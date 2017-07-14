@@ -1,6 +1,7 @@
 
 import numpy as np
 import scipy.stats as scs
+import matplotlib.pyplot as plt
 class distribution:
     def __init__(self,arr):
         if type(arr) is not np.ndarray:
@@ -26,3 +27,7 @@ class distribution:
         print('     Kurt test p-value %13.3f' % scs.kurtosistest(self.arr)[1])
         print('======')
         print('     Norm test p-value %13.3f' % scs.normaltest(self.arr)[1])
+    def hist(self,bins=40,normed=1):
+        fig,ax=plt.subplots()
+        ax.hist(self.arr,bins=bins,normed=normed)
+        plt.show()
