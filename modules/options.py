@@ -239,6 +239,56 @@ class ame_option():
             V[0:M - z, i, :] = np.where(h[0:M - z, i, :] > C_temp, h[0:M - z, i, :], C_temp)
             z += 1
         return V[0, 0, :]
+
+    @jit
+    def value_binomial_2(self, M=50):
+        lenS = np.shape(self.St)[0] if np.shape(self.St) else 1
+        lenK = np.shape(self.K)[0] if np.shape(self.K) else 1
+        lent = np.shape(self.t)[0] if np.shape(self.t) else 1
+        lenT = np.shape(self.T)[0] if np.shape(self.T) else 1
+        lenr = np.shape(self.r)[0] if np.shape(self.r) else 1
+        lensigma = np.shape(self.sigma)[0] if np.shape(self.sigma) else 1
+        parameter_tuple = (lenS, lenK, lent, lenT, lenr, lensigma)
+        max_len = np.max(parameter_tuple)
+
+        for i, para in enumerate(parameter_tuple):
+            if para != 1 and para != max_len:
+                print(para)
+                raise ValueError('There will be errors in broadcasting, please check the length of every parameter!')
+                break
+
+        St = np.resize(self.St, (M + 1, M + 1, lenS))
+        K = np.resize(self.K, (M + 1, M + 1, lenK))
+        t = np.resize(self.t, (M + 1, M + 1, lent))
+        T = np.resize(self.T, (M + 1, M + 1, lenT))
+        r = np.resize(self.r, (M + 1, M + 1, lenr))
+        sigma = np.resize(self.sigma, (M + 1, M + 1, lensigma))
+
+        dt = (T - t) / M
+        df = np.exp(-r * dt)
+        u = np.exp(sigma * np.sqrt(dt))
+        d = 1 / u
+        p = (np.exp(r * dt) - d) / (u - d)
+
+        mu = np.arange(M + 1)
+        mu = np.resize(mu, (M + 1, M + 1))
+        md = mu.T
+        mu = u ** (np.resize(mu - md, (max_len, M + 1, M + 1)).transpose((1, 2, 0)))
+        md = d ** np.resize(md, (max_len, M + 1, M + 1)).transpose((1, 2, 0))
+        S = St * mu * md
+        h = self.inner_value(S, K)
+        # h = np.maximum(S - K, 0)  # if self.otype=='call' else np.maximum(self.K-S,0)
+        V = self.inner_value(S, K)
+        # V = np.maximum(S - K, 0)  # if self.otype == 'call' else np.maximum(self.K - S, 0)
+        z = 0
+        V_temp = V[0:M - z + 1, M, :]
+        for i in range(M - 1, -1, -1):
+            C_temp = (p[0:M - z, i + 1, :] * V_temp[0:M - z, :] + (1 - p[1:M - z + 1, i + 1, :]) * V_temp[1:M - z + 1,
+                                                                                                   :]) * df[0:M - z,
+                                                                                                         i + 1, :]
+            V_temp = np.where(h[0:M - z, i, :] > C_temp, h[0:M - z, i, :], C_temp)
+            z += 1
+        return V[0, 0, :]
     def value_LSMC(self,I=25000,M=50):
         '''
         此方法似乎不稳健
