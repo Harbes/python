@@ -288,7 +288,7 @@ class ame_option():
                                                                                                          i + 1, :]
             V_temp = np.where(h[0:M - z, i, :] > C_temp, h[0:M - z, i, :], C_temp)
             z += 1
-        return V[0, 0, :]
+        return V_temp
     def value_LSMC(self,I=25000,M=50):
         '''
         此方法似乎不稳健
