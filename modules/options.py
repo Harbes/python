@@ -318,3 +318,5 @@ class ame_option():
                 C = np.polyval(rg, S[t])
                 V = np.where(h[t] > C, h[t], V * df)
         return df * np.sum(V) / I
+    def a(self):
+        pass
