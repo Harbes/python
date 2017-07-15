@@ -1,0 +1,556 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass book
+\begin_preamble
+%不显示日期
+\date{}
+
+%自动换行
+\XeTeXlinebreaklocale "zh" 
+\XeTeXlinebreakskip = 0pt plus 1pt
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language chinese-simplified
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "华文仿宋"
+\font_sans "default" "华文中宋"
+\font_typewriter "default" "华文楷体"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts true
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format pdf4
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered true
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2.5page%
+\topmargin 5pheight%
+\rightmargin 2.5page%
+\bottommargin 5pheight%
+\headheight 2.5pheight%
+\headsep 2.5pheight%
+\footskip 2.5pheight%
+\secnumdepth 3
+\tocdepth 1
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+numpy学习笔记
+\end_layout
+
+\begin_layout Author
+Harbes
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Chapter
+array objects
+\end_layout
+
+\begin_layout Itemize
+N-dimensional array type（“ndarray”）： a collection of 
+\begin_inset Quotes eld
+\end_inset
+
+item
+\begin_inset Quotes erd
+\end_inset
+
+of the same type.
+\end_layout
+
+\begin_layout Itemize
+all ndarrays are homogenous: every item takes up the same size block of
+ memory, and all blocks are interpreted in exactly the same way(
+\begin_inset Formula $data-type$
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Itemize
+three fundamental objects used describe the data in an array:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+the ndarray itself
+\end_layout
+
+\begin_layout Itemize
+the data-type object that describes the layout of a single fixed-size element
+ of the array
+\end_layout
+
+\begin_layout Itemize
+the array-scalar Python object that is returned when a single element of
+ the array is accessed
+\end_layout
+
+\end_deeper
+\begin_layout Section
+ndarray
+\end_layout
+
+\begin_layout Itemize
+一个例子：x=np.array([[1,2,3],[4,5,6]],np.int32)
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+type(x) 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+Out[4]: numpy.ndarray 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+x.shape
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+Out[5]: (2, 3) 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+x.dtype 
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+Out[6]: dtype('int32') →
+\begin_inset Formula $data-type$
+\end_inset
+
+，注意与type(x)区分开
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Subsection
+constructing arrays
+\end_layout
+
+\begin_layout Itemize
+array的属性(attribute)
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+T
+\end_layout
+
+\begin_layout Itemize
+data
+\end_layout
+
+\begin_layout Itemize
+dtype：data-type of the array's elements
+\end_layout
+
+\begin_layout Itemize
+flags
+\end_layout
+
+\begin_layout Itemize
+flat：在array上的一维迭代器
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+例如：np.array(x.flat) 
+\end_layout
+
+\begin_layout Standard
+Out[11]: array([1, 2, 3, 4, 5, 6], dtype=int32) 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+imag：虚部
+\end_layout
+
+\begin_layout Itemize
+real：实部
+\end_layout
+
+\begin_layout Itemize
+size：元素的个数，例如：x.size=6
+\end_layout
+
+\begin_layout Itemize
+itemsize：array中元素的字节(bytes)长度，例如：x.itemsize=4（因为int32）
+\end_layout
+
+\begin_layout Itemize
+nbytes：array中所有元素总的字节数，例如：x.nbytes=24
+\end_layout
+
+\begin_layout Itemize
+ndim：维度数
+\end_layout
+
+\begin_layout Itemize
+shape：维度tuple
+\end_layout
+
+\begin_layout Itemize
+strides：array中不同维度下的字节组成的tuple
+\end_layout
+
+\begin_layout Itemize
+ctypes
+\end_layout
+
+\begin_layout Itemize
+base
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+methods
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+all([axis,out,keepdims])：如果没有axis的话，如果所有元素都是True，则返回“一个”True
+\end_layout
+
+\begin_layout Itemize
+any([axis,out,keepdims]):如果没有axis的话，如果存在元素是True，则返回“一个”True
+\end_layout
+
+\begin_layout Itemize
+argmax([axis,out])：沿着给定的axis，返回最大值所在的indices；如果不指定axis，则返回的是最大值在“一维迭代器”中的位置
+\end_layout
+
+\begin_layout Itemize
+argmin([axis,out])：沿着给定的axis，返回最小值所在的indices；同上
+\end_layout
+
+\begin_layout Itemize
+argpartition(
+\begin_inset Formula $k$
+\end_inset
+
+th[,axis,kind,order])：
+\end_layout
+
+\begin_layout Itemize
+argsort([axis,kind,order])
+\end_layout
+
+\begin_layout Itemize
+astype(dtype,[,order,casting,subok,copy])：copy of the array, cast to a specified
+ type
+\end_layout
+
+\begin_layout Itemize
+byteswap(inplace)
+\end_layout
+
+\begin_layout Itemize
+choose(choices[,out,mode])：use an index array to construct a new array from
+ a set of choices
+\end_layout
+
+\begin_layout Itemize
+clip([min,max,out])：return an array whose values are limited to 
+\begin_inset Formula $[min,max]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+compress(condition[,axis,out])：return selected slices of this array along
+ given axis
+\end_layout
+
+\begin_layout Itemize
+conj()：complex-conjugate all elements
+\end_layout
+
+\begin_layout Itemize
+conjugate()：return the complex conjugate, element-wise
+\end_layout
+
+\begin_layout Itemize
+copy(order)：return a copy of the array
+\end_layout
+
+\begin_layout Itemize
+cumprod([axis,dtype,out])
+\end_layout
+
+\begin_layout Itemize
+cumsum([axis,dtype,out])
+\end_layout
+
+\begin_layout Itemize
+diagonal([offset,axis1,axis2])
+\end_layout
+
+\begin_layout Itemize
+dot(b[,out])
+\end_layout
+
+\begin_layout Itemize
+dump(file)
+\end_layout
+
+\begin_layout Itemize
+dumps()
+\end_layout
+
+\begin_layout Itemize
+fill(value)：fill the array with a scalar value(所有的数值都会变成the scalar value)
+\end_layout
+
+\begin_layout Itemize
+flatten([order])： return a copy of the array collapsed into one dimension，与属性中的f
+lat功能类似
+\end_layout
+
+\begin_layout Itemize
+getfield(dtype[,offset])：return a field of the given array as a certain
+ type
+\end_layout
+
+\begin_layout Itemize
+item(*args)：copu an element of an array to a standard Python scalar and
+ return it 
+\end_layout
+
+\begin_layout Itemize
+itemset([axis,out])：insert scalar into an array(scalar is cast to array's
+ dtype, if possible)
+\end_layout
+
+\begin_layout Itemize
+max([axis,out])：return the maximum along a give axis
+\end_layout
+
+\begin_layout Itemize
+mean([axis, dtype,out,keepdims])
+\end_layout
+
+\begin_layout Itemize
+min([axis,out,keepdims])
+\end_layout
+
+\begin_layout Itemize
+newbyteorder([new_order])：return the array with the same data viewed with
+ a different byte order
+\end_layout
+
+\begin_layout Itemize
+nonzero()：return the indices of the elements that non-zeros
+\end_layout
+
+\begin_layout Itemize
+partition(
+\begin_inset Formula $k$
+\end_inset
+
+th[,axis,kind,order])：只保证
+\begin_inset Formula $k$
+\end_inset
+
+th位置上的元素等于正确排序的元素，其他位置上的不管(理论上速度应该比sort快一点)
+\end_layout
+
+\begin_layout Itemize
+prod([axis,dtype,out,keepdims])
+\end_layout
+
+\begin_layout Itemize
+ptp([axis,out])：peak to peak(max-min) value along the given axis
+\end_layout
+
+\begin_layout Itemize
+put(indices,values[,mode])：
+\end_layout
+
+\begin_layout Itemize
+ravel([order])：return a flattened array
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+ravel只是请求返回一个展平后数据的view；而flatten要求新分配内存
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+repeat(repeats[,axis])：repeat element of an array
+\end_layout
+
+\begin_layout Itemize
+reshape(shape[,order])
+\end_layout
+
+\begin_layout Itemize
+resize(new_shape[refcheck])：change shape and size of array in-place
+\end_layout
+
+\begin_layout Itemize
+round([decimals,out])
+\end_layout
+
+\begin_layout Itemize
+searchsorted(v[,side,sorter])：find indices where elemets of v should be
+ inserted into a maintain order
+\end_layout
+
+\begin_layout Itemize
+setfield(val,dtype[,offset])
+\end_layout
+
+\begin_layout Itemize
+setflags([write,align,uic])
+\end_layout
+
+\begin_layout Itemize
+sort([axis,kind,order])
+\end_layout
+
+\begin_layout Itemize
+squeeze([axis])：remove the single-dimensional entries from the shape of
+ 
+\begin_inset Formula $a$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+std([axis,dtype,out,ddof,keepdims])
+\end_layout
+
+\begin_layout Itemize
+sum([axis,dtype,out,keepdims])
+\end_layout
+
+\begin_layout Itemize
+swapaxes(axis1,axis2)【transpose？】
+\end_layout
+
+\begin_layout Itemize
+take(indices[,axis,out,mode])：return an array formed from the elements of
+ 
+\begin_inset Formula $a$
+\end_inset
+
+ at the given indices
+\end_layout
+
+\begin_layout Itemize
+tobytes([order])
+\end_layout
+
+\begin_layout Itemize
+tofile(fid[,sep,format])
+\end_layout
+
+\begin_layout Itemize
+tolist()
+\end_layout
+
+\begin_layout Itemize
+tostring([order])
+\end_layout
+
+\begin_layout Itemize
+trace([offset,axis1,axis2,dtype,out])
+\end_layout
+
+\begin_layout Itemize
+transpose(*axes)
+\end_layout
+
+\begin_layout Itemize
+var([axis,dtype.out,ddof,keepdims])
+\end_layout
+
+\begin_layout Itemize
+view(dtype,type)：new view of array with the same data
+\end_layout
+
+\end_deeper
+\end_body
+\end_document
