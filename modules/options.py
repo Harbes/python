@@ -273,6 +273,8 @@ class ame_option():
         d = 1 / u
         p = (np.exp(r * dt) - d) / (u - d)
 
+#TODO 尝试使用“深度组合”改写这一段，看看能不能提速,例如np.dstack((tuple(Mu),)*3)
+
         mu = np.arange(M + 1)
         mu = np.resize(mu, (M + 1, M + 1))
         md = mu.T

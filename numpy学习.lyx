@@ -113,7 +113,7 @@ LatexCommand tableofcontents
 \end_layout
 
 \begin_layout Chapter
-array objects
+numpy基础
 \end_layout
 
 \begin_layout Itemize
@@ -202,7 +202,7 @@ Out[6]: dtype('int32') →
 \end_deeper
 \end_deeper
 \begin_layout Subsection
-constructing arrays
+属性(attribute)与方法(method)
 \end_layout
 
 \begin_layout Itemize
@@ -237,6 +237,10 @@ flat：在array上的一维迭代器
 
 \begin_layout Standard
 Out[11]: array([1, 2, 3, 4, 5, 6], dtype=int32) 
+\end_layout
+
+\begin_layout Standard
+【注意：flat属性是一个可以赋值的属性，该赋值会导致原array对应的元素数值发生变化
 \end_layout
 
 \end_deeper
@@ -464,10 +468,30 @@ repeat(repeats[,axis])：repeat element of an array
 reshape(shape[,order])
 \end_layout
 
+\begin_deeper
+\begin_layout Standard
+a=np.arange(24).reshape((2,3,4))
+\end_layout
+
+\begin_layout Standard
+除了使用reshape，还可以使用shape或者resize：a.reshape((4,6))效果等同于a.shape=(4,6) 或者a.resize((4,6))
+\end_layout
+
+\end_deeper
 \begin_layout Itemize
 resize(new_shape[refcheck])：change shape and size of array in-place
 \end_layout
 
+\begin_deeper
+\begin_layout Standard
+当有其他变量'挂'在变量
+\begin_inset Formula $a$
+\end_inset
+
+下时，需要传入参数refcheck=False
+\end_layout
+
+\end_deeper
 \begin_layout Itemize
 round([decimals,out])
 \end_layout
@@ -549,6 +573,234 @@ var([axis,dtype.out,ddof,keepdims])
 
 \begin_layout Itemize
 view(dtype,type)：new view of array with the same data
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+数组的组合
+\end_layout
+
+\begin_layout Itemize
+首先创建一些数组
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+a=np.arange(9).reshape(3,3)
+\end_layout
+
+\begin_layout Standard
+b=a*2
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+水平组合（hstack、concatenate）
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+np.hstack((a,b))
+\end_layout
+
+\begin_layout Standard
+Out[83]: array([[ 0, 1, 2, 0, 2, 4], [ 3, 4, 5, 6, 8, 10], [ 6, 7, 8, 12,
+ 14, 16]]) 
+\end_layout
+
+\begin_layout Itemize
+也可以使用：np.concatenate((a,b),axis=1)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+垂直组合(vstack、concatenate)
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+np.vstack((a,b))
+\end_layout
+
+\begin_layout Itemize
+或者：np.concatenate((a,b),axis=0)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+深度组合（dstack）
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+np.dstack((a,b))
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+array([[[ 0, 0], [ 1, 2], [ 2, 4]], [[ 3, 6], [ 4, 8], [ 5, 10]], [[ 6,
+ 12], [ 7, 14], [ 8, 16]]]) 
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+列组合（column_stack）
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+对于一维数据，将按照列方向进行组合：c=np.arange(2);d=2*c;np.column_stack((c,d))
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+array([[0, 0], [1, 2]]) 【注意，如果使用深度组合，结果会高一个维度：array([[[0, 0], [1, 2]]])
+ 】
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+对于二维数据，column_stack与hstack效果相同：np.column_stack((a,b))
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+array([[ 0, 1, 2, 0, 2, 4], [ 3, 4, 5, 6, 8, 10], [ 6, 7, 8, 12, 14, 16]])
+ 
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+行组合（row_stack）
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+对于一维数据，直接层叠起来组成一个二维数据：np.row_stack((c,d))
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+array([[0, 1], [0, 2]]) 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+对于二维数据，与vstack效果相同：np.row_stack((a,b))
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+array([[ 0, 1, 2], [ 3, 4, 5], [ 6, 7, 8], [ 0, 2, 4], [ 6, 8, 10], [12,
+ 14, 16]]) 
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Subsection
+数组的分割[注意分割的结果都是列表]
+\end_layout
+
+\begin_layout Itemize
+水平分割（hsplit、split）
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+np.hsplit(a,3)：沿着水平方向分割为3个大小相同(必须相等，否则会报错，因此参数选取要适当)的子数组
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+[array([[0], [3], [6]]), array([[1], [4], [7]]), array([[2], [5], [8]])]
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+或者使用：np.split(a,3,axis=1)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+垂直分割（vsplit、split）
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+np.vsplit(a,3)
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+[array([[0, 1, 2]]), array([[3, 4, 5]]), array([[6, 7, 8]])] 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+或者：np.split(a,3,axis=0)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+深度分割（dsplit、split）
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+c=np.arange(27).reshape(3,3,3);np.dsplit(c,3)
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+[array([[[ 0], [ 3], [ 6]], [[ 9], [12], [15]], [[18], [21], [24]]]), array([[[
+ 1], [ 4], [ 7]], [[10], [13], [16]], [[19], [22], [25]]]), array([[[ 2],
+ [ 5], [ 8]], [[11], [14], [17]], [[20], [23], [26]]])] 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+或者：np.split(c,3,axis=2)
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+[array([[[ 0], [ 3], [ 6]], [[ 9], [12], [15]], [[18], [21], [24]]]), array([[[
+ 1], [ 4], [ 7]], [[10], [13], [16]], [[19], [22], [25]]]), array([[[ 2],
+ [ 5], [ 8]], [[11], [14], [17]], [[20], [23], [26]]])] 
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Subsection
+数组的转换
+\end_layout
+
+\begin_layout Itemize
+利用tolist函数转换成python列表
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+a.tolist()
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+[[0, 1, 2], [3, 4, 5], [6, 7, 8]] 
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+使用astype函数转换数据类型
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+a=np.array([1+1.j,3+2.j]);a.astype(int)。【注意：此处写虚数时，一定要在虚部的系数和'j'之间加上小点'.'】
 \end_layout
 
 \end_deeper
