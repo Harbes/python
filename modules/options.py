@@ -30,7 +30,8 @@ class euro_option:
         self.otype = otype
 
     def d1f(self):
-        return (np.log(self.St / self.K) + (self.r + self.sigma ** 2 / 2) * (self.T-self.t)) / (self.sigma * np.sqrt(self.T-self.t))
+        return (np.log(self.St / self.K) + (self.r + self.sigma ** 2 / 2) * (self.T-self.t)) / (self.sigma \
+                                                                                                * np.sqrt(self.T-self.t))
     @property
     def value_BSM(self):
         '''
@@ -119,10 +120,11 @@ class euro_option:
         d1=self.d1f()
         d2 = d1 - self.sigma * np.sqrt(self.T - self.t)
         if self.otype=='call':
-            return -self.St*norm(0,1).pdf(d1)*self.sigma/2/np.sqrt(self.T-self.t)-self.r*self.K*np.exp(-self.r*(self.T-self.t))*norm(0,1).cdf(d2)
+            return -self.St*norm(0,1).pdf(d1)*self.sigma/2/np.sqrt(self.T-self.t)\
+                   -self.r*self.K*np.exp(-self.r*(self.T-self.t))*norm(0,1).cdf(d2)
         else:
-            return -self.St * norm(0, 1).pdf(d1) * self.sigma / 2 / np.sqrt(self.T - self.t) + self.r * self.K * np.exp(
-                -self.r * (self.T - self.t)) * norm(0, 1).cdf(-d2)
+            return -self.St * norm(0, 1).pdf(d1) * self.sigma / 2 / np.sqrt(self.T - self.t) \
+                   + self.r * self.K * np.exp(-self.r * (self.T - self.t)) * norm(0, 1).cdf(-d2)
     @property
     def rho(self):
         '''
@@ -235,7 +237,8 @@ class ame_option():
         #V = np.maximum(S - K, 0)  # if self.otype == 'call' else np.maximum(self.K - S, 0)
         z = 0
         for i in range(M - 1, -1, -1):
-            C_temp = (p[0:M - z, i + 1, :] * V[0:M - z, i + 1, :] + (1 - p[1:M - z + 1, i + 1, :]) * V[1:M - z + 1,i + 1, :]) * df[0:M - z,i + 1,:]
+            C_temp = (p[0:M - z, i + 1, :] * V[0:M - z, i + 1, :] + (1 - p[1:M - z + 1, i + 1, :]) \
+                      * V[1:M - z + 1,i + 1, :]) * df[0:M - z,i + 1,:]
             V[0:M - z, i, :] = np.where(h[0:M - z, i, :] > C_temp, h[0:M - z, i, :], C_temp)
             z += 1
         return V[0, 0, :]
@@ -283,12 +286,11 @@ class ame_option():
         z = 0
         V_temp = V[0:M - z + 1, M, :]
         for i in range(M - 1, -1, -1):
-            C_temp = (p[0:M - z, i + 1, :] * V_temp[0:M - z, :] + (1 - p[1:M - z + 1, i + 1, :]) * V_temp[1:M - z + 1,
-                                                                                                   :]) * df[0:M - z,
-                                                                                                         i + 1, :]
+            C_temp = (p[0:M - z, i + 1, :] * V_temp[0:M - z, :] + (1 - p[1:M - z + 1, i + 1, :]) \
+                      * V_temp[1:M - z + 1,:]) * df[0:M - z,i + 1, :]
             V_temp = np.where(h[0:M - z, i, :] > C_temp, h[0:M - z, i, :], C_temp)
             z += 1
-        return V_temp
+        return V_temp[0]
     def value_LSMC(self,I=25000,M=50):
         '''
         此方法似乎不稳健
