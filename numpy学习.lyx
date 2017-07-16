@@ -804,5 +804,903 @@ a=np.array([1+1.j,3+2.j]);a.astype(int)。【注意：此处写虚数时，一�
 \end_layout
 
 \end_deeper
+\begin_layout Chapter
+numpy中的函数
+\end_layout
+
+\begin_layout Section
+常用函数
+\end_layout
+
+\begin_layout Subsection
+读写文件
+\end_layout
+
+\begin_layout Itemize
+创建一个矩阵并将其存储到文件中
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+i2=np.eye(2)
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+np.savetxt('eye.txt',i2)，结果就会咋python工作目录下创建一个名为“eye.txt”的文件
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Subsection
+读入CSV文件
+\end_layout
+
+\begin_layout Itemize
+c,v=np.loadtxt('csv_name.csv',delimiter=',',usecols=(6,7),unpack=True)。【注意：usecols
+的传入参数为一个元组，它指定我们要获取的数据列，例子是获取第7字段-第8字段的数据；unpack=True试讲不同列的数据分开存储】
+\end_layout
+
+\begin_layout Subsection
+成交量加权平均价格(VWAP)
+\end_layout
+
+\begin_layout Itemize
+假定价格数据是
+\begin_inset Formula $c$
+\end_inset
+
+，成交量数据是
+\begin_inset Formula $v$
+\end_inset
+
+，则：vwap=np.average(c,weights=v)
+\end_layout
+
+\begin_layout Itemize
+类似的，时间加权平均价格(TWAP)：twap=np.average(c,weights=t)
+\end_layout
+
+\begin_layout Subsection
+取值范围
+\end_layout
+
+\begin_layout Itemize
+假定每日股价的最高价记录在
+\begin_inset Formula $h$
+\end_inset
+
+中，每日最低价记录在
+\begin_inset Formula $l$
+\end_inset
+
+中，则最高价中的最大值与最低价中的最小值分别为：np.max(h);np.min(l)
+\end_layout
+
+\begin_layout Itemize
+最高价数据的极差与最低价数据的极差：np.ptp(h);np.ptp(l)
+\end_layout
+
+\begin_layout Subsection
+计算真实波动幅度均值(ATR,average of true range?)
+\end_layout
+
+\begin_layout Itemize
+ATR是基于前N个交易日的最高价和最低价，例如取近20个交易日数据
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+N=20;h=h[-N:];l=l[-N:]
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+前一个交易日的收盘价
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+previousclose=c[-N-1:-1]
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+计算每天的真实波动幅度
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+truerange=np.maximum(h-l,h-previousclose,previousclose-l)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+计算ATR
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+atr=np.zeros(N);atr[0]=np.mean(truerange)。再用：
+\begin_inset Formula $\frac{(N-1)PATR+TR}{N}$
+\end_inset
+
+计算其他数值
+\end_layout
+
+\begin_layout Standard
+for i in range(N):
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+atr[i]=(N-1)*atr[i-1]+truerange[i]
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+atr[i]/=N
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+简单移动平均
+\end_layout
+
+\begin_layout Itemize
+一般来说，移动平均只需要简单的循环和均值函数就可以计算得出，但numpy中可以使用更优的convolve(卷积)函数
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+N=5;weights=np.ones(N)/N
+\end_layout
+
+\begin_layout Standard
+simple_ma=np.convolve(weights,c,mode='valid')
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+指数移动平均线
+\end_layout
+
+\begin_layout Itemize
+N=7;weights=np.exp(np.linspace(-1,0,N));weights=weights/weights.sum()
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+ema=np.convolve(weights,c,mode='valid')
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+布林带(Bollinger band)
+\end_layout
+
+\begin_layout Itemize
+布林带是一种技术指标(以发明者John Bollinger的名字命名)，用以刻画价格波动的区间，它的基本形态是由三条轨道线组成的带状通道(中轨和上、下轨各一条)
+。其中，中轨是简单移动平均；上轨是比简单移动平均高两倍标准差的距离；下轨是比简单移动平均低两倍标准差的距离。
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+deviation=[] 
+\end_layout
+
+\begin_layout Standard
+C=len(c) 
+\end_layout
+
+\begin_layout Standard
+for i in range(N-1,C):
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+if i+N<C: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+dev=c[i:i+N] 
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+else: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+dev=c[-N:] 
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+averages=np.zeros(N) 
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+averages.fill(sma[i-N-1]) 
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+dev=dev-averages 
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+dev=dev**2 
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+dev=np.sqrt(np.mean(dev)) 
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+deviation.append(dev)
+\end_layout
+
+\begin_layout Standard
+deviation=2*np.array(deviation) 
+\end_layout
+
+\begin_layout Standard
+upperBB=sma+deviation 
+\end_layout
+
+\begin_layout Standard
+lowerBB=sma-deviation 
+\end_layout
+
+\begin_layout Standard
+plt.plot(c[N-1:],label='raw') 
+\end_layout
+
+\begin_layout Standard
+plt.plot(sma,label='sma') 
+\end_layout
+
+\begin_layout Standard
+plt.plot(upperBB) 
+\end_layout
+
+\begin_layout Standard
+plt.plot(lowerBB) 
+\end_layout
+
+\begin_layout Standard
+plt.legend() 
+\end_layout
+
+\begin_layout Standard
+plt.show() 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+【注意：pandas中有rolling_std这种函数】
+\end_layout
+
+\begin_layout Subsection
+趋势线
+\end_layout
+
+\begin_layout Itemize
+趋势线是根据股价走势图上很多所谓的枢轴点绘成的曲线。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+首先确定枢轴点的位置，这里假设为最高价、最低价和收盘价的算术平均值。
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+pivots=(h+l+c)/3
+\end_layout
+
+\begin_layout Standard
+从这些枢轴点出发，可以推导出所谓的阻力位和支撑位。阻力位是指股价上升时遇到的阻力，在转跌前的最高价位；支撑位是股价下跌时遇到支撑，在反弹前的最低价格。需要提醒的
+是阻力位和支撑位并非客观存在，它们只是一个估计量。定义当日股价区间为最高价和最低价之差。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+定义一个函数，用直线
+\begin_inset Formula $y=at+b$
+\end_inset
+
+来拟合数据
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+def fit_line(t,y):
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+A=np.vstack([t,np.ones_like(t)]).T
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+return np.linalg.pinv(A.T@A)*A.T@y
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+假设支撑位在枢轴点下方一个当日股价区间的位置，阻力位在枢轴点上方一个当日股价区间的位置，据此拟合支撑位和阻力位的趋势线
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+t=np.arange(len(c))
+\end_layout
+
+\begin_layout Standard
+s_para=fit_line(t,pivots-(h-l))
+\end_layout
+
+\begin_layout Standard
+r_para=fit_line(t,pivots+(h-l))
+\end_layout
+
+\begin_layout Standard
+support=s_para[0]*t+s_para[1]
+\end_layout
+
+\begin_layout Standard
+resistance=r_para[0]*t+r_para[1]
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+【注意:需要检查有多少数据点落在支撑位和阻力位之间，如果之间的数据少，则没有意义】
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+数组修剪和压缩
+\end_layout
+
+\begin_layout Itemize
+数组修剪就是将数组中比给定的最大值更大的元素设定为最大值，比给定的最小值更小的元素设定为最小值
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+np.cilp(min,max)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+数组压缩就是返回一个根据给定条件筛选后的数组
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+np.compress(a>2)
+\end_layout
+
+\end_deeper
+\begin_layout Section
+便捷函数
+\end_layout
+
+\begin_layout Subsection
+净额成交量
+\end_layout
+
+\begin_layout Itemize
+成交量(volume)是投资中一个非常重要的变量，它可以表示价格波动的大小。OBV(On-Balance Volume，净额成交量或能量潮指标)是最简单的股价指
+标之一，可由当日收盘价、前一天的收盘价以及当日成交量计算得出
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+假定
+\begin_inset Formula $c$
+\end_inset
+
+表示收盘价数据，
+\begin_inset Formula $v$
+\end_inset
+
+表示成交量数据。
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+change=np.diff(c)
+\end_layout
+
+\begin_layout Standard
+signs=np.sign(change)#或者使用signs=np.piecewise(change,[change<0,change>0],[-1,1])
+\end_layout
+
+\begin_layout Standard
+v[1:]*signs #OBV
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Subsection
+交易过程模拟(抄底)，避免使用循环
+\end_layout
+
+\begin_layout Itemize
+使用np.vectorize函数相当于Python中的map函数，可以减少使用循环的次数。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+假定股票4价数据为
+\begin_inset Formula $o,h,l,c$
+\end_inset
+
+，尝试以比开盘价低一点的价格买入，如果买入价不在当日股票价格范围内，则尝试买入失败，没有获利也没有亏损。
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+def calc_profit((open,high,low,close)):
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+buy=open*0.99
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+if low<buy<high:
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+return (close-buy)/buy
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+else:
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+return 0
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+func=np.vectorize(calc_profit)#调用vectorize病给定calc_profit函数作为参数
+\end_layout
+
+\begin_layout Itemize
+profits=func(o,h,l,c)
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+数据平滑：使用hanning函数平滑数据
+\end_layout
+
+\begin_layout Itemize
+调用hanning函数是为了计算权重
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+N=8;weights=np.hanning(N)
+\end_layout
+
+\begin_layout Itemize
+smooth_c=np.convolve(weights,c,'valid')
+\end_layout
+
+\end_deeper
+\begin_layout Section
+矩阵和通用函数
+\end_layout
+
+\begin_layout Subsection
+创建矩阵
+\end_layout
+
+\begin_layout Itemize
+A=np.mat('1 2 3;4 5 6 ;7 8 9')或者A=np.mat(np.arange(1,10).reshape(3,3))
+\end_layout
+
+\begin_layout Itemize
+转置：A.T
+\end_layout
+
+\begin_layout Itemize
+逆：A.I（计算复杂度为O(n3)）
+\end_layout
+
+\begin_layout Subsection
+从已有的矩阵创建新的矩阵
+\end_layout
+
+\begin_layout Itemize
+a=np.eye(2);b=2*a
+\end_layout
+
+\begin_layout Itemize
+创建复合矩阵
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+np.bmat('a b;a b')
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+斐波那契数列
+\end_layout
+
+\begin_layout Itemize
+Fibonacci数列是基于递推关系生成的，如果用numpy代码来递归得出数列的话是比较麻烦的，但是我们可以使用矩阵或者黄金分割公式两种方法来获得它。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+F=np.matrix([[1,1],[1,0]]);于是斐波那契数列第n个数为：
+\begin_inset Formula $F^{n-1}$
+\end_inset
+
+中的第一行第一列，即(F**7)[0,0] 
+\end_layout
+
+\begin_layout Itemize
+sqrt5=np.sqrt(5);phi=(1+sqrt5)/2;第n个数为：fibonacci_n=np.rint((phi**n-(-1/phi)**n)/sq
+rt5)#【注意，np.rint函数是对浮点数取整】
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+深入学习numpy模块
+\end_layout
+
 \end_body
 \end_document
