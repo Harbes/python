@@ -2384,5 +2384,156 @@ M=42;window=np.kaiser(M,14)#也像正态
 质量控制
 \end_layout
 
+\begin_layout Subsection
+断言函数
+\end_layout
+
+\begin_layout Itemize
+单元测试通常使用断言函数作为测试的组成部分。在进行数值计算时，经常会遇到比较两个近似相等的浮点数这样的基本问题 → numpy.testing
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+assert_almost_equal：如果两个数字的近似程度没有达到指定精度，就抛出异常AssertionError
+\end_layout
+
+\begin_layout Itemize
+assert_approx_equal：如果两个数字的近似程度没有达到指定有效数字，就抛出异常
+\end_layout
+
+\begin_layout Itemize
+assert_array_almost_equal：如果两个数组中元素的近似程度没有达到指定精度，就抛出异常
+\end_layout
+
+\begin_layout Itemize
+assert_array_equal：如果两个数组对象不相同，就抛出异常
+\end_layout
+
+\begin_layout Itemize
+assert_array_less：两个数组形状必须一样，并且第一个数组的元素严格小于第二个数组的元素，否则抛出异常
+\end_layout
+
+\begin_layout Itemize
+assert_equal：如果两个对象不相同，就抛出异常
+\end_layout
+
+\begin_layout Itemize
+assert_raises：若填写的参数调用函数没有抛出指定的异常，则测试不通过
+\end_layout
+
+\begin_layout Itemize
+assert_warns：若没有抛出指定的警告，则测试不通过
+\end_layout
+
+\begin_layout Itemize
+assert_string_equal：断言连个字符串变量完全相同
+\end_layout
+
+\begin_layout Itemize
+assert_allclose：如果两个对象的近似程度超出了指定的容差限，就抛出异常
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+使用assert_almost_equal断言近似相等，触发条件：
+\begin_inset Formula $abs(desired-actual)\text{>}0.5*10**(-decimal)$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+np.testing.assert_almost_equal(0.123456789,0.123456780,decimal=7)#当decimal=8时就会报错
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+使用assert_approx_equal断言近似相等，触发异常的条件：
+\begin_inset Formula $abs(actual-expected)>=10**[-(significant-1)]$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+np.testing.assert_approx_equal(0.123456789,0.123456780,significant=8)#当significant=9
+时就会报错
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+使用assert_array_almost_equal断言数组近似相等，触发条件：
+\begin_inset Formula $abs(desired-actual)\text{>}10**(-decimal)$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+np.testing.assert_array_almost_equal([0,0.123456789],[0,0.123456780],decimal=8)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+使用assert_array_equal和asser_allclose断言数组相等/近似相等。前者要求形状一致、元素也严格相等，允许有NaN出现；后者要求满足：
+\begin_inset Formula $|a-b|<=(atol+btol*|b|)$
+\end_inset
+
+，其中atol表示绝对容差限(absolute tolerance)，rtol表示相对容差限(relative tolerance)
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+np.testing.assert_array_equal([0,0.123456789,np.nan],[0,0.123456780,np.nan])
+\end_layout
+
+\begin_layout Itemize
+np.testing.assert_allclose([0,0.123456789,np.nan],[0,0.123456780,np.nan],rtol=1e-7,ato
+l=0)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+使用assert_array_less对数组进行比较
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+np.testing.assert_array_less([0,0.12345678,np.nan],[1,0.23456789,np.nan])
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+使用assert_equal进行对象比较,对象不一定为numpy数组，也可以是列表、元组或字典
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+c=np.arange(27).reshape(3,3,3);obj1=np.dsplit(c,3);obj2=np.split(c,3,axis=2);np.testi
+ng.assert_equal(obj1,obj2)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+使用assert_string_equal进行字符串比较，该函数区分字符大小写
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+np.testing.assert_string_equal('numpy','Numpy')
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+使用assert_array_almost_equal_nulp和assert_array_max_ulp进行浮点数比较
+\end_layout
+
+\begin_layout Subsection
+单元测试
+\end_layout
+
 \end_body
 \end_document
