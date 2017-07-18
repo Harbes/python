@@ -1,4 +1,5 @@
 import numpy as np
+from numba import jit
 class uni_tsa:
     def __init__(self,arr):
         if type(arr) is not np.ndarray:
@@ -187,6 +188,69 @@ class uni_tsa:
     def Granger(self,arr2):
         # TODO Granger因果检验
         pass
+
+class simulation:
+    def __init__(self,phi=None,theta=None,const=0,y_init=None,dist='normal',dist_sigma=1,M=1000,seed=None):
+        self.phi=phi
+        self.theta=theta
+        self.const=const
+        self.y_init=y_init
+        self.dist=dist
+        self.dist_sigma=dist_sigma
+        self.M = M
+        self.seed=seed
+        if self.theta is None:
+            self.theta=0
+            self.q=0
+        else:
+            self.theta=np.array(self.theta)
+            self.q=(self.theta).size
+        if self.phi is None:
+            self.phi=0
+            self.p=0
+        else:
+            self.phi=np.array(self.phi)
+            self.p=(self.phi).size
+        self.pq=np.maximum(self.p,self.q)
+    @property
+    def generate_random(self):
+        if self.seed:
+            np.random.seed(self.seed)
+        if self.dist=='normal':
+            epsilon=np.random.normal(0,scale=self.dist_sigma,size=self.M+self.pq)
+        return epsilon
+    @property
+    def MA(self):
+        epsilon=self.generate_random
+        e_array=(np.vstack([epsilon[self.pq-i-1:self.M+self.pq-1-i] for i in range(self.q)])).T
+        return self.const+(self.theta*e_array).sum(axis=1)+epsilon[self.pq:]
+    @property
+    def AR(self):
+        epsilon = self.generate_random
+        y_t=np.empty(self.M+self.p)
+        if self.y_init is None:
+            y_t[:self.pq] = 0
+        else:
+            y_t[self.pq-self.p:self.pq] = np.array(self.y_init)
+        for i in range(self.pq, self.M + self.pq):
+            y_t[i] = self.const + (self.phi * y_t[i - self.p:i]).sum() + epsilon[i]
+        return y_t[self.pq:]
+    @property
+    def ARMA(self):
+        epsilon = self.generate_random
+        e_array = (np.vstack([epsilon[self.pq - 1 - i:self.M + self.pq - 1 - i] for i in range(self.pq)])).T
+        y_t=np.empty(self.M+self.pq)
+        if self.y_init is None:
+            y_t[:self.pq] = 0
+        else:
+            y_t[self.pq-self.p:self.pq] = np.array(self.y_init)
+        for i in range(self.pq, self.M + self.pq):
+            y_t[i] = self.const + (self.phi * y_t[i - self.p:i]).sum() +epsilon[i]+(self.theta*e_array[i-self.pq]).sum()
+        return y_t[self.pq:]
+
+
+
+
 
     
 
