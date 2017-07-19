@@ -23,5 +23,31 @@
 
 import numpy as np
 import scipy.stats as stats
+import matplotlib.pyplot as plt
 
+np.random.seed(1234567)
 
+t=5
+
+### Time invariant model
+mu  = 0;                            # Mean
+sig = 2;                            # Standard deviation
+z   = stats.norm(0,1).rvs((t,))          # Standard normal random numbers
+y   = sig*z;                        # Generate realizations of y
+s   = np.arange(-10,10.01,0.1)
+fz  = stats.norm(0,1).pdf(s)                   # Probability distribution of z
+fy  = stats.norm(0,1).pdf((s-mu)/sig)*(1/sig)  # Probability distribution of y
+
+plt.plot(s,fz,label='norm(0,1)')
+plt.plot(s,fy,label='norm(0,2)')
+plt.title('Time invariant model')
+plt.legend()
+plt.show()
+
+### count model
+theta   = 2;
+y       = poissrnd(theta,t,1);
+s       = 0:1:9;
+s2      = s;
+y2      = y;
+fy2     = poisspdf(s,theta);
