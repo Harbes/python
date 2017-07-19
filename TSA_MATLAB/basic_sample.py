@@ -46,8 +46,9 @@ plt.show()
 
 ### count model
 theta   = 2;
-y       = poissrnd(theta,t,1);
-s       = 0:1:9;
-s2      = s;
-y2      = y;
-fy2     = poisspdf(s,theta);
+s       = np.arange(0,9.1,1)
+fy2     = stats.poisson(theta).pmf(s)
+
+plt.bar(s,fy2);
+plt.title('Count Model');
+plt.show()
