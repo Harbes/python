@@ -19,9 +19,9 @@
 \language_package default
 \inputencoding auto
 \fontencoding global
-\font_roman "default" "华文仿宋"
-\font_sans "default" "华文中宋"
-\font_typewriter "default" "华文楷体"
+\font_roman "default" "Heiti SC"
+\font_sans "default" "STSong"
+\font_typewriter "default" "Kaiti SC"
 \font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts true
@@ -96,11 +96,15 @@
 \begin_body
 
 \begin_layout Title
-numpy学习笔记
+econometric modelling with time series：specification, estimation, and test
+\end_layout
+
+\begin_layout Title
+学习笔记
 \end_layout
 
 \begin_layout Author
-Harbes
+由Harbes整理
 \end_layout
 
 \begin_layout Standard
@@ -112,5 +116,208 @@ LatexCommand tableofcontents
 
 \end_layout
 
+\begin_layout Chapter
+the maximum likelihood principle
+\end_layout
+
+\begin_layout Chapter
+properties of maximum likelihood estimators
+\end_layout
+
+\begin_layout Section
+introduction
+\end_layout
+
+\begin_layout Itemize
+在regularity conditions下，MLE具有很多优良的性质：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+大样本下，一致、有效、正态分布
+\end_layout
+
+\begin_layout Itemize
+小样本下，满足invariance property，是function of sufficient statistics，部分情况下是无偏且唯一的。
+\end_layout
+
+\end_deeper
+\begin_layout Section
+preliminaries
+\end_layout
+
+\begin_layout Enumerate
+先简介一些时间序列的随机模型，简单讨论其性质
+\end_layout
+
+\begin_layout Enumerate
+弱大数定理
+\end_layout
+
+\begin_layout Enumerate
+the scaling factor ensuring convergence of scaled random variables to non-degene
+rate distributions
+\end_layout
+
+\begin_layout Enumerate
+中心极限定理：
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Linderberg-Levy
+\end_layout
+
+\begin_layout Enumerate
+Linderberg-Feller
+\end_layout
+
+\begin_layout Enumerate
+the martingle difference sequence central limit theorem
+\end_layout
+
+\begin_layout Enumerate
+a mixing central limit theorem
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+stochastic time series models and their properties
+\end_layout
+
+\begin_layout Subsubsection
+平稳性：严平稳、弱平稳与non-stationary
+\end_layout
+
+\begin_layout Enumerate
+弱平稳：对任意有限的j，联合分布函数
+\begin_inset Formula $F(y_{1},y_{2},...,y_{j})$
+\end_inset
+
+的前两阶unconditional moments不依赖于时间t
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+exmple 2.1：stationary AR(1) model
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $y_{t}=\alpha+\rho y_{t-1}+u_{t}$
+\end_inset
+
+,
+\begin_inset Formula $u_{t}\sim iid(0,\sigma^{2})$
+\end_inset
+
+,
+\begin_inset Formula $|\rho|<1$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+平稳的原因在于
+\begin_inset Formula 
+\begin{align*}
+ & \mu=E[y_{t}]=\frac{\alpha}{1-\rho}\\
+ & \sigma^{2}=E[(y_{t}-\mu)^{2}]=\frac{\sigma^{2}}{1-\rho^{2}}\\
+ & \gamma_{k}=E[(y_{t}-\mu)(y_{t-k}-\mu)]=\frac{\sigma^{2}}{1-\rho^{2}}\rho^{k}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+严平稳
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+严平稳所有高阶矩都不是时间t的函数
+\end_layout
+
+\begin_layout Itemize
+严平稳并不要求前两阶矩有限
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Subsubsection
+Martingale difference sequence
+\end_layout
+
+\begin_layout Standard
+a martingale difference sequence （mds）：一阶条件矩满足
+\begin_inset Formula 
+\[
+E_{t-1}[y_{t}]=E[y_{t}|y_{t-1},y_{t-2},...]=0\tag{2.1}
+\]
+
+\end_inset
+
+上式表明时间
+\begin_inset Formula $t-1$
+\end_inset
+
+的信息不能用于预测
+\begin_inset Formula $y_{t}$
+\end_inset
+
+。由(2.1)可以推导两个性质：
+\begin_inset Formula 
+\[
+\begin{split}Property\,1: & \quad E[y_{t}]=E[E_{t-1}[y_{t}]]=E[0]=0\\
+Property\,2: & \quad E[y_{t}y_{t-k}]=E[E_{t-1}[y_{t}y_{t-k}]]=E[y_{t-k}E_{t-1}[y_{t}]]=E[y_{t-k}\times0]=0
+\end{split}
+\]
+
+\end_inset
+
+第一个属性说明，mds的无条件期望值为0；第二个属性说明，mds中任意一个时间点的观测与过去线性无关（但是可能存在higher-order moment
+ dependence）
+\end_layout
+
+\begin_layout Itemize
+example 2.2：nonlinear time series
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula $y_{t}=u_{t}u_{t-1}$
+\end_inset
+
+,
+\begin_inset Formula $u_{t}\sim iid(0,\sigma^{2})$
+\end_inset
+
+，
+\begin_inset Formula $y_{t}$
+\end_inset
+
+是mds的原因在于
+\begin_inset Formula $E_{t-1}[y_{t}]=E_{t-1}[u_{t}u_{t-1}]=E_{t-1}[u_{t}]u_{t-1}=0$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+但是该过程存在dependence in the higher order moments：
+\begin_inset Formula 
+\begin{align*}
+cov(y_{t}^{2},y_{t-1}^{2}) & =E[y_{t}^{2}y_{t-1}^{2}]-E[y_{t}^{2}]E[y_{t-1}^{2}]=E[u_{t}^{2}u_{t-1}^{4}u_{t-2}^{2}]-E[u_{t}^{2}u_{t-1}^{2}]E[u_{t-1}^{2}u_{t-2}^{2}]\\
+ & =E[u_{t}^{2}]E[u_{t-1}^{4}]E[u_{t-2}^{2}]-E[u_{t}^{2}]E[u_{t-1}^{2}]^{2}E[u_{t-2}^{2}]=\sigma^{4}(E[u_{t-1}^{4}]-\sigma^{4})\neq0
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
 \end_body
 \end_document
