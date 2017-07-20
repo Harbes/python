@@ -278,7 +278,7 @@ Property\,2: & \quad E[y_{t}y_{t-k}]=E[E_{t-1}[y_{t}y_{t-k}]]=E[y_{t-k}E_{t-1}[y
 \end_inset
 
 第一个属性说明，mds的无条件期望值为0；第二个属性说明，mds中任意一个时间点的观测与过去线性无关（但是可能存在higher-order moment
- dependence）
+ dependence，例如下面的两个例子）
 \end_layout
 
 \begin_layout Itemize
@@ -313,6 +313,90 @@ cov(y_{t}^{2},y_{t-1}^{2}) & =E[y_{t}^{2}y_{t-1}^{2}]-E[y_{t}^{2}]E[y_{t-1}^{2}]
  & =E[u_{t}^{2}]E[u_{t-1}^{4}]E[u_{t-2}^{2}]-E[u_{t}^{2}]E[u_{t-1}^{2}]^{2}E[u_{t-2}^{2}]=\sigma^{4}(E[u_{t-1}^{4}]-\sigma^{4})\neq0
 \end{align*}
 
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+example 2.3: autoregression conditional heteroskedasticity
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula $y_{t}=z_{t}\sqrt{\alpha_{0}+\alpha_{1}y_{t-1}^{2}}$
+\end_inset
+
+,
+\begin_inset Formula $z_{t}\sim iid\,N(0,1)$
+\end_inset
+
+。
+\begin_inset Formula $y_{t}$
+\end_inset
+
+是mds的原因在于
+\begin_inset Formula $E_{t-1}[y_{t}]=E_{t-1}[z_{t}\sqrt{\alpha_{0}+\alpha_{1}y_{t-1}^{2}}]=E_{t-1}[z_{t}]\sqrt{\alpha_{0}+\alpha_{1}y_{t-1}^{2}}=0$
+\end_inset
+
+；但是存在dependence in the second moment
+\begin_inset Formula $E_{t-1}[y_{t}^{2}]=E_{t-1}[z_{t}^{2}(\alpha_{0}+\alpha_{1}y_{t-1}^{2})]=E_{t-1}[z_{t}^{2}](\alpha_{0}+\alpha_{1}y_{t-1}^{2})=\alpha_{0}+\alpha_{1}y_{t-1}^{2}$
+\end_inset
+
+（条件方差存在且不为0）
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection
+White Noise
+\end_layout
+
+\begin_layout Itemize
+前两阶无条件矩满足以下三个性质：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Property 1：
+\begin_inset Formula $E[y_{t}]=0$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Property 2：
+\begin_inset Formula $E[y_{t}^{2}]=\sigma^{2}<\infty$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Property 3：
+\begin_inset Formula $E[y_{t}y_{t-k}]=0$
+\end_inset
+
+,
+\begin_inset Formula $k>0$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+example 2.4: bilinear time series
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula $y_{t}=u_{t}+\delta u_{t-1}u_{t-2}$
+\end_inset
+
+,
+\begin_inset Formula $u_{t}\sim iid(0,\sigma^{2})$
 \end_inset
 
 
