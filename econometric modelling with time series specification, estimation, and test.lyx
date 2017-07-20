@@ -19,9 +19,9 @@
 \language_package default
 \inputencoding auto
 \fontencoding global
-\font_roman "default" "Heiti SC"
-\font_sans "default" "STSong"
-\font_typewriter "default" "Kaiti SC"
+\font_roman "default" "微软雅黑"
+\font_sans "default" "新宋体"
+\font_typewriter "default" "楷体"
 \font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts true
@@ -399,9 +399,316 @@ example 2.4: bilinear time series
 \begin_inset Formula $u_{t}\sim iid(0,\sigma^{2})$
 \end_inset
 
+。
+\begin_inset Formula $y_{t}$
+\end_inset
+
+是白噪声的原因在于
+\begin_inset Formula 
+\begin{align*}
+ & E[y_{t}]=E[u_{t}+\delta u_{t-1}u_{t-2}]=E[u_{t}]+\delta E[u_{t-1}]E[u_{t-2}]=0\\
+ & E[y_{t}^{2}]=E[(u_{t}+\delta u_{t-1}u_{t-2})^{2}]=E[u_{t}^{2}+\delta^{2}u_{t-1}^{2}u_{t-2}^{2}+2\delta u_{t}u_{t-1}u_{t-2}]=\sigma^{2}(1+\delta^{2}\sigma^{2})<\infty\\
+ & E[y_{t}y_{t-k}]=E[(u_{t}+\delta u_{t-1}u_{t-2})(u_{t-k}+\delta u_{t-1-k}u_{t-2-k})]\\
+ & \quad\quad\quad\quad\,=E[u_{t}u_{t-k}+\delta u_{t-1}u_{t-2}u_{t-k}+\delta u_{t}u_{t-1}u_{t-2-k}+\delta^{2}u_{t-1}u_{t-2}u_{t-1-k}u_{t-2-k}]=0
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+【注意】
+\begin_inset Formula $y_{t}$
+\end_inset
+
+不是mds，原因
+\begin_inset Formula $E_{t-1}[y_{t}]=E_{t-1}[u_{t}+\delta u_{t-1}u_{t-2}]=E_{t-1}[u_{t}]+E_{t-1}[\delta u_{t-1}u_{t-2}]=u_{t}+\delta u_{t-1}u_{t-2}\neq0$
+\end_inset
+
 
 \end_layout
 
 \end_deeper
+\begin_layout Subsubsection
+mixing
+\end_layout
+
+\begin_layout Itemize
+考虑一个时间序列的两个子样本期序列：
+\begin_inset Formula $\stackrel[Y_{-\infty}^{t}]{1st\:sub-period}{\underbrace{\text{...,\ensuremath{y_{t-2}},\ensuremath{y_{t-1}},\ensuremath{y_{t}}}}},y_{t+1},...,y_{t+s-1},\stackrel[Y_{t+s}^{\infty}]{2nd\:sub-period}{\underbrace{\text{\ensuremath{y_{t+s}},\ensuremath{y_{t+s+1}},\ensuremath{y_{t+s+2}},...}}}$
+\end_inset
+
+，其中，
+\begin_inset Formula $Y_{t}^{s}=(y_{t},y_{t+1},y_{t+2},...,y_{s})$
+\end_inset
+
+。如果有：
+\begin_inset Formula 
+\[
+cov[g(Y_{-\infty}^{t}),h(Y_{t+s}^{\infty})]\rightarrow0\quad as\:s\rightarrow\infty\tag{2.2}
+\]
+
+\end_inset
+
+（其中，
+\begin_inset Formula $g(x)$
+\end_inset
+
+和
+\begin_inset Formula $h(x)$
+\end_inset
+
+是任意的函数）表明，随着时间间隔的增加，它们表现的更像两个独立的随机变量集。满足(2.2)式就被认为是
+\begin_inset Formula $mixing$
+\end_inset
+
+(technically
+\begin_inset Formula $\alpha-mixing$
+\end_inset
+
+ or 
+\begin_inset Formula $strong\,mixing$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+所有的
+\begin_inset Formula $iid$
+\end_inset
+
+过程都是
+\begin_inset Formula $mixing$
+\end_inset
+
+；MA(q)也是
+\begin_inset Formula $mixing$
+\end_inset
+
+；假定扰动项是正态分布的情况下，AR(1)也是
+\begin_inset Formula $mixing$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+weak law of large numbers(WLLN)
+\end_layout
+
+\begin_layout Itemize
+之前讨论的随机时间序列都有这样一个特征：概率分布的参数是其矩。极大似然估计中，我们能获得的是样本统计量，因此，我们需要了解当样本容量
+\begin_inset Formula $T\rightarrow\infty$
+\end_inset
+
+，总体参数和样本统计量之间的关系。
+\end_layout
+
+\begin_layout Itemize
+example 2.5：exponential distribution
+\end_layout
+
+\begin_layout Itemize
+弱大数定理的必要条件：总体期望
+\begin_inset Formula $μ$
+\end_inset
+
+存在(有限)；充分条件：
+\begin_inset Formula $E[\bar{y}]\rightarrowμ,var(\bar{y})\rightarrow0\:as\,T\rightarrow\infty$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+example 2.6：uniform distribution
+\end_layout
+
+\begin_layout Itemize
+依概率收敛的一些重要性质：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Property 1：
+\begin_inset Formula $plim(\bar{y}_{1}\pm\bar{y}_{2})=plim(\bar{y}_{1})\pm plim(\bar{y}_{2})=μ_{1}+μ_{2}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Property 2：
+\begin_inset Formula $plim(\bar{y}_{1}\bar{y}_{2})=plim(\bar{y}_{1})plim(\bar{y}_{2})=μ_{1}μ_{2}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Property 3：
+\begin_inset Formula $plim(\frac{\bar{y}_{1}}{\bar{y}_{2}})=\frac{plim(\bar{y}_{1})}{plim(\bar{y}_{2})}=\frac{μ_{1}}{μ_{2}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Property 4：
+\begin_inset Formula $plim\,c(\bar{y})=c(plim(\bar{y}))$
+\end_inset
+
+【
+\begin_inset Formula $Slutsky's\:theorem$
+\end_inset
+
+】
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+WLLN成立的条件比
+\begin_inset Formula $iid$
+\end_inset
+
+更弱。在只假定
+\begin_inset Formula $var(y_{t})<\infty$
+\end_inset
+
+,
+\begin_inset Formula $\forall t$
+\end_inset
+
+，
+\begin_inset Formula $\bar{y}$
+\end_inset
+
+的方差总是可以写成
+\begin_inset Formula 
+\[
+var(\bar{y})=\frac{1}{T^{2}}\sum_{t=1}^{T}\sum_{s=1}^{T}cov(y_{t},y_{s})=\frac{1}{T^{2}}\sum_{t=1}^{T}var(\bar{y})+2\frac{1}{T^{2}}\sum_{t=1}^{T}\sum_{t=s+1}^{T}cov(y_{t},y_{t-s})
+\]
+
+\end_inset
+
+当
+\begin_inset Formula $y_{t}$
+\end_inset
+
+是弱平稳时，则有：
+\begin_inset Formula 
+\[
+var(\bar{y})=\frac{1}{T}γ_{0}+2\frac{1}{T}\sum_{s=1}^{T}(1-\frac{s}{T})γ_{s}t\tag{2.6}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $γ_{s}=cov(y_{t},y_{t-s})$
+\end_inset
+
+是
+\begin_inset Formula $y_{t}$
+\end_inset
+
+的自协方差。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+当
+\begin_inset Formula $y_{t}$
+\end_inset
+
+是
+\begin_inset Formula $iid$
+\end_inset
+
+或者
+\begin_inset Formula $mds$
+\end_inset
+
+或者白噪声时，
+\begin_inset Formula $γ_{s}=0,s>0$
+\end_inset
+
+，于是式(2.6)为
+\begin_inset Formula $var(\bar{y})=\frac{1}{T}γ_{0}\rightarrow0$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+当
+\begin_inset Formula $y_{t}$
+\end_inset
+
+存在自相关时，需要额外的充分条件是
+\begin_inset Formula $γ_{s}\rightarrow\infty as\,s\rightarrow\infty$
+\end_inset
+
+，原因：
+\begin_inset Formula 
+\[
+|\frac{1}{T}\sum_{s=1}^{T}(1-\frac{s}{T})γ_{s}|\leq\frac{1}{T}\sum_{s=1}^{T}(1-\frac{s}{T})|\gamma_{s}|\leq\frac{1}{T}\sum_{s=1}^{T}|\gamma_{s}|\rightarrow0\:as\:T\rightarrow\infty
+\]
+
+\end_inset
+
+其中，最后一步用到了
+\begin_inset Formula $Cesaro\,summation$
+\end_inset
+
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+if 
+\begin_inset Formula $a_{t}\rightarrow a$
+\end_inset
+
+ as 
+\begin_inset Formula $t\rightarrow\infty$
+\end_inset
+
+,then
+\begin_inset Formula $\frac{1}{T}\sum_{t=1}^{T}a_{t}\rightarrow a$
+\end_inset
+
+ as 
+\begin_inset Formula $T\rightarrow\infty$
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+example 2.7：WLLN for an AR(1) model
+\end_layout
+
+\begin_layout Subsection
+rates of convergence
+\end_layout
+
+\begin_layout Itemize
+Establishing many of the results of the MLE requires choosing the correct
+ scaling factor to ensure that the relevant statistics have non-degenerate
+ distributions
+\end_layout
+
+\begin_layout Itemize
+example 2.8：linear regression with stochastic regressors
+\end_layout
+
 \end_body
 \end_document
