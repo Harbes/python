@@ -27,7 +27,11 @@ class distribution:
         print('     Kurt test p-value %13.3f' % scs.kurtosistest(self.arr)[1])
         print('======')
         print('     Norm test p-value %13.3f' % scs.normaltest(self.arr)[1])
-    def hist(self,bins=40,normed=1):
-        fig,ax=plt.subplots()
-        ax.hist(self.arr,bins=bins,normed=normed)
+    def hist(self,bins=40,normed=1,disp_norm=0):
+        plt.figure()
+        plt.hist(self.arr, bins=bins, normed=normed)
+        if disp_norm:
+            lb=np.min(self.arr)
+            ub=np.max(self.arr)
+            plt.plot(np.arange(lb,ub+0.001,0.01),scs.norm(np.mean(self.arr),np.std(self.arr)).pdf(np.arange(lb,ub+0.001,0.01)))
         plt.show()

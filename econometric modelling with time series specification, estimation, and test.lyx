@@ -97,10 +97,7 @@
 
 \begin_layout Title
 econometric modelling with time series：specification, estimation, and test
-\end_layout
-
-\begin_layout Title
-学习笔记
+ 学习笔记
 \end_layout
 
 \begin_layout Author
@@ -708,6 +705,349 @@ Establishing many of the results of the MLE requires choosing the correct
 
 \begin_layout Itemize
 example 2.8：linear regression with stochastic regressors
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+the linear regression model
+\begin_inset Formula $y_{t}=\beta x_{t}+u_{t}$
+\end_inset
+
+,
+\begin_inset Formula $u_{t}\sim iid\,N(0,\sigma^{2})$
+\end_inset
+
+，其中
+\begin_inset Formula $x_{t}$
+\end_inset
+
+是
+\begin_inset Formula $iid$
+\end_inset
+
+，分布为
+\begin_inset Formula $(-0.5,0.5)$
+\end_inset
+
+上的均匀分布。
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\hat{\beta}=\beta+[\sum_{t=1}^{T}x_{t}^{2}]^{-1}\sum_{t=1}^{T}x_{t}u_{t}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+the appropriate scaling of the first moment to ensure that it has a non-degenera
+te distribution follows from 
+\begin_inset Formula 
+\begin{align*}
+ & E[\frac{1}{T^{k}}\sum_{t=1}^{T}x_{t}u_{t}]=0\\
+ & var(\frac{1}{T^{k}}\sum_{t=1}^{T}x_{t}u_{t})=\frac{1}{T^{2k}}var(\sum_{t=1}^{T}x_{t}u_{t})=T^{1-2k}\sigma_{u}^{2}\sigma_{x}^{2}
+\end{align*}
+
+\end_inset
+
+consequently the appropriate choice of scaling factor is 
+\begin_inset Formula $k=\frac{1}{2}$
+\end_inset
+
+ because 
+\begin_inset Formula $T^{-1/2}$
+\end_inset
+
+ stabilizes the variace and thus prevents it approaching 
+\begin_inset Formula $0(k>1/2)$
+\end_inset
+
+ or 
+\begin_inset Formula $\infty(k<1/2)$
+\end_inset
+
+。
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+注意，上式推导过程中用到了：随机变量X、Y期望为0，且相互独立，则
+\begin_inset Formula $var(XY)=E[(XY)^{2}]-[E(XY)]^{2}=E(X^{2}Y^{2})-[E(X)E(Y)]^{2}=E(X^{2})E(Y^{2})=var(X)var(Y)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+example 2.9：higher-order derivatives
+\end_layout
+
+\begin_layout Subsection
+central limit theorems(CLT)
+\end_layout
+
+\begin_layout Subsubsection
+Lindeberg-Levy CLT
+\end_layout
+
+\begin_layout Itemize
+Let 
+\begin_inset Formula $\{y_{1},y_{2},...,y_{T}\}$
+\end_inset
+
+ represent a set of T 
+\begin_inset Formula $iid$
+\end_inset
+
+ random variables from a distribution with finite mean 
+\begin_inset Formula $μ$
+\end_inset
+
+ and finite variance 
+\begin_inset Formula $\sigma^{2}>0$
+\end_inset
+
+.
+ The Lindeberg-Levy central limit theorem for the scalar case states that
+ 
+\begin_inset Formula $\sqrt{T}(\bar{y}-\mu)\stackrel{d}{\rightarrow}N(0,\sigma^{2})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+example 2.10：uniform distribution
+\end_layout
+
+\begin_layout Itemize
+example 2.11：linear regression with iid regressors
+\end_layout
+
+\begin_layout Subsubsection
+Lindeberg-Feller CLT
+\end_layout
+
+\begin_layout Itemize
+the Lindeberg-Feller CLT is applicable to models based on independent and
+ non-identically distributed random variables，in which 
+\begin_inset Formula $y_{t}$
+\end_inset
+
+ has time-varying mean 
+\begin_inset Formula $\mu_{t}$
+\end_inset
+
+ and time-varying covariance matrix 
+\begin_inset Formula $V_{t}$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+For the scalar case, let 
+\begin_inset Formula $\{y_{1},y_{2},...,y_{T}\}$
+\end_inset
+
+ represent a set of 
+\begin_inset Formula $T$
+\end_inset
+
+ independent and non-identically distributed random variables from a distributio
+n with finite time-varying means 
+\begin_inset Formula $E[y_{t}]=\mu_{t}<\infty$
+\end_inset
+
+, finite time-varying variances 
+\begin_inset Formula $var(y_{t})=\sigma_{t}^{2}<\infty$
+\end_inset
+
+and finite higher-order moments。The Lindeberg-Feller CLT gives the necessary
+ and sufficient conditons for 
+\begin_inset Formula $\sqrt{T}(\frac{\bar{y}-\bar{\mu}}{\bar{\sigma}})\stackrel{d}{\rightarrow}N(0,1)$
+\end_inset
+
+, where 
+\begin_inset Formula $\bar{\mu}=\frac{1}{T}\sum_{t=1}^{T}\mu_{t}$
+\end_inset
+
+, 
+\begin_inset Formula $\bar{\sigma^{2}}=\frac{1}{T}\sum_{t=1}^{T}\sigma_{t}^{2}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+a sufficient condition for the Lindeberg-Feller CLT is given by 
+\begin_inset Formula $E[|y_{t}-\mu_{t}|^{2+\delta}]<\infty,\delta>0$
+\end_inset
+
+。this is known as the 
+\begin_inset Formula $Lyapunov\,condition$
+\end_inset
+
+，which operates on moments higher than the second moment，and this requirement
+ is in fact a stricter condition than is needed to satisfy this theorem
+\end_layout
+
+\begin_layout Itemize
+example 2.12：Bernoulli distribution
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+假设
+\begin_inset Formula $\{y_{1},y_{2},...,y_{T}\}$
+\end_inset
+
+是一列独立的服从Bernoulli分布的随机变量集合，其中，参数
+\begin_inset Formula $\theta_{t}$
+\end_inset
+
+随时间变化，因此有：
+\begin_inset Formula $f(y;\theta_{t})=\theta_{t}^{y}(1-\theta_{t})^{1-y},0<\theta_{t}<1$
+\end_inset
+
+，于是：
+\begin_inset Formula 
+\begin{align*}
+ & \mu_{t}=\theta_{t}\\
+ & \sigma_{t}^{2}=\theta_{t}(1-\theta_{t})\\
+ & E[|y_{t}-\mu_{t}|^{3}]=\theta_{t}(1-\theta_{t})^{3}+(1-\theta_{t})\theta_{t}^{3}=\sigma_{t}^{2}((1-\theta_{t})^{2}+\theta_{t}^{2})\leq\sigma_{t}^{2}\rightarrow\text{有限}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+example 2.13：linear regression with bounded fixed regressors
+\end_layout
+
+\begin_layout Subsubsection
+Martingale difference CLT
+\end_layout
+
+\begin_layout Itemize
+martingale diffenrence CLT本质上还是Lindeberg-Levy CLT只是將“ 
+\begin_inset Formula $\{y_{1},y_{2},...,y_{T}\}$
+\end_inset
+
+是
+\begin_inset Formula $iid$
+\end_inset
+
+ ”这一假设换成了更一般的假设：
+\begin_inset Formula $y_{t}$
+\end_inset
+
+是一个mds，并且
+\begin_inset Formula $\bar{y}=\frac{1}{T}\sum_{t=1}^{T}y_{t}$
+\end_inset
+
+, 
+\begin_inset Formula $\bar{\sigma^{2}}=\frac{1}{T}\sum_{t=1}^{T}\sigma_{t}^{2}$
+\end_inset
+
+，高阶矩有界
+\begin_inset Formula $E[|y_{t}|^{2+\delta}]<\infty,\delta>0$
+\end_inset
+
+，以及
+\begin_inset Formula $\frac{1}{T}\sum_{t=1}^{T}y_{t}^{2}-\bar{\sigma^{2}}\stackrel{p}{\rightarrow}0$
+\end_inset
+
+，于是
+\begin_inset Formula 
+\[
+\sqrt{T}(\frac{\bar{y}}{\bar{\sigma}})\stackrel{d}{\rightarrow}N(0,1)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+martingale difference CLT 放松了
+\begin_inset Formula $iid$
+\end_inset
+
+的假设，但是增加了：样本方差一直腹肌总体平均方差，以及高阶矩有界性(这一点比Lindeberg-Levy CLT要求高)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+example 2.14：linear AR(1) model【很好的一个例子】
+\end_layout
+
+\begin_layout Subsubsection
+mixing CLT
+\end_layout
+
+\begin_layout Itemize
+如果
+\begin_inset Formula $y_{t}$
+\end_inset
+
+有零均值，存在某个
+\begin_inset Formula $r>2$
+\end_inset
+
+使得对于所有的t都有
+\begin_inset Formula $E[|y_{t}|^{r}]<\infty$
+\end_inset
+
+，并且
+\begin_inset Formula $y_{t}$
+\end_inset
+
+ is mixing at a sufficiently fast rate，于是有：
+\begin_inset Formula 
+\[
+\frac{1}{\sqrt{T}}\sum_{t=1}^{T}y_{t}\stackrel{d}{\rightarrow}N(0,J)
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $J=lim_{T\rightarrow\infty}\frac{1}{T}E[(\sum_{t=1}^{T}y_{t})^{2}]$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+如果
+\begin_inset Formula $y_{t}$
+\end_inset
+
+是弱平稳序列，则J可以写成
+\begin_inset Formula $J=E[y_{t}^{2}]+2\sum_{j=1}^{\infty}E[y_{t}y_{t-j}]=var(y_{t})+2\sum_{j=1}^{\infty}cov(y_{t},y_{t-j})$
+\end_inset
+
+，即此时渐进分布的方差依赖于平稳序列的方差以及所有的的自协方差
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+example 2.15：sample moments of an AR(1) model
+\end_layout
+
+\begin_layout Section
+regularity conditions
 \end_layout
 
 \end_body

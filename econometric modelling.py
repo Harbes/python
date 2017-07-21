@@ -82,10 +82,43 @@ plt.plot(np.arange(1,M+1),(mu+r)*np.ones(M),'r--')
 plt.show()
 
 
+## example 2.8: linear regression with stochastic regressors
+
+import numpy as np
+import matplotlib.pyplot as plt
+sig_u=np.sqrt(2)
+num=50
+M=50*np.arange(num)
+m=np.empty(num)
+v=np.empty(num)
+k=1/4*2
+for i in range(num):
+    xu=np.empty(5000)
+    for j in range(5000):
+        xu[j]=np.sum(np.random.uniform(-0.5,0.5,M[i])*np.random.normal(0,sig_u,M[i]))/(M[i]**k)
+    m[i]=np.mean(xu)
+    v[i]=np.var(xu)
+fig,ax=plt.subplots(2)
+ax[0].plot(m,label='mean')
+ax[1].plot(v,label='variance')
+plt.legend()
+plt.show()
 
 
-
-
+## example 2.12：Bernoulli distribution
+import numpy as np
+import matplotlib.pyplot as plt
+from math import sqrt
+T=1000;repetition=500
+y=np.empty(T)
+y_hat=np.empty(repetition)
+for j in range(repetition):
+    theta=np.random.uniform(0,1,T)
+    for i in range(T):
+        y[i]=np.random.binomial(1,theta[i])
+    y_hat[j]=sqrt(T)*(np.mean(y-theta)/np.mean(theta*(1-theta)))
+from modules import distribution as dist
+dist(y_hat).hist(disp_norm=1)
 
 
 
