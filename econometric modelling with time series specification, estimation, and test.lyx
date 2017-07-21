@@ -1050,5 +1050,131 @@ example 2.15：sample moments of an AR(1) model
 regularity conditions
 \end_layout
 
+\begin_layout Itemize
+假定分布设定是正确的。下面的
+\begin_inset Formula $regularity\text{\,}condition$
+\end_inset
+
+ 适用于
+\begin_inset Formula $iid$
+\end_inset
+
+、
+\begin_inset Formula $stationary$
+\end_inset
+
+、
+\begin_inset Formula $mds$
+\end_inset
+
+ 和 
+\begin_inset Formula $white\,noise$
+\end_inset
+
+ ，以
+\begin_inset Formula $iid$
+\end_inset
+
+ 的情况为例：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+R1: existence
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+the expection 
+\begin_inset Formula $E[lnf(y_{t};\theta)]=\int_{-\infty}^{\infty}lnf(y_{t};\theta)f(y_{t};\theta_{0})dy_{t}$
+\end_inset
+
+ exists
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+R2: convergence
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+the log-likelihood function converges in probability to its expectation
+ 
+\begin_inset Formula $lnL_{T}(\theta)=\frac{1}{T}\sum_{t=1}^{T}lnf(y_{t};\theta)\stackrel{p}{\rightarrow}E[lnf(y_{t};\theta)]$
+\end_inset
+
+ uniformly in 
+\begin_inset Formula $\theta$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+R3: continuity
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+the log-likelihood function,
+\begin_inset Formula $lnL_{T}(\theta)$
+\end_inset
+
+, is continuous in 
+\begin_inset Formula $\theta$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+R4: differentiability
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+the log-likelihood function,
+\begin_inset Formula $lnL_{T}(\theta)$
+\end_inset
+
+, is at least twice continuously differentiable in an open interval around
+ 
+\begin_inset Formula $\theta_{0}$
+\end_inset
+
+【即使似然函数不是处处可导，在某些情况下，仍然可以得到MLE】
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+R5: interchangeability
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+the order of differentiation and intergration of 
+\begin_inset Formula $lnL_{T}(\theta)$
+\end_inset
+
+ is interchangeable
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+example 2.16：likelihood function of the normal distribution
+\end_layout
+
+\begin_layout Section
+properties of the likelihood function
+\end_layout
+
+\begin_layout Subsection
+the population of likelihood function
+\end_layout
+
 \end_body
 \end_document
