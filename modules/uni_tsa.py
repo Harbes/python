@@ -190,9 +190,10 @@ class uni_tsa:
         pass
 
 class simulation:
-    def __init__(self,phi=None,theta=None,const=0,y_init=None,dist='normal',dist_sigma=1,M=1000,seed=None):
+    def __init__(self,phi=None,theta=None,d=None,const=0,y_init=None,dist='normal',dist_sigma=1,M=1000,seed=None):
         self.phi=phi
         self.theta=theta
+        self.d=d
         self.const=const
         self.y_init=y_init
         self.dist=dist
@@ -247,6 +248,15 @@ class simulation:
         for i in range(self.pq, self.M + self.pq):
             y_t[i] = self.const + (self.phi * y_t[i - self.p:i]).sum() +epsilon[i]+(self.theta*e_array[i-self.pq]).sum()
         return y_t[self.pq:]
+    @property
+    def ARIMA(self):
+        y = self.ARMA
+        if self.d:
+            for i in range(int(self.d)):
+                y=np.cumsum(y)
+        else:
+            pass
+        return y
 
 
 
