@@ -1917,7 +1917,7 @@ the gradient and Hessian ：
 
 \begin_deeper
 \begin_layout Itemize
-\begin_inset Formula $G_{T}(\theta)=\frac{\partial lnG_{T}(\theta)}{\partial\theta}=\frac{1}{T}\sum_{t=1}^{T}g_{t}(\theta)$
+\begin_inset Formula $G_{T}(\theta)=\frac{\partial lnL_{T}(\theta)}{\partial\theta}=\frac{1}{T}\sum_{t=1}^{T}g_{t}(\theta)$
 \end_inset
 
 ，
@@ -2197,6 +2197,8 @@ example 3.6：Weibull distribution
 \end_layout
 
 \begin_layout Section
+
+\color red
 quasi-Newton methods
 \end_layout
 
@@ -2233,10 +2235,14 @@ H_{(k)}=H_{(k-1)}+U_{(k-1)}\tag{3.10}
 \end_inset
 
  算法不同之处在于对更新矩阵的选择。一个重要的方法是
+\color red
+
 \begin_inset Formula $BFGS$
 \end_inset
 
-算法(Broyden,1970; Fletcher,1970; Goldfarb,1970; Shanno,1970)，其更新矩阵为：
+算法
+\color inherit
+(Broyden,1970; Fletcher,1970; Goldfarb,1970; Shanno,1970)，其更新矩阵为：
 \begin_inset Formula 
 \[
 U_{(k)}=-\frac{H_{(k)}\Delta_{\theta}\Delta_{G}^{'}+\Delta_{G}\Delta_{\theta}^{'}H_{(k)}}{\Delta_{G}^{'}\Delta_{\theta}}+(1+\frac{\Delta_{\theta}^{'}H_{(k)}\Delta_{\theta}}{\Delta_{G}^{'}\Delta_{\theta}})\frac{\Delta_{G}\Delta_{G}^{'}}{\Delta_{G}^{'}\Delta_{\theta}}
@@ -2578,7 +2584,7 @@ Inverse Transform：
 \begin_inset Text
 
 \begin_layout Plain Layout
-Jacobian 
+Jacobian： 
 \begin_inset Formula $\frac{dc(\theta)}{d\theta}$
 \end_inset
 
