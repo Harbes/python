@@ -32,12 +32,11 @@ t=5
 ### Time invariant model
 mu  = 0;                            # Mean
 sig = 2;                            # Standard deviation
-z   = stats.norm(0,1).rvs((t,))          # Standard normal random numbers
-y   = sig*z;                        # Generate realizations of y
+#z   = stats.norm(0,1).rvs((t,))          # Standard normal random numbers
+#y   = sig*z;                        # Generate realizations of y
 s   = np.arange(-10,10.01,0.1)
 fz  = stats.norm(0,1).pdf(s)                   # Probability distribution of z
 fy  = stats.norm(0,1).pdf((s-mu)/sig)*(1/sig)  # Probability distribution of y
-
 plt.plot(s,fz,label='norm(0,1)')
 plt.plot(s,fy,label='norm(0,2)')
 plt.title('Time invariant model')
@@ -48,7 +47,18 @@ plt.show()
 theta   = 2;
 s       = np.arange(0,9.1,1)
 fy2     = stats.poisson(theta).pmf(s)
-
 plt.bar(s,fy2);
 plt.title('Count Model');
 plt.show()
+
+# Linear regression model
+beta = 3;
+sig  = 2;
+z    = randn(t,1);
+x    = (0:1:t-1)
+y    = beta*x + sig*z;
+s    = (-10:0.1:20)';
+fz   = normpdf(s);
+tmp0 = repmat(s,1,length(beta*x'));
+tmp1 = repmat(beta*x',length(s),1);
+fy   = normpdf( (tmp0-tmp1)./sig )*(1/sig);
