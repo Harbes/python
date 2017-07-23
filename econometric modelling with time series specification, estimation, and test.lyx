@@ -20,7 +20,7 @@
 \inputencoding auto
 \fontencoding global
 \font_roman "default" "微软雅黑"
-\font_sans "default" "新宋体"
+\font_sans "default" "楷体"
 \font_typewriter "default" "楷体"
 \font_math "auto" "auto"
 \font_default_family default
@@ -2200,8 +2200,978 @@ example 3.6：Weibull distribution
 quasi-Newton methods
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
+\begin_inset Formula $Newton\,Raphson\,method$
+\end_inset
 
+ 的一个很明显的特点是：直接计算
+\begin_inset Formula $Hessian$
+\end_inset
+
+ 矩阵；而
+\begin_inset Formula $quasi-Newton$
+\end_inset
+
+ 则使用下面的方法更新
+\begin_inset Formula $Hessian$
+\end_inset
+
+ 矩阵：
+\begin_inset Formula 
+\[
+H_{(k)}=H_{(k-1)}+U_{(k-1)}\tag{3.10}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $U_{(k)}$
+\end_inset
+
+是一个更新矩阵，
+\begin_inset Formula $quasi-Newton$
+\end_inset
+
+ 算法不同之处在于对更新矩阵的选择。一个重要的方法是
+\begin_inset Formula $BFGS$
+\end_inset
+
+算法(Broyden,1970; Fletcher,1970; Goldfarb,1970; Shanno,1970)，其更新矩阵为：
+\begin_inset Formula 
+\[
+U_{(k)}=-\frac{H_{(k)}\Delta_{\theta}\Delta_{G}^{'}+\Delta_{G}\Delta_{\theta}^{'}H_{(k)}}{\Delta_{G}^{'}\Delta_{\theta}}+(1+\frac{\Delta_{\theta}^{'}H_{(k)}\Delta_{\theta}}{\Delta_{G}^{'}\Delta_{\theta}})\frac{\Delta_{G}\Delta_{G}^{'}}{\Delta_{G}^{'}\Delta_{\theta}}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\Delta_{\theta}=\theta_{(k)}-\theta_{(k-1)}$
+\end_inset
+
+，
+\begin_inset Formula $\Delta_{G}=G_{(k)}-G_{(k-1)}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+example 3.7：exponential distribution using BFGS
+\end_layout
+
+\begin_layout Section
+line searching
+\end_layout
+
+\begin_layout Itemize
+在
+\begin_inset Formula $\hat{\theta}=\theta_{0}-H_{T}^{-1}(\theta_{0})G_{T}(\theta_{0})$
+\end_inset
+
+中，每一次的迭代并不能保证会提高对数似然函数值。为了保证对数似然函数在每一次迭代过程中都能增加，我们引入参数
+\begin_inset Formula $\lambda$
+\end_inset
+
+以便 control the size of updating
+\begin_inset Formula 
+\[
+\theta_{(k)}=\theta_{(k-1)}-\lambda H_{(k-1)}^{-1}G_{(k-1)},0\leq\lambda\leq1\tag{3.12}
+\]
+
+\end_inset
+
+在每一步迭代中，
+\begin_inset Formula $\lambda$
+\end_inset
+
+都是变化的，而决定每一步迭代中
+\begin_inset Formula $\lambda$
+\end_inset
+
+的最优值就是一种一维最优化问题，被称为
+\begin_inset Formula $line\,searching$
+\end_inset
+
+。最简单的方法就是perform a coarse grid search over the possible values（known as
+ 
+\begin_inset Formula $squeezing$
+\end_inset
+
+）:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+首先，尝试
+\begin_inset Formula $\lambda=1$
+\end_inset
+
+，计算对数似然函数值是否增加，若未增加，则尝试
+\begin_inset Formula $\lambda=1/2$
+\end_inset
+
+；每一步都依此类推
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+example 3.8：BHHHwith squeezing
+\end_layout
+
+\begin_layout Section
+optimization based on function evaluation
+\end_layout
+
+\begin_layout Itemize
+实际中，对数似然函数往往有一个不规则表面(irregular surface)，而且常常会出现 gradient 在许多维度上是平的，在这种情况下数值误差会导致
+利用gradient的算法都表现很差。有许多其他仅仅依赖函数值(based solely on function evaluation)的迭代方法，例如
+ Nelder and Mead(1965)的单纯形法(simplex method，细节可见Gill, Murray and Wright(1981))以及其
+他一些更复杂的方法：模拟退火(simulated annealing)和遗传搜索算法(genetic search algorithms)。这些方法都很稳健，但
+是效率都不高。
+\end_layout
+
+\begin_layout Itemize
+
+\color red
+具体算法待学习
+\end_layout
+
+\begin_layout Section
+computing standard errors
+\end_layout
+
+\begin_layout Itemize
+第二章提到，MLE的渐进分布为
+\begin_inset Formula $\sqrt{T}(\hat{\theta}-\theta_{0})\overset{d}{\rightarrow}N(0,I^{-1}(\theta_{0}))$
+\end_inset
+
+，于是
+\begin_inset Formula $\sqrt{T}(\hat{\theta}-\theta_{0})$
+\end_inset
+
+的方差-协方差矩阵为
+\begin_inset Formula 
+\[
+\hat{\Omega}=I^{-1}(\hat{\theta})\tag{3.13}
+\]
+
+\end_inset
+
+但是现实中，信息矩阵不容易估算，因而常见的是将其替换成
+\begin_inset Formula $Hessian$
+\end_inset
+
+ 矩阵，即
+\begin_inset Formula 
+\[
+\hat{\Omega}=-H_{T}^{-1}(\hat{\theta})\tag{3.14}
+\]
+
+\end_inset
+
+如果在MLE处，
+\begin_inset Formula $Hessian$
+\end_inset
+
+ 矩阵并不是负定的，那么标准差将无法计算，此时往往利用the outer product of gradients matrix来替代信息矩阵，即
+\begin_inset Formula 
+\[
+\hat{\Omega}=J_{T}^{-1}(\hat{\theta})\tag{3.15}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+example 3.9：exponential distribution standard errors
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+注意到，使用gradient的外积的计算结果往往与使用信息矩阵或海塞矩阵的结果相差较大，可能的原因是gradient的外积不是对信息矩阵的很好的近似；也有可能是
+因为分布错误设定，导致gradient的外积与信息矩阵不收敛到同一个值。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+现实中，往往需要估计MLE的某个非线性函数的协方差矩阵，有两种方法：
+\begin_inset Formula $substitution\,method$
+\end_inset
+
+ 和
+\begin_inset Formula $delta\,method$
+\end_inset
+
+。前者就是简单的将MLE代入非线性函数中，然后利用constrained log-likelihood function去计算标准差。后者则是利用：
+\begin_inset Formula 
+\[
+C(\hat{\theta})=C(\theta_{0})+D(\theta^{*})(\hat{\theta}-\theta_{0})
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $D(\theta)=\frac{\partial C(\theta)}{\partial\theta^{'}}$
+\end_inset
+
+，
+\begin_inset Formula $\theta^{*}$
+\end_inset
+
+介于
+\begin_inset Formula $\theta_{0}$
+\end_inset
+
+和
+\begin_inset Formula $\hat{\theta}$
+\end_inset
+
+之间。于是
+\begin_inset Formula 
+\begin{align*}
+\sqrt{T}(C(\hat{\theta})-C(\theta_{0})) & =D(\theta^{*})\sqrt{T}(\hat{\theta}-\theta_{0})\\
+ & \overset{d}{\rightarrow}D(\theta_{0})\times N(0,I(\theta_{0})^{-1})\\
+ & =N(0,D(\theta_{0})I(\theta_{0})^{-1}D(\theta_{0})^{'})
+\end{align*}
+
+\end_inset
+
+或者
+\begin_inset Formula 
+\[
+C(\hat{\theta})\stackrel{a}{\rightarrow}N(C(\theta_{0}),\frac{1}{T}D(\theta_{0})I(\theta_{0})^{-1}D(\theta_{0})^{'})
+\]
+
+\end_inset
+
+因此，
+\begin_inset Formula 
+\[
+cov(C(\hat{\theta}))=\frac{1}{T}D(\theta_{0})I(\theta_{0})^{-1}D(\theta_{0})^{'}
+\]
+
+\end_inset
+
+当然了，信息矩阵也可以依据具体情况用海塞矩阵或者gradient的外积来替代
+\end_layout
+
+\begin_layout Itemize
+example 3.10：standard errors of nonlinear functions
+\end_layout
+
+\begin_layout Section
+hints for practical optimization
+\end_layout
+
+\begin_layout Subsection
+concentrating the likelihood 
+\end_layout
+
+\begin_layout Itemize
+有时候，可以降低待估参数
+\begin_inset Formula $\theta$
+\end_inset
+
+的维度，such a reduction is known as 
+\begin_inset Formula $concentrating\,the\,likelihoood\,function$
+\end_inset
+
+，原因在于部分未知参数可以表示成另外一部分参数的函数
+\end_layout
+
+\begin_layout Itemize
+example 3.11：Weibull distribution
+\end_layout
+
+\begin_layout Subsection
+parameter constraints
+\end_layout
+
+\begin_layout Itemize
+实际中，待估参数往往有一个约束条件，例如方差要求大于0;边际消费倾向要求介于0和1之间等等
+\end_layout
+
+\begin_layout Itemize
+可以利用一个非线性双射(nonlinear bijective mapping)
+\begin_inset Formula $\phi=c(\theta)$
+\end_inset
+
+将区间(a,b)映射到real line(当参数一维时；多维时类似)【于是
+\begin_inset Formula $\theta=c^{-1}(\phi)$
+\end_inset
+
+】。利用ML得到
+\begin_inset Formula $\phi$
+\end_inset
+
+的MLE
+\begin_inset Formula $\hat{\phi}$
+\end_inset
+
+之后，利用
+\begin_inset Formula $invariance\,property$
+\end_inset
+
+可以得到
+\begin_inset Formula $\theta$
+\end_inset
+
+的MLE
+\begin_inset Formula $\hat{\theta}=c^{-1}(\hat{\phi})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+一些有用的转换
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="9" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0pt">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="0pt">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Constraint
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Transform：
+\begin_inset Formula $\phi=c(\theta)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Inverse Transform：
+\begin_inset Formula $\theta=c^{-1}(\phi)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Jacobian 
+\begin_inset Formula $\frac{dc(\theta)}{d\theta}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(0,\infty)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi=ln\theta$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\theta=e^{\phi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{1}{\theta}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(-\infty,0)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi=ln(-\theta)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\theta=-e^{\phi}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{1}{\theta}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(0,1)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi=ln(\frac{\theta}{1-\theta})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\theta=\frac{1}{1+e^{-\phi}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{1}{\theta(1-\theta)}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(0,b)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi=ln(\frac{\theta}{b-\theta})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\theta=\frac{b}{1+e^{-\phi}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{b}{\theta(b-\theta)}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(a,b)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi=ln(\frac{\theta-a}{b-\theta})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\theta=\frac{b+ae^{-\phi}}{1+e^{-\phi}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{b-a}{(\theta-a)(b-\theta)}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(-1,1)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi=aranh(\theta)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\theta=tan(\phi)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{1}{1-\theta^{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(-1,1)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi=\frac{\theta}{1-|\theta|}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\theta=\frac{\phi}{1+|\phi|}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{1}{(1-|\theta|)^{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(-1,1)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi=tan(\frac{\pi\theta}{2})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\theta=\frac{2}{\pi}tan^{-1}(\phi)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\frac{\pi}{2}sec^{2}(\frac{\pi\theta}{2})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+注意，在计算标准差时需要使用
+\begin_inset Formula $substitution$
+\end_inset
+
+或者
+\begin_inset Formula $delta\,method$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+choice of algorithm
+\end_layout
+
+\begin_layout Itemize
+本章讨论的方法在最优值附近的收敛速度都是二次的，即
+\begin_inset Formula $\bigparallel\theta_{(k+1)}-\theta\bigparallel<\kappa\bigparallel\theta_{(k)}-\theta\bigparallel^{2},\kappa>0$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+几点注意
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $Newton-Raphson$
+\end_inset
+
+ 和
+\begin_inset Formula $method\,of\,scoring$
+\end_inset
+
+需要对数似然函数的前两阶导数；而且由于信息矩阵很难计算，所以
+\begin_inset Formula $method\,of\,scoring$
+\end_inset
+
+仅仅具有理论上优势而已。
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $Newton-Raphson$
+\end_inset
+
+方法虽然在最优值附近收敛速度是二次的，但是，比较而言，它所估计的最优值往往离真实值最远。因而通过数值计算的海塞矩阵可能不是负定的，从而导致算法不稳定。
+\end_layout
+
+\begin_layout Itemize
+由于
+\begin_inset Formula $BHHH$
+\end_inset
+
+ 使用gradient的外积，从而保证了半正定，因而许多计量问题都选择它作为主要算法
+\end_layout
+
+\begin_layout Itemize
+目前的共识是
+\begin_inset Formula $quasi-Newton$
+\end_inset
+
+算法是更好的选择。更新海塞矩阵时所用的
+\begin_inset Formula $BFGS$
+\end_inset
+
+算法的结果很稳健，因此，实际应用中，许多都会默认使用
+\begin_inset Formula $BFGS$
+\end_inset
+
+算法。
+\end_layout
+
+\begin_layout Itemize
+一个
+\color red
+广泛应用的策略
+\color inherit
+是：先使用单纯形法开始进行数值最优化，经过几步迭代后，使用
+\begin_inset Formula $BFGS$
+\end_inset
+
+算法加速收敛速度。
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+numerical derivatives
+\end_layout
+
+\begin_layout Itemize
+1st-order numerical derivatives：
+\begin_inset Formula $\frac{\partial lnL_{T}(\theta)}{\partial\theta}|_{\theta=\theta_{(k)}}\simeq\frac{lnL(\theta_{(k)}+s)-lnL(\theta_{(k)})}{s}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+2nd-order numerical derivatives：
+\begin_inset Formula $\frac{\partial^{2}lnL_{T}(\theta)}{\partial\theta^{2}}|_{\theta=\theta_{(k)}}\simeq\frac{lnL(\theta_{(k)}+s)-2lnL(\theta_{(k)})+lnL(\theta_{(k)}-s)}{s^{2}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+starting values
+\end_layout
+
+\begin_layout Itemize
+arbitrary choice，当对数似然函数是globally concave时。例如一些情况下，初始值选择0会导致多重共线问题。
+\end_layout
+
+\begin_layout Itemize
+consistent estimator，前提是可以获得consistent estimator。这种方法的好处就是每次迭代结果都是一致估计量
+\end_layout
+
+\begin_layout Itemize
+restricted model
+\end_layout
+
+\begin_layout Itemize
+historical precedent
+\end_layout
+
+\begin_layout Subsection
+convergence criteria
+\end_layout
+
+\begin_layout Itemize
+给定收敛精度(convergence tolerance)
+\begin_inset Formula $\varepsilon$
+\end_inset
+
+，一些普遍使用的判断收敛的标准：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+objective function：
+\begin_inset Formula $lnL(\theta_{(k)})-lnL(\theta_{(k-1)})<\varepsilon$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+gradient function:
+\begin_inset Formula $G(\theta_{(k)})^{'}G(\theta_{(k)})<\varepsilon$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+parameter values：
+\begin_inset Formula $(\theta_{(k)})^{'}(\theta_{(k)})<\varepsilon$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+updating function：
+\begin_inset Formula $G(\theta_{(k)})^{'}H(\theta_{(k)})^{-1}G(\theta_{(k)})<\varepsilon$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Section
+applications
 \end_layout
 
 \end_body
