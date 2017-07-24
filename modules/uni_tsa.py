@@ -128,10 +128,14 @@ class uni_tsa:
                 print('   p-value is %26.3f' % p_value)
 
     def pacf(self,max_lag=40,method='Yule-Walker'):
+
         if method=='Yule-Walker':
-            acfs=[self.acf(lag=i) for i in range(max_lag+1)]
-            R=toeplitz(acfs[:-1])
-            return np.r_[1,np.linalg.solve(R,acfs[1:])]
+            pacfs = [1]
+            for j in range(1,max_lag+1):
+                gamma=[self.cov(lag=i) for i in range(j+1)]
+                R=toeplitz(gamma[:-1])
+                pacfs.append(np.linalg.solve(R, gamma[1:])[-1])
+            return pacfs
         else:
             return  np.r_[1,[self.pacf_ols(lag=i) for i in range(1,max_lag+1)]]
     def pacf_ols(self,lag=1):
