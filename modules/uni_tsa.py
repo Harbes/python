@@ -247,7 +247,7 @@ class simulation:
     @property
     def ARMA(self):
         epsilon = self.generate_random
-        e_array = (np.vstack([epsilon[self.pq - 1 - i:self.M + self.pq - 1 - i] for i in range(self.pq)])).T
+        e_array = (np.vstack([epsilon[self.pq - 1 - i:self.M + self.pq - 1 - i] for i in range(self.q)])).T
         y_t=np.empty(self.M+self.pq)
         if self.y_init is None:
             y_t[:self.pq] = 0
