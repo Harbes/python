@@ -8,6 +8,7 @@ class mle:
         else:
             self.arr = arr
     def newton_raphson(self):
+        pass
 
 
 

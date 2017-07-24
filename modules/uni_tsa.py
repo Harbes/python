@@ -62,11 +62,11 @@ class uni_tsa:
     def acf(self,lag=0):
         return self.cov(lag=lag)/self.cov(lag=0)
 
-    def acf_plot(self, max_lag=10):
+    def acf_plot(self, max_lag=24):
         import matplotlib.pyplot as plt
         plt.figure(figsize=(15, 5))
         ax = plt.subplot(111)
-        plt.bar(range(1, max_lag), [self.acf(lag) for lag in range(1, max_lag)])
+        plt.stem(range(1, max_lag), [self.acf(lag) for lag in range(1, max_lag)])
         plt.xlabel("Lag")
         plt.ylabel("Autocorrelation")
         plt.title("ACF")
@@ -124,11 +124,11 @@ class uni_tsa:
         y=self.arr[lag:]
         x=np.append([np.ones(len(y))],tmp,axis=0)
         return y@x.T@np.linalg.pinv(x@x.T)[lag]
-    def pacf_plot(self,max_lag=10):
+    def pacf_plot(self,max_lag=24):
         import matplotlib.pyplot as plt
         plt.figure(figsize=(15, 5))
         ax = plt.subplot(111)
-        plt.bar(range(1, max_lag), [self.pacf(lag) for lag in range(1, max_lag)])
+        plt.stem(range(1, max_lag), [self.pacf(lag) for lag in range(1, max_lag)])
         plt.xlabel("Lag")
         plt.ylabel("Partial Autocorrelation")
         plt.title("PACF")
@@ -136,18 +136,18 @@ class uni_tsa:
         plt.axhline(0, linestyle='-', color='black')
         plt.axhline(0 - 2 / np.sqrt(len(self.arr)), linestyle="-.", color="red")
         plt.show()
-    def acf_pacf_plot(self,max_lag=10):
+    def acf_pacf_plot(self,max_lag=24):
         import matplotlib.pyplot as plt
         fig=plt.figure(figsize=(15, 5))
         ax1= fig.add_subplot(211)
-        ax1.bar(range(1, max_lag), [self.acf(lag) for lag in range(1, max_lag)])
+        ax1.stem(range(1, max_lag), [self.acf(lag) for lag in range(1, max_lag)])
         plt.ylabel("ACF")
         plt.axhline(0 + 2 / np.sqrt(len(self.arr)), linestyle="-.", color="red")
         plt.axhline(0,linestyle='-',color='black')
         plt.axhline(0 - 2 / np.sqrt(len(self.arr)), linestyle="-.", color="red")
 
         ax2 = fig.add_subplot(212)
-        ax2.bar(range(1, max_lag), [self.pacf(lag) for lag in range(1, max_lag)])
+        ax2.stem(range(1, max_lag), [self.pacf(lag) for lag in range(1, max_lag)])
         plt.xlabel("Lag")
         plt.ylabel("PACF")
         plt.axhline(0 + 2 / np.sqrt(len(self.arr)), linestyle="-.", color="red")
