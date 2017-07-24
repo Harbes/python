@@ -1,4 +1,7 @@
 import numpy as np
+from scipy.stats import norm, chi2
+from math import sqrt
+import matplotlib.pyplot as plt
 from numba import jit
 class uni_tsa:
     def __init__(self,arr):
@@ -8,7 +11,6 @@ class uni_tsa:
             self.arr=arr
     def unit_test(self,lag=1,ct='c'):
         from functools import reduce
-        from math import sqrt
         delta_x=self.arr[1:]-self.arr[:-1]
         tmp=np.array([delta_x[lag-i:-i] for i in range(1,lag+1)])
         y = delta_x[lag:]
@@ -61,18 +63,25 @@ class uni_tsa:
             return np.sum((x1 - np.mean(self.arr)) * (self.arr[0:len(self.arr) - lag] - np.mean(self.arr))) / len(x1)
     def acf(self,lag=0):
         return self.cov(lag=lag)/self.cov(lag=0)
+    def _acfs(self,max_lag):
+        acfs = np.array([self.acf(lag) for lag in range(1, max_lag)])
+        acf_interval = np.ones(max_lag - 1)
+        acf_interval[1:] = 2 * acfs[:-1] ** 2
+        acf_interval = np.sqrt(np.cumsum(acf_interval) / len(self.arr))
+        return acfs,acf_interval
 
-    def acf_plot(self, max_lag=24):
-        import matplotlib.pyplot as plt
+    def acf_plot(self, max_lag=24,alpha=0.05):
+        s=norm.ppf(1-alpha/2)
+        acfs,acf_interval=self._acfs(max_lag)
         plt.figure(figsize=(15, 5))
         ax = plt.subplot(111)
-        plt.stem(range(1, max_lag), [self.acf(lag) for lag in range(1, max_lag)])
+        plt.stem(range(1, max_lag),acfs)
         plt.xlabel("Lag")
         plt.ylabel("Autocorrelation")
         plt.title("ACF")
-        plt.axhline(0 + 2 / np.sqrt(len(self.arr)), linestyle="-.", color="red")
+        plt.plot(range(1, max_lag), s *acf_interval, linestyle="-.", color="red")
         plt.axhline(0, linestyle='-', color='black')
-        plt.axhline(0 - 2 / np.sqrt(len(self.arr)), linestyle="-.", color="red")
+        plt.plot(range(1, max_lag), -s *acf_interval, linestyle="-.", color="red")
         plt.show()
     def acf_test(self,lag=None,test_type='individual'):
         '''
@@ -85,8 +94,7 @@ class uni_tsa:
         :return: 
             the test result
         '''
-        from scipy.stats import norm, chi2
-        from math import sqrt
+
         if test_type == 'individual':
             if lag is None:
                 lag=1
@@ -124,35 +132,36 @@ class uni_tsa:
         y=self.arr[lag:]
         x=np.append([np.ones(len(y))],tmp,axis=0)
         return y@x.T@np.linalg.pinv(x@x.T)[lag]
-    def pacf_plot(self,max_lag=24):
-        import matplotlib.pyplot as plt
+    def pacf_plot(self,max_lag=24,alpha=0.05):
+        s = norm.ppf(1 - alpha / 2)
         plt.figure(figsize=(15, 5))
         ax = plt.subplot(111)
         plt.stem(range(1, max_lag), [self.pacf(lag) for lag in range(1, max_lag)])
         plt.xlabel("Lag")
         plt.ylabel("Partial Autocorrelation")
         plt.title("PACF")
-        plt.axhline(0 + 2 / np.sqrt(len(self.arr)), linestyle="-.", color="red")
+        plt.axhline(0 + s / np.sqrt(len(self.arr)), linestyle="-.", color="red")
         plt.axhline(0, linestyle='-', color='black')
-        plt.axhline(0 - 2 / np.sqrt(len(self.arr)), linestyle="-.", color="red")
+        plt.axhline(0 - s / np.sqrt(len(self.arr)), linestyle="-.", color="red")
         plt.show()
-    def acf_pacf_plot(self,max_lag=24):
-        import matplotlib.pyplot as plt
+    def acf_pacf_plot(self,max_lag=24,alpha=0.05):
+        s = norm.ppf(1 - alpha / 2)
+        acfs, acf_interval = self._acfs(max_lag)
         fig=plt.figure(figsize=(15, 5))
         ax1= fig.add_subplot(211)
-        ax1.stem(range(1, max_lag), [self.acf(lag) for lag in range(1, max_lag)])
+        ax1.stem(range(1, max_lag), acfs)
         plt.ylabel("ACF")
-        plt.axhline(0 + 2 / np.sqrt(len(self.arr)), linestyle="-.", color="red")
+        plt.plot(range(1, max_lag),s *acf_interval, linestyle="-.", color="red")
         plt.axhline(0,linestyle='-',color='black')
-        plt.axhline(0 - 2 / np.sqrt(len(self.arr)), linestyle="-.", color="red")
+        plt.plot(range(1, max_lag),-s*acf_interval, linestyle="-.", color="red")
 
         ax2 = fig.add_subplot(212)
         ax2.stem(range(1, max_lag), [self.pacf(lag) for lag in range(1, max_lag)])
         plt.xlabel("Lag")
         plt.ylabel("PACF")
-        plt.axhline(0 + 2 / np.sqrt(len(self.arr)), linestyle="-.", color="red")
+        plt.axhline(0 + s / np.sqrt(len(self.arr)), linestyle="-.", color="red")
         plt.axhline(0, linestyle='-', color='black')
-        plt.axhline(0 - 2 / np.sqrt(len(self.arr)), linestyle="-.", color="red")
+        plt.axhline(0 - s / np.sqrt(len(self.arr)), linestyle="-.", color="red")
         plt.show()
     def model(self):
         # TODO 时间序列模型参数估计，主要针对 ARIMA 模型
@@ -227,7 +236,7 @@ class simulation:
     @property
     def AR(self):
         epsilon = self.generate_random
-        y_t=np.empty(self.M+self.p)
+        y_t=np.empty(self.M+self.pq)
         if self.y_init is None:
             y_t[:self.pq] = 0
         else:
