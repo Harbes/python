@@ -2,6 +2,7 @@ import numpy as np
 from scipy.stats import norm, chi2
 from scipy.linalg import toeplitz
 from math import sqrt
+import statsmodels.tsa.stattools as tsa_tools
 import matplotlib.pyplot as plt
 from numba import jit
 class uni_tsa:
@@ -10,6 +11,7 @@ class uni_tsa:
             self.arr=np.array(arr)
         else:
             self.arr=arr
+    # TODO 与后面的adfuller结果有一点点偏差，待改进
     def unit_test(self,lag=1,ct='c'):
         from functools import reduce
         delta_x=self.arr[1:]-self.arr[:-1]
@@ -56,6 +58,15 @@ class uni_tsa:
             sigma = np.std(y - beta @ x)
             return beta[0]/sigma/sqrt(np.linalg.pinv(x @ x.T)[0,0])
 
+# TODO 待自己编写
+    def adfuller(self, max_lag=None, regression='c'):
+        res = tsa_tools.adfuller(self.arr, maxlag=max_lag, regression=regression)
+        print('Null hypothesis: There is a unit root')
+        print('     Test statistics:',res[0])
+        print('     p-value:',res[1])
+        print('     Number of lags used:', res[2])
+        print('     Number of obs:',res[3])
+        print('     critical values:',res[4])
     def cov(self,lag=0):
         if lag >= self.arr.shape[0]:
             raise ValueError("Not enough observations to compute autocovariance")
@@ -127,15 +138,15 @@ class uni_tsa:
                 print('   chi_square statistics is %12.3f' % Q)
                 print('   p-value is %26.3f' % p_value)
 
-    def pacf(self,max_lag=40,method='Yule-Walker'):
+    def pacf(self,max_lag=40,method='ols'):
 
         if method=='Yule-Walker':
             pacfs = [1]
             for j in range(1,max_lag+1):
                 gamma=[self.cov(lag=i) for i in range(j+1)]
                 R=toeplitz(gamma[:-1])
-                pacfs.append(np.linalg.solve(R, gamma[1:])[-1])
-            return pacfs
+                pacfs.append(np.linalg.solve(R,gamma[1:])[-1])
+            return np.array(pacfs)
         else:
             return  np.r_[1,[self.pacf_ols(lag=i) for i in range(1,max_lag+1)]]
     def pacf_ols(self,lag=1):
@@ -143,7 +154,7 @@ class uni_tsa:
         y=self.arr[lag:]
         x=np.append([np.ones(len(y))],tmp,axis=0)
         return y@x.T@np.linalg.pinv(x@x.T)[lag]
-    def pacf_plot(self,max_lag=24,alpha=0.05,method='Yule-Walker'):
+    def pacf_plot(self,max_lag=24,alpha=0.05,method='ols'):
         s = norm.ppf(1 - alpha / 2)
         pacfs=self.pacf(max_lag=max_lag,method=method)
         plt.figure(figsize=(15, 5))
@@ -156,7 +167,7 @@ class uni_tsa:
         plt.axhline(0, linestyle='-', color='black')
         plt.axhline(- s / np.sqrt(len(self.arr)), linestyle="-.", color="red")
         plt.show()
-    def acf_pacf_plot(self,max_lag=24,alpha=0.05,pacf_method='Yule-Walker'):
+    def acf_pacf_plot(self,max_lag=24,alpha=0.05,pacf_method='ols'):
         s = norm.ppf(1 - alpha / 2)
         acfs, acf_interval = self._acfs(max_lag)
         pacfs=self.pacf(max_lag=max_lag,method=pacf_method)
@@ -176,6 +187,16 @@ class uni_tsa:
         plt.axhline(0, linestyle='-', color='black')
         plt.axhline(- s / np.sqrt(len(self.arr)), linestyle="-.", color="red")
         plt.show()
+    def periodogram(self):
+        return 1/len(self.arr)*np.abs(np.fft.fft(self.arr))**2
+
+    # TODO Granger因果检验，待自己编写
+    def Granger(self,arr,max_lag=12,addconst=True,disp=True):
+        x=np.vstack((self.arr,arr)).T
+        return tsa_tools.grangercausalitytests(x,maxlag=max_lag,addconst=addconst,verbose=disp)
+
+
+
     def model(self):
         # TODO 时间序列模型参数估计，主要针对 ARIMA 模型
         pass
@@ -207,14 +228,16 @@ class uni_tsa:
 
         return theta_estimate
 
-    def Granger(self,arr2):
-        # TODO Granger因果检验
-        pass
+
+
+
+
+
 
 class simulation:
-    def __init__(self,phi=None,theta=None,const=0,y_init=None,dist='normal',dist_sigma=1,M=1000,seed=None):
-        self.phi=phi
-        self.theta=theta
+    def __init__(self,ar_params=None,ma_params=None,const=0,y_init=None,dist='normal',dist_sigma=1,M=1000,seed=None):
+        self.phi=ar_params
+        self.theta=ma_params
         self.const=const
         self.y_init=y_init
         self.dist=dist
@@ -244,8 +267,12 @@ class simulation:
     @property
     def MA(self):
         epsilon=self.generate_random
-        e_array=(np.vstack([epsilon[self.pq-i-1:self.M+self.pq-1-i] for i in range(self.q)])).T
-        return self.const+(self.theta*e_array).sum(axis=1)+epsilon[self.pq:]
+        if self.q>0:
+            e_array = (np.vstack([epsilon[self.pq - 1 - i:self.M + self.pq - 1 - i] for i in range(self.q)])).T
+            return self.const + (self.theta * e_array).sum(axis=1) + epsilon[self.pq:]
+        else:
+            return self.const+ epsilon[self.pq:]
+
     @property
     def AR(self):
         epsilon = self.generate_random
@@ -260,15 +287,27 @@ class simulation:
     @property
     def ARMA(self):
         epsilon = self.generate_random
-        e_array = (np.vstack([epsilon[self.pq - 1 - i:self.M + self.pq - 1 - i] for i in range(self.q)])).T
-        y_t=np.empty(self.M+self.pq)
-        if self.y_init is None:
-            y_t[:self.pq] = 0
+        if self.q>0:
+            e_array = (np.vstack([epsilon[self.pq - 1 - i:self.M + self.pq - 1 - i] for i in range(self.q)])).T
+            y_t = np.empty(self.M + self.pq)
+            if self.y_init is None:
+                y_t[:self.pq] = 0
+            else:
+                y_t[self.pq - self.p:self.pq] = np.array(self.y_init)
+            for i in range(self.pq, self.M + self.pq):
+                y_t[i] = self.const + (self.phi * y_t[i - self.p:i]).sum() + epsilon[i] + (
+                self.theta * e_array[i - self.pq]).sum()
+            return y_t[self.pq:]
         else:
-            y_t[self.pq-self.p:self.pq] = np.array(self.y_init)
-        for i in range(self.pq, self.M + self.pq):
-            y_t[i] = self.const + (self.phi * y_t[i - self.p:i]).sum() +epsilon[i]+(self.theta*e_array[i-self.pq]).sum()
-        return y_t[self.pq:]
+            y_t = np.empty(self.M + self.pq)
+            if self.y_init is None:
+                y_t[:self.pq] = 0
+            else:
+                y_t[self.pq - self.p:self.pq] = np.array(self.y_init)
+            for i in range(self.pq, self.M + self.pq):
+                y_t[i] = self.const + (self.phi * y_t[i - self.p:i]).sum() + epsilon[i]
+            return y_t[self.pq:]
+
 
 
 
