@@ -20,8 +20,8 @@
 \inputencoding auto
 \fontencoding global
 \font_roman "default" "华文仿宋"
-\font_sans "default" "华文中宋"
-\font_typewriter "default" "华文楷体"
+\font_sans "default" "楷体"
+\font_typewriter "default" "楷体"
 \font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts true
@@ -96,7 +96,7 @@
 \begin_body
 
 \begin_layout Title
-numpy学习笔记
+《时间序列分析》(汉密尔顿)学习笔记
 \end_layout
 
 \begin_layout Author
@@ -110,6 +110,1153 @@ LatexCommand tableofcontents
 \end_inset
 
 
+\end_layout
+
+\begin_layout Chapter
+差分方程
+\end_layout
+
+\begin_layout Section
+一阶差分方程
+\end_layout
+
+\begin_layout Itemize
+一阶差分方程：
+\begin_inset Formula 
+\[
+y_{t}=\phi y_{t-1}+\omega_{t}\tag{1.1.1}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+例子：Goldfeld(1973)对美国货币需求函数的估计。Goldfeld的模型將公众实际持有货币量的对数(
+\begin_inset Formula $m_{t}$
+\end_inset
+
+)与总体实际收入的对数(
+\begin_inset Formula $I_{t}$
+\end_inset
+
+)、银行账户利率的对数(
+\begin_inset Formula $r_{bt}$
+\end_inset
+
+)和商业票据利率的对数(
+\begin_inset Formula $r_{ct}$
+\end_inset
+
+)联系起来
+\begin_inset Formula 
+\[
+m_{t}=0.27+0.72m_{t-1}+0.19I_{t}-0.045r_{bt}-0.019r_{ct}\tag{1.1.2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+用递归代替法求解差分方程
+\end_layout
+
+\begin_layout Subsection
+动态乘子
+\end_layout
+
+\begin_layout Itemize
+单个冲击带来的时间维度上总的影响：
+\begin_inset Formula $\sum_{j=0}^{\infty}\frac{\partial y_{t+j}}{\partial\omega_{t}}=\sum_{j=0}^{\infty}\beta^{j}\phi^{j}=\frac{1}{1-\beta\phi}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+永久冲击的影响：
+\begin_inset Formula $\underset{j\rightarrow\infty}{lim}\sum_{i=0}^{j}\frac{\partial y_{t+j}}{\partial\omega_{t+i}}=\frac{1}{1-\beta\phi}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+p阶差分方程
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+y_{t}=\phi_{1}y_{t-1}+\phi_{2}y_{t-2}+...+\phi_{p}y_{t-p}+\omega_{t}\tag{1.2.1}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+向量形式。定义(p*1)的向量
+\begin_inset Formula $\xi_{t}$
+\end_inset
+
+：
+\begin_inset Formula 
+\[
+\xi_{t}\equiv\left[\begin{array}{c}
+y_{t}\\
+y_{t-1}\\
+y_{t-2}\\
+\vdots\\
+y_{t-p+1}
+\end{array}\right]\tag{1.2.2}
+\]
+
+\end_inset
+
+定义(p*p)的矩阵F为：
+\begin_inset Formula 
+\[
+F\equiv\left[\begin{array}{cccccc}
+\phi_{1} & \phi_{2} & \phi_{3} & \cdots & \phi_{p-1} & \phi_{p}\\
+1 & 0 & 0 & \cdots & 0 & 0\\
+0 & 1 & 0 & \cdots & 0 & 0\\
+\vdots & \vdots & \vdots & \cdots & \vdots & \vdots\\
+0 & 0 & 0 & \cdots & 1 & 0
+\end{array}\right]\tag{1.2.3}
+\]
+
+\end_inset
+
+定义(p*1)的向量：
+\begin_inset Formula 
+\[
+v_{t}\equiv\left[\begin{array}{c}
+\omega_{t}\\
+0\\
+0\\
+\vdots\\
+0
+\end{array}\right]\tag{1.2.4}
+\]
+
+\end_inset
+
+于是，p阶差分方程可写成：
+\begin_inset Formula 
+\[
+\xi_{t}=F\xi_{t-1}+v_{t}\tag{1.2.5}
+\]
+
+\end_inset
+
+通过迭代，有：
+\begin_inset Formula 
+\[
+\xi_{t}=F^{t+1}\xi_{-1}+F^{t}v_{0}+F^{t-1}v_{1}+...+Fv_{t-1}+v_{t}\tag{1.2.6}
+\]
+
+\end_inset
+
+令
+\begin_inset Formula $f_{ij}^{(t)}$
+\end_inset
+
+表示
+\begin_inset Formula $F^{t}$
+\end_inset
+
+的第(i,j)个元素，则將上式展开，可得：
+\begin_inset Formula 
+\[
+y_{t}=f_{11}^{(t+1)}y_{-1}+f_{12}^{(t+1)}y_{-2}+...+f_{1p}^{(t+1)}y_{-p}+f_{11}^{(t)}\omega_{0}+f_{11}^{(t-1)}\omega_{1}+...+f_{11}^{(1)}\omega_{t-1}+\omega_{t}\tag{1.2.8}
+\]
+
+\end_inset
+
+动态乘子：
+\begin_inset Formula 
+\[
+\frac{\partial y_{t+j}}{\partial\omega_{t}}=f_{11}^{(j)}\tag{1.2.11}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+动态乘子——当p阶差分方程的特征值不同时
+\end_layout
+
+\begin_layout Itemize
+尽管可以通过数值计算或者数值模拟得到动态乘子，但是，我们还是希望进一步了解动态乘子的分析特征。首先回顾矩阵F的特征值
+\begin_inset Formula $\lambda$
+\end_inset
+
+满足：
+\begin_inset Formula 
+\[
+|F-\lambda I_{p}|=0\tag{1.2.12}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+性质1.1：方程(1.2.3)定义的F的特征值是满足下式的λ值：
+\begin_inset Formula 
+\[
+\lambda^{p}-\phi_{1}\lambda^{p-1}-\phi_{2}\lambda^{p-2}-...-\phi_{p-1}\lambda-\phi_{p}=0\tag{1.2.16}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+假定(p*p)的矩阵F的特征值各不相同，则存在一个(p*p)的非奇异矩阵T，使得
+\begin_inset Formula $F=T\varLambda T^{-1}$
+\end_inset
+
+，于是
+\begin_inset Formula $F^{j}$
+\end_inset
+
+可以写成：
+\begin_inset Formula 
+\[
+F^{j}=\left[\begin{array}{cccc}
+t_{11} & t_{12} & \cdots & t_{1p}\\
+t_{21} & t_{22} & \cdots & t_{2p}\\
+\vdots & \vdots & \ddots & \vdots\\
+t_{p1} & t_{p2} & \cdots & t_{pp}
+\end{array}\right]\left[\begin{array}{ccccc}
+\lambda_{1}^{j} & 0 & 0 & \cdots & 0\\
+0 & \lambda_{2}^{j} & 0 & \cdots & 0\\
+\vdots & \vdots & \vdots & \ddots & \vdots\\
+0 & 0 & 0 & \cdots & \lambda_{p}^{j}
+\end{array}\right]\left[\begin{array}{cccc}
+t^{11} & t^{12} & \cdots & t^{1p}\\
+t^{21} & t^{22} & \cdots & t^{2p}\\
+\vdots & \vdots & \ddots & \vdots\\
+t^{p1} & t^{p2} & \cdots & t^{pp}
+\end{array}\right]
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula $F^{j}$
+\end_inset
+
+的第(1,1)个元素为：
+\begin_inset Formula 
+\[
+f_{11}^{(j)}=[t_{11}t^{11}]\lambda_{1}^{j}+[t_{12}t^{21}]\lambda_{2}^{j}+...+[t_{1p}t^{p1}]\lambda_{p}^{j}
+\]
+
+\end_inset
+
+或
+\begin_inset Formula 
+\[
+f_{11}^{(j)}=c_{1}\lambda_{1}^{j}+c_{2}\lambda_{2}^{j}+...+c_{p}\lambda_{p}^{j}\tag{1.2.20}
+\]
+
+\end_inset
+
+注意到
+\begin_inset Formula $c_{1}+c_{2}+...+c_{p}=[t_{11}t^{11}]+[t_{12}t^{21}]+...+[t_{1p}t^{p1}]$
+\end_inset
+
+，即为
+\begin_inset Formula $T*T^{-1}$
+\end_inset
+
+的第(1,1)个元素，显然有：
+\begin_inset Formula 
+\[
+c_{1}+c_{2}+...+c_{p}=1\tag{1.2.23}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+性质1.2 给出常数
+\begin_inset Formula $(c_{1},c_{2},...,c_{p})$
+\end_inset
+
+的闭型表达式：如果式(1.2.3)中定义的矩阵F的特征值为
+\begin_inset Formula $(\lambda_{1},\lambda_{2},...,\lambda_{p})$
+\end_inset
+
+是不同的，则
+\begin_inset Formula $c_{i}$
+\end_inset
+
+可以写为
+\begin_inset Formula 
+\[
+c_{i}=\frac{\lambda_{i}^{p-1}}{\Pi_{k=1,k\neq i}^{p}(\lambda_{i}-\lambda_{k})}\tag{1.2.25}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+特征值的一些特征
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+如果所有特征值的绝对值均小于1，则系统是稳定的，且系统的动态被表示为指数衰减的加权平均；相反，若存在至少一个特征值的绝对值大于1，则系统是爆炸的。
+\end_layout
+
+\begin_layout Itemize
+令
+\begin_inset Formula $\lambda_{1}$
+\end_inset
+
+代表绝对值最大的特征值，动态乘子最终由该特征值的指数函数主导(
+\begin_inset Formula $\underset{j\rightarrow\infty}{lim}\frac{\partial y_{t+j}}{\partial\omega_{t}}\frac{1}{\lambda_{1}^{j}}=c_{1}$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+如果存在复数特征值，特征值将以复数共轭的形式出现。以二阶差分方程
+\begin_inset Formula $y_{t}=\phi_{1}y_{t-1}+\phi_{2}y_{t-2}+\omega_{t}$
+\end_inset
+
+为例，并且
+\begin_inset Formula $\phi_{1}^{2}+4\phi_{2}<0$
+\end_inset
+
+，则F对应的特征值为
+\begin_inset Formula $\lambda_{1}=a+bi$
+\end_inset
+
+，
+\begin_inset Formula $\lambda_{2}=a-bi$
+\end_inset
+
+，显然
+\begin_inset Formula $a=\phi_{1}/2$
+\end_inset
+
+，
+\begin_inset Formula $b=(1/2)\sqrt{-\phi_{1}^{2}-4\phi_{2}}$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+为了將复数转换为幂，先將特征值写成极坐标的形式
+\begin_inset Formula $\lambda_{1}=R[cos(\theta)+i\cdot sin(\theta)]$
+\end_inset
+
+，
+\begin_inset Formula $R=\sqrt{a^{2}+b^{2}}\,,\,cos(\theta)=a/R\,,\,sin(\theta)=b/R$
+\end_inset
+
+，于是
+\begin_inset Formula $\lambda_{1}=R[e^{i\theta}]\Rightarrow\lambda_{1}^{j}=R^{j}[e^{i\theta j}]=R^{j}[cos(\theta j)+i\cdot sin(\theta j)]$
+\end_inset
+
+，类似地可得
+\begin_inset Formula $\lambda_{2}^{j}=R^{j}[e^{-i\theta j}]=R^{j}[cos(\theta j)-i\cdot sin(\theta j)]$
+\end_inset
+
+，则动态乘子
+\begin_inset Formula 
+\begin{align*}
+c_{1}\lambda_{1}^{j}+c_{2}\lambda_{2}^{j} & =c_{1}R^{j}[cos(\theta j)+i\cdot sin(\theta j)]+c_{2}R^{j}[cos(\theta j)-i\cdot sin(\theta j)]\\
+ & =[c_{1}+c_{2}]R^{j}cos(\theta j)+i\cdot[c_{1}-c_{2}]R^{j}sin(\theta j)\tag{1.2.39}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+巧妙的是：如果
+\begin_inset Formula $\lambda_{1}$
+\end_inset
+
+和
+\begin_inset Formula $\lambda_{2}$
+\end_inset
+
+共轭，则
+\begin_inset Formula $c_{1}$
+\end_inset
+
+和
+\begin_inset Formula $c_{2}$
+\end_inset
+
+也共轭，即
+\begin_inset Formula $c_{1}$
+\end_inset
+
+和
+\begin_inset Formula $c_{2}$
+\end_inset
+
+可写成
+\begin_inset Formula $c_{1}=\alpha+\beta i\,,\,c_{2}=\alpha-\beta i$
+\end_inset
+
+，代入上式得
+\begin_inset Formula 
+\[
+c_{1}\lambda_{1}^{j}+c_{2}\lambda_{2}^{j}=2\alpha R^{j}cos(\theta j)-2\beta R^{j}sin(\theta j)
+\]
+
+\end_inset
+
+因此，当某些特征值是复数时，动态乘子就是指数与三角函数的复合形态。
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Subsubsection
+带有不同特征值的二阶差分方程的解
+\end_layout
+
+\begin_layout Subsection
+动态乘子——当p阶差分方程有重复特征值时
+\end_layout
+
+\begin_layout Itemize
+考虑更一般的情形：差分方程对应的F矩阵有重复的特征值以及
+\begin_inset Formula $s<p$
+\end_inset
+
+个线性独立的特征向量，利用约当分解(Jordan decomposition)：
+\begin_inset Formula 
+\[
+F=MJM^{-1}\tag{1.2.40}
+\]
+
+\end_inset
+
+其中，M是(p*p)的矩阵，J的形式为
+\begin_inset Formula 
+\[
+J=\left[\begin{array}{cccc}
+J_{1} & 0 & \cdots & 0\\
+0 & J_{2} & \cdots & 0\\
+\vdots & \vdots & \ddots & \vdots\\
+0 & 0 & \cdots & J_{s}
+\end{array}\right]
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula 
+\[
+J_{i}=\left[\begin{array}{cccccc}
+\lambda_{i} & 1 & 0 & \cdots & 0 & 0\\
+0 & \lambda_{i} & 1 & \cdots & 0 & 0\\
+0 & 0 & \lambda_{i} & \cdots & 0 & 0\\
+\vdots & \vdots & \vdots & \ddots & \vdots & \vdots\\
+0 & 0 & 0 & \cdots & \lambda_{i} & 1\\
+0 & 0 & 0 & \cdots & 0 & \lambda_{i}
+\end{array}\right]
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula $F^{j}=MJ^{j}M^{-1}$
+\end_inset
+
+，其中
+\begin_inset Formula 
+\[
+J^{j}=\left[\begin{array}{cccc}
+J_{1}^{j} & 0 & \cdots & 0\\
+0 & J_{2}^{j} & \cdots & 0\\
+\vdots & \vdots & \ddots & \vdots\\
+0 & 0 & \cdots & J_{s}^{j}
+\end{array}\right]
+\]
+
+\end_inset
+
+进一步地，如果
+\begin_inset Formula $J_{i}$
+\end_inset
+
+是
+\begin_inset Formula $n_{i}*n_{i}$
+\end_inset
+
+维的，则
+\begin_inset Formula 
+\[
+J_{i}=\left[\begin{array}{cccccc}
+\lambda_{i}^{j} & C_{j}^{1}\lambda_{i}^{j-1} & C_{j}^{2}\lambda_{i}^{j-2} & \cdots & C_{j}^{n_{i}-2}\lambda_{i}^{j-n_{i}+2} & C_{j}^{n_{i}-1}\lambda_{i}^{j-n_{i}+1}\\
+0 & \lambda_{i} & C_{j}^{1}\lambda_{i}^{j-1} & \cdots & C_{j}^{n_{i}-3}\lambda_{i}^{j-n_{i}+3} & C_{j}^{n_{i}-2}\lambda_{i}^{j-n_{i}+2}\\
+0 & 0 & \lambda_{i} & \cdots & C_{j}^{n_{i}-4}\lambda_{i}^{j-n_{i}+4} & C_{j}^{n_{i}-3}\lambda_{i}^{j-n_{i}+3}\\
+\vdots & \vdots & \vdots & \ddots & \vdots & \vdots\\
+0 & 0 & 0 & \cdots & \lambda_{i} & \vdots\\
+0 & 0 & 0 & \cdots & 0 & \lambda_{i}
+\end{array}\right]
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $C_{n}^{j}\equiv\begin{cases}
+\frac{n(n-1)...(n-j+1)}{j!} & \text{，}n\geq j\\
+0 & \text{，其他}
+\end{cases}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+以二阶差分方程为例，考虑重根的情形，有
+\begin_inset Formula 
+\[
+F^{j}=M\left[\begin{array}{cc}
+\lambda^{j} & j\lambda^{j-1}\\
+0 & \lambda^{j}
+\end{array}\right]M^{-1}
+\]
+
+\end_inset
+
+所以动态乘子的形式为
+\begin_inset Formula 
+\[
+\frac{\partial y_{t+j}}{\partial\omega}=f_{11}^{(j)}=k_{1}\lambda^{j}+k_{2}j\lambda^{j-1}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+长期与现值的计算
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $v$
+\end_inset
+
+的变换对
+\begin_inset Formula $\xi$
+\end_inset
+
+的现值的影响为
+\begin_inset Formula 
+\[
+\frac{\partial\sum_{j=0}^{\infty}\beta^{j}\xi_{t+j}}{\partial v_{t}^{'}}=\sum_{j=0}^{\infty}\beta^{j}F^{j}=(I_{p}-\beta F)^{-1}\tag{1.2.46}
+\]
+
+\end_inset
+
+前提是F的特征值的模小于
+\begin_inset Formula $\beta^{-1}$
+\end_inset
+
+。于是，
+\begin_inset Formula $\omega$
+\end_inset
+
+对
+\begin_inset Formula $y$
+\end_inset
+
+的现值的影响为
+\begin_inset Formula $\frac{\partial\sum_{j=0}^{\infty}\beta^{j}y_{t+j}}{\partial\omega_{t}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+性质1.3：若式(1.2.3)定义的(p*p)矩阵F的特征值的模均小于
+\begin_inset Formula $\beta^{-1}$
+\end_inset
+
+，则矩阵
+\begin_inset Formula $(I_{p}-\beta F)^{-1}$
+\end_inset
+
+存在，且
+\begin_inset Formula $\omega$
+\end_inset
+
+对
+\begin_inset Formula $y$
+\end_inset
+
+的现值的影响有该矩阵的第(1,1)个元素确定
+\begin_inset Formula 
+\[
+\frac{1}{1-\phi_{1}\beta-\phi_{2}\beta^{2}-...-\phi_{p-1}\beta^{p-1}-\phi_{p}\beta^{p}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\omega_{t}$
+\end_inset
+
+对
+\begin_inset Formula $y_{t},y_{t+1},...$
+\end_inset
+
+的累积效应可以看作性质1.3没有折现的特例
+\begin_inset Formula 
+\[
+\frac{\partial\sum_{j=0}^{\infty}y_{t+j}}{\partial\omega_{t}}=\frac{1}{1-\phi_{1}-\phi_{2}-...-\phi_{p-1}-\phi_{p}}\tag{1.2.47}
+\]
+
+\end_inset
+
+式(1.2.47)还可以解释为
+\begin_inset Formula $\omega$
+\end_inset
+
+的永久变化对
+\begin_inset Formula $y$
+\end_inset
+
+的长期影响(长期乘子)
+\begin_inset Formula 
+\[
+\underset{j\rightarrow\infty}{lim}\sum_{i=0}^{j}\frac{\partial y_{t+j}}{\partial\omega_{t+i}}=\frac{1}{1-\phi_{1}-\phi_{2}-...-\phi_{p-1}-\phi_{p}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Chapter
+滞后算子
+\end_layout
+
+\begin_layout Section
+简介
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $Lx_{t}\equiv x_{t-1}$
+\end_inset
+
+ → 对于任意的整数k，
+\begin_inset Formula $L^{k}x_{t}=x_{t-k}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+滞后算子复合乘法的代数运算法则。当面对一个时间序列的复合运算，我们可以灵活运用交换律、结合律和分配律等加法和乘法的代数运算法则，进而将原始变为另外一种形式。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+交换律：
+\begin_inset Formula $L(\beta x_{t})=\beta\cdot Lx_{t}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+分配律：
+\begin_inset Formula $L(x_{t}+y_{t})=Lx_{t}+Ly_{t}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Section
+一阶差分方程
+\end_layout
+
+\begin_layout Itemize
+首先，將一阶差分方程
+\begin_inset Formula $y_{t}=\phi y_{t-1}+\omega_{t}$
+\end_inset
+
+改写成包含滞后算子的形式
+\begin_inset Formula 
+\[
+(1-\phi L)y_{t}=\omega_{t}\tag{2.2.2}
+\]
+
+\end_inset
+
+考虑在等式两边同时乘以
+\begin_inset Formula $(1+\phi L+\phi^{2}L^{2}+...+\phi^{t}L^{t})$
+\end_inset
+
+，整理后得
+\begin_inset Formula 
+\[
+(1-\phi^{t+1}L^{t+1})y_{t}=(1+\phi L+\phi^{2}L^{2}+...+\phi^{t}L^{t})\omega_{t}\tag{2.2.6}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+y=\phi^{t+1}y_{-1}+\omega_{t}+\phi\omega_{t-1}+...+\phi^{t}\omega_{0}\tag{2.2.7}
+\]
+
+\end_inset
+
+注意到使用滞后算子
+\begin_inset Formula $(1+\phi L+\phi^{2}L^{2}+...+\phi^{t}L^{t})$
+\end_inset
+
+和前一章节中运用递归替代法的结果是一样的。
+\end_layout
+
+\begin_layout Itemize
+在上式中，当
+\begin_inset Formula $|\phi|<1$
+\end_inset
+
+且
+\begin_inset Formula $y_{-1}$
+\end_inset
+
+是一个有限的数，则
+\begin_inset Formula $\phi^{t+1}y_{-1}$
+\end_inset
+
+会随着t的增加而减小：
+\begin_inset Formula 
+\[
+(1+\phi L+\phi^{2}L^{2}+...+\phi^{t}L^{t})(1-\phi L)y_{t}\cong y_{t}\text{，}t\text{足够大}
+\]
+
+\end_inset
+
+作为算子
+\begin_inset Formula $(1-\phi L)$
+\end_inset
+
+[【
+\begin_inset Formula $|\phi|<1$
+\end_inset
+
+】的倒数的估计值，当j足够大时，这个估计值满足
+\begin_inset Formula 
+\[
+(1-\phi L)^{-1}=\underset{j\rightarrow\infty}{lim}(1+\phi L+\phi^{2}L^{2}+...+\phi^{j}L^{j})\tag{2.2.8}
+\]
+
+\end_inset
+
+算子
+\begin_inset Formula $(1-\phi L)^{-1}$
+\end_inset
+
+满足性质
+\begin_inset Formula $(1-\phi L)^{-1}(1-\phi L)=1$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Section
+二阶差分方程
+\end_layout
+
+\begin_layout Itemize
+考虑一个二阶差分方程
+\begin_inset Formula 
+\[
+y_{t}=\phi_{1}y_{t-1}+\phi_{2}y_{t-2}+\omega_{t}\tag{2.3.1}
+\]
+
+\end_inset
+
+改写成
+\begin_inset Formula 
+\[
+(1-\phi_{1}L-\phi_{2}L^{2})y_{t}=(1-\lambda_{1}L)(1-\lambda_{2}L)y_{t}=\omega_{t}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+p阶差分方程
+\end_layout
+
+\begin_layout Itemize
+考虑一个p阶差分方程
+\begin_inset Formula 
+\[
+y_{t}=\phi_{1}y_{t-1}+\phi_{2}y_{t-2}+...+\phi_{p}y_{t-p}+\omega_{t}\tag{2.4.1}
+\]
+
+\end_inset
+
+改写成,
+\begin_inset Formula 
+\[
+(1-\phi_{1}L-\phi_{2}L^{2}-...-\phi_{p}L^{p})y_{t}=(1-\lambda_{1}L)(1-\lambda_{2}L)...(1-\lambda_{p}L)y_{t}=\omega_{t}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+性质2.2 ：將p阶差分方程的滞后算子形式因式分解如下
+\begin_inset Formula 
+\[
+(1-\phi_{1}L-\phi_{2}L^{2}-...-\phi_{p}L^{p})=(1-\lambda_{1}L)(1-\lambda_{2}L)...(1-\lambda_{p}L)\tag{2.4.3}
+\]
+
+\end_inset
+
+其计算与求式(1.2.3)定义的F的特征值相同。F的特征值
+\begin_inset Formula $(\lambda_{1},\lambda_{2},...,\lambda_{p})$
+\end_inset
+
+与式(2.4.3)中的系数
+\begin_inset Formula $(\lambda_{1},\lambda_{2},...,\lambda_{p})$
+\end_inset
+
+完全相同，并且由下面方程的给出
+\begin_inset Formula 
+\[
+\lambda^{p}-\phi_{1}\lambda^{p-1}-\phi_{2}\lambda^{p-2}-...-\phi_{p-1}\lambda-\phi_{p}=0\tag{2.4.5}
+\]
+
+\end_inset
+
+解法可见原书。
+\end_layout
+
+\begin_layout Itemize
+一个计算
+\begin_inset Formula $\omega$
+\end_inset
+
+对
+\begin_inset Formula $y$
+\end_inset
+
+现值的影响更为简单的方法
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+首先，
+\begin_inset Formula $y_{t}=\psi_{0}\omega_{t}+\psi_{1}\omega_{t-1}+...$
+\end_inset
+
+，其中，
+\begin_inset Formula $\psi_{j}=c_{1}\lambda_{1}^{j}+c_{2}\lambda_{2}^{j}+...+c_{p}\lambda_{p}^{j}$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+將上式写成滞后算子形式：
+\begin_inset Formula $y_{t}=\psi(L)\omega_{t}$
+\end_inset
+
+，其中，
+\begin_inset Formula $\psi(L)=\psi_{0}+\psi_{1}L+\psi_{2}L^{2}+...$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\omega_{t}$
+\end_inset
+
+对
+\begin_inset Formula $y$
+\end_inset
+
+现值的影响：
+\begin_inset Formula $\frac{\partial\sum_{j=0}^{\infty}\beta^{j}y_{t+j}}{\partial\omega_{t}}=\sum_{j=0}^{\infty}\beta^{j}\frac{\partial y_{t+j}}{\partial\omega_{t}}=\sum_{j=0}^{\infty}\beta^{j}\psi_{j}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+当考虑z取实数时，多项式
+\begin_inset Formula $\psi(z)$
+\end_inset
+
+变为：
+\begin_inset Formula $\psi(z)=\psi_{0}+\psi_{1}z+\psi_{2}z^{2}+...$
+\end_inset
+
+，注意到上式的结果恰好是
+\begin_inset Formula $z=\beta$
+\end_inset
+
+时的多项式的值，即
+\begin_inset Formula $\frac{\partial\sum_{j=0}^{\infty}\beta^{j}y_{t+j}}{\partial\omega_{t}}=\psi(\beta)=\sum_{j=0}^{\infty}\beta^{j}\psi_{j}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+通过对比
+\begin_inset Formula $y_{t}=\psi(L)\omega_{t}$
+\end_inset
+
+和
+\begin_inset Formula $y_{t}=[(1-\lambda_{1}L)(1-\lambda_{2}L)...(1-\lambda_{p}L)]^{-1}\omega_{t}$
+\end_inset
+
+发现
+\begin_inset Formula $\psi(L)=[(1-\lambda_{1}L)(1-\lambda_{2}L)...(1-\lambda_{p}L)]^{-1}$
+\end_inset
+
+，这意味着
+\begin_inset Formula $\psi(L)=[1-\phi_{1}L-\phi_{2}L^{2}-...-\phi_{p}L^{p}]^{-1}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+于是，
+\begin_inset Formula $\psi(\beta)=[1-\phi_{1}\beta-\phi_{2}\beta^{2}-...-\phi_{p}\beta^{p}]^{-1}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+结果，
+\begin_inset Formula 
+\[
+\frac{\partial\sum_{j=0}^{\infty}\beta^{j}y_{t+j}}{\partial\omega_{t}}=\frac{1}{1-\phi_{1}\beta-\phi_{2}\beta^{2}-...-\phi_{p-1}\beta^{p-1}-\phi_{p}\beta^{p}}
+\]
+
+\end_inset
+
+长期乘子就是
+\begin_inset Formula $\beta=1$
+\end_inset
+
+时的特例
+\begin_inset Formula 
+\[
+\underset{j\rightarrow\infty}{lim}\sum_{i=0}^{j}\frac{\partial y_{t+j}}{\partial\omega_{t+i}}=\frac{1}{1-\phi_{1}-\phi_{2}-...-\phi_{p-1}-\phi_{p}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Section
+初始条件及无界序列
+\end_layout
+
+\begin_layout Chapter
+平稳自回归移动过程
+\end_layout
+
+\begin_layout Section
+期望、平稳性和遍历性
+\end_layout
+
+\begin_layout Subsection
+期望和随机过程
+\end_layout
+
+\begin_layout Subsection
+自协方差
+\end_layout
+
+\begin_layout Subsection
+平稳性
+\end_layout
+
+\begin_layout Subsection
+遍历性
+\end_layout
+
+\begin_layout Itemize
+举个例子：在时间序列中，一般来说，在计算期望时，我们往往能得到的总是时间维度上的平均，而不是真正意义上的总体的平均。对于一个平稳过程来说，时间平均是否最终收敛到
+总体平均
+\begin_inset Formula $E(Y_{t})$
+\end_inset
+
+与遍历性有关。
+\end_layout
+
+\begin_layout Itemize
+一个协方差平稳过程被称作是
+\series bold
+\bar under
+关于均值遍历
+\series default
+\bar default
+的：如果当
+\begin_inset Formula $T\rightarrow\infty$
+\end_inset
+
+，时间平均依概率收敛与总体平均
+\begin_inset Formula $E(Y_{t})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+一个过程，如果当j增大时，其自协方差
+\begin_inset Formula $\gamma_{j}$
+\end_inset
+
+足够快地趋近于0，则该过程是遍历的
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+在第7章，我们会发现，如果一个协方差平稳过程的自协方差满足
+\begin_inset Formula 
+\[
+\sum_{j=0}^{\infty}|\gamma_{j}|<\infty\tag{3.1.15}
+\]
+
+\end_inset
+
+则该过程关于均值是遍历的
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+类似的可以定义
+\series bold
+\bar under
+关于二阶矩遍历
+\series default
+\bar default
+：如果
+\begin_inset Formula $\frac{1}{T-j}\sum_{t=j+1}^{T}(Y_{t}-\mu)(Y_{t-j}-\mu)\overset{p}{\rightarrow}\gamma_{j}$
+\end_inset
+
+对于所有的j都成立。【第七章会给出二阶矩遍历性的充分条件】
+\end_layout
+
+\begin_layout Itemize
+特别的，当随机过程是一个高斯平稳过程时，条件(3.1.15)足以保证该过程的所有阶矩都是遍历的。
+\end_layout
+
+\begin_layout Section
+白噪声
+\end_layout
+
+\begin_layout Section
+移动平均过程
+\end_layout
+
+\begin_layout Subsection
+一阶移动平均过程
+\end_layout
+
+\begin_layout Itemize
+过程
+\begin_inset Formula 
+\[
+Y_{t}=\mu+\varepsilon_{t}+\theta\varepsilon_{t-1}\tag{3.3.1}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\{\varepsilon_{t}\}$
+\end_inset
+
+是一个白噪声
+\end_layout
+
+\begin_layout Itemize
+矩
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $E(Y_{t})=E(\mu+\varepsilon_{t}+\theta\varepsilon_{t-1})=\mu$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $E(Y_{t}-\mu)^{2}=E(\varepsilon_{t}+\theta\varepsilon_{t-1})^{2}=(1+\theta^{2})\sigma^{2}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $E(Y_{t}-\mu)(Y_{t-j}-\mu)=E(\varepsilon_{t}+\theta\varepsilon_{t-1})(\varepsilon_{t-j}+\theta\varepsilon_{t-1-j})=\begin{cases}
+\theta\sigma^{2} & \text{，}j=1\\
+0 & \text{，}j>1
+\end{cases}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $\sum_{j=0}^{\infty}|\gamma_{j}|=(1+\theta^{2})\sigma^{2}+|\theta\sigma^{2}|$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+q阶MA
 \end_layout
 
 \end_body

@@ -195,8 +195,6 @@ class uni_tsa:
         x=np.vstack((self.arr,arr)).T
         return tsa_tools.grangercausalitytests(x,maxlag=max_lag,addconst=addconst,verbose=disp)
 
-
-
     def model(self):
         # TODO 时间序列模型参数估计，主要针对 ARIMA 模型
         pass
