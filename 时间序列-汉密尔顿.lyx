@@ -1525,5 +1525,458 @@ Y_{t} & =(c+\varepsilon_{t})+\phi(c+\varepsilon_{t-1})+\phi^{2}(c+\varepsilon_{t
 二阶自回归过程
 \end_layout
 
+\begin_layout Itemize
+考虑过程
+\begin_inset Formula 
+\[
+Y_{t}=c+\phi_{1}Y_{t-1}+\phi_{2}Y_{t-2}+\varepsilon_{t}\tag{3.4.16}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\{\varepsilon_{t}\}$
+\end_inset
+
+是白噪声序列。
+\end_layout
+
+\begin_layout Itemize
+写成滞后算子形式：
+\begin_inset Formula 
+\[
+(1-\phi_{1}L-\phi_{2}L^{2})Y_{t}=c+\varepsilon_{t}\tag{3.4.17}
+\]
+
+\end_inset
+
+由差分方程的知识，当
+\begin_inset Formula $(1-\phi_{1}z-\phi_{2}z^{2})=0$
+\end_inset
+
+的根落在单位圆之外是，式(3.4.16)才是协方差平稳的。
+\end_layout
+
+\begin_layout Itemize
+假定
+\begin_inset Formula $\psi(L)=(1-\phi_{1}L-\phi_{2}L^{2})^{-1}=\psi_{0}+\psi_{1}L+\psi_{2}L^{2}+...$
+\end_inset
+
+。在式(3.4.17)左右两边同时乘以
+\begin_inset Formula $\psi(L)$
+\end_inset
+
+，得到
+\begin_inset Formula $Y_{t}=\psi(L)c+\psi(L)\varepsilon_{t}$
+\end_inset
+
+。由此可以直接得到(
+\series bold
+\bar under
+\color red
+?
+\series default
+\bar default
+\color inherit
+)
+\begin_inset Formula 
+\begin{align*}
+ & \psi(L)c=\frac{c}{1-\phi_{1}-\phi_{2}}\\
+ & \sum_{j=0}^{\infty}|\psi_{j}|<\infty\tag{3.4.22}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+矩
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $E(Y_{t})=\frac{c}{1-\phi_{1}-\phi_{2}}=\mu$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $E(Y_{t}-\mu)^{2}=E(Y_{t}-\mu)(\phi_{1}(Y_{t-1}-\mu)+\phi_{2}(Y_{t-2}-\mu)+\varepsilon_{t})=\phi_{1}\gamma_{1}+\phi_{2}\gamma_{2}+\sigma^{2}$
+\end_inset
+
+，即
+\begin_inset Formula 
+\[
+\gamma_{0}=\phi_{1}\gamma_{1}+\phi_{2}\gamma_{2}+\sigma^{2}=\phi_{1}\rho_{1}\gamma_{0}+\phi_{2}\rho_{2}\gamma_{0}+\sigma^{2}\tag{3.4.30}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+又
+\begin_inset Formula $E(Y_{t}-\mu)(Y_{t-j}-\mu)=E(\phi_{1}(Y_{t-1}-\mu)+\phi_{2}(Y_{t-2}-\mu)+\varepsilon_{t})(Y_{t-j}-\mu)\Rightarrow\boldsymbol{\underline{\gamma_{j}=\phi_{1}\gamma_{j-1}+\phi_{2}\gamma_{j-2}}},j=1,2,3,...$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\Rightarrow\rho_{j}=\phi_{1}\rho_{j-1}+\phi_{2}\rho_{j-2},j=1,2,3,...$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+令j=1，得
+\begin_inset Formula $\rho_{1}=\frac{\phi_{1}}{1-\phi_{2}}$
+\end_inset
+
+；j=2，得
+\begin_inset Formula $\rho_{2}=\phi_{1}\rho_{1}+\phi_{2}$
+\end_inset
+
+，代入式(3.4.30)可得
+\begin_inset Formula 
+\[
+\gamma_{0}=\frac{(1-\phi_{2})\sigma^{2}}{(1+\phi_{2})[(1-\phi_{2})^{2}-\phi_{1}^{2}]}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Subsection
+p阶自回归过程
+\end_layout
+
+\begin_layout Itemize
+考虑过程
+\begin_inset Formula 
+\[
+Y_{t}=c+\phi_{1}Y_{t-1}+\phi_{2}Y_{t-2}+...+\phi_{p}Y_{t-p}+\varepsilon_{t}\tag{3.4.31}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\{\varepsilon_{t}\}$
+\end_inset
+
+是白噪声序列。
+\end_layout
+
+\begin_layout Itemize
+写成滞后算子形式：
+\begin_inset Formula 
+\[
+(1-\phi_{1}L-\phi_{2}L^{2}-...-\phi_{p}L^{p})Y_{t}=c+\varepsilon_{t}\tag{3.4.32}
+\]
+
+\end_inset
+
+由差分方程的知识，当
+\begin_inset Formula $(1-\phi_{1}z-\phi_{2}z^{2}...-\phi_{p}z^{p})=0$
+\end_inset
+
+的根落在单位圆之外是，式(3.4.32)才是协方差平稳的。
+\end_layout
+
+\begin_layout Itemize
+假定
+\begin_inset Formula $\psi(L)=(1-\phi_{1}L-\phi_{2}L^{2}-...-\phi_{p}L^{p})^{-1}=\psi_{0}+\psi_{1}L+\psi_{2}L^{2}+...$
+\end_inset
+
+，与二阶自回归类似的，在协方差平稳的条件下，我们可以得到
+\begin_inset Formula 
+\begin{align*}
+ & \mu=\frac{c}{1-\phi_{1}-...-\phi_{p}}\\
+ & \sum_{j=0}^{\infty}|\psi_{j}|<\infty\tag{3.4.34}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+矩
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $E(Y_{t})=\frac{c}{1-\phi_{1}-...-\phi_{p}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\gamma_{j}=\begin{cases}
+\phi_{1}\gamma_{j-1}+\phi_{2}\gamma_{j-2}+...+\phi_{p}\gamma_{j-p} & \text{，}j=1,2,3,...\\
+\phi_{1}\gamma_{1}+\phi_{2}\gamma_{2}+...+\phi_{p}\gamma_{p}+\sigma^{2} & \text{，}j=0
+\end{cases}$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+在上式两边同除以
+\begin_inset Formula $\gamma_{0}$
+\end_inset
+
+可得
+\begin_inset Formula $\rho_{j}=\phi_{1}\rho_{j-1}+\phi_{2}\rho_{j-2}+...+\phi_{p}\rho_{j-p}$
+\end_inset
+
+，这就是
+\begin_inset Formula $Yule-Walker$
+\end_inset
+
+方程
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Section
+混合自回归移动平均过程
+\end_layout
+
+\begin_layout Itemize
+考虑过程
+\begin_inset Formula 
+\[
+Y_{t}=c+\phi_{1}Y_{t-1}+\phi_{2}Y_{t-2}+...+\phi_{p}Y_{t-p}+\varepsilon_{t}+\theta_{1}\varepsilon_{t-1}+\theta_{2}\varepsilon_{t-2}+...+\theta_{q}\varepsilon_{t-q}\tag{3.5.1}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+滞后算子形式
+\begin_inset Formula 
+\[
+(1-\phi_{1}L-\phi_{2}L^{2}-...-\phi_{p}L^{p})Y_{t}=c+(1+\theta_{1}L+\theta_{2}L^{2}+...+\theta_{q}L^{q})\varepsilon_{t}\tag{3.5.2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+假定
+\begin_inset Formula $(1-\phi_{1}z-\phi_{2}z^{2}...-\phi_{p}z^{p})=0$
+\end_inset
+
+的根落在单位圆之外，两边同乘以
+\begin_inset Formula $(1-\phi_{1}L-\phi_{2}L^{2}-...-\phi_{p}L^{p})^{-1}$
+\end_inset
+
+可得
+\begin_inset Formula 
+\[
+Y_{t}=\mu+\psi(L)\varepsilon_{t}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\begin{align*}
+ & \psi(L)=\frac{1+\theta_{1}L+\theta_{2}L^{2}+...+\theta_{q}L^{q}}{1-\phi_{1}L-\phi_{2}L^{2}-...-\phi_{p}L^{p}}\\
+ & \sum_{j=0}^{\infty}|\psi_{j}|<\infty\\
+ & \mu=\frac{c}{1-\phi_{1}-\phi_{2}-...-\phi_{p}}
+\end{align*}
+
+\end_inset
+
+因此，ARMA过程的平稳性完全取决于AR部分的参数
+\begin_inset Formula $(\phi_{1},\phi_{2},...)$
+\end_inset
+
+，而与MA部分无关。
+\end_layout
+
+\begin_layout Itemize
+与之前类似的，我们将ARMA写成均值离差形式，然后两边同乘以
+\begin_inset Formula $Y_{t-j}-\mu$
+\end_inset
+
+(j>q)并取期望可得
+\begin_inset Formula 
+\[
+\gamma_{j}=\phi_{1}\gamma_{j-1}+\phi_{2}\gamma_{j-2}+...+\phi_{p}\gamma_{j-p}\,,\,j=q+1,q+2,...\tag{3.5.5}
+\]
+
+\end_inset
+
+注意，当
+\begin_inset Formula $j\leq q$
+\end_inset
+
+，由于
+\begin_inset Formula $\theta_{j}\varepsilon_{t-j}$
+\end_inset
+
+与
+\begin_inset Formula $Y_{t-j}$
+\end_inset
+
+之间存在相关关系，因此式(3.5.5)不适用。当
+\begin_inset Formula $j>q$
+\end_inset
+
+且有相异的自回归根时，自协方差为
+\begin_inset Formula 
+\[
+\gamma_{j}=h_{1}\lambda_{1}^{j}+h_{2}\lambda_{2}^{j}+...+h_{p}\lambda_{p}^{j}\tag{3.5.6}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+注意，ARMA过程有过度参数化的可能，因为一个
+\begin_inset Formula $ARMA(p,q)$
+\end_inset
+
+过程可以两端同乘以
+\begin_inset Formula $1+\rho L$
+\end_inset
+
+而变成
+\begin_inset Formula $ARMA(p+1,q+1)$
+\end_inset
+
+过程。
+\end_layout
+
+\begin_layout Section
+自协方差生成函数
+\end_layout
+
+\begin_layout Itemize
+我们在研究时间序列是否平稳时，总会计算它的自协方差序列
+\begin_inset Formula $\{\gamma_{j}\}_{j=-\infty}^{\infty}$
+\end_inset
+
+。如果这个序列是绝对可加的，那么一种概括这些协方差的方法是运用一个标量值函数，这就是我们接下来要探讨的自协方差生成函数：
+\begin_inset Formula 
+\[
+g_{Y}(z)=\sum_{j=-\infty}^{\infty}\gamma_{j}z^{j}\tag{3.6.1}
+\]
+
+\end_inset
+
+前面提到的平稳
+\begin_inset Formula $ARMA(p,q)$
+\end_inset
+
+过程可以写成
+\begin_inset Formula 
+\[
+Y_{t}-\mu=\frac{1+\theta_{1}L+\theta_{2}L^{2}+...+\theta_{q}L^{q}}{1-\phi_{1}L-\phi_{2}L^{2}-...-\phi_{p}L^{p}}\varepsilon_{t}=\frac{\theta(L)}{\phi(L)}\varepsilon_{t}
+\]
+
+\end_inset
+
+对应的自协方差生成函数可写为
+\begin_inset Formula 
+\[
+g_{Y}(z)=\frac{\sigma^{2}(1+\theta_{1}z+\theta_{2}z^{2}+...+\theta_{q}z^{q})(1+\theta_{1}z^{-1}+\theta_{2}z^{-2}+...+\theta_{q}z^{-q})}{(1-\phi_{1}z-\phi_{2}z^{2}-...-\phi_{p}z^{p})(1-\phi_{1}z^{-1}-\phi_{2}z^{-2}-...-\phi_{p}z^{-p})}=\sigma^{2}\frac{\theta(z)\cdot\theta(z^{-1})}{\phi(z)\cdot\phi(z^{-1})}\tag{3.6.10}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+一个例子：AR(1)
+\end_layout
+
+\begin_layout Subsection
+滤子
+\end_layout
+
+\begin_layout Itemize
+有时候数据需要过滤，或者说在进行分析之前要对数据进行的一种特别处理，那么这种处理会对自协方差产生什么影响呢？
+\end_layout
+
+\begin_layout Itemize
+假定原始数据序列
+\begin_inset Formula $\{Y_{t}\}$
+\end_inset
+
+是平稳的，令数据按照下述方式过滤
+\begin_inset Formula 
+\[
+X_{t}=h(L)Y_{t}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\begin{align*}
+ & h(L)=\sum_{j=-\infty}^{\infty}h_{j}L^{j}\\
+ & \sum_{j=-\infty}^{\infty}|h_{j}|<\infty
+\end{align*}
+
+\end_inset
+
+则观测值可以由下式生成
+\begin_inset Formula 
+\[
+X_{t}=h(1)\mu+h(L)\frac{\theta(L)}{\phi(L)}\varepsilon_{t}\equiv\mu^{*}+\psi^{*}(L)\varepsilon_{t}
+\]
+
+\end_inset
+
+而且可以证明与复合算子
+\begin_inset Formula $\{\psi_{j}^{*}\}_{j=-\infty}^{\infty}$
+\end_inset
+
+有关的系数构成的序列是绝对可加的。
+\end_layout
+
+\begin_layout Itemize
+序列
+\begin_inset Formula $\{X_{t}\}$
+\end_inset
+
+对应的自协方差生成函数：
+\begin_inset Formula 
+\begin{align*}
+g_{X}(z) & =\sigma^{2}\psi^{*}(z)\psi^{*}(z^{-1})\\
+ & =\sigma^{2}h(z)\frac{\theta(z)}{\phi(z)}h(z^{-1})\frac{\theta(z^{-1})}{\phi(z^{-1})}\\
+ & =h(z)h(z^{-1})g_{Y}(z)\tag{3.6.17}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+可逆性
+\end_layout
+
 \end_body
 \end_document
