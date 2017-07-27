@@ -1249,7 +1249,7 @@ Y_{t}=\mu+\varepsilon_{t}+\theta\varepsilon_{t-1}\tag{3.3.1}
 
 \end_deeper
 \begin_layout Itemize
-\begin_inset Formula $\sum_{j=0}^{\infty}|\gamma_{j}|=(1+\theta^{2})\sigma^{2}+|\theta\sigma^{2}|$
+\begin_inset Formula $\sum_{j=0}^{\infty}|\gamma_{j}|=(1+\theta^{2})\sigma^{2}+|\theta\sigma^{2}|<\infty$
 \end_inset
 
 
@@ -1257,6 +1257,272 @@ Y_{t}=\mu+\varepsilon_{t}+\theta\varepsilon_{t-1}\tag{3.3.1}
 
 \begin_layout Subsection
 q阶MA
+\end_layout
+
+\begin_layout Itemize
+过程
+\begin_inset Formula 
+\[
+Y_{t}=\mu+\varepsilon_{t}+\theta_{1}\varepsilon_{t-1}+\theta_{2}\varepsilon_{t-2}+...+\theta_{q}\varepsilon_{t-q}\tag{3.3.8}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\{\varepsilon_{t}\}$
+\end_inset
+
+是一个白噪声
+\end_layout
+
+\begin_layout Itemize
+矩
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula 
+\[
+E(Y_{t})=E(\mu+\varepsilon_{t}+\theta_{1}\varepsilon_{t-1}+\theta_{2}\varepsilon_{t-2}+...+\theta_{q}\varepsilon_{t-q})=\mu
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+E(Y_{t}-\mu)^{2}=E(\varepsilon_{t}+\theta_{1}\varepsilon_{t-1}+\theta_{2}\varepsilon_{t-2}+...+\theta_{q}\varepsilon_{t-q})^{2}=(1+\theta_{1}^{2}+\theta_{2}^{2}+...+\theta_{q}^{2})\sigma^{2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+E(Y_{t}-\mu)(Y_{t-j}-\mu) & =E(\varepsilon_{t}+\theta_{1}\varepsilon_{t-1}+\theta_{2}\varepsilon_{t-2}+...+\theta_{q}\varepsilon_{t-q})(\varepsilon_{t-j}+\theta_{1}\varepsilon_{t-1-j}+\theta_{2}\varepsilon_{t-2-j}+...+\theta_{q}\varepsilon_{t-q-j})\\
+ & =\begin{cases}
+[\theta_{j}+\theta_{j+1}\theta_{1}+...+\theta_{q}\theta_{q-j}]\sigma^{2} & \text{，}j=1,2,...,q\\
+0 & \text{，}j>q
+\end{cases}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $\sum_{j=0}^{\infty}|\gamma_{j}|=\sum_{j=0}^{q}|\gamma_{j}|<\infty$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+无限阶MA
+\end_layout
+
+\begin_layout Itemize
+过程
+\begin_inset Formula 
+\begin{align*}
+Y_{t} & =\mu+\varepsilon_{t}+\theta_{1}\varepsilon_{t-1}+\theta_{2}\varepsilon_{t-2}+...\\
+ & =\mu+\sum_{j=0}^{\infty}\theta_{j}\varepsilon_{t-j}\tag{3.3.13}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula $\{\varepsilon_{t}\}$
+\end_inset
+
+是一个白噪声
+\end_layout
+
+\begin_layout Itemize
+平稳的充分条件：
+\begin_inset Formula $\sum_{j=0}^{\infty}\theta_{j}^{2}<\infty$
+\end_inset
+
+(平方可加)，或者更强一点：
+\begin_inset Formula $\sum_{j=0}^{\infty}|\theta_{j}|<\infty$
+\end_inset
+
+(绝对可加)
+\end_layout
+
+\begin_layout Itemize
+矩
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $E(Y_{t})=\underset{T\rightarrow\infty}{lim}E(\mu+\varepsilon_{t}+\theta_{1}\varepsilon_{t-1}+\theta_{2}\varepsilon_{t-2}+...+\theta_{T}\varepsilon_{t-T})=\mu$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $E(Y_{t}-\mu)^{2}=\underset{T\rightarrow\infty}{lim}E(\varepsilon_{t}+\theta_{1}\varepsilon_{t-1}+\theta_{2}\varepsilon_{t-2}+...+\theta_{T}\varepsilon_{t-T})^{2}=\underset{T\rightarrow\infty}{lim}(1+\theta_{1}^{2}+\theta_{2}^{2}+...+\theta_{T}^{2})\sigma^{2}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $E(Y_{t}-\mu)(Y_{t-j}-\mu)=\sigma^{2}(\theta_{j}\theta_{0}+\theta_{j+1}\theta_{1}+\theta_{j+2}\theta_{2}+...)$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+一个系数绝对可加的
+\begin_inset Formula $MA(\infty)$
+\end_inset
+
+过程的自协方差也是绝对可加的：
+\begin_inset Formula $\sum_{j=0}^{\infty}|\gamma_{j}|<\infty$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+自回归过程
+\end_layout
+
+\begin_layout Subsection
+一阶自回归过程
+\end_layout
+
+\begin_layout Itemize
+考虑过程
+\begin_inset Formula 
+\[
+Y_{t}=c+\phi Y_{t-1}+\varepsilon_{t}\tag{3.4.1}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\{\varepsilon_{t}\}$
+\end_inset
+
+是白噪声序列。
+\end_layout
+
+\begin_layout Itemize
+从前面的差分方程可以知道：当
+\begin_inset Formula $|\phi|\geq1$
+\end_inset
+
+时，不存在满足式(3.4.1)且具有有限方差的协方差平稳序列
+\begin_inset Formula $Y_{t}$
+\end_inset
+
+。当
+\begin_inset Formula $|\phi|<1$
+\end_inset
+
+时，存在一个满足(3.4.1)的协方差平稳过程，下面就是平稳解
+\begin_inset Formula 
+\begin{align*}
+Y_{t} & =(c+\varepsilon_{t})+\phi(c+\varepsilon_{t-1})+\phi^{2}(c+\varepsilon_{t-2})+...\\
+ & =\frac{c}{1-\phi}+\varepsilon_{t}+\phi\varepsilon_{t-1}+\phi^{2}\varepsilon_{t-2}+\phi^{3}\varepsilon_{t-3}+...\tag{3.4.2}
+\end{align*}
+
+\end_inset
+
+上式可以看作是一个
+\begin_inset Formula $MA(\infty)$
+\end_inset
+
+，显然
+\begin_inset Formula $\sum_{j=0}^{\infty}|\theta_{j}|=\sum_{j=0}^{\infty}|\phi|^{j}=\frac{1}{1-|\phi|}$
+\end_inset
+
+(
+\begin_inset Formula $|\phi|<1$
+\end_inset
+
+)【该条件不仅保证了
+\begin_inset Formula $MA(\infty)$
+\end_inset
+
+表示的存在，也保证了
+\begin_inset Formula $AR(1)$
+\end_inset
+
+是关于均值遍历的】
+\end_layout
+
+\begin_layout Itemize
+矩
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $E(Y_{t})=\frac{c}{1-\phi}=\mu$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $E(Y_{t}-\mu)^{2}=E(\varepsilon_{t}+\phi\varepsilon_{t-1}+\phi^{2}\varepsilon_{t-2}+\phi^{3}\varepsilon_{t-3}+...)^{2}=(1+\phi^{2}+\phi^{4}+...)\sigma^{2}=\frac{\sigma^{2}}{1-\phi^{2}}=\gamma_{0}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $E(Y_{t}-\mu)(Y_{t-j}-\mu)=E(\varepsilon_{t}+\phi\varepsilon_{t-1}+\phi^{2}\varepsilon_{t-2}+\phi^{3}\varepsilon_{t-3}+...)(\varepsilon_{t-j}+\phi\varepsilon_{t-j-1}+\phi^{2}\varepsilon_{t-j-2}+\phi^{3}\varepsilon_{t-j-3}+...)=\frac{\phi^{j}}{1-\phi^{2}}\sigma^{2}=\phi^{j}\gamma_{0}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+对式(3.4.1)变形：
+\begin_inset Formula $Y_{t}-\mu=\phi(Y_{t-1}-\mu)+\varepsilon_{t}$
+\end_inset
+
+，两边同时乘以
+\begin_inset Formula $Y_{t-1}-\mu$
+\end_inset
+
+并取期望可得：
+\begin_inset Formula $\gamma_{1}=\phi\gamma_{0}$
+\end_inset
+
+；如果两边同乘以
+\begin_inset Formula $Y_{t-j}-\mu$
+\end_inset
+
+(j>0)并取期望可得：
+\begin_inset Formula $\gamma_{j}=\phi\gamma_{j-1}$
+\end_inset
+
+，进一步可得到
+\begin_inset Formula $\gamma_{j}=\phi\gamma_{0}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+二阶自回归过程
 \end_layout
 
 \end_body
