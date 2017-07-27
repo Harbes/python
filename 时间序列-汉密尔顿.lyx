@@ -1978,5 +1978,529 @@ g_{X}(z) & =\sigma^{2}\psi^{*}(z)\psi^{*}(z^{-1})\\
 可逆性
 \end_layout
 
+\begin_layout Subsection
+MA(1)过程的可逆性
+\end_layout
+
+\begin_layout Itemize
+假定一个MA(1)是由一个可逆表示的方程生成，那么必然存在一个可以同样有效地描述上述数据的不可逆表示。
+\end_layout
+
+\begin_layout Itemize
+尽管从可行性角度考虑，人们倾向于使用可逆表示，但可逆表示和不可逆表示可以同等出色地表征任何给定的数据。
+\end_layout
+
+\begin_layout Subsection
+MA(q)过程的可逆性
+\end_layout
+
+\begin_layout Itemize
+当
+\begin_inset Formula $(1+\theta_{1}z+\theta_{2}z^{2}+...+\theta_{q}z^{q})=0$
+\end_inset
+
+的根落在单位圆之外，则MA(q)可以写成
+\begin_inset Formula $AR(\infty)$
+\end_inset
+
+的形式，因而此时的MA(q)表示式是可逆的
+\end_layout
+
+\begin_layout Itemize
+求可逆表示的步骤(Hansen and Sargent建议)
+\end_layout
+
+\begin_layout Section
+附录：无限阶移动平均过程的收敛结论
+\end_layout
+
+\begin_layout Chapter
+预测
+\end_layout
+
+\begin_layout Section
+预测的原理
+\end_layout
+
+\begin_layout Subsection
+基于条件期望的预测
+\end_layout
+
+\begin_layout Subsection
+基于线性投影的预测
+\end_layout
+
+\begin_layout Itemize
+一般来说，
+\begin_inset Formula $MSE[\hat{P}(Y_{t+1}|X_{t})]\geq MSE[E(Y_{t+1}|X_{t})]$
+\end_inset
+
+，因为条件期望给出了所有可能预测中的最优预测
+\end_layout
+
+\begin_layout Subsection
+线性投影的性质
+\end_layout
+
+\begin_layout Subsection
+线性投影和OLS
+\end_layout
+
+\begin_layout Itemize
+基于线性投影的预测仅要求相关关系，而不需要分析因果关系
+\end_layout
+
+\begin_layout Subsection
+预测向量
+\end_layout
+
+\begin_layout Section
+基于无限个观测的预测
+\end_layout
+
+\begin_layout Subsection
+基于滞后
+\begin_inset Formula $\varepsilon$
+\end_inset
+
+的预测
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\hat{E}[Y_{t+s}|\varepsilon_{t},\varepsilon_{t-1},...]=\mu+[\frac{\psi(L)}{L^{s}}]_{+}\varepsilon_{t}\tag{4.2.9}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+基于滞后Y的预测
+\end_layout
+
+\begin_layout Itemize
+考虑一个
+\begin_inset Formula $ARMA$
+\end_inset
+
+过程
+\begin_inset Formula 
+\[
+\phi(L)(Y_{t}-\mu)=\theta(L)\varepsilon_{t}
+\]
+
+\end_inset
+
+其中自回归算子满足平稳性条件(
+\begin_inset Formula $\phi(z)=0$
+\end_inset
+
+的根全部落在单位圆之外)，并且移动平均算子满足可逆性条件(
+\begin_inset Formula $\theta(z)=0$
+\end_inset
+
+的根全部落在单位圆之外)。
+\end_layout
+
+\begin_layout Itemize
+假定上述
+\begin_inset Formula $ARMA$
+\end_inset
+
+过程有一个
+\begin_inset Formula $AR(\infty)$
+\end_inset
+
+表示
+\begin_inset Formula 
+\[
+\eta(L)(Y_{t}-\mu)=\varepsilon_{t}\tag{4.2.10}
+\]
+
+\end_inset
+
+于是AR多项式
+\begin_inset Formula $\eta(L)$
+\end_inset
+
+和
+\begin_inset Formula $\phi(L)$
+\end_inset
+
+、
+\begin_inset Formula $\theta(L)$
+\end_inset
+
+存在的关系：
+\begin_inset Formula $\eta(L)=\frac{\phi(L)}{\theta(L)}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+上述
+\begin_inset Formula $ARMA$
+\end_inset
+
+过程还有一个
+\begin_inset Formula $MA(\infty)$
+\end_inset
+
+表示
+\begin_inset Formula 
+\[
+Y_{t}-\mu=\psi(L)\varepsilon_{t}
+\]
+
+\end_inset
+
+显然AR多项式与MA多项式存在关系
+\begin_inset Formula $\eta(L)=[\psi(L)]^{-1}$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+利用“基于滞后
+\begin_inset Formula $\varepsilon$
+\end_inset
+
+的预测”，我们有
+\begin_inset Formula 
+\[
+\hat{E}[Y_{t+s}|Y_{t},Y_{t-1},...]=\mu+[\frac{\psi(L)}{L^{s}}]_{+}\eta(L)(Y_{t}-\mu)
+\]
+
+\end_inset
+
+或者
+\begin_inset Formula 
+\[
+\hat{E}[Y_{t+s}|Y_{t},Y_{t-1},...]=\mu+[\frac{\psi(L)}{L^{s}}]_{+}\frac{1}{\psi(L)}(Y_{t}-\mu)\tag{4.2.16}
+\]
+
+\end_inset
+
+方程(4.2.16)被称作
+\series bold
+\bar under
+维纳-柯尔莫哥洛夫(Wiener-Kolmogorov)
+\series default
+\bar default
+预测公式。下面给出一些利用这个预测规则的例子（实际中，我们往往只能观测到Y值，所以，W-K预测公式很有用）
+\end_layout
+
+\begin_layout Subsection
+预测一个AR(1)过程
+\end_layout
+
+\begin_layout Itemize
+对于一个协方差平稳的AR(1)过程，有
+\begin_inset Formula 
+\[
+\psi(L)=\frac{1}{1-\phi L}=1+\phi L+\phi^{2}L^{2}+...
+\]
+
+\end_inset
+
+且
+\begin_inset Formula 
+\[
+[\frac{\psi(L)}{L^{s}}]_{+}=\phi^{s}+\phi^{s+1}L+\phi^{s+2}L^{2}+...=\frac{\phi^{s}}{1-\phi L}\tag{4.2.18}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+代入W-K预测公式中，可得
+\begin_inset Formula 
+\begin{align*}
+\hat{E}[Y_{t+s}|Y_{t},Y_{t-1},...] & =\mu+\frac{\phi^{s}}{1-\phi L}(1-\phi L)(Y_{t}-\mu)\\
+ & =\mu+\phi^{s}(Y_{t}-\mu)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+预测误差为
+\begin_inset Formula 
+\[
+MSE(Y_{t+s}-\hat{E}[Y_{t+s}|Y_{t},Y_{t-1},...])=[1+\phi^{2}+\phi^{4}+...+\phi^{2(s-1)}]\sigma^{2}
+\]
+
+\end_inset
+
+随着s的增加，上述预测误差趋近于Y的无条件方差
+\begin_inset Formula $\frac{\sigma^{2}}{1-\phi^{2}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+预测AR(p)过程
+\end_layout
+
+\begin_layout Itemize
+由前面的差分方程可得
+\begin_inset Formula 
+\begin{align*}
+Y_{t+s}-\mu & =f_{11}^{(s)}(Y_{t}-\mu)+f_{12}^{(s)}(Y_{t-1}-\mu)+...+f_{1p}^{(s)}(Y_{t-p+1}-\mu)\\
+ & +\varepsilon_{t+s}+f_{11}^{(1)}\varepsilon_{t+s-1}+f_{11}^{(2)}\varepsilon_{t+s-2}+...+f_{11}^{(s-1)}\varepsilon_{t+1}\tag{4.2.20}
+\end{align*}
+
+\end_inset
+
+观察上式结构发现，
+\begin_inset Formula $Y_{t+s}-\mu$
+\end_inset
+
+由初始值
+\begin_inset Formula $Y_{t}-\mu,Y_{t-1}-\mu,...$
+\end_inset
+
+和继后值
+\begin_inset Formula $\{\varepsilon_{t+1},\varepsilon_{t+2},...\}$
+\end_inset
+
+两部分组成，因而，很容易得到
+\begin_inset Formula 
+\[
+\hat{Y}_{t+s|t}=\mu+f_{11}^{(s)}(Y_{t}-\mu)+f_{12}^{(s)}(Y_{t-1}-\mu)+...+f_{1p}^{(s)}(Y_{t-p+1}-\mu)\tag{4.2.22}
+\]
+
+\end_inset
+
+相应的预测误差
+\begin_inset Formula 
+\[
+Y_{t+a}-\hat{Y}_{t+s|t}=\varepsilon_{t+s}+f_{11}^{(1)}\varepsilon_{t+s-1}+f_{11}^{(2)}\varepsilon_{t+s-2}+...+f_{11}^{(s-1)}\varepsilon_{t+1}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+预测一个MA(1)过程
+\end_layout
+
+\begin_layout Itemize
+考察一个可逆的MA(1)过程
+\begin_inset Formula 
+\[
+Y_{t}-\mu=(1+\theta L)\varepsilon_{t}\tag{4.2.28}
+\]
+
+\end_inset
+
+应用W-K预测公式
+\begin_inset Formula 
+\begin{align*}
+\hat{Y}_{t+s|t} & =\mu+[\frac{1+\theta L}{L^{s}}]_{+}\frac{1}{1+\theta L}(Y_{t}-\mu)\\
+ & =\begin{cases}
+\mu+\theta(Y_{t}-\mu)-\theta^{2}(Y_{t-1}-\mu)+\theta^{3}(Y_{t-2}-\mu)-... & \text{，}s=1\\
+\mu & \text{，}s>1
+\end{cases}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+预测一个MA(q)过程
+\end_layout
+
+\begin_layout Itemize
+考察一个可逆的MA(1)过程
+\begin_inset Formula 
+\[
+Y_{t}-\mu=(1+\theta_{1}L+\theta_{2}L^{2}+...+\theta_{q}L^{q})\varepsilon_{t}
+\]
+
+\end_inset
+
+应用W-K预测公式
+\begin_inset Formula 
+\begin{align*}
+\hat{Y}_{t+s|t} & =\mu+[\frac{1+\theta_{1}L+\theta_{2}L^{2}+...+\theta_{q}L^{q}}{L^{s}}]_{+}\varepsilon_{t}\\
+ & =\begin{cases}
+\mu+(\theta_{s}+\theta_{s+1}L+\theta_{s+2}L^{2}+...+\theta_{q}L^{q-s})\hat{\varepsilon}_{t} & \text{，}s=1,2,...,q\\
+\mu & \text{，}s>q
+\end{cases}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula $\hat{\varepsilon}_{t}$
+\end_inset
+
+需要通过递归式
+\begin_inset Formula $\hat{\varepsilon}_{t}=(Y_{t}-\mu)-\theta_{1}\hat{\varepsilon}_{t-1}-\theta_{2}\hat{\varepsilon}_{t-2}-...-\theta_{q}\hat{\varepsilon}_{t-q}$
+\end_inset
+
+来表征。
+\end_layout
+
+\begin_layout Subsection
+预测一个ARMA(1,1)过程
+\end_layout
+
+\begin_layout Itemize
+考虑一个平稳(
+\begin_inset Formula $|\phi|<1$
+\end_inset
+
+)且可逆(
+\begin_inset Formula $|\theta|<1$
+\end_inset
+
+)的ARMA(1,1)过程
+\begin_inset Formula 
+\[
+(1-\phi L)(Y_{t}-\mu)=(1+\theta L)\varepsilon_{t}
+\]
+
+\end_inset
+
+应用W-K预测公式
+\begin_inset Formula 
+\[
+\hat{Y}_{t+s|t}=\mu+[\frac{1+\theta L}{(1-\phi L)L^{s}}]_{+}\frac{1-\phi L}{1+\theta L}(Y_{t}-\mu)\tag{4.2.37}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\begin{align*}
+[\frac{1+\theta L}{(1-\phi L)L^{s}}]_{+} & =[\frac{(1+\phi L+\phi^{2}L^{2}+...)}{L^{s}}+\frac{\theta L(1+\phi L+\phi^{2}L^{2}+...)}{L^{s}}]_{+}\\
+ & =(\phi^{s}+\phi^{s+1}L+\phi^{s+2}L^{2}+...)+\theta(\phi^{s-1}+\phi^{s}L+\phi^{s+1}L^{2}+...)\\
+ & =(\phi^{s}+\theta\phi^{s-1})(1+\phi L+\phi^{2}L^{2}+...)\\
+ & =\frac{\phi^{s}+\theta\phi^{s-1}}{1-\phi L}
+\end{align*}
+
+\end_inset
+
+代入前式可得
+\begin_inset Formula 
+\begin{align*}
+\hat{Y}_{t+s|t} & =\mu+\frac{\phi^{s}+\theta\phi^{s-1}}{1-\phi L}\frac{1-\phi L}{1+\theta L}(Y_{t}-\mu)\\
+ & =\mu+\frac{\phi^{s}+\theta\phi^{s-1}}{1+\theta L}(Y_{t}-\mu)\tag{4.2.39}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+由上式可得，当s>1时，有
+\begin_inset Formula $\hat{Y}_{t+s|t}-\mu=\phi(\hat{Y}_{t+s-1|t}-\mu)$
+\end_inset
+
+；当s=1时，
+\begin_inset Formula $\hat{Y}_{t+1|t}-\mu=\frac{\phi+\theta}{1+\theta L}(Y_{t}-\mu)=\frac{\phi(1+\theta L)+\theta(1-\phi L)}{1+\theta L}(Y_{t}-\mu)=\phi(Y_{t}-\mu)+\theta\hat{\varepsilon}_{t}$
+\end_inset
+
+，其中
+\begin_inset Formula $\hat{\varepsilon}_{t}=\frac{(1-\phi L)}{1+\theta L}(Y_{t}-\mu)=(Y_{t}-\mu)-\phi(Y_{t-1}-\mu)-\theta\hat{\varepsilon}_{t-1}=Y_{t}-\hat{Y}_{t|t-1}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+预测一个ARMA(p,q)过程
+\end_layout
+
+\begin_layout Itemize
+考虑一个平稳(
+\begin_inset Formula $\phi(z)=0$
+\end_inset
+
+的根全在单位圆外)且可逆(
+\begin_inset Formula $\theta(z)=0$
+\end_inset
+
+的根全在单位圆外)的ARMA(1,1)过程
+\begin_inset Formula 
+\[
+(1-\phi_{1}L-\phi_{2}L^{2}-...-\phi_{p}L^{p})(Y_{t}-\mu)=(1+\theta_{1}L+\theta_{2}L^{2}+...+\theta_{q}L^{q})\varepsilon_{t}
+\]
+
+\end_inset
+
+使用递归方法
+\begin_inset Formula 
+\begin{align*}
+\hat{Y}_{t+1|t}-\mu & =\phi_{1}(Y_{t}-\mu)+\phi_{2}(Y_{t-1}-\mu)+...+\phi_{p}(Y_{t-p+1}-\mu)\\
+ & +\theta_{1}\hat{\varepsilon}_{t}+\theta_{2}\hat{\varepsilon}_{t-1}+...+\theta_{q}\hat{\varepsilon}_{t-q+1}\tag{4.2.43}
+\end{align*}
+
+\end_inset
+
+于是s期预测为
+\begin_inset Formula 
+\[
+\hat{Y}_{t+1|t}-\mu=\begin{cases}
+\phi_{1}(\hat{Y}_{t+s-1|t}-\mu)+\phi_{2}(\hat{Y}_{t+s-2|t}-\mu)+...+\phi_{p}(\hat{Y}_{t+s-p|t}-\mu)\\
+\hfill+\theta_{s}\hat{\varepsilon}_{t}+\theta_{s+1}\hat{\varepsilon}_{t-1}+...+\theta_{q}\hat{\varepsilon}_{t-q+s} & \text{，}s=1,2,...,q\\
+\phi_{1}(\hat{Y}_{t+s-1|t}-\mu)+\phi_{2}(\hat{Y}_{t+s-2|t}-\mu)+...+\phi_{p}(\hat{Y}_{t+s-p|t}-\mu) & \text{，}s>q
+\end{cases}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+基于有限个观测的预测
+\end_layout
+
+\begin_layout Itemize
+前面的内容中：当预测一个AR(p)过程时，最优s期预测事实上只用了最近的p个数值
+\begin_inset Formula $\{Y_{t},Y_{t-1},...,Y_{t-p+1}\}$
+\end_inset
+
+；当预测一个MA或者ARMA过程时，原理上，利用W-K预测公式可能需要Y的全部历史数据
+\end_layout
+
+\begin_layout Subsection
+最优预测的近似
+\end_layout
+
+\begin_layout Standard
+一种基于有限个观测值的方法就是在基于无限个观测值的基础上，假定样本之前的
+\begin_inset Formula $\varepsilon$
+\end_inset
+
+都是0，即
+\begin_inset Formula 
+\[
+\hat{E}(Y_{t+s}|Y_{t},Y_{t-1},...)\cong\hat{E}(Y_{t+s}|Y_{t},Y_{t-1},...,Y_{t-m+1},\varepsilon_{t-m}=0,\varepsilon_{t-m-1}=0,...)\tag{4.3.1}
+\]
+
+\end_inset
+
+
+\end_layout
+
 \end_body
 \end_document
