@@ -2486,8 +2486,8 @@ Y_{t}-\mu=(1+\theta_{1}L+\theta_{2}L^{2}+...+\theta_{q}L^{q})\varepsilon_{t}
 最优预测的近似
 \end_layout
 
-\begin_layout Standard
-一种基于有限个观测值的方法就是在基于无限个观测值的基础上，假定样本之前的
+\begin_layout Itemize
+一种基于有限个观测值的方法就是：在基于无限个观测值的基础上，假定样本之前的
 \begin_inset Formula $\varepsilon$
 \end_inset
 
@@ -2500,6 +2500,418 @@ Y_{t}-\mu=(1+\theta_{1}L+\theta_{2}L^{2}+...+\theta_{q}L^{q})\varepsilon_{t}
 \end_inset
 
 
+\end_layout
+
+\begin_layout Itemize
+上述的思想是，随着时间的推进，“初始值”的影响会逐渐趋于0，那么对于移动平均过程来说，当
+\begin_inset Formula $\theta$
+\end_inset
+
+接近1甚至大于1的话，式(4.3.1)就不太适合了。
+\end_layout
+
+\begin_layout Subsection
+精确有限样本预测
+\end_layout
+
+\begin_layout Itemize
+另一种方法就是计算
+\begin_inset Formula $Y_{t+1}$
+\end_inset
+
+关于它的m个最近值的精确投影，令
+\begin_inset Formula 
+\[
+\boldsymbol{X_{t}}\equiv\left[\begin{array}{c}
+1\\
+Y_{t}\\
+Y_{t-1}\\
+\vdots\\
+Y_{t-m+1}
+\end{array}\right]
+\]
+
+\end_inset
+
+记基于最近m个值的线性投影系数为
+\begin_inset Formula $\boldsymbol{\alpha}^{(m)}$
+\end_inset
+
+，则
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{\alpha}^{(m)} & \equiv\left[\begin{array}{c}
+\alpha_{0}^{(m)}\\
+\alpha_{1}^{(m)}\\
+\alpha_{2}^{(m)}\\
+\vdots\\
+\alpha_{m}^{(m)}
+\end{array}\right]=[E(\boldsymbol{X_{t}X_{t}^{'}})]^{-1}E(\boldsymbol{X_{t}}Y_{t+1})\\
+ & =\left[\begin{array}{ccccc}
+1 & \mu & \mu & \cdots & \mu\\
+\mu & \gamma_{0}+\mu^{2} & \gamma_{1}+\mu^{2} & \cdots & \gamma_{m-1}+\mu^{2}\\
+\mu & \gamma_{1}+\mu^{2} & \gamma_{0}+\mu^{2} & \cdots & \gamma_{m-2}+\mu^{2}\\
+\vdots & \vdots & \vdots & \cdots & \vdots\\
+\mu & \gamma_{m-1}+\mu^{2} & \gamma_{m-2}+\mu^{2} & \cdots & \gamma_{0}+\mu^{2}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+\mu\\
+\gamma_{1}+\mu^{2}\\
+\gamma_{2}+\mu^{2}\\
+\vdots\\
+\gamma_{m}+\mu^{2}
+\end{array}\right]\tag{4.3.6}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+当
+\begin_inset Formula $\boldsymbol{X_{t}}$
+\end_inset
+
+包含常数项，则写成均值离差形式更简单：
+\begin_inset Formula 
+\[
+\boldsymbol{X_{t}}\equiv\left[\begin{array}{c}
+Y_{t}-\mu\\
+Y_{t-1}-\mu\\
+Y_{t-2}-\mu\\
+\vdots\\
+Y_{t-m+1}-\mu
+\end{array}\right]
+\]
+
+\end_inset
+
+线性投影系数为
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{\alpha}^{(m)} & \equiv\left[\begin{array}{c}
+\alpha_{1}^{(m)}\\
+\alpha_{2}^{(m)}\\
+\alpha_{3}^{(m)}\\
+\vdots\\
+\alpha_{m}^{(m)}
+\end{array}\right]=[E(\boldsymbol{X_{t}X_{t}^{'}})]^{-1}E(\boldsymbol{X_{t}}(Y_{t+1}-\mu))\\
+ & =\left[\begin{array}{cccc}
+\gamma_{0} & \gamma_{1} & \cdots & \gamma_{m-1}\\
+\gamma_{1} & \gamma_{0} & \cdots & \gamma_{m-2}\\
+\vdots & \vdots & \cdots & \vdots\\
+\gamma_{m-1} & \gamma_{m-2} & \cdots & \gamma_{0}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+\gamma_{1}\\
+\gamma_{2}\\
+\vdots\\
+\gamma_{m}
+\end{array}\right]\tag{4.3.8}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+推广到任意s期预测
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{\alpha}^{(m,s)} & \equiv\left[\begin{array}{c}
+\alpha_{1}^{(m,s)}\\
+\alpha_{2}^{(m,s)}\\
+\alpha_{3}^{(m,s)}\\
+\vdots\\
+\alpha_{m}^{(m,s)}
+\end{array}\right]=[E(\boldsymbol{X_{t}X_{t}^{'}})]^{-1}E(\boldsymbol{X_{t}}(Y_{t+s}-\mu))\\
+ & =\left[\begin{array}{cccc}
+\gamma_{0} & \gamma_{1} & \cdots & \gamma_{m-1}\\
+\gamma_{1} & \gamma_{0} & \cdots & \gamma_{m-2}\\
+\vdots & \vdots & \cdots & \vdots\\
+\gamma_{m-1} & \gamma_{m-2} & \cdots & \gamma_{0}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+\gamma_{s}\\
+\gamma_{s+1}\\
+\vdots\\
+\gamma_{m+s-1}
+\end{array}\right]\tag{4.3.9}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+有几种计算式(4.3.8)的简便算法：一种是第13章要讨论的卡尔曼滤波；另一种是基于矩阵的因式分解。本章后面讨论的主要是第二种方法。
+\end_layout
+
+\begin_layout Section
+正定对称矩阵的三角分解
+\end_layout
+
+\begin_layout Itemize
+对任意一个
+\series bold
+\bar under
+正定对称(n*n)矩阵
+\series default
+\bar default
+
+\begin_inset Formula $\Omega$
+\end_inset
+
+，都有唯一的(分解)表示形式：
+\begin_inset Formula 
+\[
+\boldsymbol{\Omega=ADA^{'}}\tag{4.4.1}
+\]
+
+\end_inset
+
+其中，
+\series bold
+
+\begin_inset Formula $\boldsymbol{A}$
+\end_inset
+
+
+\series default
+是一个主对角线元素为1的下三角矩阵：
+\begin_inset Formula 
+\[
+\boldsymbol{A}=\left[\begin{array}{ccccc}
+1 & 0 & 0 & \cdots & 0\\
+a_{21} & 1 & 0 & \cdots & 0\\
+a_{31} & a_{32} & 1 & \cdots & 0\\
+\vdots & \vdots & \vdots & \cdots & \vdots\\
+a_{n1} & a_{n2} & a_{n3} & \cdots & 1
+\end{array}\right]
+\]
+
+\end_inset
+
+且
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+是一个对角矩阵：
+\begin_inset Formula 
+\[
+\boldsymbol{D}=\left[\begin{array}{ccccc}
+d_{11} & 0 & 0 & \cdots & 0\\
+0 & d_{22} & 0 & \cdots & 0\\
+0 & 0 & d_{33} & \cdots & 0\\
+\vdots & \vdots & \vdots & \cdots & \vdots\\
+0 & 0 & 0 & \cdots & d_{nn}
+\end{array}\right]
+\]
+
+\end_inset
+
+对于所有的i，都有
+\begin_inset Formula $d_{ii}>0$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+具体算法过程见教材
+\end_layout
+
+\begin_layout Subsection
+三角分解的唯一性
+\end_layout
+
+\begin_layout Itemize
+假定
+\begin_inset Formula $\boldsymbol{\Omega=A_{1}D_{1}A_{1}^{'}=A_{2}D_{2}A_{2}^{'}}$
+\end_inset
+
+，将左式左乘
+\begin_inset Formula $\boldsymbol{D_{1}^{-1}A_{1}^{-1}}$
+\end_inset
+
+且右乘
+\begin_inset Formula $[\boldsymbol{A_{2}^{'}}]^{-1}$
+\end_inset
+
+得：
+\begin_inset Formula $\boldsymbol{A}_{1}^{'}[\boldsymbol{A_{2}^{'}}]^{-1}=\boldsymbol{D_{1}^{-1}A_{1}^{-1}A_{2}D_{2}}$
+\end_inset
+
+。由于
+\begin_inset Formula $\boldsymbol{A}_{1}^{'}$
+\end_inset
+
+和
+\begin_inset Formula $[\boldsymbol{A_{2}^{'}}]^{-1}$
+\end_inset
+
+都是主对角线元素为1的上三角矩阵，于是等式左边就是主对角线元素为1的上三角矩阵；同理右边是主对角线元素为1的下三角矩阵，如此唯一的可能性就是两边都是非对角线元素
+为0的矩阵，因此
+\begin_inset Formula $\boldsymbol{A}_{1}^{'}[\boldsymbol{A_{2}^{'}}]^{-1}=\boldsymbol{I}_{\boldsymbol{n}}\Rightarrow\boldsymbol{A}_{1}^{'}=\boldsymbol{A_{2}^{'}}\Rightarrow\boldsymbol{D_{1}}=\boldsymbol{D}_{\boldsymbol{2}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+乔利斯基分解(Cholesky decomposition)
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\boldsymbol{\Omega=ADA^{'}}=\boldsymbol{AD^{\frac{1}{2}}D^{\frac{1}{2}}A^{'}=AD^{\frac{1}{2}}(AD^{\frac{1}{2}})^{'}=PP^{'}}$
+\end_inset
+
+，其中
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{P} & \equiv\boldsymbol{A}\boldsymbol{D}^{\frac{1}{2}}\\
+ & =\left[\begin{array}{ccccc}
+1 & 0 & 0 & \cdots & 0\\
+a_{21} & 1 & 0 & \cdots & 0\\
+a_{31} & a_{32} & 1 & \cdots & 0\\
+\vdots & \vdots & \vdots & \cdots & \vdots\\
+a_{n1} & a_{n2} & a_{n3} & \cdots & 1
+\end{array}\right]\left[\begin{array}{ccccc}
+\sqrt{d_{11}} & 0 & 0 & \cdots & 0\\
+0 & \sqrt{d_{22}} & 0 & \cdots & 0\\
+0 & 0 & \sqrt{d_{33}} & \cdots & 0\\
+\vdots & \vdots & \vdots & \cdots & \vdots\\
+0 & 0 & 0 & \cdots & \sqrt{d_{nn}}
+\end{array}\right]\\
+ & =\left[\begin{array}{ccccc}
+\sqrt{d_{11}} & 0 & 0 & \cdots & 0\\
+a_{21}\sqrt{d_{11}} & \sqrt{d_{22}} & 0 & \cdots & 0\\
+a_{31}\sqrt{d_{11}} & a_{32}\sqrt{d_{22}} & \sqrt{d_{33}} & \cdots & 0\\
+\vdots & \vdots & \vdots & \cdots & \vdots\\
+a_{n1}\sqrt{d_{11}} & a_{n2}\sqrt{d_{22}} & a_{n3}\sqrt{d_{33}} & \cdots & \sqrt{d_{nn}}
+\end{array}\right]
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+线性投影更新
+\end_layout
+
+\begin_layout Subsection
+二阶矩矩阵的三角分解和线性投影
+\end_layout
+
+\begin_layout Itemize
+令
+\begin_inset Formula $\boldsymbol{Y}=(Y_{1},Y_{2},...,Y_{n})^{'}$
+\end_inset
+
+为一个(n*1)的随机变量，其二阶矩矩阵为
+\begin_inset Formula 
+\[
+\boldsymbol{\Omega}=E(\boldsymbol{YY^{'}})
+\]
+
+\end_inset
+
+令
+\begin_inset Formula $\boldsymbol{\Omega}=\boldsymbol{ADA^{'}}$
+\end_inset
+
+为三角分解，定义
+\begin_inset Formula $\tilde{\boldsymbol{Y}}\equiv\boldsymbol{A}^{-1}\boldsymbol{Y}$
+\end_inset
+
+，则
+\begin_inset Formula 
+\[
+E(\tilde{\boldsymbol{Y}}\tilde{\boldsymbol{Y}}')=E(\boldsymbol{A}^{-1}\boldsymbol{Y}\boldsymbol{Y}^{'}[\boldsymbol{A}^{'}]^{-1})=\boldsymbol{A}^{-1}E(\boldsymbol{Y}\boldsymbol{Y}^{'})[\boldsymbol{A}^{'}]^{-1}=\boldsymbol{D}
+\]
+
+\end_inset
+
+即
+\begin_inset Formula 
+\[
+E(\tilde{Y}_{i}\tilde{Y}_{j})=\begin{cases}
+d_{ii} & \text{，}i=j\\
+0 & \text{，}i\neq j
+\end{cases}
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula $\tilde{Y}$
+\end_inset
+
+就成了一列彼此不相关的随机变量。
+\end_layout
+
+\begin_layout Itemize
+关于上述变换的一个线性投影的解释（见教材）
+\end_layout
+
+\begin_layout Itemize
+总结
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+对于任意的
+\begin_inset Formula $i>j$
+\end_inset
+
+，矩阵
+\begin_inset Formula $\boldsymbol{A}$
+\end_inset
+
+的第
+\begin_inset Formula $i$
+\end_inset
+
+行第
+\begin_inset Formula $j$
+\end_inset
+
+列的元素，就是在
+\begin_inset Formula $Y_{i}$
+\end_inset
+
+关于
+\begin_inset Formula $Y_{j}$
+\end_inset
+
+的线性投影中
+\begin_inset Formula $Y_{j}$
+\end_inset
+
+的系数；而
+\begin_inset Formula $d_{ii}$
+\end_inset
+
+则为
+\begin_inset Formula $Y_{i}$
+\end_inset
+
+关于
+\begin_inset Formula $Y_{i-1},Y_{i-2},...,Y_{1}$
+\end_inset
+
+的线性投影的MSE，即
+\begin_inset Formula $\tilde{Y}_{i}$
+\end_inset
+
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+应用：MA(1)过程的精确有限样本预测
 \end_layout
 
 \end_body
