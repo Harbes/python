@@ -3632,5 +3632,135 @@ AR(1)+AR(1)=ARMA(2,1)
 沃尔德分解与博克斯-詹金斯建模哲学
 \end_layout
 
+\begin_layout Subsection
+沃尔德分解
+\end_layout
+
+\begin_layout Itemize
+性质4.1：(沃尔德分解)任何零均值协方差平稳过程
+\begin_inset Formula $Y_{t}$
+\end_inset
+
+可表示成下式的形式
+\begin_inset Formula 
+\[
+Y_{t}=\sum_{j=0}^{\infty}\psi_{j}\varepsilon_{t-j}+\kappa_{t}\tag{4.8.2}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\psi_{0}=1$
+\end_inset
+
+且
+\begin_inset Formula $\sum_{j=0}^{\infty}\psi_{j}^{2}<\infty$
+\end_inset
+
+。
+\begin_inset Formula $\varepsilon_{t}$
+\end_inset
+
+是白噪声，表示以Y的滞后项预测
+\begin_inset Formula $Y_{t}$
+\end_inset
+
+产生的误差：
+\begin_inset Formula 
+\[
+\varepsilon_{t}\equiv Y_{t}-\hat{E}(Y_{t}|Y_{t-1},Y_{t-2},...)\tag{4.8.3}
+\]
+
+\end_inset
+
+对于任意的j，
+\begin_inset Formula $\kappa_{t}$
+\end_inset
+
+的值与
+\begin_inset Formula $\varepsilon_{t-j}$
+\end_inset
+
+无关，尽管
+\begin_inset Formula $\kappa_{t}$
+\end_inset
+
+可由Y的过去值很好地预测
+\begin_inset Formula 
+\[
+\kappa_{t}=\hat{E}(\kappa_{t}|Y_{t-1},Y_{t-2},...)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+我们把上述性质中的
+\begin_inset Formula $\kappa_{t}$
+\end_inset
+
+称作
+\begin_inset Formula $Y_{t}$
+\end_inset
+
+的确定性分量，而
+\begin_inset Formula $\sum_{j=0}^{\infty}\psi_{j}\varepsilon_{t-j}$
+\end_inset
+
+称作线性非确定性分量。若
+\begin_inset Formula $\kappa_{t}\equiv0$
+\end_inset
+
+，则该过程称为纯线性不确定的。
+\end_layout
+
+\begin_layout Subsection
+博克斯-詹金斯建模思想
+\end_layout
+
+\begin_layout Itemize
+实际工作中，很多预测者都同意尽可能使用较少的参数。尽管有些复杂模型能很好地拟合历史期数据，但当应用到样本外预测时，表现往往很糟糕。
+\end_layout
+
+\begin_layout Itemize
+博克斯-詹金斯倡导的预测方法：
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+如有必要，先变换数据，以保证协方差平稳性的假定是合理的(第15章)
+\end_layout
+
+\begin_layout Enumerate
+对能够描述变换过的序列的
+\begin_inset Formula $ARMA(p,q)$
+\end_inset
+
+模型的参数
+\begin_inset Formula $p,q$
+\end_inset
+
+，做一个初始的较小值的猜测
+\end_layout
+
+\begin_layout Enumerate
+估计
+\begin_inset Formula $\theta(L)$
+\end_inset
+
+和
+\begin_inset Formula $\phi(L)$
+\end_inset
+
+中的系数(第5章)
+\end_layout
+
+\begin_layout Enumerate
+进行诊断分析以证实所得模型确实与观测到的数据特征一致(第14章)
+\end_layout
+
+\end_deeper
 \end_body
 \end_document
