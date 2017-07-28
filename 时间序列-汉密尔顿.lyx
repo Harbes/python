@@ -2914,5 +2914,723 @@ d_{ii} & \text{，}i=j\\
 应用：MA(1)过程的精确有限样本预测
 \end_layout
 
+\begin_layout Subsection
+快三角分解
+\end_layout
+
+\begin_layout Itemize
+假定我们有两组变量的观测值。第一组变量为(
+\begin_inset Formula $n_{1}\times1$
+\end_inset
+
+)向量
+\begin_inset Formula $\boldsymbol{Y}_{1}$
+\end_inset
+
+，第二组为(
+\begin_inset Formula $n_{2}\times1$
+\end_inset
+
+)向量
+\begin_inset Formula $\boldsymbol{Y}_{2}$
+\end_inset
+
+。它们的二阶矩矩阵可写成下面的分块形式：
+\begin_inset Formula 
+\[
+\boldsymbol{\Omega}\equiv\left[\begin{array}{cc}
+E(\boldsymbol{Y_{1}Y_{1}}^{'}) & E(\boldsymbol{Y_{1}Y_{2}}^{'})\\
+E(\boldsymbol{Y_{2}Y_{1}}^{'}) & E(\boldsymbol{Y_{2}Y_{2}}^{'})
+\end{array}\right]=\left[\begin{array}{cc}
+\boldsymbol{\Omega}_{11} & \boldsymbol{\Omega}_{12}\\
+\boldsymbol{\Omega}_{21} & \boldsymbol{\Omega}_{22}
+\end{array}\right]
+\]
+
+\end_inset
+
+对
+\begin_inset Formula $\boldsymbol{\Omega}$
+\end_inset
+
+左乘矩阵
+\begin_inset Formula $\bar{\boldsymbol{E}}_{1}$
+\end_inset
+
+，可使
+\begin_inset Formula $\boldsymbol{\Omega}$
+\end_inset
+
+的左下(
+\begin_inset Formula $n_{2}\times n_{1}$
+\end_inset
+
+)矩阵块为
+\series bold
+0，
+\series default
+其中
+\begin_inset Formula 
+\[
+\bar{\boldsymbol{E}}_{1}=\left[\begin{array}{cc}
+\boldsymbol{I}_{n_{1}} & 0\\
+-\boldsymbol{\Omega}_{21}\boldsymbol{\Omega}_{11}^{-1} & \boldsymbol{I}_{n_{2}}
+\end{array}\right]
+\]
+
+\end_inset
+
+如果对
+\begin_inset Formula $\boldsymbol{\Omega}$
+\end_inset
+
+左乘矩阵
+\begin_inset Formula $\bar{\boldsymbol{E}}_{1}$
+\end_inset
+
+且右乘
+\begin_inset Formula $\bar{\boldsymbol{E}}_{1}'$
+\end_inset
+
+，则结果为
+\begin_inset Formula 
+\[
+\bar{\boldsymbol{E}}_{1}\boldsymbol{\Omega}\bar{\boldsymbol{E}}_{1}'=\left[\begin{array}{cc}
+\boldsymbol{\Omega}_{11} & \boldsymbol{0}\\
+\boldsymbol{0} & \boldsymbol{\Omega}_{22}-\boldsymbol{\Omega}_{21}\boldsymbol{\Omega}_{11}^{-1}\boldsymbol{\Omega}_{12}
+\end{array}\right]\equiv\bar{\boldsymbol{D}}\tag{4.5.25}
+\]
+
+\end_inset
+
+现在定义
+\begin_inset Formula 
+\[
+\bar{\boldsymbol{A}}\equiv\bar{\boldsymbol{E}}_{1}^{-1}=\left[\begin{array}{cc}
+\boldsymbol{I}_{n_{1}} & 0\\
+\boldsymbol{\Omega}_{21}\boldsymbol{\Omega}_{11}^{-1} & \boldsymbol{I}_{n_{2}}
+\end{array}\right]
+\]
+
+\end_inset
+
+对
+\series bold
+
+\begin_inset Formula $\bar{\boldsymbol{D}}$
+\end_inset
+
+
+\series default
+左乘
+\begin_inset Formula $\bar{\boldsymbol{A}}$
+\end_inset
+
+且右乘
+\begin_inset Formula $\bar{\boldsymbol{A}}'$
+\end_inset
+
+，结果为
+\begin_inset Formula 
+\[
+\boldsymbol{\Omega}=\bar{\boldsymbol{A}}\bar{\boldsymbol{D}}\bar{\boldsymbol{A}}'\tag{4.5.26}
+\]
+
+\end_inset
+
+上式与之前的三角分解
+\begin_inset Formula $\boldsymbol{\Omega=ADA^{'}}$
+\end_inset
+
+很像，但是，这里的
+\series bold
+
+\begin_inset Formula $\bar{\boldsymbol{D}}$
+\end_inset
+
+
+\series default
+是
+\series bold
+\bar under
+块对角矩阵
+\series default
+\bar default
+，而不是纯粹的对角矩阵
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+\begin_inset Formula $\bar{\boldsymbol{D}}$
+\end_inset
+
+
+\series default
+可解释为向量
+\begin_inset Formula $\tilde{\boldsymbol{Y}}=\bar{\boldsymbol{A}}^{-1}\boldsymbol{Y}$
+\end_inset
+
+的二阶矩矩阵。与前述类似的，
+\begin_inset Formula $\boldsymbol{\Omega}_{21}\boldsymbol{\Omega}_{11}^{-1}$
+\end_inset
+
+给出了向量
+\begin_inset Formula $\boldsymbol{Y}_{\boldsymbol{2}}$
+\end_inset
+
+关于向量
+\begin_inset Formula $\boldsymbol{Y}_{\boldsymbol{1}}$
+\end_inset
+
+的线性投影的相应的系数矩阵
+\begin_inset Formula 
+\[
+\hat{P}(\boldsymbol{Y}_{\boldsymbol{2}}|\boldsymbol{Y}_{\boldsymbol{1}})=\boldsymbol{\Omega}_{21}\boldsymbol{\Omega}_{11}^{-1}\boldsymbol{Y}_{\boldsymbol{1}}\tag{4.5.27}
+\]
+
+\end_inset
+
+该线性投影相应的MSE为
+\begin_inset Formula 
+\begin{align*}
+MSE(\boldsymbol{Y}_{\boldsymbol{2}}-\hat{P}(\boldsymbol{Y}_{\boldsymbol{2}}|\boldsymbol{Y}_{\boldsymbol{1}})) & =E(\tilde{\boldsymbol{Y}}_{2}\tilde{\boldsymbol{Y}}_{2}')\\
+ & =\bar{\boldsymbol{D}}_{22}\\
+ & =\boldsymbol{\Omega}_{22}-\boldsymbol{\Omega}_{21}\boldsymbol{\Omega}_{11}^{-1}\boldsymbol{\Omega}_{12}\tag{4.5.28}
+\end{align*}
+
+\end_inset
+
+与前述一样，可以继续推广到更多的块矩阵
+\end_layout
+
+\begin_layout Subsection
+投影迭代定理
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\hat{P}[\hat{P}(\boldsymbol{Y}_{3}|\boldsymbol{Y}_{2},\boldsymbol{Y}_{1})|\boldsymbol{Y}_{1}]=\hat{P}(\boldsymbol{Y}_{3}|\boldsymbol{Y}_{1})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+高斯过程的最优预测
+\end_layout
+
+\begin_layout Itemize
+在前面的讨论中，可知
+\bar under
+线性投影是线性函数组内的最优预测
+\bar default
+。对于高斯过程，这个结论可以进一步强化：只要预测所依据的变量包含常数项，则可证明最优无限制预测为线性形式，进而该罪有预测可由线性投影给出。
+\end_layout
+
+\begin_layout Section
+自回归移动平均过程的和
+\end_layout
+
+\begin_layout Subsection
+MA(1)过程加白噪声的和
+\end_layout
+
+\begin_layout Itemize
+假定一个序列
+\begin_inset Formula $X_{t}$
+\end_inset
+
+服从零均值MA(1)过程
+\begin_inset Formula 
+\[
+X_{t}=u_{t}+\delta u_{t-1}\tag{4.7.1}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $u_{t}$
+\end_inset
+
+是白噪声。令
+\begin_inset Formula $v_{t}$
+\end_inset
+
+代表另外一个白噪声序列，且假定v和u对于所有超前和滞后都不相关：
+\begin_inset Formula $E(u_{i}v_{j})=0$
+\end_inset
+
+对于所有i、j均成立。于是
+\begin_inset Formula $E(X_{i}v_{j})=0$
+\end_inset
+
+对所有i、j均成立
+\end_layout
+
+\begin_layout Itemize
+令序列
+\begin_inset Formula 
+\[
+Y_{t}=X_{t}+v_{t}=u_{t}+\delta u_{t-1}+v_{t}\tag{4.7.5}
+\]
+
+\end_inset
+
+则
+\begin_inset Formula 
+\begin{align*}
+E(Y_{t}Y_{t-j}) & =E(X_{t}X_{t-j})+E(v_{t}v_{t-j})\\
+ & =\begin{cases}
+(1+\delta^{2})\sigma_{u}^{2}+\sigma_{v}^{2} & \text{，}j=0\\
+\delta\sigma_{u}^{2} & \text{，}j=\pm1\\
+0 & \text{，}\text{其他}
+\end{cases}\tag{4.7.6}
+\end{align*}
+
+\end_inset
+
+因此，序列
+\begin_inset Formula $Y_{t}$
+\end_inset
+
+是平稳的，且超过一阶的自协方差为0，因此一个很自然的问题是：序列
+\begin_inset Formula $Y_{t}$
+\end_inset
+
+是否存在一个MA(1)表示，即
+\begin_inset Formula 
+\[
+Y_{t}=\varepsilon_{t}+\theta\varepsilon_{t-1}
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\[
+E(Y_{t}Y_{t-j})=\begin{cases}
+(1+\theta^{2})\sigma^{2} & \text{，}j=0\\
+\theta\sigma^{2} & \text{，}j=\pm1\\
+0 & \text{，}\text{其他}
+\end{cases}
+\]
+
+\end_inset
+
+此式要与(4.7.6)完全一致，于是有
+\begin_inset Formula 
+\begin{align*}
+(1+\theta^{2})\sigma^{2} & =(1+\delta^{2})\sigma_{u}^{2}+\sigma_{v}^{2}\\
+\theta\sigma^{2} & =\delta\sigma_{u}^{2}
+\end{align*}
+
+\end_inset
+
+整理得
+\begin_inset Formula 
+\[
+\delta\theta^{2}-[(1+\delta^{2})+(\delta_{v}^{2}/\delta_{u}^{2})]\theta+\delta=0\tag{4.7.11}
+\]
+
+\end_inset
+
+解得
+\begin_inset Formula 
+\[
+\theta=\frac{[(1+\delta^{2})+(\delta_{v}^{2}/\delta_{u}^{2})]\pm\sqrt{[(1+\delta^{2})+(\delta_{v}^{2}/\delta_{u}^{2})]^{2}-4\delta^{2}}}{2\delta}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+当
+\begin_inset Formula $\delta_{v}^{2}=0$
+\end_inset
+
+，式(4.7.11)中变为
+\begin_inset Formula 
+\[
+\delta\theta^{2}-(1+\delta^{2})\theta+\delta=\delta(\theta-\delta)(\theta-\delta^{-1})=0\tag{4.7.13}
+\]
+
+\end_inset
+
+显然
+\begin_inset Formula $f(\theta)=\delta\theta^{2}-[(1+\delta^{2})+(\delta_{v}^{2}/\delta_{u}^{2})]\theta+\delta$
+\end_inset
+
+的图像始终在
+\begin_inset Formula $g(\theta)=\delta\theta^{2}-(1+\delta^{2})\theta+\delta$
+\end_inset
+
+的下方(
+\begin_inset Formula $\delta>0$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename /home/harbes/下载/照片.JPG
+	width 20pheight%
+	height 50page%
+	scaleBeforeRotation
+	rotateAngle 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+从上图中可以看出
+\begin_inset Formula 
+\[
+0<|\theta^{*}|<|\delta|<1<|\delta^{-1}|<|\tilde{\theta}^{*}|
+\]
+
+\end_inset
+
+我们取可逆表示相应的(
+\begin_inset Formula $\theta^{*},\sigma^{*2}$
+\end_inset
+
+)值，即：
+\begin_inset Formula 
+\[
+(1+\theta^{*}L)\varepsilon_{t}=(1+\delta L)u_{t}+v_{t}\tag{4.7.15}
+\]
+
+\end_inset
+
+或
+\begin_inset Formula 
+\[
+\varepsilon_{t}=(1+\theta^{*}L)^{-1}[(1+\delta L)u_{t}+v_{t}]\tag{4.7.16}
+\]
+
+\end_inset
+
+可以证明此时定义的
+\begin_inset Formula $\varepsilon$
+\end_inset
+
+序列是白噪声：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Y序列的自协方差生成函数：
+\begin_inset Formula $g_{Y}(z)=(1+\delta z)\sigma_{u}^{2}(1+\delta z^{-1})+\sigma_{v}^{2}$
+\end_inset
+
+或者
+\begin_inset Formula $g_{Y}(z)=(1+\theta^{*}z)\sigma^{*2}(1+\theta^{*}z^{-1})$
+\end_inset
+
+，于是，
+\begin_inset Formula $\varepsilon_{t}$
+\end_inset
+
+的自协方差生成函数为
+\begin_inset Formula 
+\[
+g_{\varepsilon}(z)=\frac{(1+\delta z)\sigma_{u}^{2}(1+\delta z^{-1})+\sigma_{v}^{2}}{(1+\theta^{*}z)(1+\theta^{*}z^{-1})}=\sigma^{*2}\tag{4.7.18}
+\]
+
+\end_inset
+
+得证
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+注意，基于
+\begin_inset Formula $Y_{t}$
+\end_inset
+
+过去值的最优预测和基于
+\begin_inset Formula $u_{t}$
+\end_inset
+
+和
+\begin_inset Formula $v_{t}$
+\end_inset
+
+过去值的最优预测是不一样的。一般来说，Y过去值包含的信息较u和v的过去值包含的信息更少；以
+\begin_inset Formula $\{Y_{t}\}$
+\end_inset
+
+为基础只能估计两个参数
+\begin_inset Formula $\theta^{*}$
+\end_inset
+
+和
+\begin_inset Formula $\sigma^{*2}$
+\end_inset
+
+，然而真实模型有三个参数
+\begin_inset Formula $\delta,\sigma_{u}^{2},\sigma_{v}^{2}$
+\end_inset
+
+，也就是说，结构是不可识别的。
+\end_layout
+
+\begin_layout Subsection
+两个移动平均过程相加
+\end_layout
+
+\begin_layout Itemize
+假定
+\begin_inset Formula $X_{t}$
+\end_inset
+
+是一个零均值
+\begin_inset Formula $MA(q_{1})$
+\end_inset
+
+过程：
+\begin_inset Formula 
+\[
+X_{t}=(1+\delta_{1}L+\delta_{2}L^{2}+...+\delta_{q_{1}}L^{q_{1}})u_{t}\equiv\delta(L)u_{t}
+\]
+
+\end_inset
+
+令
+\begin_inset Formula $W_{t}$
+\end_inset
+
+是一个零均值
+\begin_inset Formula $MA(q_{2})$
+\end_inset
+
+过程：
+\begin_inset Formula 
+\[
+W_{t}=(1+\kappa_{1}L+\kappa_{2}L^{2}+...+\kappa_{q_{2}}L^{\kappa_{q_{2}}})v_{t}\equiv\kappa(L)v_{t}
+\]
+
+\end_inset
+
+假定X和W对每一个超前和滞后都不相关：
+\begin_inset Formula $E(X_{t}W_{t-j})=0$
+\end_inset
+
+对任意j均成立。
+\end_layout
+
+\begin_layout Itemize
+假定我们观察到
+\begin_inset Formula $Y_{t}=X_{t}+W_{t}$
+\end_inset
+
+，定义
+\begin_inset Formula $q=max\{q_{1},q_{2}\}$
+\end_inset
+
+，则Y的第j阶自协方差为
+\begin_inset Formula 
+\begin{align*}
+E(Y_{t}Y_{t-j}) & =E(X_{t}X_{t-j})+E(W_{t}W_{t-j})\\
+ & \begin{cases}
+\gamma_{j}^{X}+\gamma_{j}^{W} & \text{，}j=0,\pm1,\pm2,...,\pm q\\
+0 & \text{，}\text{其他}
+\end{cases}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+由于
+\begin_inset Formula 
+\[
+\gamma_{j}^{Y}=\gamma_{j}^{X}+\gamma_{j}^{W}
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\[
+\sum_{j=-\infty}^{\infty}\gamma_{j}^{Y}z^{j}=\sum_{j=-\infty}^{\infty}\gamma_{j}^{X}z^{j}+\sum_{j=-\infty}^{\infty}\gamma_{j}^{W}z^{j}
+\]
+
+\end_inset
+
+即
+\begin_inset Formula 
+\[
+g_{Y}(z)=g_{X}(z)+g_{W}(z)\tag{4.7.19}
+\]
+
+\end_inset
+
+因此问题就是：是否存在
+\begin_inset Formula $(\theta_{1},\theta_{2},...,\theta_{q},\sigma^{2})$
+\end_inset
+
+使得(4.7.19)满足：
+\begin_inset Formula 
+\[
+\theta(z)\theta(z^{-1})\sigma^{2}=\delta(z)\delta(z^{-1})\sigma_{u}^{2}+\kappa(z)\kappa(z^{-1})\sigma_{v}^{2}\tag{4.7.20}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+上述问题的答案是：结果总是存在的。因此对于两个MA过程，只要它们关于所有的超前和滞后都不相关，则二者相加后，其结果是一个新的MA，且新的MA的阶数为两个原始序列
+中较大的一个：
+\begin_inset Formula 
+\[
+MA(q_{1})+MA(q_{2})=MA(max\{q_{1},q_{2}\})\tag{4.7.21}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+两个AR过程相加
+\end_layout
+
+\begin_layout Itemize
+假定
+\begin_inset Formula $X_{t}$
+\end_inset
+
+和
+\begin_inset Formula $W_{t}$
+\end_inset
+
+是两个
+\begin_inset Formula $AR(1)$
+\end_inset
+
+过程：
+\begin_inset Formula 
+\begin{align*}
+(1-\pi L)X_{t} & =u_{t}\tag{4.7.22}\\
+(1-\rho L)W_{t} & =v_{t}\tag{4.7.23}
+\end{align*}
+
+\end_inset
+
+其中，
+\begin_inset Formula $u_{t}$
+\end_inset
+
+和
+\begin_inset Formula $v_{t}$
+\end_inset
+
+都是白噪声且对于所有的
+\begin_inset Formula $t$
+\end_inset
+
+和
+\begin_inset Formula $\tau$
+\end_inset
+
+，
+\begin_inset Formula $u_{t}$
+\end_inset
+
+和
+\begin_inset Formula $v_{t}$
+\end_inset
+
+无关。再假定我们观测到
+\begin_inset Formula $Y_{t}$
+\end_inset
+
+，而实际上
+\begin_inset Formula $Y_{t}=X_{t}+W_{t}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+如果恰巧X和W的自回归参数是一样的，则
+\begin_inset Formula 
+\[
+(1-\pi L)(X_{t}+W_{t})=u_{t}+v_{t}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+更一般的情况是两个自回归参数不同，因此我们对(4.7.22-23)两式进行简单的变换：
+\begin_inset Formula 
+\begin{align*}
+(1-\rho L)(1-\pi L)X_{t} & =(1-\rho L)u_{t}\tag{4.7.24}\\
+(1-\rho L)(1-\pi L)W_{t} & =(1-\pi L)v_{t}\tag{4.7.25}
+\end{align*}
+
+\end_inset
+
+两式相加
+\begin_inset Formula 
+\[
+(1-\rho L)(1-\pi L)(X_{t}+W_{t})=(1-\rho L)u_{t}+(1-\pi L)v_{t}
+\]
+
+\end_inset
+
+由前述内容可知，上式右侧有一个MA(1)表示，即
+\begin_inset Formula 
+\[
+(1-\rho L)(1-\pi L)(X_{t}+W_{t})=(1+\theta L)\varepsilon_{t}
+\]
+
+\end_inset
+
+换句话说
+\begin_inset Formula 
+\[
+AR(1)+AR(1)=ARMA(2,1)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+将上述内容进行推广：将一个
+\begin_inset Formula $AR(p_{1})$
+\end_inset
+
+过程和一个与其超前和滞后项不相关的
+\begin_inset Formula $AR(p_{2})$
+\end_inset
+
+过程相加，得到一个
+\begin_inset Formula $ARMA(p_{1}+p_{2},max\{p_{1},p_{2}\})$
+\end_inset
+
+过程
+\end_layout
+
+\begin_layout Section
+沃尔德分解与博克斯-詹金斯建模哲学
+\end_layout
+
 \end_body
 \end_document
