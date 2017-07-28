@@ -3762,5 +3762,371 @@ Y_{t}=\sum_{j=0}^{\infty}\psi_{j}\varepsilon_{t-j}+\kappa_{t}\tag{4.8.2}
 \end_layout
 
 \end_deeper
+\begin_layout Subsection
+样本自相关
+\end_layout
+
+\begin_layout Subsection
+偏自相关
+\end_layout
+
+\begin_layout Section
+附录4 
+\end_layout
+
+\begin_layout Subsection
+普通最小二乘与线性投影
+\end_layout
+
+\begin_layout Subsection
+一阶移动平均过程协方差矩阵的三角分解
+\end_layout
+
+\begin_layout Chapter
+极大似然估计
+\end_layout
+
+\begin_layout Section
+简介
+\end_layout
+
+\begin_layout Section
+高斯一阶自回归过程的似然函数
+\end_layout
+
+\begin_layout Subsection
+计算似然函数
+\end_layout
+
+\begin_layout Itemize
+一个高斯AR(1)过程形式如下
+\begin_inset Formula 
+\[
+Y_{t}=c+\phi Y_{t-1}+\varepsilon_{t}\tag{5.2.1}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\varepsilon_{t}\sim iid\,N(0,\sigma^{2})$
+\end_inset
+
+。在此情况下，总体参数向量记为
+\begin_inset Formula $\boldsymbol{\theta}\equiv(c,\phi,\sigma^{2})'$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+先考察第一个观测值
+\begin_inset Formula $Y_{1}$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $E(Y_{t})=\frac{c}{1-\phi}$
+\end_inset
+
+；
+\begin_inset Formula $E(Y_{t}-\mu)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+因为
+\begin_inset Formula $\varepsilon_{t}$
+\end_inset
+
+是高斯分布的，于是
+\begin_inset Formula $Y_{t}$
+\end_inset
+
+也是高斯分布的，因此，第一个观测值的密度函数
+\begin_inset Formula 
+\[
+f_{Y_{1}}(y_{1};\boldsymbol{\theta})=\frac{1}{\sqrt{2\pi}\sqrt{\sigma^{2}/(1-\phi^{2})}}e^{-\frac{\{y_{1}-[c/(1-\phi)]\}^{2}}{2\sigma^{2}/(1-\phi^{2})}}\tag{5.2.2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+考察其他观测值(
+\begin_inset Formula $t\geq2$
+\end_inset
+
+)，一般的，
+\begin_inset Formula $Y_{1},Y_{2},...,Y_{t-1}$
+\end_inset
+
+只通过
+\begin_inset Formula $Y_{t-1}$
+\end_inset
+
+对
+\begin_inset Formula $Y_{t}$
+\end_inset
+
+起作用，第t个观测值以前t-1个观测值为条件的分布为
+\begin_inset Formula 
+\begin{align*}
+f_{Y_{t}|Y_{t-1},Y_{t-2},...,Y_{1}}(y_{t}|y_{t-1},y_{t-2},...,y_{1};\boldsymbol{\theta}) & =f_{Y_{t}|Y_{t-1}}(y_{t}|y_{t-1};\boldsymbol{\theta})\\
+ & =\frac{1}{\sqrt{2\pi\sigma^{2}}}e^{-\frac{(y_{t}-c-\phi y_{t-1})^{2}}{2\sigma^{2}}}\tag{5.2.5}
+\end{align*}
+
+\end_inset
+
+于是，样本似然函数为
+\begin_inset Formula 
+\[
+f_{Y_{T},Y_{T-1},...,Y_{1}}(y_{T},y_{T-1},...,y_{1};\boldsymbol{\theta})=f_{Y_{1}}(y_{1};\boldsymbol{\theta})\cdot\prod_{t=2}^{T}f_{Y_{t}|Y_{t-1}}(y_{t}|y_{t-1};\boldsymbol{\theta})
+\]
+
+\end_inset
+
+相应的对数似然函数为
+\begin_inset Formula 
+\begin{align*}
+\mathscr{L}(\boldsymbol{\theta})= & \mathrm{ln}f_{Y_{1}}(y_{1};\boldsymbol{\theta})+\sum_{t=2}^{T}\mathrm{ln}f_{Y_{t}|Y_{t-1}}(y_{t}|y_{t-1};\boldsymbol{\theta})\\
+= & -\frac{1}{2}\mathrm{ln}(2\pi)-\frac{1}{2}\mathrm{ln}\frac{\sigma^{2}}{1-\phi^{2}}-\frac{(y_{1}-\frac{c}{1-\phi})^{2}}{2\frac{\sigma^{2}}{1-\phi^{2}}}\\
+ & -\frac{T-1}{2}\mathrm{ln}(2\pi)-\frac{T-1}{2}\mathrm{ln}(\sigma^{2})-\sum_{t=2}^{T}\frac{(y_{t}-c-\phi y_{t-1})^{2}}{2\sigma^{2}}\tag{5.2.9}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+似然函数的另一种表达形式
+\end_layout
+
+\begin_layout Itemize
+将所有
+\bar under
+观测值
+\bar default
+写成(T*1)的向量形式：
+\begin_inset Formula $\underset{(T\times1)}{\boldsymbol{y}}\equiv(y_{1},y_{2},...,y_{T})'$
+\end_inset
+
+，它可以看做T维高斯分布(随机变量记作
+\begin_inset Formula $\boldsymbol{Y}$
+\end_inset
+
+)的一个实现，其均值：
+\begin_inset Formula 
+\[
+E(\boldsymbol{Y})=\boldsymbol{\mu}
+\]
+
+\end_inset
+
+方差-协方差矩阵为
+\begin_inset Formula 
+\begin{align*}
+E[(\boldsymbol{Y}-\boldsymbol{\mu})(\boldsymbol{Y}-\boldsymbol{\mu})'] & =\boldsymbol{\Omega}\\
+ & =\left[\begin{array}{cccc}
+E(Y_{1}-\mu)^{2} & E(Y_{1}-\mu)(Y_{2}-\mu) & \cdots & E(Y_{1}-\mu)(Y_{T}-\mu)\\
+E(Y_{2}-\mu)(Y_{1}-\mu) & E(Y_{2}-\mu)^{2} & \cdots & E(Y_{2}-\mu)(Y_{T}-\mu)\\
+\vdots & \vdots & \cdots & \vdots\\
+E(Y_{T}-\mu)(Y_{1}-\mu) & E(Y_{T}-\mu)(Y_{2}-\mu) & \cdots & E(Y_{T}-\mu)^{2}
+\end{array}\right]\tag{5.2.12}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula $E(Y_{t}-\mu)(Y_{t-j}-\mu)=\phi^{j}\frac{\sigma^{2}}{1-\phi^{2}}$
+\end_inset
+
+。因此，式(5.2.12)可以写为
+\begin_inset Formula 
+\[
+\boldsymbol{\Omega}=\sigma^{2}\boldsymbol{V}\tag{5.2.14}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\[
+\boldsymbol{V}=\frac{1}{1-\phi^{2}}\left[\begin{array}{ccccc}
+1 & \phi & \phi^{2} & \cdots & \phi^{T-1}\\
+\phi & 1 & \phi & \cdots & \phi^{T-2}\\
+\phi^{2} & \phi & 1 & \cdots & \phi^{T-3}\\
+\vdots & \vdots & \vdots & \cdots & \vdots\\
+\phi^{T-1} & \phi^{T-2} & \phi^{T-3} & \cdots & 1
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+将观测到的样本
+\begin_inset Formula $\boldsymbol{y}$
+\end_inset
+
+看做由
+\begin_inset Formula $N(\boldsymbol{\mu},\boldsymbol{\Omega})$
+\end_inset
+
+分布得到的一个简单抽样，样本似然值可根据多远高斯密度公式直接计算出来
+\begin_inset Formula 
+\[
+f_{\boldsymbol{Y}}(y;\theta)=(2\pi)^{-T/2}|\boldsymbol{\Omega}^{-1}|^{1/2}e^{-\frac{1}{2}(\boldsymbol{y-\mu})'\boldsymbol{\Omega}^{-1}(\boldsymbol{y-\mu})}\tag{5.2.16}
+\]
+
+\end_inset
+
+其对数似然值为
+\begin_inset Formula 
+\[
+\mathscr{L}(\theta)=-\frac{T}{2}\mathrm{ln}(2\pi)+\frac{1}{2}\mathrm{ln}(|\boldsymbol{\Omega}^{-1}|)-\frac{1}{2}(\boldsymbol{y-\mu})'\boldsymbol{\Omega}^{-1}(\boldsymbol{y-\mu})\tag{5.2.17}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+可以证明式(5.2.17)和式(5.2.9)是关于
+\begin_inset Formula $(y_{1},y_{2},...,y_{T})$
+\end_inset
+
+的同一个函数，首先，定义
+\begin_inset Formula 
+\[
+\underset{(T\times T)}{\boldsymbol{L}}=\left[\begin{array}{cccccc}
+\sqrt{1-\phi^{2}} & 0 & 0 & \cdots & 0 & 0\\
+-\phi & 1 & 0 & \cdots & 0 & 0\\
+0 & -\phi & 1 & \cdots & 0 & 0\\
+\vdots & \vdots & \vdots & \cdots & \vdots & \vdots\\
+0 & 0 & 0 & \cdots & -\phi & 1
+\end{array}\right]
+\]
+
+\end_inset
+
+可直接证明
+\begin_inset Formula $\boldsymbol{L}'\boldsymbol{L}=\boldsymbol{V}^{-1}$
+\end_inset
+
+，再由(5.2.14)可得
+\begin_inset Formula $\boldsymbol{\Omega}^{-1}=\sigma^{-2}\boldsymbol{L}'\boldsymbol{L}$
+\end_inset
+
+，代入(5.2.17)得
+\begin_inset Formula 
+\[
+\mathscr{L}(\theta)=-\frac{T}{2}\mathrm{ln}(2\pi)+\frac{1}{2}\mathrm{ln}(|\sigma^{-2}\boldsymbol{L}'\boldsymbol{L}|)-\frac{1}{2}(\boldsymbol{y-\mu})'\sigma^{-2}\boldsymbol{L}'\boldsymbol{L}(\boldsymbol{y-\mu})\tag{5.2.21}
+\]
+
+\end_inset
+
+定义
+\begin_inset Formula $(T*1)$
+\end_inset
+
+向量
+\begin_inset Formula $\tilde{\boldsymbol{y}}$
+\end_inset
+
+为
+\begin_inset Formula 
+\begin{align*}
+\tilde{\boldsymbol{y}} & \equiv\boldsymbol{L(y-\mu)}\\
+ & =\left[\begin{array}{cccccc}
+\sqrt{1-\phi^{2}} & 0 & 0 & \cdots & 0 & 0\\
+-\phi & 1 & 0 & \cdots & 0 & 0\\
+0 & -\phi & 1 & \cdots & 0 & 0\\
+\vdots & \vdots & \vdots & \cdots & \vdots & \vdots\\
+0 & 0 & 0 & \cdots & -\phi & 1
+\end{array}\right]\left[\begin{array}{c}
+y_{1}-\mu\\
+y_{2}-\mu\\
+y_{3}-\mu\\
+\vdots\\
+y_{T}-\mu
+\end{array}\right]\\
+ & =\left[\begin{array}{c}
+\sqrt{1-\phi^{2}}(y_{1}-\mu)\\
+(y_{2}-\mu)-\phi(y_{1}-\mu)\\
+(y_{3}-\mu)-\phi(y_{2}-\mu)\\
+\vdots\\
+(y_{T}-\mu)-\phi(y_{T-1}-\mu)
+\end{array}\right]
+\end{align*}
+
+\end_inset
+
+将
+\begin_inset Formula $\mu=\frac{c}{1-\phi}$
+\end_inset
+
+代入得
+\begin_inset Formula 
+\[
+\tilde{\boldsymbol{y}}=\left[\begin{array}{c}
+\sqrt{1-\phi^{2}}(y_{1}-\frac{c}{1-\phi})\\
+y_{2}-c-\phi y_{1}\\
+y_{3}-c-\phi y_{2}\\
+\vdots\\
+y_{T}-c-\phi y_{T-1}
+\end{array}\right]
+\]
+
+\end_inset
+
+于是(5.2.21)的最后一项可写为
+\begin_inset Formula 
+\begin{align*}
+\frac{1}{2}(\boldsymbol{y-\mu})'\sigma^{-2}\boldsymbol{L}'\boldsymbol{L}(\boldsymbol{y-\mu})= & \frac{1}{2\sigma^{2}}\tilde{\boldsymbol{y}}'\tilde{\boldsymbol{y}}\\
+= & \frac{1}{2\sigma^{2}}(1-\phi^{2})(y_{1}-\frac{c}{1-\phi})^{2}+\frac{1}{2\sigma^{2}}\sum_{t=2}^{T}(y_{t}-c-\phi y_{t-1})^{2}
+\end{align*}
+
+\end_inset
+
+类似的，(5.2.21)的中间一项可写为
+\begin_inset Formula 
+\begin{align*}
+\frac{1}{2}\mathrm{ln}(|\sigma^{-2}\boldsymbol{L}'\boldsymbol{L}|) & =-\frac{T}{2}\mathrm{ln}(\sigma^{2})+\mathrm{ln}(|\boldsymbol{L}|)\\
+ & =-\frac{T}{2}\mathrm{ln}(\sigma^{2})+\mathrm{ln}(1-\phi^{2})\tag{5.2.25}
+\end{align*}
+
+\end_inset
+
+将上面所有都整合起来即可证明。
+\end_layout
+
+\begin_layout Itemize
+注意(5.2.17)需要求一个
+\begin_inset Formula $(T\times T)$
+\end_inset
+
+矩阵的逆，显然，这不便于运算
+\end_layout
+
+\begin_layout Subsection
+高斯AR(1)过程的精确最大似然估计
+\end_layout
+
+\begin_layout Subsection
+条件最大似然估计
+\end_layout
+
 \end_body
 \end_document
