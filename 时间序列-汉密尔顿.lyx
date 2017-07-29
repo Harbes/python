@@ -5044,8 +5044,184 @@ y_{s} & =\frac{c}{1-\phi_{1}-\phi_{2}-...-\phi_{p}}\text{，}s=0,-1,...,-p+1\\
 数值优化
 \end_layout
 
-\begin_layout Standard
+\begin_layout Section
+极大似然估计的统计推断
+\end_layout
 
+\begin_layout Section
+不等式约束
+\end_layout
+
+\begin_layout Chapter
+谱分析
+\end_layout
+
+\begin_layout Itemize
+任何协方差平稳过程均有一个时域表达与一个频域表达，且任何能被其中一个表达的数据特征同样也能倍另外一个表达
+\end_layout
+
+\begin_layout Section
+总体谱
+\end_layout
+
+\begin_layout Subsection
+总体谱及其性质
+\end_layout
+
+\begin_layout Itemize
+令
+\begin_inset Formula $\{Y_{t}\}_{t=-\infty}^{\infty}$
+\end_inset
+
+表示一个协方差平稳过程，均值为
+\begin_inset Formula $E(Y_{t})=\mu$
+\end_inset
+
+，第j阶自协方差为
+\begin_inset Formula $E(Y_{t}-\mu)(Y_{t-j}-\mu)=\gamma_{j}$
+\end_inset
+
+。假定这个协方差平稳过程的自协方差绝对可加，于是自协方差生成函数为
+\begin_inset Formula 
+\[
+g_{Y}(z)=\sum_{j=-\infty}^{\infty}\gamma_{j}z^{j}\tag{6.1.1}
+\]
+
+\end_inset
+
+其中z表示复数标量。将上式除以
+\begin_inset Formula $2\pi$
+\end_inset
+
+并取
+\begin_inset Formula $z=e^{-i\omega}$
+\end_inset
+
+，
+\begin_inset Formula $i=\sqrt{-1}$
+\end_inset
+
+且
+\begin_inset Formula $\omega$
+\end_inset
+
+为实数，结果就是Y的总体谱
+\begin_inset Formula 
+\[
+s_{Y}(\omega)=\frac{1}{2\pi}g_{Y}(e^{-i\omega})=\frac{1}{2\pi}\sum_{j=-\infty}^{\infty}\gamma_{j}e^{-i\omega j}\tag{6.1.2}
+\]
+
+\end_inset
+
+注意到总体谱是
+\begin_inset Formula $\omega$
+\end_inset
+
+的函数
+\end_layout
+
+\begin_layout Itemize
+依据
+\begin_inset Formula $De\,Moivre$
+\end_inset
+
+定理，
+\begin_inset Formula $e^{-i\omega j}=cos(\omega j)-i\cdot sin(\omega j)$
+\end_inset
+
+，代入上式可得
+\begin_inset Formula 
+\[
+s_{Y}(\omega)=\frac{1}{2\pi}g_{Y}(e^{-i\omega})=\frac{1}{2\pi}\sum_{j=-\infty}^{\infty}\gamma_{j}[cos(\omega j)-i\cdot sin(\omega j)]\tag{6.1.4}
+\]
+
+\end_inset
+
+又对于一个协方差平稳过程，有
+\begin_inset Formula $\gamma_{j}=\gamma_{-j}$
+\end_inset
+
+，于是
+\begin_inset Formula 
+\begin{align*}
+s_{Y}(\omega) & =\frac{1}{2\pi}\gamma_{0}[cos(0)-i\cdot sin(0)]+\frac{1}{2\pi}\{\sum_{j=1}^{\infty}\gamma_{j}[cos(\omega j)+cos(-\omega j)-i\cdot sin(\omega j)-i\cdot sin(-\omega j)]\}\\
+ & =\frac{1}{2\pi}\{\gamma_{0}+2\sum_{j=1}^{\infty}\gamma_{j}cos(\omega j)\}\tag{6.1.6}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+在假定自协方差序列绝对可加的前提下，表达式(6.1.6)表明总体谱存在且
+\begin_inset Formula $s_{Y}(\omega)$
+\end_inset
+
+是
+\begin_inset Formula $\omega$
+\end_inset
+
+的连续实值函数。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+进一步可以证明：若
+\begin_inset Formula $\gamma_{j}$
+\end_inset
+
+表示协方差平稳过程的自协方差，则对于所有的
+\begin_inset Formula $\omega$
+\end_inset
+
+，
+\begin_inset Formula $s_{Y}(\omega)$
+\end_inset
+
+
+\series bold
+\bar under
+非负
+\end_layout
+
+\begin_layout Itemize
+明显
+\begin_inset Formula $s_{Y}(\omega)$
+\end_inset
+
+关于
+\begin_inset Formula $\omega=0$
+\end_inset
+
+
+\series bold
+\bar under
+对称
+\end_layout
+
+\begin_layout Itemize
+对于任意的整数k与j，都有
+\begin_inset Formula $cos[(2\pi k+\omega)\cdot j]=cos(\omega j)$
+\end_inset
+
+，于是，
+\begin_inset Formula $s_{Y}(\omega+2\pi k)=s_{Y}(\omega)$
+\end_inset
+
+，即总体谱是
+\begin_inset Formula $\omega$
+\end_inset
+
+的
+\series bold
+\bar under
+周期函数
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+计算不同过程的总体谱
 \end_layout
 
 \end_body
