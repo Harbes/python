@@ -4124,8 +4124,349 @@ y_{T}-c-\phi y_{T-1}
 高斯AR(1)过程的精确最大似然估计
 \end_layout
 
+\begin_layout Itemize
+最大化(5.2.9)所得
+\begin_inset Formula $\hat{\boldsymbol{\theta}}$
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 条件最大似然估计
+\end_layout
+
+\begin_layout Itemize
+有时候，可以将
+\begin_inset Formula $y_{1}$
+\end_inset
+
+视作确定的常熟，然后最大化以第一个观测值为条件的似然值
+\begin_inset Formula 
+\[
+f_{Y_{T},Y_{T-1},...,Y_{2}|Y_{1}}(y_{T},y_{T-1},...,y_{2}|y_{1})=\prod_{t=2}^{T}f_{Y_{t}|Y_{t-1}}(y_{t}|y_{t-1};\boldsymbol{\theta})\tag{5.2.26}
+\]
+
+\end_inset
+
+于是现在最大化的目标为
+\begin_inset Formula 
+\begin{align*}
+\mathrm{ln}f_{Y_{T},Y_{T-1},...,Y_{2}|Y_{1}}(y_{T},y_{T-1},...,y_{2}|y_{1})= & -\frac{T-1}{2}\mathrm{ln}(2\pi)-\frac{T-1}{2}\mathrm{ln}(\sigma^{2})\\
+ & -\sum_{t=2}^{T}\frac{(y_{t}-c-\phi y_{t-1})^{2}}{2\sigma^{2}}\tag{5.2.27}
+\end{align*}
+
+\end_inset
+
+显然，关于
+\begin_inset Formula $c$
+\end_inset
+
+和
+\begin_inset Formula $\phi$
+\end_inset
+
+函数式(5.2.27)的最大值等价于求下式的最小值
+\begin_inset Formula 
+\[
+\sum_{t=2}^{T}(y_{t}-c-\phi y_{t-1})^{2}
+\]
+
+\end_inset
+
+此式中的
+\begin_inset Formula $c$
+\end_inset
+
+和
+\begin_inset Formula $\phi$
+\end_inset
+
+的估计值可以通过OLS得到
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+\hat{c}\\
+\hat{\phi}
+\end{array}\right]=\left[\begin{array}{cc}
+T-1 & \sum y_{t-1}\\
+\sum y_{t-1} & \sum y_{t-1}^{2}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+\sum y_{t}\\
+\sum y_{t-1}y_{t}
+\end{array}\right]
+\]
+
+\end_inset
+
+式(5.2.27)关于
+\begin_inset Formula $\sigma^{2}$
+\end_inset
+
+求导并令其结果等于0可求得方差的条件似然估计
+\begin_inset Formula 
+\[
+-\frac{T-1}{2\sigma^{2}}+\sum_{t=2}^{T}\frac{(y_{t}-c-\phi y_{t-1})^{2}}{2\sigma^{4}}=0
+\]
+
+\end_inset
+
+或
+\begin_inset Formula 
+\[
+\hat{\sigma}^{2}=\sum_{t=2}^{T}\frac{(y_{t}-\hat{c}-\hat{\phi}y_{t-1})^{2}}{T-1}
+\]
+
+\end_inset
+
+这也是OLS回归式得到的均方残差
+\end_layout
+
+\begin_layout Itemize
+与精确最大似然不同，条件最大似然易于计算。另外，如果样本容量T足够大，则第一个观测值可以忽略。只要
+\begin_inset Formula $|\phi|<1$
+\end_inset
+
+，精确MLE和条件MLE就具有相同的大样本分布；当
+\begin_inset Formula $|\phi|>1$
+\end_inset
+
+时，条件MLE仍然可以给出一致估计，而最大化(5.2.9)则无法做到这一点【这是因为(5.2.9)是由(5.2.2)导出的，后者在
+\begin_inset Formula $|\phi|>1$
+\end_inset
+
+时并不能精确地描述
+\begin_inset Formula $Y_{1}$
+\end_inset
+
+的密度】。基于这些原因，在多数应用中，自回归系数都由OLS(条件最大似然)估计而不是通过精确最大似然估计。
+\end_layout
+
+\begin_layout Section
+高斯AR(p)的似然函数
+\end_layout
+
+\begin_layout Subsection
+计算似然函数
+\end_layout
+
+\begin_layout Itemize
+样本的前p个观测值
+\begin_inset Formula $(y_{1},y_{2},...,y_{p})$
+\end_inset
+
+构成一个
+\begin_inset Formula $(p\times1)$
+\end_inset
+
+向量
+\begin_inset Formula $\boldsymbol{y}_{p}$
+\end_inset
+
+，可将它视为p维高斯变量
+\begin_inset Formula $(Y_{1},Y_{2},...,Y_{p})$
+\end_inset
+
+的一个实现。该向量均值为
+\begin_inset Formula 
+\[
+\underset{(p\times1)}{\boldsymbol{\mu}_{p}}=\left[\begin{array}{c}
+\mu\\
+\mu\\
+\vdots\\
+\mu
+\end{array}\right]=\left[\begin{array}{c}
+\frac{c}{1-\phi_{1}-\phi_{2}-...-\phi_{p}}\\
+\frac{c}{1-\phi_{1}-\phi_{2}-...-\phi_{p}}\\
+\vdots\\
+\frac{c}{1-\phi_{1}-\phi_{2}-...-\phi_{p}}
+\end{array}\right]
+\]
+
+\end_inset
+
+方差-协方差矩阵为
+\begin_inset Formula 
+\begin{align*}
+\sigma^{2}\boldsymbol{V}_{p} & =\left[\begin{array}{cccc}
+E(Y_{1}-\mu)^{2} & E(Y_{1}-\mu)(Y_{2}-\mu) & \cdots & E(Y_{1}-\mu)(Y_{2}-\mu)\\
+E(Y_{2}-\mu)(Y_{1}-\mu) & E(Y_{2}-\mu)^{2} & \cdots & E(Y_{2}-\mu)(Y_{p}-\mu)\\
+\vdots & \vdots & \cdots & \vdots\\
+E(Y_{p}-\mu)(Y_{1}-\mu) & E(Y_{p}-\mu)(Y_{2}-\mu) & \cdots & E(Y_{p}-\mu)^{2}
+\end{array}\right]\\
+ & =\left[\begin{array}{ccccc}
+\gamma_{0} & \gamma_{1} & \gamma_{2} & \cdots & \gamma_{p-1}\\
+\gamma_{1} & \gamma_{0} & \gamma_{1} & \cdots & \gamma_{p-2}\\
+\gamma_{2} & \gamma_{1} & \gamma_{0} & \cdots & \gamma_{p-3}\\
+\vdots & \vdots & \vdots & \cdots & \vdots\\
+\gamma_{p-1} & \gamma_{p-2} & \gamma_{p-3} & \cdots & \gamma_{0}
+\end{array}\right]
+\end{align*}
+
+\end_inset
+
+前p个观测值的密度是一个
+\begin_inset Formula $N(\boldsymbol{\mu}_{p},\sigma^{2}\boldsymbol{V}_{p})$
+\end_inset
+
+变量的密度：
+\begin_inset Formula 
+\begin{align*}
+f_{Y_{p},Y_{p-1},...,Y_{1}}(y_{p},y_{p-1},...,y_{1};\boldsymbol{\theta}) & =(2\pi)^{-\frac{p}{2}}|\sigma^{-2}\boldsymbol{V}_{p}^{-1}|^{\frac{1}{2}}e^{-\frac{1}{2\sigma^{2}}(\boldsymbol{y}_{\boldsymbol{p}}-\boldsymbol{\mu}_{\boldsymbol{p}})'\boldsymbol{V}_{p}^{-1}(\boldsymbol{y}_{\boldsymbol{p}}-\boldsymbol{\mu}_{\boldsymbol{p}})}\\
+ & =(2\pi\sigma^{2})^{-\frac{p}{2}}|\boldsymbol{V}_{p}^{-1}|^{\frac{1}{2}}e^{-\frac{1}{2\sigma^{2}}(\boldsymbol{y}_{\boldsymbol{p}}-\boldsymbol{\mu}_{\boldsymbol{p}})'\boldsymbol{V}_{p}^{-1}(\boldsymbol{y}_{\boldsymbol{p}}-\boldsymbol{\mu}_{\boldsymbol{p}})}\tag{5.3.4}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+对于样本中余下的观测值
+\begin_inset Formula $(y_{p+1},y_{p+2},...,y_{T})$
+\end_inset
+
+，可应用
+\bar under
+\color red
+预测误差分解
+\bar default
+\color inherit
+(?)。以前t-1个观测值为条件，第t个观测值是高斯的，其均值为
+\begin_inset Formula 
+\[
+c+\phi_{1}y_{t-1}+\phi_{2}y_{t-2}+...+\phi_{p}y_{t-p}
+\]
+
+\end_inset
+
+且其方差为
+\begin_inset Formula $\sigma^{2}$
+\end_inset
+
+(这个分布只有最近p个观测值是有用的)，条件密度为
+\begin_inset Formula 
+\begin{align*}
+f_{Y_{t}|Y_{t-1},Y_{t-2},...,Y_{1}}(y_{t}|y_{t-1},y_{t-2},...,y_{1};\boldsymbol{\theta}) & =f_{Y_{t}|Y_{t-1},Y_{t-2},...,Y_{t-p}}(y_{t}|y_{t-1},y_{t-2},...,y_{t-p};\boldsymbol{\theta})\\
+ & =\frac{1}{\sqrt{2\pi\sigma^{2}}}e^{-\frac{(y_{t}-c-\phi_{1}y_{t-1}-\phi_{2}y_{t-2}-...-\phi_{p}y_{t-p})^{2}}{2\sigma^{2}}}
+\end{align*}
+
+\end_inset
+
+于是全部样本的似然函数为
+\begin_inset Formula 
+\[
+f_{Y_{t},Y_{t-1},Y_{t-2},...,Y_{1}}(y_{t},y_{t-1},y_{t-2},...,y_{1};\boldsymbol{\theta})=f_{Y_{p},Y_{p-1},...,Y_{1}}(y_{p},y_{p-1},...,y_{1};\boldsymbol{\theta})\cdot\prod_{t=p+1}^{T}f_{Y_{t}|Y_{t-1},Y_{t-2},...,Y_{t-p}}(y_{t}|y_{t-1},y_{t-2},...,y_{t-p};\boldsymbol{\theta})
+\]
+
+\end_inset
+
+对数似然值为
+\begin_inset Formula 
+\begin{align*}
+\mathscr{L}(\boldsymbol{\theta})= & \mathrm{ln}f_{Y_{t},Y_{t-1},Y_{t-2},...,Y_{1}}(y_{t},y_{t-1},y_{t-2},...,y_{1};\boldsymbol{\theta})\\
+= & -\frac{p}{2}ln(2\pi)-\frac{p}{2}ln(\sigma^{2})+\frac{1}{2}ln(|\boldsymbol{V}_{p}^{-1}|)-\frac{1}{2\sigma^{2}}(\boldsymbol{y}_{\boldsymbol{p}}-\boldsymbol{\mu}_{\boldsymbol{p}})'\boldsymbol{V}_{p}^{-1}(\boldsymbol{y}_{\boldsymbol{p}}-\boldsymbol{\mu}_{\boldsymbol{p}})\\
+ & -\frac{T-p}{2}ln(2\pi)-\frac{T-p}{2}ln(\sigma^{2})-\sum_{t=p+1}^{T}\frac{(y_{t}-c-\phi_{1}y_{t-1}-\phi_{2}y_{t-2}-...-\phi_{p}y_{t-p})^{2}}{2\sigma^{2}}\\
+= & -\frac{T}{2}ln(2\pi)-\frac{T}{2}ln(\sigma^{2})+\frac{1}{2}ln(|\boldsymbol{V}_{p}^{-1}|)-\frac{1}{2\sigma^{2}}(\boldsymbol{y}_{\boldsymbol{p}}-\boldsymbol{\mu}_{\boldsymbol{p}})'\boldsymbol{V}_{p}^{-1}(\boldsymbol{y}_{\boldsymbol{p}}-\boldsymbol{\mu}_{\boldsymbol{p}})\\
+ & -\sum_{t=p+1}^{T}\frac{(y_{t}-c-\phi_{1}y_{t-1}-\phi_{2}y_{t-2}-...-\phi_{p}y_{t-p})^{2}}{2\sigma^{2}}\tag{5.3.6}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+上式需要求
+\begin_inset Formula $(p\times p)$
+\end_inset
+
+矩阵
+\begin_inset Formula $\boldsymbol{V}_{p}$
+\end_inset
+
+的逆，令矩阵
+\begin_inset Formula $\boldsymbol{V}_{p}^{-1}$
+\end_inset
+
+的第i行第j列元素记为
+\begin_inset Formula $v^{ij}(p)$
+\end_inset
+
+，
+\begin_inset Formula $Galbraixh\,and\,Galbraith(1974)$
+\end_inset
+
+证明了
+\begin_inset Formula 
+\[
+v^{ij}(p)=\sum_{k=0}^{i-1}\phi_{k}\phi_{k+j-i}-\sum_{k=p+1-j}^{p+i-j}\phi_{k}\phi_{k+j-i}\text{，}1\leq i\leq j\leq p\tag{5.3.7}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\phi_{0}=1$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+条件最大似然估计
+\end_layout
+
+\begin_layout Itemize
+以前p个观测值为条件的对数似然估计有如下的简洁形式
+\begin_inset Formula 
+\begin{align*}
+\mathrm{ln}f_{Y_{T},Y_{T-1},...,Y_{p+1}|Y_{p},...,Y_{1}}(y_{T},y_{t-1},...,y_{p+1}|y_{p},...,y_{1};\boldsymbol{\theta})= & -\frac{T-p}{2}ln(2\pi)-\frac{T-p}{2}ln(\sigma^{2})\\
+ & -\sum_{t=p+1}^{T}\frac{(y_{t}-c-\phi_{1}y_{t-1}-\phi_{2}y_{t-2}-...-\phi_{p}y_{t-p})^{2}}{2\sigma^{2}}\tag{5.3.9}
+\end{align*}
+
+\end_inset
+
+同样的，上式等价于下式的最小化
+\begin_inset Formula 
+\[
+\sum_{t=p+1}^{T}(y_{t}-c-\phi_{1}y_{t-1}-\phi_{2}y_{t-2}-...-\phi_{p}y_{t-p})^{2}\tag{5.3.10}
+\]
+
+\end_inset
+
+这可以通过
+\begin_inset Formula $y_{t}$
+\end_inset
+
+关于常数项和它的p个滞后值的OLS回归得到MLE，而
+\begin_inset Formula $\sigma^{2}$
+\end_inset
+
+的极大似然估计则为上述回归的均方残差
+\begin_inset Formula 
+\[
+\hat{\sigma}^{2}=\frac{1}{T-p}\sum_{t=p+1}^{T}(y_{t}-\hat{c}-\hat{\phi}_{1}y_{t-1}-\hat{\phi}_{2}y_{t-2}-...-\hat{\phi}_{p}y_{t-p})^{2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+非高斯时间序列的最大似然估计
+\end_layout
+
+\begin_layout Section
+高斯MA(1)的似然函数
+\end_layout
+
+\begin_layout Subsection
+条件似然函数
+\end_layout
+
+\begin_layout Standard
+
 \end_layout
 
 \end_body
