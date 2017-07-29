@@ -5224,5 +5224,241 @@ s_{Y}(\omega) & =\frac{1}{2\pi}\gamma_{0}[cos(0)-i\cdot sin(0)]+\frac{1}{2\pi}\{
 计算不同过程的总体谱
 \end_layout
 
+\begin_layout Itemize
+令
+\begin_inset Formula $Y_{t}$
+\end_inset
+
+服从
+\begin_inset Formula $MA(\infty)$
+\end_inset
+
+过程
+\begin_inset Formula 
+\[
+Y_{t}=\mu+\psi(L)\varepsilon_{t}\tag{6.1.7}
+\]
+
+\end_inset
+
+对应的自协方差生成函数
+\begin_inset Formula 
+\[
+g_{Y}(z)=\sigma^{2}\psi(z)\psi(z^{-1})
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula $MA(\infty)$
+\end_inset
+
+过程的总体谱为
+\begin_inset Formula 
+\[
+s_{Y}(\omega)=\frac{1}{2\pi}\sigma^{2}\psi(e^{-i\omega})\psi(e^{i\omega})\tag{6.1.8}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+对于一个
+\begin_inset Formula $AR(1)$
+\end_inset
+
+过程
+\begin_inset Formula 
+\[
+Y_{t}=c+\phi Y_{t-1}+\varepsilon_{t}
+\]
+
+\end_inset
+
+当
+\begin_inset Formula $|\phi|<1$
+\end_inset
+
+，就有
+\begin_inset Formula $\psi(L)=\frac{1}{1-\phi L}$
+\end_inset
+
+，于是总体谱为
+\begin_inset Formula 
+\begin{align*}
+s_{Y}(\omega) & =\frac{1}{2\pi}\frac{\sigma^{2}}{(1-\phi e^{-i\omega})(1-\phi e^{i\omega})}\\
+ & =\frac{1}{2\pi}\frac{\sigma^{2}}{1-\phi^{2}-2\phi\cdot cos(\omega)}\tag{6.1.13}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+考虑一般的
+\begin_inset Formula $ARMA(p,q)$
+\end_inset
+
+过程，总体谱为
+\begin_inset Formula 
+\[
+s_{Y}(\omega)=\frac{\sigma^{2}}{2\pi}\frac{(1+\theta_{1}e^{-i\omega}+\theta_{2}e^{-i\omega2}+...+\theta_{q}e^{-i\omega q})}{(1-\phi_{1}e^{-i\omega}-\phi_{2}e^{-i\omega2}-...-\phi_{p}e^{-i\omega p})}\times\frac{(1+\theta_{1}e^{i\omega}+\theta_{2}e^{i\omega2}+...+\theta_{q}e^{i\omega q})}{(1-\phi_{1}e^{i\omega}-\phi_{2}e^{i\omega2}-...-\phi_{p}e^{i\omega p})}\tag{6.1.14}
+\]
+
+\end_inset
+
+若移动平均和自回归多项式可以分解为下面的形式
+\begin_inset Formula 
+\begin{align*}
+1+\theta_{1}z+\theta_{2}z^{2}+...+\theta_{q}z^{q} & =(1-\eta_{1}z)(1-\eta_{2}z)...(1-\eta_{q}z)\\
+1-\phi_{1}z-\phi_{2}z^{2}-...-\phi_{p}z^{p} & =(1-\lambda_{1}z)(1-\lambda_{2}z)...(1-\lambda_{p}z)
+\end{align*}
+
+\end_inset
+
+则总体谱可以写为
+\begin_inset Formula 
+\[
+s_{Y}(\omega)=\frac{\sigma^{2}}{2\pi}\frac{\prod_{j=1}^{q}[1+\eta_{j}^{2}-2\eta_{j}cos(\omega)]}{\prod_{j=1}^{p}[1+\lambda_{j}^{2}-2\lambda_{j}cos(\omega)]}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+计算机上一般直接使用式(6.1.14)，不需要多项式因式分解，更好操作。
+\end_layout
+
+\begin_layout Subsection
+由总体谱计算协方差
+\end_layout
+
+\begin_layout Itemize
+原则上，只要知道协方差序列
+\begin_inset Formula $\{\gamma_{j}\}_{j=-\infty}^{\infty}$
+\end_inset
+
+，对于任意给定的
+\begin_inset Formula $\omega$
+\end_inset
+
+值，就可以直接计算
+\begin_inset Formula $s_{Y}(\omega)$
+\end_inset
+
+；反之也成立：如果我们知道
+\begin_inset Formula $[0,\pi]$
+\end_inset
+
+区间上的所有
+\begin_inset Formula $\omega$
+\end_inset
+
+对应的
+\begin_inset Formula $s_{Y}(\omega)$
+\end_inset
+
+，对于任意给定的k，就可以直接计算k阶自协方差。实际上这意味着总体谱
+\begin_inset Formula $s_{Y}(\omega)$
+\end_inset
+
+与自协方差序列实际上包含相同的信息
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+\bar under
+性质6.1
+\series default
+\bar default
+：令
+\begin_inset Formula $\{\gamma_{j}\}_{j=-\infty}^{\infty}$
+\end_inset
+
+是一个绝对可加的自协方差序列，
+\begin_inset Formula $s_{Y}(\omega)$
+\end_inset
+
+是对应的总体谱，则
+\begin_inset Formula 
+\[
+\int_{-\pi}^{\pi}s_{Y}(\omega)e^{i\omega k}d\omega=\gamma_{k}\tag{6.1.15}
+\]
+
+\end_inset
+
+也可以等价地写为
+\begin_inset Formula 
+\[
+\int_{-\pi}^{\pi}s_{Y}(\omega)cos(\omega k)d\omega=\gamma_{k}\tag{6.1.16}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+总体谱解释
+\end_layout
+
+\begin_layout Itemize
+令k=0可得到
+\begin_inset Formula 
+\[
+\int_{-\pi}^{\pi}s_{Y}(\omega)d\omega=\gamma_{0}\tag{6.1.17}
+\]
+
+\end_inset
+
+换句话说，
+\begin_inset Formula $\pm\pi$
+\end_inset
+
+之间总体谱下面的面积的值是
+\begin_inset Formula $\gamma_{0}$
+\end_inset
+
+，也就是
+\begin_inset Formula $Y_{t}$
+\end_inset
+
+的方差
+\end_layout
+
+\begin_layout Itemize
+更一般的，假设
+\begin_inset Formula $\omega_{1}$
+\end_inset
+
+是0与
+\begin_inset Formula $\pi$
+\end_inset
+
+之间的任意值，那么我们可以将
+\begin_inset Formula $\int_{-\omega_{1}}^{\omega_{1}}s_{Y}(\omega)d\omega=2\int_{0}^{\omega_{1}}s_{Y}(\omega)d\omega$
+\end_inset
+
+解释为频率的绝对值小于
+\begin_inset Formula $\omega_{1}$
+\end_inset
+
+的部分所对应的方差，或者说频率的绝对值小于
+\begin_inset Formula $\omega_{1}$
+\end_inset
+
+的随机成分对Y的方差的贡献
+\end_layout
+
+\begin_layout Itemize
+样本谱
+\end_layout
+
 \end_body
 \end_document

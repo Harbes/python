@@ -305,6 +305,16 @@ class simulation:
             for i in range(self.pq, self.M + self.pq):
                 y_t[i] = self.const + (self.phi * y_t[i - self.p:i]).sum() + epsilon[i]
             return y_t[self.pq:]
+    # TODO 画总体谱
+    def p_spectrum_plot(self):
+        pass
+    # TODO 样本谱
+    def s_spectrum_plot(self):
+        pass
+    # TODO 理论自协方差值，根据总体谱计算
+    def acov(self):
+        pass
+
 
 
 
