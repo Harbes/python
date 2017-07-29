@@ -4465,6 +4465,585 @@ v^{ij}(p)=\sum_{k=0}^{i-1}\phi_{k}\phi_{k+j-i}-\sum_{k=p+1-j}^{p+i-j}\phi_{k}\ph
 条件似然函数
 \end_layout
 
+\begin_layout Itemize
+考察MA(1)过程
+\begin_inset Formula 
+\[
+Y_{t}=\mu+\varepsilon_{t}+\theta\varepsilon_{t-1}\tag{5.4.1}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\varepsilon_{t}\sim iid\,N(0,\sigma^{2})$
+\end_inset
+
+。令
+\begin_inset Formula $\boldsymbol{\theta}=(\mu,\theta,\sigma^{2})'$
+\end_inset
+
+表示要估计的总体参数。
+\end_layout
+
+\begin_layout Itemize
+假定
+\begin_inset Formula $\varepsilon_{0}=0$
+\end_inset
+
+，则
+\begin_inset Formula $(Y_{1}|\varepsilon_{0})\sim N(\mu,\sigma^{2})$
+\end_inset
+
+。此时可以根据
+\begin_inset Formula $y_{1},\varepsilon_{0}$
+\end_inset
+
+继续往下迭代
+\begin_inset Formula $\varepsilon_{1}=y_{1}-\mu$
+\end_inset
+
+，总结：如果已知
+\begin_inset Formula $\varepsilon_{t-1}$
+\end_inset
+
+(t>1)的值，则
+\begin_inset Formula 
+\[
+Y_{t}|\varepsilon_{t-1}\sim N(\mu+\theta\varepsilon_{t-1},\sigma^{2})
+\]
+
+\end_inset
+
+或
+\begin_inset Formula 
+\begin{align*}
+f_{Y_{t}|Y_{t-1},Y_{t-2},...,Y_{1},\varepsilon_{0}}(y_{t}|y_{t-1},y_{t-2},...,y_{1},\varepsilon_{0}=0;\boldsymbol{\theta}) & =f_{Y_{t}|\varepsilon_{t-1}}(y_{t}|\varepsilon_{t-1};\boldsymbol{\theta})\\
+ & =\frac{1}{\sqrt{2\pi\sigma^{2}}}e^{-\frac{\varepsilon_{t}^{2}}{2\sigma^{2}}}\\
+ & =\frac{1}{\sqrt{2\pi\sigma^{2}}}e^{-\frac{(y_{t}-\mu-\varepsilon_{t-1})^{2}}{2\sigma^{2}}}\tag{5.4.2}
+\end{align*}
+
+\end_inset
+
+于是样本似然函数
+\begin_inset Formula 
+\begin{align*}
+f_{Y_{T},Y_{T-1},...,Y_{1}|\varepsilon_{0}}(y_{T},y_{T-1},...,y_{1}|\varepsilon_{0}=0;\boldsymbol{\theta})\\
+= & f_{Y_{1}|\varepsilon_{0}=0}(y_{1}|\varepsilon_{0}=0;\boldsymbol{\theta})\prod_{t=2}^{T}f_{Y_{t}|Y_{t-1},Y_{t-2},...,Y_{1},\varepsilon_{0}}(y_{t}|y_{t-1},y_{t-2},...,y_{1},\varepsilon_{0}=0;\boldsymbol{\theta})
+\end{align*}
+
+\end_inset
+
+对应的条件对数似然函数
+\begin_inset Formula 
+\begin{align*}
+\mathscr{L}(\boldsymbol{\theta}) & =\mathrm{ln}f_{Y_{T},Y_{T-1},...,Y_{1}|\varepsilon_{0}}(y_{T},y_{T-1},...,y_{1}|\varepsilon_{0}=0;\boldsymbol{\theta})\\
+ & =-\frac{T}{2}ln(2\pi)-\frac{T}{2}ln(\sigma^{2})-\sum_{t=1}^{T}\frac{\varepsilon_{t}^{2}}{2\sigma^{2}}\tag{5.4.5}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+注意当
+\begin_inset Formula $|\theta|\ll1$
+\end_inset
+
+，则我们假设
+\begin_inset Formula $\varepsilon_{0}=0$
+\end_inset
+
+的影响将很快消失，(5.4.5)就给出了无条件对数似然函数的一个良好近似。然而，当
+\begin_inset Formula $|\theta|>1$
+\end_inset
+
+时，则假定
+\begin_inset Formula $\varepsilon_{0}=0$
+\end_inset
+
+的后果将随时间而累积，在此情形下条件方法就不再合理（
+\bar under
+\color red
+怎么办？
+\bar default
+\color inherit
+）
+\end_layout
+
+\begin_layout Subsection
+精确似然函数
+\end_layout
+
+\begin_layout Itemize
+计算MA(1)过程的精确似然函数有两种简便方法：一是运用卡尔曼滤波(第13章)；二是运用方差-协方差矩阵的三角分解(下面就是讨论此方法)。
+\end_layout
+
+\begin_layout Itemize
+首先将y的观测值
+\begin_inset Formula $(y_{1},y_{2},...,y_{T})$
+\end_inset
+
+看成是
+\begin_inset Formula $(T\times1)$
+\end_inset
+
+维向量
+\begin_inset Formula $(Y_{1},Y_{2},...,Y_{T})$
+\end_inset
+
+的一个实现，其均值为
+\begin_inset Formula $\boldsymbol{\mu}=(\mu,\mu,...,\mu)'$
+\end_inset
+
+，方差-协方差矩阵为
+\begin_inset Formula $(T\times T)$
+\end_inset
+
+维度的矩阵：
+\begin_inset Formula $\boldsymbol{\Omega}=E(\boldsymbol{Y}-\boldsymbol{\mu})(\boldsymbol{Y}-\boldsymbol{\mu})'$
+\end_inset
+
+，对于MA(1)过程而言
+\begin_inset Formula 
+\[
+\boldsymbol{\Omega}=\sigma^{2}\left[\begin{array}{ccccc}
+1+\theta^{2} & \theta & 0 & \cdots & 0\\
+\theta & 1+\theta^{2} & \theta & \cdots & 0\\
+0 & \theta & 1+\theta^{2} & \cdots & 0\\
+\vdots & \vdots & \vdots & \cdots & \vdots\\
+0 & 0 & 0 & \cdots & 1+\theta^{2}
+\end{array}\right]
+\]
+
+\end_inset
+
+对应的似然函数为
+\begin_inset Formula 
+\[
+f_{\boldsymbol{Y}}(\boldsymbol{y};\boldsymbol{\theta})=(2\pi)^{-T/2}|\boldsymbol{\Omega}|^{-1/2}e^{-\frac{1}{2}(\boldsymbol{y}-\boldsymbol{\mu})'\boldsymbol{\Omega}^{-1}(\boldsymbol{y}-\boldsymbol{\mu})}\tag{5.4.6}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+由
+\begin_inset Formula $\boldsymbol{\Omega}$
+\end_inset
+
+的三角分解可得到似然的预测误差分解
+\begin_inset Formula 
+\[
+\boldsymbol{\Omega}=\boldsymbol{ADA}'\tag{5.4.7}
+\]
+
+\end_inset
+
+代入(5.4.6)可得
+\begin_inset Formula 
+\[
+f_{\boldsymbol{Y}}(\boldsymbol{y};\boldsymbol{\theta})=(2\pi)^{-T/2}|\boldsymbol{ADA}'|^{-1/2}e^{-\frac{1}{2}(\boldsymbol{y}-\boldsymbol{\mu})'[\boldsymbol{A}']^{-1}\boldsymbol{D}^{-1}\boldsymbol{A}^{-1}(\boldsymbol{y}-\boldsymbol{\mu})}\tag{5.4.8}
+\]
+
+\end_inset
+
+定义
+\begin_inset Formula $\tilde{\boldsymbol{y}}\equiv\boldsymbol{A}^{-1}(\boldsymbol{y}-\boldsymbol{\mu})$
+\end_inset
+
+，则(5.4.8)可写为
+\begin_inset Formula 
+\[
+f_{\boldsymbol{Y}}(\boldsymbol{y};\boldsymbol{\theta})=(2\pi)^{-T/2}|\boldsymbol{D}|^{-1/2}e^{-\frac{1}{2}\tilde{\boldsymbol{y}}'\boldsymbol{D}^{-1}\tilde{\boldsymbol{y}}}\tag{5.4.10}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+注意
+\begin_inset Formula $\tilde{\boldsymbol{y}}\equiv\boldsymbol{A}^{-1}(\boldsymbol{y}-\boldsymbol{\mu})$
+\end_inset
+
+意味着
+\begin_inset Formula 
+\begin{align*}
+\tilde{y}_{1} & =y_{1}-\mu\\
+\tilde{y}_{t} & =y_{t}-\mu-\theta\frac{1+\theta^{2}+\theta^{4}+...+\theta^{2(t-2)}}{1+\theta^{2}+\theta^{4}+...+\theta^{2(t-1)}}\tilde{y}_{t-1}(t>1)
+\end{align*}
+
+\end_inset
+
+显然变量
+\begin_inset Formula $\tilde{y}_{t}$
+\end_inset
+
+可视为
+\begin_inset Formula $y_{t}$
+\end_inset
+
+关于常数项和
+\begin_inset Formula $y_{t-1},y_{t-2},...,y_{1}$
+\end_inset
+
+的线性投影的残差。
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+的主对角线元素给出了这一线性投影的MSE
+\begin_inset Formula 
+\[
+d_{tt}=E(\tilde{Y}_{t}^{2})=\sigma^{2}\frac{1+\theta^{2}+\theta^{4}+...+\theta^{2t}}{1+\theta^{2}+\theta^{4}+...+\theta^{2(t-1)}}\tag{5.4.12}
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\[
+\tilde{\boldsymbol{y}}'\boldsymbol{D}^{-1}\tilde{\boldsymbol{y}}=\sum_{t=1}^{T}\frac{\tilde{y}_{t}^{2}}{d_{tt}}
+\]
+
+\end_inset
+
+最终似然函数变为
+\begin_inset Formula 
+\[
+f_{\boldsymbol{Y}}(\boldsymbol{y};\boldsymbol{\theta})=(2\pi)^{-T/2}|\prod_{t=1}^{T}d_{tt}|^{-1/2}e^{-\frac{1}{2}\sum_{t=1}^{T}\frac{\tilde{y}_{t}^{2}}{d_{tt}}}\tag{5.4.15}
+\]
+
+\end_inset
+
+对数似然函数为
+\begin_inset Formula 
+\begin{align*}
+\mathscr{L}(\boldsymbol{\theta}) & =\mathscr{ln}f_{\boldsymbol{Y}}(\boldsymbol{y};\boldsymbol{\theta})\\
+ & =-\frac{T}{2}ln(2\pi)-\frac{1}{2}\sum_{t=1}^{T}ln(d_{tt})-\frac{1}{2}\sum_{t=1}^{T}\frac{\tilde{y}_{t}^{2}}{d_{tt}}\tag{5.4.16}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+值得注意的是，与条件对数似然函数式(5.4.5)不同，不管
+\begin_inset Formula $\theta$
+\end_inset
+
+是否与一个可逆的MA(1)表示有关，表达式(5.4.16)都是成立的。
+\end_layout
+
+\begin_layout Section
+高斯MA(q)的似然函数
+\end_layout
+
+\begin_layout Subsection
+条件似然函数
+\end_layout
+
+\begin_layout Itemize
+对于MA(q)过程
+\begin_inset Formula 
+\[
+Y_{t}=\mu+\varepsilon_{t}+\theta_{1}\varepsilon_{t-1}+...+\theta_{q}\varepsilon_{t-q}\tag{5.5.1}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+一个简单的方法就是假定前q项
+\begin_inset Formula $\varepsilon$
+\end_inset
+
+值全为0
+\begin_inset Formula 
+\[
+\varepsilon_{0}=\varepsilon_{-1}=...=\varepsilon_{-q+1}=0\tag{5.5.2}
+\]
+
+\end_inset
+
+于是后面的
+\begin_inset Formula $\varepsilon$
+\end_inset
+
+就可以通过迭代的方法得到
+\begin_inset Formula 
+\[
+\varepsilon_{t}=y_{t}-(\mu+\theta_{1}\varepsilon_{t-1}+...+\theta_{q}\varepsilon_{t-q})\tag{5.5.3}
+\]
+
+\end_inset
+
+其中t>0。令
+\begin_inset Formula $\boldsymbol{\varepsilon}_{0}$
+\end_inset
+
+表示
+\begin_inset Formula $(q\times1)$
+\end_inset
+
+向量
+\begin_inset Formula $(\varepsilon_{0},\varepsilon_{-1},...,\varepsilon_{-q+1})$
+\end_inset
+
+。于是条件对数似然函数可写为
+\begin_inset Formula 
+\begin{align*}
+\mathscr{L}(\boldsymbol{\theta}) & =\mathrm{ln}f_{Y_{T},Y_{T-1},...,Y_{1}|\boldsymbol{\varepsilon_{0}}}(y_{T},y_{T-1},...,y_{1}|\boldsymbol{\varepsilon_{0}=0};\boldsymbol{\theta})\\
+ & =-\frac{T}{2}ln(2\pi)-\frac{T}{2}ln(\sigma^{2})-\sum_{t=1}^{T}\frac{\varepsilon_{t}^{2}}{2\sigma^{2}}\tag{5.5.4}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+注意，只有当
+\begin_inset Formula $1+\theta_{1}z+\theta_{2}z^{2}+...+\theta_{q}z^{q}=0$
+\end_inset
+
+的根全部落在单位圆之外时，表达式(5.5.4)才有意义。
+\end_layout
+
+\begin_layout Subsection
+精确似然函数
+\end_layout
+
+\begin_layout Itemize
+精确似然函数由下式给出
+\begin_inset Formula 
+\[
+f_{\boldsymbol{Y}}(\boldsymbol{y};\boldsymbol{\theta})=(2\pi)^{-T/2}|\boldsymbol{\Omega}|^{-1/2}e^{-\frac{1}{2}(\boldsymbol{y}-\boldsymbol{\mu})'\boldsymbol{\Omega}^{-1}(\boldsymbol{y}-\boldsymbol{\mu})}\tag{5.5.5}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $\boldsymbol{\Omega}$
+\end_inset
+
+是可以看做
+\begin_inset Formula $\{\gamma_{k}\}_{k=0}^{T}$
+\end_inset
+
+序列生成的Toeplitz矩阵，且
+\begin_inset Formula 
+\[
+\gamma_{k}=\begin{cases}
+\sigma^{2}(\theta_{k}+\theta_{k+1}\theta_{1}+...+\theta_{q}\theta_{q-k}) & \text{，}k=0,1,...,q\\
+0 & \text{，}k>q
+\end{cases}\tag{5.5.7}
+\]
+
+\end_inset
+
+类似的，由卡尔曼滤波或者由
+\begin_inset Formula $\boldsymbol{\Omega}$
+\end_inset
+
+的三角分解可得
+\begin_inset Formula 
+\[
+\boldsymbol{\Omega}=\boldsymbol{ADA}'\tag{5.5.8}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $\boldsymbol{A}$
+\end_inset
+
+是一个下三角矩阵，当
+\begin_inset Formula $i>q+j$
+\end_inset
+
+时，
+\begin_inset Formula $a_{ij}=0$
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\boldsymbol{A}=\left[\begin{array}{cccccc}
+1 & 0 & 0 & \cdots & 0 & 0\\
+a_{21} & 1 & 0 & \cdots & 0 & 0\\
+a_{31} & a_{32} & 1 & \cdots & 0 & 0\\
+\vdots & \vdots & \vdots & \cdots & \vdots & \vdots\\
+a_{q+1,1} & a_{q+1,2} & a_{q+1,3} & \cdots & 0 & 0\\
+0 & a_{q+2,2} & a_{q+2,3} & \cdots & 0 & 0\\
+\vdots & \vdots & \vdots & \cdots & \vdots & \vdots\\
+0 & 0 & 0 & \cdots
+\end{array}\right]
+\]
+
+\end_inset
+
+然后经过前述同样的方法可得
+\begin_inset Formula 
+\[
+f_{\boldsymbol{Y}}(\boldsymbol{y};\boldsymbol{\theta})=(2\pi)^{-T/2}|\boldsymbol{D}|^{-1/2}e^{-\frac{1}{2}\tilde{\boldsymbol{y}}'\boldsymbol{D}^{-1}\tilde{\boldsymbol{y}}}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\tilde{\boldsymbol{y}}=\boldsymbol{A}^{-1}(\boldsymbol{y-\mu})$
+\end_inset
+
+，我们可以通过递归的方法求出所有
+\begin_inset Formula $\tilde{\boldsymbol{y}}$
+\end_inset
+
+的元素
+\begin_inset Formula 
+\begin{align*}
+\tilde{y}_{1} & =y_{1}-\mu\\
+\tilde{y}_{2} & =y_{2}-\mu-a_{21}\tilde{y}_{1}\\
+\tilde{y}_{3} & =y_{3}-\mu-a_{32}\tilde{y}_{2}-a_{31}\tilde{y}_{1}\\
+ & \vdots\\
+\tilde{y}_{t} & =y_{t}-\mu-a_{t,t-1}\tilde{y}_{t-1}-a_{t,t-2}\tilde{y}_{t-2}-...-a_{t,t-q}\tilde{y}_{t-q}
+\end{align*}
+
+\end_inset
+
+则精确对数似然函数为
+\begin_inset Formula 
+\begin{align*}
+\mathscr{L}(\boldsymbol{\theta}) & =\mathscr{ln}f_{\boldsymbol{Y}}(\boldsymbol{y};\boldsymbol{\theta})\\
+ & =-\frac{T}{2}ln(2\pi)-\frac{1}{2}\sum_{t=1}^{T}ln(d_{tt})-\frac{1}{2}\sum_{t=1}^{T}\frac{\tilde{y}_{t}^{2}}{d_{tt}}\tag{5.5.10}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+高斯ARMA(p,q)过程的似然函数
+\end_layout
+
+\begin_layout Itemize
+一个高斯ARMA(p,q)过程
+\begin_inset Formula 
+\begin{align*}
+Y_{t} & =c+\phi_{1}Y_{t-1}+\phi_{2}Y_{t-2}+...+\phi_{p}Y_{t-p}\\
+ & +\varepsilon_{t}+\theta_{1}\varepsilon_{t-1}+...+\theta_{q}\varepsilon_{t-q}\tag{5.6.1}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+给定初始值
+\begin_inset Formula $\boldsymbol{y}_{0}\equiv(y_{0},y_{-1},...,y_{-p+1})'$
+\end_inset
+
+和
+\begin_inset Formula $\boldsymbol{\varepsilon}_{0}=(\varepsilon_{0},\varepsilon_{-1},...,\varepsilon_{-q+1})'$
+\end_inset
+
+，于是我们可以通过迭代
+\begin_inset Formula 
+\[
+\varepsilon_{t}=y_{t}-c-(\phi_{1}y_{t-1}+\phi_{2}y_{t-2}+...+\phi_{p}y_{t-p})-(\theta_{1}\varepsilon_{t-1}+...+\theta_{q}\varepsilon_{t-q})\tag{5.6.2}
+\]
+
+\end_inset
+
+条件似然函数为
+\begin_inset Formula 
+\begin{align*}
+\mathscr{L}(\boldsymbol{\theta}) & =\mathrm{ln}f_{Y_{T},Y_{T-1},...,Y_{1}|\boldsymbol{Y}_{0},\boldsymbol{\varepsilon_{0}}}(y_{T},y_{T-1},...,y_{1}|\boldsymbol{y}_{0},\boldsymbol{\varepsilon_{0}};\boldsymbol{\theta})\\
+ & =-\frac{T}{2}ln(2\pi)-\frac{T}{2}ln(\sigma^{2})-\sum_{t=1}^{T}\frac{\varepsilon_{t}^{2}}{2\sigma^{2}}\tag{5.6.3}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+可以令
+\begin_inset Formula $y$
+\end_inset
+
+和
+\begin_inset Formula $\varepsilon$
+\end_inset
+
+的初始值为其期望值
+\begin_inset Formula 
+\begin{align*}
+y_{s} & =\frac{c}{1-\phi_{1}-\phi_{2}-...-\phi_{p}}\text{，}s=0,-1,...,-p+1\\
+\varepsilon_{s} & =0\text{，}s=0,-1,...,-q+1
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+另外，
+\begin_inset Formula $Box\,and\,Jenkins(1976)$
+\end_inset
+
+建议令各个
+\begin_inset Formula $\varepsilon$
+\end_inset
+
+为0，但令各个
+\begin_inset Formula $y$
+\end_inset
+
+等于其实际值，也就是说不再假设初始值，而是从
+\begin_inset Formula $t=p+1$
+\end_inset
+
+开始迭代，令
+\begin_inset Formula $y_{1},y_{2},...,y_{p}$
+\end_inset
+
+等于其观测值且令
+\begin_inset Formula $\varepsilon_{p}=\varepsilon_{p-1}=...=\varepsilon_{p-q+1}=0$
+\end_inset
+
+，此时条件对数似然函数为
+\begin_inset Formula 
+\[
+\mathrm{ln}f(y_{T},..,y_{p+1}|y_{p},...,y_{1},\varepsilon_{p}=0,...,\varepsilon_{p-q+1}=0)=-\frac{T-p}{2}\mathrm{ln}(2\pi)-\frac{T-p}{2}\mathrm{ln}(\sigma^{2})-\sum_{t=p+1}^{T}\frac{\varepsilon_{t}^{2}}{2\sigma^{2}}\tag{5.6.3}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+无论初始值采用何值，上述条件似然函数需要满足前提条件
+\begin_inset Formula $1+\theta_{1}z+\theta_{2}z^{2}+...+\theta_{q}z^{p}=0$
+\end_inset
+
+的根全部落在单位圆之外。
+\end_layout
+
+\begin_layout Section
+数值优化
+\end_layout
+
 \begin_layout Standard
 
 \end_layout
