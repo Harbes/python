@@ -3896,9 +3896,9 @@ f_{Y_{T},Y_{T-1},...,Y_{1}}(y_{T},y_{T-1},...,y_{1};\boldsymbol{\theta})=f_{Y_{1
 相应的对数似然函数为
 \begin_inset Formula 
 \begin{align*}
-\mathscr{L}(\boldsymbol{\theta})= & \mathrm{ln}f_{Y_{1}}(y_{1};\boldsymbol{\theta})+\sum_{t=2}^{T}\mathrm{ln}f_{Y_{t}|Y_{t-1}}(y_{t}|y_{t-1};\boldsymbol{\theta})\\
-= & -\frac{1}{2}\mathrm{ln}(2\pi)-\frac{1}{2}\mathrm{ln}\frac{\sigma^{2}}{1-\phi^{2}}-\frac{(y_{1}-\frac{c}{1-\phi})^{2}}{2\frac{\sigma^{2}}{1-\phi^{2}}}\\
- & -\frac{T-1}{2}\mathrm{ln}(2\pi)-\frac{T-1}{2}\mathrm{ln}(\sigma^{2})-\sum_{t=2}^{T}\frac{(y_{t}-c-\phi y_{t-1})^{2}}{2\sigma^{2}}\tag{5.2.9}
+\mathscr{L}(\boldsymbol{\theta})= & lnf_{Y_{1}}(y_{1};\boldsymbol{\theta})+\sum_{t=2}^{T}lnf_{Y_{t}|Y_{t-1}}(y_{t}|y_{t-1};\boldsymbol{\theta})\\
+= & -\frac{1}{2}ln(2\pi)-\frac{1}{2}ln\frac{\sigma^{2}}{1-\phi^{2}}-\frac{(y_{1}-\frac{c}{1-\phi})^{2}}{2\frac{\sigma^{2}}{1-\phi^{2}}}\\
+ & -\frac{T-1}{2}ln(2\pi)-\frac{T-1}{2}ln(\sigma^{2})-\sum_{t=2}^{T}\frac{(y_{t}-c-\phi y_{t-1})^{2}}{2\sigma^{2}}\tag{5.2.9}
 \end{align*}
 
 \end_inset
@@ -3994,7 +3994,7 @@ f_{\boldsymbol{Y}}(y;\theta)=(2\pi)^{-T/2}|\boldsymbol{\Omega}^{-1}|^{1/2}e^{-\f
 其对数似然值为
 \begin_inset Formula 
 \[
-\mathscr{L}(\theta)=-\frac{T}{2}\mathrm{ln}(2\pi)+\frac{1}{2}\mathrm{ln}(|\boldsymbol{\Omega}^{-1}|)-\frac{1}{2}(\boldsymbol{y-\mu})'\boldsymbol{\Omega}^{-1}(\boldsymbol{y-\mu})\tag{5.2.17}
+\mathscr{L}(\theta)=-\frac{T}{2}ln(2\pi)+\frac{1}{2}ln(|\boldsymbol{\Omega}^{-1}|)-\frac{1}{2}(\boldsymbol{y-\mu})'\boldsymbol{\Omega}^{-1}(\boldsymbol{y-\mu})\tag{5.2.17}
 \]
 
 \end_inset
@@ -4032,7 +4032,7 @@ f_{\boldsymbol{Y}}(y;\theta)=(2\pi)^{-T/2}|\boldsymbol{\Omega}^{-1}|^{1/2}e^{-\f
 ，代入(5.2.17)得
 \begin_inset Formula 
 \[
-\mathscr{L}(\theta)=-\frac{T}{2}\mathrm{ln}(2\pi)+\frac{1}{2}\mathrm{ln}(|\sigma^{-2}\boldsymbol{L}'\boldsymbol{L}|)-\frac{1}{2}(\boldsymbol{y-\mu})'\sigma^{-2}\boldsymbol{L}'\boldsymbol{L}(\boldsymbol{y-\mu})\tag{5.2.21}
+\mathscr{L}(\theta)=-\frac{T}{2}ln(2\pi)+\frac{1}{2}ln(|\sigma^{-2}\boldsymbol{L}'\boldsymbol{L}|)-\frac{1}{2}(\boldsymbol{y-\mu})'\sigma^{-2}\boldsymbol{L}'\boldsymbol{L}(\boldsymbol{y-\mu})\tag{5.2.21}
 \]
 
 \end_inset
@@ -4103,8 +4103,8 @@ y_{T}-c-\phi y_{T-1}
 类似的，(5.2.21)的中间一项可写为
 \begin_inset Formula 
 \begin{align*}
-\frac{1}{2}\mathrm{ln}(|\sigma^{-2}\boldsymbol{L}'\boldsymbol{L}|) & =-\frac{T}{2}\mathrm{ln}(\sigma^{2})+\mathrm{ln}(|\boldsymbol{L}|)\\
- & =-\frac{T}{2}\mathrm{ln}(\sigma^{2})+\mathrm{ln}(1-\phi^{2})\tag{5.2.25}
+\frac{1}{2}ln(|\sigma^{-2}\boldsymbol{L}'\boldsymbol{L}|) & =-\frac{T}{2}ln(\sigma^{2})+ln(|\boldsymbol{L}|)\\
+ & =-\frac{T}{2}ln(\sigma^{2})+ln(1-\phi^{2})\tag{5.2.25}
 \end{align*}
 
 \end_inset
@@ -4152,7 +4152,7 @@ f_{Y_{T},Y_{T-1},...,Y_{2}|Y_{1}}(y_{T},y_{T-1},...,y_{2}|y_{1})=\prod_{t=2}^{T}
 于是现在最大化的目标为
 \begin_inset Formula 
 \begin{align*}
-\mathrm{ln}f_{Y_{T},Y_{T-1},...,Y_{2}|Y_{1}}(y_{T},y_{T-1},...,y_{2}|y_{1})= & -\frac{T-1}{2}\mathrm{ln}(2\pi)-\frac{T-1}{2}\mathrm{ln}(\sigma^{2})\\
+\mathrm{ln}f_{Y_{T},Y_{T-1},...,Y_{2}|Y_{1}}(y_{T},y_{T-1},...,y_{2}|y_{1})= & -\frac{T-1}{2}ln(2\pi)-\frac{T-1}{2}ln(\sigma^{2})\\
  & -\sum_{t=2}^{T}\frac{(y_{t}-c-\phi y_{t-1})^{2}}{2\sigma^{2}}\tag{5.2.27}
 \end{align*}
 
@@ -4536,7 +4536,7 @@ f_{Y_{T},Y_{T-1},...,Y_{1}|\varepsilon_{0}}(y_{T},y_{T-1},...,y_{1}|\varepsilon_
 对应的条件对数似然函数
 \begin_inset Formula 
 \begin{align*}
-\mathscr{L}(\boldsymbol{\theta}) & =\mathrm{ln}f_{Y_{T},Y_{T-1},...,Y_{1}|\varepsilon_{0}}(y_{T},y_{T-1},...,y_{1}|\varepsilon_{0}=0;\boldsymbol{\theta})\\
+\mathscr{L}(\boldsymbol{\theta}) & =lnf_{Y_{T},Y_{T-1},...,Y_{1}|\varepsilon_{0}}(y_{T},y_{T-1},...,y_{1}|\varepsilon_{0}=0;\boldsymbol{\theta})\\
  & =-\frac{T}{2}ln(2\pi)-\frac{T}{2}ln(\sigma^{2})-\sum_{t=1}^{T}\frac{\varepsilon_{t}^{2}}{2\sigma^{2}}\tag{5.4.5}
 \end{align*}
 
@@ -4722,7 +4722,7 @@ f_{\boldsymbol{Y}}(\boldsymbol{y};\boldsymbol{\theta})=(2\pi)^{-T/2}|\prod_{t=1}
 对数似然函数为
 \begin_inset Formula 
 \begin{align*}
-\mathscr{L}(\boldsymbol{\theta}) & =\mathscr{ln}f_{\boldsymbol{Y}}(\boldsymbol{y};\boldsymbol{\theta})\\
+\mathscr{L}(\boldsymbol{\theta}) & =lnf_{\boldsymbol{Y}}(\boldsymbol{y};\boldsymbol{\theta})\\
  & =-\frac{T}{2}ln(2\pi)-\frac{1}{2}\sum_{t=1}^{T}ln(d_{tt})-\frac{1}{2}\sum_{t=1}^{T}\frac{\tilde{y}_{t}^{2}}{d_{tt}}\tag{5.4.16}
 \end{align*}
 
@@ -4799,7 +4799,7 @@ Y_{t}=\mu+\varepsilon_{t}+\theta_{1}\varepsilon_{t-1}+...+\theta_{q}\varepsilon_
 。于是条件对数似然函数可写为
 \begin_inset Formula 
 \begin{align*}
-\mathscr{L}(\boldsymbol{\theta}) & =\mathrm{ln}f_{Y_{T},Y_{T-1},...,Y_{1}|\boldsymbol{\varepsilon_{0}}}(y_{T},y_{T-1},...,y_{1}|\boldsymbol{\varepsilon_{0}=0};\boldsymbol{\theta})\\
+\mathscr{L}(\boldsymbol{\theta}) & =lnf_{Y_{T},Y_{T-1},...,Y_{1}|\boldsymbol{\varepsilon_{0}}}(y_{T},y_{T-1},...,y_{1}|\boldsymbol{\varepsilon_{0}=0};\boldsymbol{\theta})\\
  & =-\frac{T}{2}ln(2\pi)-\frac{T}{2}ln(\sigma^{2})-\sum_{t=1}^{T}\frac{\varepsilon_{t}^{2}}{2\sigma^{2}}\tag{5.5.4}
 \end{align*}
 
@@ -4920,7 +4920,7 @@ f_{\boldsymbol{Y}}(\boldsymbol{y};\boldsymbol{\theta})=(2\pi)^{-T/2}|\boldsymbol
 则精确对数似然函数为
 \begin_inset Formula 
 \begin{align*}
-\mathscr{L}(\boldsymbol{\theta}) & =\mathscr{ln}f_{\boldsymbol{Y}}(\boldsymbol{y};\boldsymbol{\theta})\\
+\mathscr{L}(\boldsymbol{\theta}) & =lnf_{\boldsymbol{Y}}(\boldsymbol{y};\boldsymbol{\theta})\\
  & =-\frac{T}{2}ln(2\pi)-\frac{1}{2}\sum_{t=1}^{T}ln(d_{tt})-\frac{1}{2}\sum_{t=1}^{T}\frac{\tilde{y}_{t}^{2}}{d_{tt}}\tag{5.5.10}
 \end{align*}
 
@@ -4966,7 +4966,7 @@ Y_{t} & =c+\phi_{1}Y_{t-1}+\phi_{2}Y_{t-2}+...+\phi_{p}Y_{t-p}\\
 条件似然函数为
 \begin_inset Formula 
 \begin{align*}
-\mathscr{L}(\boldsymbol{\theta}) & =\mathrm{ln}f_{Y_{T},Y_{T-1},...,Y_{1}|\boldsymbol{Y}_{0},\boldsymbol{\varepsilon_{0}}}(y_{T},y_{T-1},...,y_{1}|\boldsymbol{y}_{0},\boldsymbol{\varepsilon_{0}};\boldsymbol{\theta})\\
+\mathscr{L}(\boldsymbol{\theta}) & =lnf_{Y_{T},Y_{T-1},...,Y_{1}|\boldsymbol{Y}_{0},\boldsymbol{\varepsilon_{0}}}(y_{T},y_{T-1},...,y_{1}|\boldsymbol{y}_{0},\boldsymbol{\varepsilon_{0}};\boldsymbol{\theta})\\
  & =-\frac{T}{2}ln(2\pi)-\frac{T}{2}ln(\sigma^{2})-\sum_{t=1}^{T}\frac{\varepsilon_{t}^{2}}{2\sigma^{2}}\tag{5.6.3}
 \end{align*}
 
@@ -5024,7 +5024,7 @@ y_{s} & =\frac{c}{1-\phi_{1}-\phi_{2}-...-\phi_{p}}\text{，}s=0,-1,...,-p+1\\
 ，此时条件对数似然函数为
 \begin_inset Formula 
 \[
-\mathrm{ln}f(y_{T},..,y_{p+1}|y_{p},...,y_{1},\varepsilon_{p}=0,...,\varepsilon_{p-q+1}=0)=-\frac{T-p}{2}\mathrm{ln}(2\pi)-\frac{T-p}{2}\mathrm{ln}(\sigma^{2})-\sum_{t=p+1}^{T}\frac{\varepsilon_{t}^{2}}{2\sigma^{2}}\tag{5.6.3}
+\mathrm{ln}f(y_{T},..,y_{p+1}|y_{p},...,y_{1},\varepsilon_{p}=0,...,\varepsilon_{p-q+1}=0)=-\frac{T-p}{2}ln(2\pi)-\frac{T-p}{2}ln(\sigma^{2})-\sum_{t=p+1}^{T}\frac{\varepsilon_{t}^{2}}{2\sigma^{2}}\tag{5.6.3}
 \]
 
 \end_inset
@@ -5457,7 +5457,282 @@ s_{Y}(\omega)=\frac{\sigma^{2}}{2\pi}\frac{\prod_{j=1}^{q}[1+\eta_{j}^{2}-2\eta_
 \end_layout
 
 \begin_layout Itemize
+谱表示定理
+\end_layout
+
+\begin_layout Section
 样本谱
+\end_layout
+
+\begin_layout Itemize
+给定可观测的样本容量为T的序列
+\begin_inset Formula $y_{1},y_{2},...,y_{T}$
+\end_inset
+
+，有下式我们能计算直到T-1期的样本自协方差
+\begin_inset Formula 
+\[
+\hat{\gamma}_{j}=\begin{cases}
+\frac{1}{T}\sum_{t=j+1}^{T}(y_{t}-\bar{y})(y_{t-j}-\bar{y}) & \text{，}j=0,1,2,...,T-1\\
+\hat{\gamma}_{-j} & \text{，}j=-1,-2,...,-T+1
+\end{cases}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\bar{y}=\frac{1}{T}\sum_{t=1}^{T}y_{t}$
+\end_inset
+
+。对任意给定的
+\begin_inset Formula $\omega$
+\end_inset
+
+，我们构建与总体谱对应的样本形式，即
+\series bold
+\bar under
+样本周期图
+\series default
+\bar default
+
+\begin_inset Formula 
+\[
+\hat{s}_{y}(\omega)=\frac{1}{2\pi}\sum_{j=-T+1}^{T-1}\hat{\gamma}_{j}e^{-i\omega j}\tag{6.2.4}
+\]
+
+\end_inset
+
+或等价地
+\begin_inset Formula 
+\[
+\hat{s}_{y}(\omega)=\frac{1}{2\pi}[\hat{\gamma}_{0}+2\sum_{j=1}^{T-1}\hat{\gamma}_{j}cos(\omega j)]\tag{6.2.5}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+\bar under
+性质6.2
+\series default
+\bar default
+(谱表示定理的有限样本形式)：令T为奇数，
+\begin_inset Formula $M\equiv\frac{T-1}{2}$
+\end_inset
+
+。令
+\begin_inset Formula $\omega_{j}=\frac{2\pi j}{T},j=1,2,...,M$
+\end_inset
+
+，以及
+\begin_inset Formula $\underset{(T\times1)}{\boldsymbol{x}_{t}}=\{1,cos[\omega_{1}(t-1)],sin[\omega_{1}(t-1)],cos[\omega_{2}(t-1)],sin[\omega_{2}(t-1)],...,cos[\omega_{M}(t-1)],sin[\omega_{M}(t-1)]\}'$
+\end_inset
+
+，则
+\begin_inset Formula 
+\[
+\sum_{t=1}^{T}\boldsymbol{x}_{t}\boldsymbol{x}_{t}'=\left[\begin{array}{cc}
+T & \boldsymbol{0}\\
+\boldsymbol{0} & \frac{T}{2}\boldsymbol{I}_{T-1}
+\end{array}\right]\tag{6.2.11}
+\]
+
+\end_inset
+
+进一步地令
+\begin_inset Formula $\{y_{1},y_{2},...,y_{T}\}$
+\end_inset
+
+为任意T个数，则下面的结论成立：
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Formula $y_{t}$
+\end_inset
+
+能表示为
+\begin_inset Formula 
+\[
+y_{t}=\hat{\mu}+\sum_{j=1}^{M}\{\hat{\alpha}_{j}\cdot cos[\omega_{j}(t-1)]+\hat{\delta}_{j}\cdot sin[\omega_{j}(t-1)]\}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\hat{\mu}=\bar{y}$
+\end_inset
+
+以及
+\begin_inset Formula 
+\begin{align*}
+\hat{\alpha}_{j} & =\frac{2}{T}\sum_{t=1}^{T}y_{t}\cdot cos[\omega_{j}(t-1)]\tag{6.2.12}\\
+\hat{\delta}_{j} & =\frac{2}{T}\sum_{t=1}^{T}y_{t}\cdot sin[\omega_{j}(t-1)]\tag{6.2.13}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $y_{t}$
+\end_inset
+
+的样本方差可以表示为
+\begin_inset Formula 
+\[
+\frac{1}{T}\sum_{t=1}^{T}(y_{t}-\bar{y})^{2}=\frac{1}{2}\sum_{j=1}^{M}(\hat{\alpha}_{j}^{2}+\hat{\delta}_{j}^{2})\tag{6.2.14}
+\]
+
+\end_inset
+
+由频率
+\begin_inset Formula $\omega_{j}$
+\end_inset
+
+的周期引起的样本方差为
+\begin_inset Formula $\frac{1}{2}(\hat{\alpha}_{j}^{2}+\hat{\delta}_{j}^{2})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+由频率
+\begin_inset Formula $\omega_{j}$
+\end_inset
+
+的周期引起的样本方差可以等价地表示为
+\begin_inset Formula 
+\[
+\frac{1}{2}(\hat{\alpha}_{j}^{2}+\hat{\delta}_{j}^{2})=\frac{4\pi}{T}\cdot\hat{s}_{y}(\omega_{j})\tag{6.2.15}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $\hat{s}_{y}(\omega_{j})$
+\end_inset
+
+为样本周期图在频率
+\begin_inset Formula $\omega_{j}$
+\end_inset
+
+处的值
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+注意到解释y的方差的频率
+\begin_inset Formula $\omega_{j}$
+\end_inset
+
+位于
+\begin_inset Formula $[0,\pi]$
+\end_inset
+
+之间，而不采用
+\begin_inset Formula $<0$
+\end_inset
+
+或者
+\begin_inset Formula $>\pi$
+\end_inset
+
+的频率
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+不采用
+\begin_inset Formula $<0$
+\end_inset
+
+：首先，不采用负频率是因为无法识别(负频率与正频率最终只是表现在参数的正负号上，本质上无区别)
+\end_layout
+
+\begin_layout Itemize
+最大能观测到的频率为
+\begin_inset Formula $\omega=\pi$
+\end_inset
+
+：对于
+\begin_inset Formula $>\pi$
+\end_inset
+
+的频率，通过周期性知道它与某个
+\begin_inset Formula $-\pi<\omega<\pi$
+\end_inset
+
+的频率显示结果是一致的，而正频率与负频率因本质上没区别而无法区分，因而
+\begin_inset Formula $>\pi$
+\end_inset
+
+的频率与某个
+\begin_inset Formula $0<\omega<\pi$
+\end_inset
+
+的频率的结果无法区分
+\end_layout
+
+\begin_layout Itemize
+总结：无论是负频率还是大于
+\begin_inset Formula $\pi$
+\end_inset
+
+的频率，最终都会归于
+\begin_inset Formula $[0,\pi]$
+\end_inset
+
+之间的频率，这就是所谓的
+\series bold
+\bar under
+频叠
+\series default
+\bar default
+。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实际当中，对于一个特殊的有限样本，最低频率为
+\begin_inset Formula $\omega_{1}=\frac{2\pi}{T}$
+\end_inset
+
+，相应的能观察到的最长周期为T
+\end_layout
+
+\begin_layout Itemize
+性质6.2的第3条为样本周期图反映了y的样本方差中由各种频率的周期解释的比例的论述提供了理论基础
+\end_layout
+
+\begin_layout Section
+总体谱估计
+\end_layout
+
+\begin_layout Subsection
+样本周期图的大样本性质
+\end_layout
+
+\begin_layout Itemize
+一个明显的思路是通过样本周期图来估计总体谱，但是该方法存在明显的缺陷。Fuller(1976)证明，对于
+\begin_inset Formula $\omega\neq0$
+\end_inset
+
+以及足够大的样本容量T，样本周期图与总体谱的比率的两倍服从卡方分布：
+\begin_inset Formula 
+\[
+\frac{2\hat{s}_{y}(\omega)}{s_{Y}(\omega)}\approx\chi^{2}(2)
+\]
+
+\end_inset
+
+
 \end_layout
 
 \end_body
