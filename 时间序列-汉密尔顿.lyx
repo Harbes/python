@@ -5727,12 +5727,75 @@ y_{t}=\hat{\mu}+\sum_{j=1}^{M}\{\hat{\alpha}_{j}\cdot cos[\omega_{j}(t-1)]+\hat{
 以及足够大的样本容量T，样本周期图与总体谱的比率的两倍服从卡方分布：
 \begin_inset Formula 
 \[
-\frac{2\hat{s}_{y}(\omega)}{s_{Y}(\omega)}\approx\chi^{2}(2)
+\frac{2\hat{s}_{y}(\omega)}{s_{Y}(\omega)}\approx\chi^{2}(2)\tag{6.3.1}
 \]
 
 \end_inset
 
+当另取一个
+\begin_inset Formula $\lambda\neq\omega$
+\end_inset
 
+，则
+\begin_inset Formula $\frac{2\hat{s}_{y}(\lambda)}{s_{Y}(\lambda)}\approx\chi^{2}(2)$
+\end_inset
+
+且
+\begin_inset Formula $\frac{2\hat{s}_{y}(\lambda)}{s_{Y}(\lambda)}$
+\end_inset
+
+与
+\begin_inset Formula $\frac{2\hat{s}_{y}(\omega)}{s_{Y}(\omega)}$
+\end_inset
+
+是近似独立的，在95%的情况下，
+\begin_inset Formula $\chi^{2}(2)$
+\end_inset
+
+取值范围是0.05～7.4，范围太大，因而
+\begin_inset Formula $\hat{s}_{y}(\omega)$
+\end_inset
+
+不适合作为总体谱的合意估计量。式(6.3.1)还告诉我们，随着T增加，估计量
+\begin_inset Formula $\hat{s}_{y}(\omega)$
+\end_inset
+
+并不会变的更精确。
+\end_layout
+
+\begin_layout Subsection
+总体谱的参数估计
+\end_layout
+
+\begin_layout Itemize
+估计总体谱的一个很好的方法是：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+先使用极大似然估计估计ARMA参数
+\end_layout
+
+\begin_layout Itemize
+然后利用参数来估算任意频率
+\begin_inset Formula $\omega$
+\end_inset
+
+处的总体谱
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+如果模型设定正确，当T增加时，MLE会越来越接近真实值，因此总体谱的估计量也是一样；即使模型设定不正确，但如果真实过程的自协方差非常接近我们所估计的ARMA的设
+定，上述过程也能提供总体谱的有用估计
+\end_layout
+
+\begin_layout Subsection
+总体谱的非参数估计
+\end_layout
+
+\begin_layout Section
+谱分析的应用
 \end_layout
 
 \end_body
