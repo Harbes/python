@@ -5798,5 +5798,182 @@ y_{t}=\hat{\mu}+\sum_{j=1}^{M}\{\hat{\alpha}_{j}\cdot cos[\omega_{j}(t-1)]+\hat{
 谱分析的应用
 \end_layout
 
+\begin_layout Itemize
+样本周期图显示的是在
+\begin_inset Formula $\omega_{j}=\frac{2\pi j}{T}$
+\end_inset
+
+处的值，因此计算周期时，首先寻找尖峰所在位置(例如
+\begin_inset Formula $m$
+\end_inset
+
+)，则对应的周期为
+\begin_inset Formula $\frac{2\pi}{\omega_{m}}=\frac{T}{m}$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+注意，由于最高频率只取
+\begin_inset Formula $\pi$
+\end_inset
+
+，因而，样本周期图往往是关于
+\begin_inset Formula $\frac{T}{2}$
+\end_inset
+
+处对称的
+\end_layout
+
+\begin_layout Subsection
+滤波
+\end_layout
+
+\begin_layout Itemize
+举个例子，对于一个明显有趋势的序列，我们往往要对其数据进行处理，如差分。也就是对于有趋势的序列
+\begin_inset Formula $Y_{t}$
+\end_inset
+
+，首先进行处理
+\begin_inset Formula $X_{t}=Y_{t}-Y_{t-1}=(1-L)Y_{t}$
+\end_inset
+
+。相应的总体谱为
+\begin_inset Formula 
+\begin{align*}
+s_{X}(\omega) & =(1-e^{-i\omega})(1-e^{i\omega})s_{Y}(\omega)\\
+ & =[2-2\cdot cos(\omega)]\cdot s_{Y}(\omega)
+\end{align*}
+
+\end_inset
+
+具体来说：在频率
+\begin_inset Formula $\omega=0$
+\end_inset
+
+处的谱乘以0，在频率
+\begin_inset Formula $\omega=\frac{\pi}{2}$
+\end_inset
+
+处的谱乘以2，在频率
+\begin_inset Formula $\omega=\pi$
+\end_inset
+
+处的谱乘以4。换句话说，对数据差分就是移除低频的成分(趋势)且加强高频的成分(短周期)。
+\end_layout
+
+\begin_layout Itemize
+季节差分(月度数据)，首先季节差分算子是
+\begin_inset Formula $h(L)=1-L^{12}$
+\end_inset
+
+，于是
+\begin_inset Formula 
+\[
+h(e^{-i\omega})h(e^{i\omega})=2-2\cdot cos(12\omega)
+\]
+
+\end_inset
+
+它在频率
+\begin_inset Formula $\omega=0,\frac{2\pi}{12},\frac{4\pi}{12},\frac{6\pi}{12},\frac{8\pi}{12},\frac{10\pi}{12},\pi$
+\end_inset
+
+处的值均为0，因此季节差分不仅消除了平稳过程中的低频(
+\begin_inset Formula $\omega=0$
+\end_inset
+
+)成分，而且进一步消除了12、6、4、3、2.4以及2个月的周期的贡献。
+\end_layout
+
+\begin_layout Itemize
+同理，如果使用
+\begin_inset Formula $h(L)=1-L^{6}$
+\end_inset
+
+，则会消除6、3、2个月的周期的贡献
+\end_layout
+
+\begin_layout Subsection
+复合随机过程
+\end_layout
+
+\begin_layout Itemize
+令
+\begin_inset Formula $X_{t}$
+\end_inset
+
+和
+\begin_inset Formula $W_{t}$
+\end_inset
+
+分别表示两个不同的自协方差绝对可加的协方差平稳过程，且对于所有的
+\begin_inset Formula $t$
+\end_inset
+
+和
+\begin_inset Formula $\tau$
+\end_inset
+
+，
+\begin_inset Formula $X_{t}$
+\end_inset
+
+和
+\begin_inset Formula $W_{\tau}$
+\end_inset
+
+均不相关。两个过程的和为
+\begin_inset Formula 
+\[
+Y_{t}=X_{t}+W_{t}
+\]
+
+\end_inset
+
+于是和的自协方差生成函数为
+\begin_inset Formula 
+\[
+g_{Y}(z)=g_{X}(z)+g_{W}(z)
+\]
+
+\end_inset
+
+和的总体谱为
+\begin_inset Formula 
+\[
+s_{Y}(\omega)=s_{X}(\omega)+s_{W}(\omega)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+附录 一些证明
+\end_layout
+
+\begin_layout Chapter
+渐进分布理论
+\end_layout
+
+\begin_layout Chapter
+线性回归模型
+\end_layout
+
+\begin_layout Chapter
+线性联立方程系统
+\end_layout
+
+\begin_layout Chapter
+协方差平稳的向量过程
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
 \end_body
 \end_document
