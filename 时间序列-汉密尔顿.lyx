@@ -5971,8 +5971,321 @@ s_{Y}(\omega)=s_{X}(\omega)+s_{W}(\omega)
 协方差平稳的向量过程
 \end_layout
 
-\begin_layout Standard
+\begin_layout Section
+向量自回归简介
+\end_layout
 
+\begin_layout Itemize
+本章介绍一系列变量的动态交互作用，各变量集合在一个
+\begin_inset Formula $(n\times1)$
+\end_inset
+
+向量
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+中。一个p阶向量自回归记作
+\begin_inset Formula $VAR(p)$
+\end_inset
+
+：
+\begin_inset Formula 
+\[
+\boldsymbol{y}_{t}=\boldsymbol{c}+\boldsymbol{\Phi}_{1}\boldsymbol{y}_{t-1}+\boldsymbol{\Phi}_{2}\boldsymbol{y}_{t-2}+...+\boldsymbol{\Phi}_{p}\boldsymbol{y}_{t-p}+\boldsymbol{\varepsilon}_{t}\tag{10.1.4}
+\]
+
+\end_inset
+
+这里
+\begin_inset Formula $\boldsymbol{c}$
+\end_inset
+
+表示一个
+\begin_inset Formula $(n\times1)$
+\end_inset
+
+常数元素向量并且
+\begin_inset Formula $\Phi_{j}$
+\end_inset
+
+表示一个由
+\begin_inset Formula $j=1,2,...,p$
+\end_inset
+
+的自回归系数构成的
+\begin_inset Formula $(n\times n)$
+\end_inset
+
+矩阵。
+\begin_inset Formula $(n\times1)$
+\end_inset
+
+向量
+\begin_inset Formula $\boldsymbol{\varepsilon}_{t}$
+\end_inset
+
+是一个白噪声的向量形式推广：
+\begin_inset Formula 
+\begin{align*}
+E(\boldsymbol{\varepsilon}_{t}) & =\boldsymbol{0}\tag{10.1.5}\\
+E(\boldsymbol{\varepsilon}_{t}\boldsymbol{\varepsilon}_{t}') & =\begin{cases}
+\boldsymbol{\Omega} & \text{，}t=\tau\\
+\boldsymbol{0} & \text{，}\text{其他}
+\end{cases}\tag{10.1.6}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula $\boldsymbol{\Omega}$
+\end_inset
+
+是一个
+\begin_inset Formula $(n\times n)$
+\end_inset
+
+的对称正定矩阵。
+\end_layout
+
+\begin_layout Itemize
+令
+\begin_inset Formula $c_{i}$
+\end_inset
+
+表示向量
+\begin_inset Formula $\boldsymbol{c}$
+\end_inset
+
+的第i个元素并且令
+\begin_inset Formula $\phi_{ij}^{(m)}$
+\end_inset
+
+表示矩阵
+\begin_inset Formula $\boldsymbol{\Phi}_{m}$
+\end_inset
+
+的第i行第j列元素，于是(10.1.4)中的向量系统的第一行为
+\begin_inset Formula 
+\begin{align*}
+y_{1t} & =c_{1}+\phi_{11}^{(1)}y_{1,t-1}+\phi_{12}^{(1)}y_{2,t-1}+...+\phi_{1n}^{(1)}y_{n,t-1}\\
+ & +\phi_{11}^{(2)}y_{1,t-2}+\phi_{12}^{(2)}y_{2,t-2}+...+\phi_{1n}^{(2)}y_{n,t-2}\\
+ & +...\\
+ & +\phi_{11}^{(p)}y_{1,t-p}+\phi_{12}^{(p)}y_{2,t-p}+...+\phi_{1n}^{(p)}y_{n,t-p}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+运用滞后算子的概念，(10.1.4)可写为
+\begin_inset Formula 
+\[
+(\boldsymbol{I}_{n}-\boldsymbol{\Phi}_{1}L-\boldsymbol{\Phi}_{2}L^{2}-...-\boldsymbol{\Phi}_{p}L^{p})\boldsymbol{y}_{t}=\boldsymbol{c}+\boldsymbol{\varepsilon}_{t}
+\]
+
+\end_inset
+
+或者
+\begin_inset Formula 
+\[
+\boldsymbol{\Phi}(L)\boldsymbol{y}_{t}=\boldsymbol{c}+\boldsymbol{\varepsilon}_{t}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+如果一个向量过程
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+的一阶矩(
+\begin_inset Formula $E[\boldsymbol{y}_{t}]$
+\end_inset
+
+)和二阶矩(
+\begin_inset Formula $E[\boldsymbol{y}_{t}\boldsymbol{y}_{t-j}']$
+\end_inset
+
+)不依赖于时期t，则被称为协方差平稳的。在平稳的前提下，两边取期望，计算该过程的均值：
+\begin_inset Formula 
+\[
+\boldsymbol{\mu}=\boldsymbol{c}+\boldsymbol{\Phi}_{1}\boldsymbol{\mu}+\boldsymbol{\Phi}_{2}\boldsymbol{\mu}+...+\boldsymbol{\Phi}_{p}\boldsymbol{\mu}
+\]
+
+\end_inset
+
+或者
+\begin_inset Formula 
+\[
+\boldsymbol{\mu}=(\boldsymbol{I}_{n}-\boldsymbol{\Phi}_{1}-\boldsymbol{\Phi}_{2}-...-\boldsymbol{\Phi}_{p})^{-1}\boldsymbol{c}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+将一个
+\begin_inset Formula $VAR(p)$
+\end_inset
+
+改写成一个
+\begin_inset Formula $VAR(1)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+首先定义
+\begin_inset Formula 
+\[
+\underset{(np\times1)}{\boldsymbol{\xi}_{t}}\equiv\left[\begin{array}{c}
+\boldsymbol{y}_{t}-\boldsymbol{\mu}\\
+\boldsymbol{y}_{t-1}-\boldsymbol{\mu}\\
+\vdots\\
+\boldsymbol{y}_{t-p+1}-\boldsymbol{\mu}
+\end{array}\right]\tag{10.1.9}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\underset{(np\times np)}{\boldsymbol{F}_{t}}\equiv\left[\begin{array}{cccccc}
+\boldsymbol{\Phi}_{1} & \boldsymbol{\Phi}_{2} & \boldsymbol{\Phi}_{3} & \cdots & \boldsymbol{\Phi}_{p-1} & \boldsymbol{\Phi}_{p}\\
+\boldsymbol{I}_{n} & \boldsymbol{0} & \boldsymbol{0} & \cdots & \boldsymbol{0} & \boldsymbol{0}\\
+\boldsymbol{0} & \boldsymbol{I}_{n} & \boldsymbol{0} & \cdots & \boldsymbol{0} & \boldsymbol{0}\\
+\vdots & \vdots & \vdots & \cdots & \vdots & \vdots\\
+\boldsymbol{0} & \boldsymbol{0} & \boldsymbol{0} & \cdots & \boldsymbol{I}_{n} & \boldsymbol{0}
+\end{array}\right]\tag{10.1.10}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\underset{(np\times1)}{\boldsymbol{V}_{t}}\equiv\left[\begin{array}{c}
+\boldsymbol{\varepsilon}_{t}\\
+\boldsymbol{0}\\
+\vdots\\
+\boldsymbol{0}
+\end{array}\right]
+\]
+
+\end_inset
+
+于是(10.1.8)中的
+\begin_inset Formula $VAR(p)$
+\end_inset
+
+可以改写成
+\begin_inset Formula $VAR(1)$
+\end_inset
+
+：
+\begin_inset Formula 
+\[
+\boldsymbol{\xi}_{t}=\boldsymbol{F}\boldsymbol{\xi}_{t-1}+\boldsymbol{V}_{t}\tag{10.1.11}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\[
+E(\boldsymbol{V}_{t}\boldsymbol{V}_{t}')=\begin{cases}
+\boldsymbol{Q} & \text{，}t=\tau\\
+\boldsymbol{0} & \text{，}\text{其他}
+\end{cases}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\underset{(np\times np)}{\boldsymbol{Q}}\equiv\left[\begin{array}{cccc}
+\boldsymbol{\Omega} & \boldsymbol{0} & \cdots & \boldsymbol{0}\\
+\boldsymbol{0} & \boldsymbol{0} & \cdots & \boldsymbol{0}\\
+\vdots & \vdots & \cdots & \vdots\\
+\boldsymbol{0} & \boldsymbol{0} & \cdots & \boldsymbol{0}
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+平稳的条件
+\end_layout
+
+\begin_layout Itemize
+(10.1.11)表明
+\begin_inset Formula 
+\[
+\boldsymbol{\xi}_{t+s}=\boldsymbol{V}_{t+s}+\boldsymbol{F}\boldsymbol{V}_{t+s-1}+\boldsymbol{F}^{2}\boldsymbol{V}_{t+s-2}+...+\boldsymbol{F}^{s-1}\boldsymbol{V}_{t+1}+\boldsymbol{F}^{s}\boldsymbol{\xi}_{t}\tag{10.1.12}
+\]
+
+\end_inset
+
+为了是过程是协方差平稳的，对于任意给定的
+\begin_inset Formula $\varepsilon_{t}$
+\end_inset
+
+的结果都必须最终消失。当
+\begin_inset Formula $\boldsymbol{F}$
+\end_inset
+
+的特征值全部落在单位圆内，则VAR是协方差平稳的。于是我们有下面的性质
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+\bar under
+性质10.1
+\series default
+\bar default
+：式(10.1.10)中的F的特征值满足
+\begin_inset Formula 
+\[
+|\boldsymbol{I}_{n}\lambda^{p}-\boldsymbol{\Phi}_{1}\lambda^{p-1}-\boldsymbol{\Phi}_{2}\lambda^{p-2}-...-\boldsymbol{\Phi}_{p}|=0\tag{10.1.13}
+\]
+
+\end_inset
+
+只要对于所有满足上式的
+\begin_inset Formula $\lambda$
+\end_inset
+
+都有
+\begin_inset Formula $|\lambda|<1$
+\end_inset
+
+，则该
+\begin_inset Formula $VAR(p)$
+\end_inset
+
+就是协方差平稳的。
+\end_layout
+
+\begin_layout Subsection
+向量
+\begin_inset Formula $MA(\infty)$
+\end_inset
+
+形式的表示
 \end_layout
 
 \end_body
