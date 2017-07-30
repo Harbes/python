@@ -6921,6 +6921,10 @@ j阶自协方差矩阵
 
 \end_inset
 
+
+\end_layout
+
+\begin_layout Itemize
 令
 \begin_inset Formula $\boldsymbol{\Sigma}$
 \end_inset
@@ -7012,7 +7016,412 @@ vec(\boldsymbol{\Sigma})=(\boldsymbol{I}_{np\times np}-\boldsymbol{M})^{-1}vec(\
 \begin_inset Formula $\boldsymbol{M}$
 \end_inset
 
-的所有特征值都在单位圆内
+的所有特征值都在单位圆内。最后，一个
+\begin_inset Formula $VAR(p)$
+\end_inset
+
+过程的前p阶自协方差矩阵可以通过下式求得：
+\begin_inset Formula 
+\[
+\left[\begin{array}{cccc}
+\boldsymbol{\Gamma}_{0} & \boldsymbol{\Gamma}_{1} & \cdots & \boldsymbol{\Gamma}_{p-1}\\
+\boldsymbol{\Gamma}_{1}' & \boldsymbol{\Gamma}_{0} & \cdots & \boldsymbol{\Gamma}_{p-2}\\
+\vdots & \vdots & \cdots & \vdots\\
+\boldsymbol{\Gamma}_{p-1}' & \boldsymbol{\Gamma}_{p-2}' & \cdots & \boldsymbol{\Gamma}_{0}
+\end{array}\right]=(\boldsymbol{I}_{np\times np}-\boldsymbol{M})^{-1}vec(\boldsymbol{Q})\tag{10.2.19}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\boldsymbol{\xi}$
+\end_inset
+
+的j阶自协方差(
+\begin_inset Formula $\boldsymbol{\Sigma}_{j}$
+\end_inset
+
+)
+\begin_inset Formula 
+\[
+E(\boldsymbol{\xi}_{t}\boldsymbol{\xi}_{t-j}')=\boldsymbol{F}\cdot E(\boldsymbol{\xi}_{t-1}\boldsymbol{\xi}_{t-j}')+E(\boldsymbol{V}_{t}\boldsymbol{\xi}_{t-j}')
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{\Sigma}_{j} & =\boldsymbol{F}\boldsymbol{\Sigma}_{j-1}\tag{10.2.20}\\
+ & =\boldsymbol{F}^{j}\boldsymbol{\Sigma}\text{，}j=1,2,...\tag{10.2.21}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+原过程
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+的j阶自协方差
+\begin_inset Formula $\Gamma_{j}$
+\end_inset
+
+可由(10.2.20)的前n行n列给出：
+\begin_inset Formula 
+\[
+\Gamma_{j}=\Phi_{1}\Gamma_{j-1}+\Phi_{2}\Gamma_{j-2}+...+\Phi_{p}\Gamma_{j-p}\text{，}j=p,p+1,p+2,...\tag{10.2.22}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+向量过程的自协方差生成函数
+\end_layout
+
+\begin_layout Itemize
+对于一个具有绝对可加的自协方差序列的协方差平稳向量过程
+\series bold
+
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+
+\series default
+，自协方差生成函数
+\series bold
+
+\begin_inset Formula $\boldsymbol{\boldsymbol{G}}_{\boldsymbol{Y}}(z)$
+\end_inset
+
+
+\series default
+定义如下：
+\begin_inset Formula 
+\[
+\boldsymbol{\boldsymbol{G}}_{\boldsymbol{Y}}(z)\equiv\sum_{j=-\infty}^{\infty}\boldsymbol{\Gamma}_{j}z^{j}\tag{10.3.1}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\boldsymbol{\Gamma}_{j}\equiv E[(\boldsymbol{y}_{t}-\boldsymbol{\mu})(\boldsymbol{y}_{t-j}-\boldsymbol{\mu})']$
+\end_inset
+
+，z为复数。
+\end_layout
+
+\begin_layout Subsection
+向量MA过程的自协方差生成函数
+\end_layout
+
+\begin_layout Itemize
+对于一个向量
+\begin_inset Formula $MA(q)$
+\end_inset
+
+过程
+\begin_inset Formula 
+\[
+\boldsymbol{\boldsymbol{G}}_{\boldsymbol{Y}}(z)=(\boldsymbol{I}_{n}+\boldsymbol{\Theta}_{1}z+\boldsymbol{\Theta}_{2}z^{2}+...+\boldsymbol{\Theta}_{q}z^{q})\boldsymbol{\Omega}(\boldsymbol{I}_{n}+\boldsymbol{\Theta}_{1}'z^{-1}+\boldsymbol{\Theta}_{2}'z^{-2}+...+\boldsymbol{\Theta}_{q}'z^{-q})\tag{10.3.3}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $z^{j}$
+\end_inset
+
+的系数等于(10.2.5)中给出的
+\begin_inset Formula $\boldsymbol{\Gamma}_{j}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+对于一个形如(10.2.6)的向量
+\begin_inset Formula $MA(\infty)$
+\end_inset
+
+过程，
+\begin_inset Formula $\boldsymbol{\boldsymbol{G}}_{\boldsymbol{Y}}(z)=[\boldsymbol{\Psi}(z)]\boldsymbol{\Omega}[\boldsymbol{\Psi}(z^{-1})]'$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+向量AR过程的自协方差生成函数
+\end_layout
+
+\begin_layout Itemize
+对于前述提到的
+\begin_inset Formula $\boldsymbol{\xi}_{t}=\boldsymbol{F}\boldsymbol{\xi}_{t-1}+\boldsymbol{V}_{t}$
+\end_inset
+
+，其自协方差生成函数可写为
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{\boldsymbol{G}}_{\boldsymbol{\xi}}(z) & =[\boldsymbol{I}_{np}-\boldsymbol{F}z]^{-1}\boldsymbol{Q}[\boldsymbol{I}_{np}-\boldsymbol{F}z^{-1}]^{-1}\\
+ & =[\boldsymbol{I}_{np}+\boldsymbol{F}z+\boldsymbol{F}^{2}z^{2}+...]\boldsymbol{Q}[\boldsymbol{I}_{np}+(\boldsymbol{F}')z^{-1}+(\boldsymbol{\boldsymbol{F}'})^{2}z^{-2}+...]\tag{10.3.5}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+向量过程的交换
+\end_layout
+
+\begin_layout Itemize
+两个向量过程加和后的自协方差生成函数
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{G}_{\boldsymbol{X+W}}(z) & =\sum_{j=-\infty}^{\infty}E[(\boldsymbol{x}_{t}-\boldsymbol{\mu}_{X}+\boldsymbol{w}_{t}-\boldsymbol{\mu}_{W})(\boldsymbol{x}_{t-j}-\boldsymbol{\mu}_{X}+\boldsymbol{w}_{t-j}-\boldsymbol{\mu}_{W})']z^{j}\\
+ & =\sum_{j=-\infty}^{\infty}E[(\boldsymbol{x}_{t}-\boldsymbol{\mu}_{X})(\boldsymbol{x}_{t-j}-\boldsymbol{\mu}_{X})']z^{j}+\sum_{j=-\infty}^{\infty}E[(\boldsymbol{w}_{t}-\boldsymbol{\mu}_{W})(\boldsymbol{w}_{t-j}-\boldsymbol{\mu}_{W})']z^{j}\\
+ & =\boldsymbol{G}_{\boldsymbol{X}}(z)+\boldsymbol{G}_{\boldsymbol{W}}(z)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+已知
+\begin_inset Formula $\boldsymbol{\xi}_{t}=\boldsymbol{F}\boldsymbol{\xi}_{t-1}+\boldsymbol{V}_{t}$
+\end_inset
+
+以及一个新的过程
+\begin_inset Formula $\boldsymbol{u}_{t}=\boldsymbol{H}'\boldsymbol{\xi}_{t}+\boldsymbol{w}_{t}$
+\end_inset
+
+，其中，
+\begin_inset Formula $\boldsymbol{w}_{t}$
+\end_inset
+
+是一个对于所有j都与
+\begin_inset Formula $\boldsymbol{\xi}_{t-j}$
+\end_inset
+
+不相关的白噪声过程，于是有
+\begin_inset Formula 
+\[
+\boldsymbol{G}_{\boldsymbol{U}}(z)=\boldsymbol{H}'\boldsymbol{\boldsymbol{G}}_{\boldsymbol{\xi}}(z)\boldsymbol{H}+\boldsymbol{G}_{\boldsymbol{W}}(z)
+\]
+
+\end_inset
+
+或者，如果
+\begin_inset Formula $\boldsymbol{R}$
+\end_inset
+
+是
+\begin_inset Formula $\boldsymbol{w}_{t}$
+\end_inset
+
+的方差，有
+\begin_inset Formula 
+\[
+\boldsymbol{G}_{\boldsymbol{U}}(z)=\boldsymbol{H}'[\boldsymbol{I}_{np}-\boldsymbol{F}z]^{-1}\boldsymbol{Q}[\boldsymbol{I}_{np}-\boldsymbol{F}z^{-1}]^{-1}\boldsymbol{H}+\boldsymbol{R}\tag{10.3.6}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+对于一个过程
+\begin_inset Formula 
+\[
+\boldsymbol{y}_{t}=\boldsymbol{\mu}_{Y}+\boldsymbol{\Psi}(L)\boldsymbol{\varepsilon}_{t}
+\]
+
+\end_inset
+
+对应的自协方差生成函数为
+\begin_inset Formula 
+\[
+\boldsymbol{G}_{\boldsymbol{Y}}(z)=\boldsymbol{\Psi}(z)\boldsymbol{\Omega}[\boldsymbol{\Psi}(z^{-1})]'\tag{10.3.7}
+\]
+
+\end_inset
+
+还有一个衍生过程
+\begin_inset Formula 
+\[
+\boldsymbol{x}_{\boldsymbol{t}}=\boldsymbol{H}(L)\boldsymbol{y}_{t}=\boldsymbol{\mu}_{X}+\boldsymbol{B}(L)\boldsymbol{\varepsilon}_{t}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\boldsymbol{B}(L)=\sum_{k=-\infty}^{\infty}\boldsymbol{B}_{k}L^{k}=\boldsymbol{H}(L)\boldsymbol{\Psi}(L)$
+\end_inset
+
+，于是
+\begin_inset Formula $\boldsymbol{x}_{\boldsymbol{t}}$
+\end_inset
+
+的自协方差生成函数
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{G}_{\boldsymbol{X}}(z) & =\boldsymbol{B}(z)\boldsymbol{\Omega}[\boldsymbol{B}(z^{-1})]'=\boldsymbol{H}(z)\boldsymbol{\Psi}(z)\boldsymbol{\Omega}[\boldsymbol{\Psi}(z^{-1})]'[\boldsymbol{H}(z^{-1})]'\tag{10.3.8}\\
+ & =\boldsymbol{H}(z)\boldsymbol{G}_{\boldsymbol{Y}}(z)[\boldsymbol{H}(z^{-1})]'\tag{10.3.9}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+向量过程的谱
+\end_layout
+
+\begin_layout Itemize
+对于一个向量过程
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+，其自协方差生成函数为
+\begin_inset Formula 
+\[
+\boldsymbol{G}_{\boldsymbol{Y}}(z)=\sum_{k=-\infty}^{\infty}\boldsymbol{\Gamma}_{k}z^{k}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\{\boldsymbol{\Gamma}_{k}\}_{k=-\infty}^{\infty}$
+\end_inset
+
+是绝对可加的，于是，相应的总体谱为
+\begin_inset Formula 
+\[
+\boldsymbol{s_{Y}}(\omega)=\frac{1}{2\pi}\boldsymbol{G}_{\boldsymbol{Y}}(e^{-i\omega})=\sum_{k=-\infty}^{\infty}\boldsymbol{\Gamma}_{k}e^{-i\omega k}\tag{10.4.3}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+值得一提的是，
+\begin_inset Formula $\boldsymbol{s_{Y}}(\omega)$
+\end_inset
+
+的对角线元素对于所有的
+\begin_inset Formula $\omega$
+\end_inset
+
+都是非负的实值，因为
+\begin_inset Formula $\boldsymbol{s_{Y}}(\omega)$
+\end_inset
+
+的第j个对角线元素恰好为
+\begin_inset Formula $y_{it}$
+\end_inset
+
+的单变量谱；而非对角线元素却不一定是实数
+\end_layout
+
+\begin_layout Itemize
+与性质6.1类似的，可以通过下式计算
+\begin_inset Formula $\boldsymbol{y}$
+\end_inset
+
+的k阶自协方差矩阵
+\begin_inset Formula 
+\[
+\int_{-\pi}^{\pi}\boldsymbol{s_{Y}}(\omega)e^{i\omega k}=\boldsymbol{\Gamma}_{k}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+一个例子：n=2时
+\end_layout
+
+\begin_layout Subsection
+求积分谱、余谱和正交谱
+\end_layout
+
+\begin_layout Subsection
+多变量的样本周期图
+\end_layout
+
+\begin_layout Subsection
+相干性、位相和增益
+\end_layout
+
+\begin_layout Subsection
+向量MA和AR过程的总体谱
+\end_layout
+
+\begin_layout Subsection
+估计总体谱
+\end_layout
+
+\begin_layout Itemize
+一般采用的方法是使用OLS估计向量自回归式的参数，再将这些参数代入总体谱方程式中。
+\end_layout
+
+\begin_layout Itemize
+也可以使用非参估计
+\end_layout
+
+\begin_layout Subsection
+滤波
+\end_layout
+
+\begin_layout Section
+向量过程的样本均值
+\end_layout
+
+\begin_layout Subsection
+样本均值的方差
+\end_layout
+
+\begin_layout Subsection
+样本均值的方差的T倍的一支孤寂
+\end_layout
+
+\begin_layout Subsection
+Newey-West估计量
+\end_layout
+
+\begin_layout Subsection
+应用：线性回归的自相关和异方差一致的标准差
+\end_layout
+
+\begin_layout Subsection
+基于谱的估计量
+\end_layout
+
+\begin_layout Section
+附录：一些 性质的证明
+\end_layout
+
+\begin_layout Standard
+向量自回归
 \end_layout
 
 \end_body
