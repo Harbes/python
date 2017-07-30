@@ -6634,8 +6634,385 @@ j阶自协方差矩阵
 过程
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
+向量
+\begin_inset Formula $MA(\infty)$
+\end_inset
 
+过程
+\begin_inset Formula 
+\[
+\boldsymbol{y}_{t}=\boldsymbol{\mu}+\boldsymbol{\varepsilon}_{t}+\boldsymbol{\Psi}_{1}\boldsymbol{\varepsilon}_{t-1}+\boldsymbol{\Psi}_{2}\boldsymbol{\varepsilon}_{t-2}+...\tag{10.2.6}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+对于一个
+\begin_inset Formula $(n\times m)$
+\end_inset
+
+矩阵
+\begin_inset Formula $\boldsymbol{H}_{s}$
+\end_inset
+
+，如果它的每一个元素都构成一个绝对可加测数量序列，则矩阵序列
+\begin_inset Formula $\{\boldsymbol{H}_{s}\}_{s=-\infty}^{\infty}$
+\end_inset
+
+是绝对可加的。
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+\bar under
+性质10.2
+\series default
+\bar default
+：令
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+表示一个满足下式的
+\begin_inset Formula $(n\times1)$
+\end_inset
+
+向量
+\begin_inset Formula 
+\[
+\boldsymbol{y}_{t}=\boldsymbol{\mu}+\sum_{k=0}^{\infty}\boldsymbol{\Psi}_{k}\boldsymbol{\varepsilon}_{t-k}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\boldsymbol{\varepsilon}_{t}$
+\end_inset
+
+是一个向量白噪声过程，序列
+\begin_inset Formula $\{\boldsymbol{\Psi}_{k}\}_{k=0}^{\infty}$
+\end_inset
+
+是绝对可加的。于是有
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+(a) t时期第i个变量
+\begin_inset Formula $y_{it}$
+\end_inset
+
+和滞后s期的第j个变量
+\begin_inset Formula $y_{j,t-s}$
+\end_inset
+
+的自协方差存在，可由一下矩阵的第(i,j)元素给出
+\begin_inset Formula 
+\[
+\boldsymbol{\Gamma_{s}}=\sum_{v=0}^{\infty}\boldsymbol{\Psi}_{s+v}\boldsymbol{\Omega}\boldsymbol{\Psi}_{v}'\text{，}s=0,1,2,...
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+(b) 矩阵序列
+\begin_inset Formula $\{\boldsymbol{\Gamma}_{s}\}_{s=0}^{\infty}$
+\end_inset
+
+是绝对可加的
+\end_layout
+
+\begin_layout Standard
+进一步地，如果
+\begin_inset Formula $\{\varepsilon\}_{t=-\infty}^{\infty}$
+\end_inset
+
+是一个独立同分布序列并且
+\begin_inset Formula $E|\varepsilon_{i_{1},t}\varepsilon_{i_{2},t}\varepsilon_{i_{3},t}\varepsilon_{i_{4},t}|<\infty$
+\end_inset
+
+对于
+\begin_inset Formula $i_{1},i_{2},i_{3},i_{4}=1,2,...,n$
+\end_inset
+
+都成立，则还有：
+\end_layout
+
+\begin_layout Standard
+(c) 
+\begin_inset Formula $E|y_{i_{1},t_{1}}y_{i_{2},t_{2}}y_{i_{3},t_{3}}y_{i_{4},t_{4}}|<\infty$
+\end_inset
+
+对于
+\begin_inset Formula $i_{1},i_{2},i_{3},i_{4}=1,2,...,n$
+\end_inset
+
+和所有的
+\begin_inset Formula $t_{1},t_{2},t_{3},t_{4}$
+\end_inset
+
+都成立
+\end_layout
+
+\begin_layout Standard
+(d) 
+\begin_inset Formula $\frac{1}{T}\sum_{t=1}^{T}y_{it}y_{j,t-s}\overset{p}{\rightarrow}E(y_{it}y_{j,t-s})$
+\end_inset
+
+对于
+\begin_inset Formula $i,j=1,2,...,n$
+\end_inset
+
+和所有的s都成立
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+性质10.2中，(a)表明一个具有绝对可加系数的
+\begin_inset Formula $MA(\infty)$
+\end_inset
+
+向量过程的二阶矩可以通过对(10.2.5)取极限得到；(b)保证向量过程具有均值遍历性；(c)说明
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+具有有限的四阶矩；(d)说明
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+对于二阶矩是遍历的
+\end_layout
+
+\begin_layout Subsection
+多变量滤波
+\end_layout
+
+\begin_layout Itemize
+假设一个
+\begin_inset Formula $(n\times1)$
+\end_inset
+
+向量
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+服从一个
+\begin_inset Formula $MA(\infty)$
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\boldsymbol{y}_{t}=\boldsymbol{\mu}_{Y}+\boldsymbol{\Psi}(L)\boldsymbol{\varepsilon}_{t}\tag{10.2.8}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\{\boldsymbol{\Psi}_{k}\}_{k=0}^{\infty}$
+\end_inset
+
+是绝对可加的。令
+\begin_inset Formula $\{\boldsymbol{H_{k}}\}_{k=-\infty}^{\infty}$
+\end_inset
+
+是绝对可加的
+\begin_inset Formula $(r\times n)$
+\end_inset
+
+矩阵的序列，并且假设一个
+\begin_inset Formula $(r\times1)$
+\end_inset
+
+向量
+\begin_inset Formula $\boldsymbol{x}_{t}$
+\end_inset
+
+满足
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{x}_{\boldsymbol{t}} & =\boldsymbol{H}(L)\boldsymbol{y}_{t}=\sum_{k=-\infty}^{\infty}\boldsymbol{H}_{k}\boldsymbol{y}_{t-k}\tag{10.2.9}\\
+ & =\boldsymbol{H}(L)[\boldsymbol{\mu}_{Y}+\boldsymbol{\Psi}(L)\boldsymbol{\varepsilon}_{t}]\\
+ & =\boldsymbol{H}(1)\boldsymbol{\mu}_{Y}+\boldsymbol{H}(L)\boldsymbol{\Psi}(L)\boldsymbol{\varepsilon}_{t}\\
+ & =\boldsymbol{\mu}_{X}+\boldsymbol{B}(L)\boldsymbol{\varepsilon}_{t}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\[
+\boldsymbol{B}(L)=\sum_{k=-\infty}^{\infty}\boldsymbol{B}_{k}L^{k}=\boldsymbol{H}(L)\boldsymbol{\Psi}(L)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+\bar under
+性质10.3
+\series default
+\bar default
+：令
+\begin_inset Formula $\{\boldsymbol{\Psi}_{k}\}_{k=0}^{\infty}$
+\end_inset
+
+表示一个绝对可加的
+\begin_inset Formula $(n\times n)$
+\end_inset
+
+矩阵的序列并且令
+\begin_inset Formula $\{\boldsymbol{H_{k}}\}_{k=-\infty}^{\infty}$
+\end_inset
+
+表示一个绝对可加的
+\begin_inset Formula $(r\times n)$
+\end_inset
+
+矩阵的序列。则与算子
+\begin_inset Formula $\boldsymbol{B}(L)=\boldsymbol{H}(L)\boldsymbol{\Psi}(L)$
+\end_inset
+
+相对应的矩阵序列
+\begin_inset Formula $\{\boldsymbol{B}_{k}\}_{k=-\infty}^{\infty}$
+\end_inset
+
+是绝对可加的。
+\end_layout
+
+\begin_layout Itemize
+由性质10.2，若(10.2.8)中的
+\begin_inset Formula $\{\boldsymbol{\varepsilon}_{t}\}$
+\end_inset
+
+是具有有限四阶矩的独立同分布，则
+\begin_inset Formula $\{\boldsymbol{x}_{\boldsymbol{t}}\}$
+\end_inset
+
+具有有限的四阶矩并且对于二阶矩是遍历的。
+\end_layout
+
+\begin_layout Subsection
+向量自回归
+\end_layout
+
+\begin_layout Itemize
+首先定义
+\begin_inset Formula 
+\[
+\underset{(np\times1)}{\boldsymbol{\xi}_{t}}\equiv\left[\begin{array}{c}
+\boldsymbol{y}_{t}-\boldsymbol{\mu}\\
+\boldsymbol{y}_{t-1}-\boldsymbol{\mu}\\
+\vdots\\
+\boldsymbol{y}_{t-p+1}-\boldsymbol{\mu}
+\end{array}\right]
+\]
+
+\end_inset
+
+令
+\begin_inset Formula $\boldsymbol{\Sigma}$
+\end_inset
+
+表示
+\begin_inset Formula $\boldsymbol{\xi}$
+\end_inset
+
+的方差
+\begin_inset Formula 
+\[
+\boldsymbol{\Sigma}=E(\boldsymbol{\xi}_{t}\boldsymbol{\xi}_{t}')=\left[\begin{array}{cccc}
+\boldsymbol{\Gamma}_{0} & \boldsymbol{\Gamma}_{1} & \cdots & \boldsymbol{\Gamma}_{p-1}\\
+\boldsymbol{\Gamma}_{1}' & \boldsymbol{\Gamma}_{0} & \cdots & \boldsymbol{\Gamma}_{p-2}\\
+\vdots & \vdots & \cdots & \vdots\\
+\boldsymbol{\Gamma}_{p-1}' & \boldsymbol{\Gamma}_{p-2}' & \cdots & \boldsymbol{\Gamma}_{0}
+\end{array}\right]\tag{10.2.12}
+\]
+
+\end_inset
+
+又由(10.1.11)可得
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{\Sigma}=E(\boldsymbol{\xi}_{t}\boldsymbol{\xi}_{t}') & =E[(\boldsymbol{F}\boldsymbol{\xi}_{t-1}+\boldsymbol{V}_{t})(\boldsymbol{F}\boldsymbol{\xi}_{t-1}+\boldsymbol{V}_{t})']\\
+ & =\boldsymbol{F}E(\boldsymbol{\xi}_{t-1}\boldsymbol{\xi}_{t-1}')\boldsymbol{F}'+E(\boldsymbol{V}_{t}\boldsymbol{V}_{t}')\\
+ & =\boldsymbol{F}\boldsymbol{\Sigma}\boldsymbol{F}'+\boldsymbol{Q}\tag{10.2.13}
+\end{align*}
+
+\end_inset
+
+由
+\begin_inset Formula $vec(ABC)=(C'\otimes A)\cdot vec(B)$
+\end_inset
+
+得
+\begin_inset Formula 
+\[
+vec(\boldsymbol{\Sigma})=(\boldsymbol{F}\otimes\boldsymbol{F})\cdot vec(\boldsymbol{\Sigma})+vec(\boldsymbol{Q})=\boldsymbol{M}\cdot vec(\boldsymbol{\Sigma})+vec(\boldsymbol{Q})
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\boldsymbol{M}=\boldsymbol{F}\otimes\boldsymbol{F}$
+\end_inset
+
+，于是
+\begin_inset Formula 
+\[
+vec(\boldsymbol{\Sigma})=(\boldsymbol{I}_{np\times np}-\boldsymbol{M})^{-1}vec(\boldsymbol{Q})\tag{10.2.18}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\boldsymbol{I}_{np\times np}-\boldsymbol{M}$
+\end_inset
+
+非奇异，即1不是
+\begin_inset Formula $\boldsymbol{M}$
+\end_inset
+
+的特征值。因为
+\begin_inset Formula $\boldsymbol{F}\otimes\boldsymbol{F}$
+\end_inset
+
+的特征值都是形如
+\begin_inset Formula $\lambda_{i}\lambda_{j}$
+\end_inset
+
+，其中
+\begin_inset Formula $\lambda_{i}$
+\end_inset
+
+和
+\begin_inset Formula $\lambda_{j}$
+\end_inset
+
+是矩阵
+\begin_inset Formula $\boldsymbol{F}$
+\end_inset
+
+的特征值，由于
+\begin_inset Formula $|\lambda_{i}|<1$
+\end_inset
+
+对所有i都成立，因此
+\begin_inset Formula $\boldsymbol{M}$
+\end_inset
+
+的所有特征值都在单位圆内
 \end_layout
 
 \end_body
