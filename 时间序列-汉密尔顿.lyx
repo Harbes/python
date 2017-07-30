@@ -7420,8 +7420,12 @@ Newey-West估计量
 附录：一些 性质的证明
 \end_layout
 
-\begin_layout Standard
+\begin_layout Chapter
 向量自回归
+\end_layout
+
+\begin_layout Section
+无约束向量自回归的极大似然估计与假设检验
 \end_layout
 
 \end_body
