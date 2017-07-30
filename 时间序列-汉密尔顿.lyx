@@ -6288,5 +6288,219 @@ E(\boldsymbol{V}_{t}\boldsymbol{V}_{t}')=\begin{cases}
 形式的表示
 \end_layout
 
+\begin_layout Itemize
+式(10.1.12)的前n行
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{y}_{t+s} & =\boldsymbol{\mu}+\boldsymbol{\varepsilon}_{t+s}+\boldsymbol{\Psi}_{1}\boldsymbol{\varepsilon}_{t+s-1}+\boldsymbol{\Psi}_{2}\boldsymbol{\varepsilon}_{t+s-2}+...+\boldsymbol{\Psi}_{s-1}\boldsymbol{\varepsilon}_{t+1}\\
+ & +\boldsymbol{F}_{11}^{(s)}(\boldsymbol{y}_{t}-\boldsymbol{\mu})+\boldsymbol{F}_{12}^{(s)}(\boldsymbol{y}_{t-1}-\boldsymbol{\mu})+...+\boldsymbol{F}_{1p}^{(s)}(\boldsymbol{y}_{t-p+1}-\boldsymbol{\mu})\tag{10.1.14}
+\end{align*}
+
+\end_inset
+
+这里
+\begin_inset Formula $\boldsymbol{\Psi}_{j}=\boldsymbol{F}_{11}^{(j)}$
+\end_inset
+
+并且
+\begin_inset Formula $\boldsymbol{F}_{11}^{(j)}$
+\end_inset
+
+表示
+\begin_inset Formula $\boldsymbol{F}^{(j)}$
+\end_inset
+
+的左上角分块(第1～n行以及第1～n列)。类似地，
+\begin_inset Formula $\boldsymbol{F}_{12}^{(j)}$
+\end_inset
+
+表示
+\begin_inset Formula $\boldsymbol{F}^{(j)}$
+\end_inset
+
+的第1～n行以及第n+1～2n列，以此类推。
+\end_layout
+
+\begin_layout Itemize
+
+\bar under
+如果
+\begin_inset Formula $\boldsymbol{F}$
+\end_inset
+
+的特征值全部在单位圆内
+\bar default
+，则
+\begin_inset Formula $s\rightarrow\infty$
+\end_inset
+
+时
+\begin_inset Formula $\boldsymbol{F}^{s}\rightarrow0$
+\end_inset
+
+并且
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+可以写成一个
+\begin_inset Formula $\boldsymbol{\varepsilon}$
+\end_inset
+
+的历史值的收敛和的形式：
+\begin_inset Formula 
+\[
+\boldsymbol{y}_{t}=\boldsymbol{\mu}+\boldsymbol{\varepsilon}_{t}+\boldsymbol{\Psi}_{1}\boldsymbol{\varepsilon}_{t-1}+\boldsymbol{\Psi}_{2}\boldsymbol{\varepsilon}_{t-2}+...\equiv\boldsymbol{\mu}+\boldsymbol{\Psi}(L)\boldsymbol{\varepsilon}_{t}\tag{10.1.15}
+\]
+
+\end_inset
+
+这就是一个向量
+\begin_inset Formula $MA(\infty)$
+\end_inset
+
+形式的表示。
+\end_layout
+
+\begin_layout Itemize
+除了
+\begin_inset Formula $\boldsymbol{\varepsilon}_{t}$
+\end_inset
+
+之外，还可以有基于其他的向量白噪声过程得到不同的MA表示，令
+\series bold
+
+\begin_inset Formula $\boldsymbol{H}$
+\end_inset
+
+
+\series default
+表示
+\begin_inset Formula $(n\times n)$
+\end_inset
+
+非奇异矩阵，并且有
+\begin_inset Formula 
+\[
+\boldsymbol{u}_{t}\equiv\boldsymbol{H}\boldsymbol{\varepsilon}_{t}\tag{10.1.20}
+\]
+
+\end_inset
+
+显然
+\begin_inset Formula $ $
+\end_inset
+
+是白噪声，于是(10.1.15)可以写为
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{y}_{t} & =\boldsymbol{\mu}+\boldsymbol{\Psi}_{0}\boldsymbol{H}^{-1}\boldsymbol{H}\boldsymbol{\varepsilon}_{t}+\boldsymbol{\Psi}_{1}\boldsymbol{H}^{-1}\boldsymbol{H}\boldsymbol{\varepsilon}_{t-1}+\boldsymbol{\Psi}_{2}\boldsymbol{H}^{-1}\boldsymbol{H}\boldsymbol{\varepsilon}_{t-2}+...\\
+ & =\boldsymbol{\mu}+\boldsymbol{J}_{0}\boldsymbol{u}_{t}+\boldsymbol{J}_{1}\boldsymbol{u}_{t-1}+\boldsymbol{J}_{2}\boldsymbol{u}_{t-2}+...\tag{10.1.21}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula $\boldsymbol{J}_{s}\equiv\boldsymbol{\Psi}_{s}\boldsymbol{H}^{-1}$
+\end_inset
+
+，
+\begin_inset Formula $\boldsymbol{\Psi}_{0}=\boldsymbol{I}_{n}$
+\end_inset
+
+。例如，
+\begin_inset Formula $\boldsymbol{H}$
+\end_inset
+
+可以为任意使得
+\begin_inset Formula $\boldsymbol{\varepsilon}_{t}$
+\end_inset
+
+的方差-协方差矩阵对角化的矩阵：
+\begin_inset Formula 
+\[
+\boldsymbol{H}\boldsymbol{\Omega}\boldsymbol{H}'=\boldsymbol{D}
+\]
+
+\end_inset
+
+这样的构造使得
+\begin_inset Formula $\boldsymbol{u}_{t}$
+\end_inset
+
+的元素互不相关
+\begin_inset Formula 
+\[
+E(\boldsymbol{u}_{t}\boldsymbol{u}_{t}')=E(\boldsymbol{H}\boldsymbol{\varepsilon}_{t}\boldsymbol{\varepsilon}_{t}'\boldsymbol{H}')=\boldsymbol{D}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+注意，(10.1.15)和(10.1.21)存在一个重要区别：前者第一个MA参数矩阵
+\begin_inset Formula $\boldsymbol{\Psi}_{0}$
+\end_inset
+
+是单位矩阵，而后者第一个矩阵
+\begin_inset Formula $\boldsymbol{J}_{0}$
+\end_inset
+
+不是单位矩阵
+\end_layout
+
+\begin_layout Subsection
+一个VAR中隐含的假设
+\end_layout
+
+\begin_layout Itemize
+对于一个协方差平稳过程，(10.1.4)中的参数可以定义成
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+对常数和
+\begin_inset Formula $\boldsymbol{y}_{t-1},...,\boldsymbol{y}_{t-p}$
+\end_inset
+
+的投影的系数，因此，
+\begin_inset Formula $\boldsymbol{\varepsilon}_{t}$
+\end_inset
+
+与
+\begin_inset Formula $\boldsymbol{y}_{t-1},...,\boldsymbol{y}_{t-p}$
+\end_inset
+
+是不相关的。一个VAR中隐含的假设是：
+\bar under
+由此投影定义的
+\begin_inset Formula $\boldsymbol{\varepsilon}_{t}$
+\end_inset
+
+仍然与
+\begin_inset Formula $\boldsymbol{y}_{t-p-1},\boldsymbol{y}_{t-p-2},...$
+\end_inset
+
+是不相关的
+\bar default
+，即
+\begin_inset Formula $\boldsymbol{\varepsilon}_{t}$
+\end_inset
+
+完全是新息。
+\end_layout
+
+\begin_layout Section
+向量过程的自协方差与收敛性结论
+\end_layout
+
+\begin_layout Subsection
+j阶自协方差矩阵
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
 \end_body
 \end_document
