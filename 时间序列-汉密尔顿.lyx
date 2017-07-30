@@ -7428,5 +7428,13 @@ Newey-West估计量
 无约束向量自回归的极大似然估计与假设检验
 \end_layout
 
+\begin_layout Section
+二元格兰杰因果检验
+\end_layout
+
+\begin_layout Subsection
+二元格兰杰因果的定义
+\end_layout
+
 \end_body
 \end_document
