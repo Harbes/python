@@ -6498,6 +6498,142 @@ E(\boldsymbol{u}_{t}\boldsymbol{u}_{t}')=E(\boldsymbol{H}\boldsymbol{\varepsilon
 j阶自协方差矩阵
 \end_layout
 
+\begin_layout Itemize
+对于一个协方差平稳的n维向量过程，j阶自协方差表示如下
+\begin_inset Formula 
+\[
+\boldsymbol{\Gamma}_{j}=E[(\boldsymbol{y}_{t}-\boldsymbol{\mu})(\boldsymbol{y}_{t-j}-\boldsymbol{\mu})']\tag{10.2.1}
+\]
+
+\end_inset
+
+值得注意的是，对于一个向量过程，
+\begin_inset Formula $\boldsymbol{\Gamma}_{j}\neq\boldsymbol{\Gamma}_{-j}$
+\end_inset
+
+。例如，
+\begin_inset Formula $\boldsymbol{\Gamma}_{j}$
+\end_inset
+
+的第(1,2)个元素给出了
+\begin_inset Formula $y_{1t}$
+\end_inset
+
+和
+\begin_inset Formula $y_{2,t-j}$
+\end_inset
+
+的协方差，而
+\begin_inset Formula $\boldsymbol{\Gamma}_{-j}$
+\end_inset
+
+的第(1,2)个元素给出了
+\begin_inset Formula $y_{1t}$
+\end_inset
+
+和
+\begin_inset Formula $y_{2,t+j}$
+\end_inset
+
+的协方差，
+\bar under
+
+\begin_inset Formula $y_{1}$
+\end_inset
+
+与
+\begin_inset Formula $y_{2}$
+\end_inset
+
+滞后值的关系和
+\begin_inset Formula $y_{2}$
+\end_inset
+
+与
+\begin_inset Formula $y_{1}$
+\end_inset
+
+滞后值的关系不是同一个概念
+\bar default
+。因此，正确的关系应该是
+\begin_inset Formula 
+\[
+\boldsymbol{\Gamma}_{j}'=\boldsymbol{\Gamma}_{-j}\tag{10.2.2}
+\]
+
+\end_inset
+
+简单证明如下：
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{\Gamma}_{j} & =E[(\boldsymbol{y}_{t+j}-\boldsymbol{\mu})(\boldsymbol{y}_{t}-\boldsymbol{\mu})']\\
+\boldsymbol{\Gamma}_{j}' & =E[(\boldsymbol{y}_{t}-\boldsymbol{\mu})(\boldsymbol{y}_{t+j}-\boldsymbol{\mu})']=\boldsymbol{\Gamma}_{-j}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+向量MA(q)过程
+\end_layout
+
+\begin_layout Itemize
+一个q阶MA
+\begin_inset Formula 
+\[
+\boldsymbol{y}_{t}=\boldsymbol{\mu}+\boldsymbol{\varepsilon}_{t}+\boldsymbol{\Theta}_{1}\boldsymbol{\varepsilon}_{t-1}+\boldsymbol{\Theta}_{2}\boldsymbol{\varepsilon}_{t-2}+...+\boldsymbol{\Theta}_{q}\boldsymbol{\varepsilon}_{t-q}\tag{10.2.3}
+\]
+
+\end_inset
+
+显然
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+的均值为
+\begin_inset Formula $\boldsymbol{\mu}$
+\end_inset
+
+，方差为
+\begin_inset Formula 
+\begin{align*}
+\Gamma_{0} & =E[(\boldsymbol{y}_{t}-\boldsymbol{\mu})(\boldsymbol{y}_{t}-\boldsymbol{\mu})']\\
+ & =E[\boldsymbol{\varepsilon}_{t}\boldsymbol{\varepsilon}_{t}']+\boldsymbol{\Theta}_{1}E[\boldsymbol{\varepsilon}_{t-1}\boldsymbol{\varepsilon}_{t-1}']\boldsymbol{\Theta}_{1}'+\boldsymbol{\Theta}_{2}E[\boldsymbol{\varepsilon}_{t-2}\boldsymbol{\varepsilon}_{t-2}']\boldsymbol{\Theta}_{2}'\\
+ & +...+\boldsymbol{\Theta}_{q}E[\boldsymbol{\varepsilon}_{t-q}\boldsymbol{\varepsilon}_{t-q}']\boldsymbol{\Theta}_{q}'\\
+ & =\boldsymbol{\Omega}+\boldsymbol{\Theta}_{1}\boldsymbol{\Omega}\boldsymbol{\Theta}_{1}'+\boldsymbol{\Theta}_{2}\boldsymbol{\Omega}\boldsymbol{\Theta}_{2}'+...+\boldsymbol{\Theta}_{q}\boldsymbol{\Omega}\boldsymbol{\Theta}_{q}'\tag{10.2.4}
+\end{align*}
+
+\end_inset
+
+其自协方差为
+\begin_inset Formula 
+\[
+\Gamma_{j}=\begin{cases}
+\boldsymbol{\Theta}_{j}\boldsymbol{\Omega}+\boldsymbol{\Theta}_{j+1}\boldsymbol{\Omega}\boldsymbol{\Theta}_{1}'+\boldsymbol{\Theta}_{j+2}\boldsymbol{\Omega}\boldsymbol{\Theta}_{2}'+...+\boldsymbol{\Theta}_{q}\boldsymbol{\Omega}\boldsymbol{\Theta}_{q-j}' & \text{，}j=1,2,...,q\\
+\boldsymbol{\Omega}\boldsymbol{\Theta}_{-j}'+\boldsymbol{\Theta}_{1}\boldsymbol{\Omega}\boldsymbol{\Theta}_{-j+1}'+\boldsymbol{\Theta}_{2}\boldsymbol{\Omega}\boldsymbol{\Theta}_{-j+2}'+...+\boldsymbol{\Theta}_{q+j}\boldsymbol{\Omega}\boldsymbol{\Theta}_{q}' & \text{，}j=-1,-2,...,-q\\
+\boldsymbol{0} & \text{，}|j|>q
+\end{cases}\tag{10.2.5}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\boldsymbol{\Theta}_{0}=\boldsymbol{I}_{n}$
+\end_inset
+
+。因此，任何一个向量MA(q)过程都是协方差平稳的
+\end_layout
+
+\begin_layout Subsection
+向量
+\begin_inset Formula $MA(\infty)$
+\end_inset
+
+过程
+\end_layout
+
 \begin_layout Standard
 
 \end_layout
