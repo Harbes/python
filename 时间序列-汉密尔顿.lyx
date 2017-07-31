@@ -7885,5 +7885,46 @@ p的选取以及对序列潜在的非平稳问题所选取的方法都是极为�
 的反应。
 \end_layout
 
+\begin_layout Section
+方差分解
+\end_layout
+
+\begin_layout Itemize
+预测一个
+\begin_inset Formula $VAR$
+\end_inset
+
+在未来s期的误差项，即
+\begin_inset Formula 
+\[
+\boldsymbol{y}_{t+s}-\hat{\boldsymbol{y}}_{t+s|t}=\boldsymbol{\varepsilon}_{t+s}+\boldsymbol{\Psi}_{1}\boldsymbol{\varepsilon}_{t+s-1}+\boldsymbol{\Psi}_{2}\boldsymbol{\varepsilon}_{t+s-2}+...+\boldsymbol{\Psi}_{s-1}\boldsymbol{\varepsilon}_{t+1}\tag{11.5.1}
+\]
+
+\end_inset
+
+于是预测未来s期的均方误差为
+\begin_inset Formula 
+\begin{align*}
+MSE(\hat{\boldsymbol{y}}_{t+s|t}) & =E[(\boldsymbol{y}_{t+s}-\hat{\boldsymbol{y}}_{t+s|t})(\boldsymbol{y}_{t+s}-\hat{\boldsymbol{y}}_{t+s|t})']\\
+ & =\boldsymbol{\Omega}+\boldsymbol{\Psi}_{1}\boldsymbol{\Omega}\boldsymbol{\Psi}_{1}'+\boldsymbol{\Psi}_{2}\boldsymbol{\Omega}\boldsymbol{\Psi}_{2}'+...+\boldsymbol{\Psi}_{s-1}\boldsymbol{\Omega}\boldsymbol{\Psi}_{s-1}'\tag{11.5.2}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula $\boldsymbol{\Omega}=E(\boldsymbol{\varepsilon}_{t}\boldsymbol{\varepsilon}_{t}')$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+现在考虑正交化的扰动项
+\begin_inset Formula $(u_{1t},u_{2t},...,u_{nt})$
+\end_inset
+
+中的每一项对MSE的贡献。
+\end_layout
+
 \end_body
 \end_document
