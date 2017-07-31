@@ -7931,6 +7931,162 @@ MSE(\hat{\boldsymbol{y}}_{t+s|t}) & =E[(\boldsymbol{y}_{t+s}-\hat{\boldsymbol{y}
 
 \end_inset
 
+其中
+\begin_inset Formula $\boldsymbol{a}_{j}$
+\end_inset
+
+表示矩阵
+\begin_inset Formula $\boldsymbol{A}$
+\end_inset
+
+的第j列，注意,
+\begin_inset Formula $u_{jt}$
+\end_inset
+
+都是不相关的，于是
+\begin_inset Formula 
+\[
+\boldsymbol{\Omega}=E(\boldsymbol{\varepsilon}_{t}\boldsymbol{\varepsilon}_{t}')=\boldsymbol{a}_{1}\boldsymbol{a}_{1}'Var(u_{1t})+\boldsymbol{a}_{2}\boldsymbol{a}_{2}'Var(u_{2t})+...+\boldsymbol{a}_{n}\boldsymbol{a}_{n}'Var(u_{nt})\tag{11.5.5}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $Var(u_{jt})$
+\end_inset
+
+是
+\begin_inset Formula $\boldsymbol{D}=\boldsymbol{A^{-1}}\boldsymbol{\Omega}(\boldsymbol{A}')^{-1}$
+\end_inset
+
+的第j行第j列元素。将上式代入(11.5.2)得
+\begin_inset Formula 
+\[
+MSE(\hat{\boldsymbol{y}}_{t+s|t})=\sum_{j=1}^{\infty}\{Var(u_{jt})\cdot[\boldsymbol{a}_{j}\boldsymbol{a}_{j}'+\boldsymbol{\Psi}_{1}\boldsymbol{a}_{j}\boldsymbol{a}_{j}'\boldsymbol{\Psi}_{1}'+\boldsymbol{\Psi}_{2}\boldsymbol{a}_{j}\boldsymbol{a}_{j}'\boldsymbol{\Psi}_{2}'+...+\boldsymbol{\Psi}_{s-1}\boldsymbol{a}_{j}\boldsymbol{a}_{j}'\boldsymbol{\Psi}_{s-1}']\}\tag{11.5.6}
+\]
+
+\end_inset
+
+于是，第j个正交化的新息对于s期预测的MSE的贡献是：
+\begin_inset Formula 
+\[
+Var(u_{jt})\cdot[\boldsymbol{a}_{j}\boldsymbol{a}_{j}'+\boldsymbol{\Psi}_{1}\boldsymbol{a}_{j}\boldsymbol{a}_{j}'\boldsymbol{\Psi}_{1}'+\boldsymbol{\Psi}_{2}\boldsymbol{a}_{j}\boldsymbol{a}_{j}'\boldsymbol{\Psi}_{2}'+...+\boldsymbol{\Psi}_{s-1}\boldsymbol{a}_{j}\boldsymbol{a}_{j}'\boldsymbol{\Psi}_{s-1}']
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+注意，
+\begin_inset Formula $\boldsymbol{a}_{j}\cdot\sqrt{Var(u_{jt})}$
+\end_inset
+
+等于Cholesky分解的矩阵
+\begin_inset Formula $\boldsymbol{P}$
+\end_inset
+
+的第j列
+\begin_inset Formula $\boldsymbol{p}_{j}$
+\end_inset
+
+，于是，(11.5.6)可以等价地写成
+\begin_inset Formula 
+\[
+MSE(\hat{\boldsymbol{y}}_{t+s|t})=\sum_{j=1}^{\infty}[\boldsymbol{p}_{j}\boldsymbol{p}_{j}'+\boldsymbol{\Psi}_{1}\boldsymbol{p}_{j}\boldsymbol{p}_{j}'\boldsymbol{\Psi}_{1}'+\boldsymbol{\Psi}_{2}\boldsymbol{p}_{j}\boldsymbol{p}_{j}'\boldsymbol{\Psi}_{2}'+...+\boldsymbol{\Psi}_{s-1}\boldsymbol{p}_{j}\boldsymbol{p}_{j}'\boldsymbol{\Psi}_{s-1}']\tag{11.5.7}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+向量自回归与结构计量模型
+\end_layout
+
+\begin_layout Subsection
+动态结构模型估计中的缺陷
+\end_layout
+
+\begin_layout Subsection
+动态结构模型与向量自回归间的关系
+\end_layout
+
+\begin_layout Subsection
+解释脉冲响应函数
+\end_layout
+
+\begin_layout Subsection
+非递归结构型VAR
+\end_layout
+
+\begin_layout Subsection
+具有无约束动态性质的结构型VAR的FIML估计
+\end_layout
+
+\begin_layout Subsection
+结构型VAR的识别
+\end_layout
+
+\begin_layout Subsection
+对
+\begin_inset Formula $\Pi$
+\end_inset
+
+施加约束条件下的结构型VAR
+\end_layout
+
+\begin_layout Subsection
+结构型VAR以及前瞻行为
+\end_layout
+
+\begin_layout Subsection
+识别结构型VAR的其他方法
+\end_layout
+
+\begin_layout Subsection
+对结构VAR的评述
+\end_layout
+
+\begin_layout Section
+脉冲响应函数的标准误
+\end_layout
+
+\begin_layout Subsection
+基于解析函数的非正交化脉冲响应函数的标准误
+\end_layout
+
+\begin_layout Subsection
+计算非正交化脉冲响应函数的标准误的其他方法
+\end_layout
+
+\begin_layout Subsection
+结构型VAR的参数的标准误
+\end_layout
+
+\begin_layout Subsection
+正交化脉冲响应函数的标准误
+\end_layout
+
+\begin_layout Subsection
+对于标准误的实际经验
+\end_layout
+
+\begin_layout Section
+附录 一些性质证明以及解析导数的计算
+\end_layout
+
+\begin_layout Chapter
+贝叶斯分析
+\end_layout
+
+\begin_layout Chapter
+卡尔曼滤波
+\end_layout
+
+\begin_layout Standard
 
 \end_layout
 
