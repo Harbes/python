@@ -10,3 +10,4 @@ from .options import *
 from .distribution import *
 from .uni_tsa import *
 from .estimate import *
+from .mat_dec import *
