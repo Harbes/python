@@ -12,54 +12,57 @@ class uni_tsa:
         else:
             self.arr=arr
     # TODO 与后面的adfuller结果有一点点偏差，待改进
-    def unit_test(self,lag=1,ct='c'):
-        from functools import reduce
-        delta_x=self.arr[1:]-self.arr[:-1]
-        tmp=np.array([delta_x[lag-i:-i] for i in range(1,lag+1)])
-        y = delta_x[lag:]
-        if ct == 'c':
-            if lag>0:
-                x=reduce(lambda x, y: np.append(x, y, axis=0), ([np.ones(len(delta_x)-lag)],[self.arr[lag:-1]],tmp))
+    def unit_test(self,lag=1,ct='c',origin='my'):
+        if origin=='my':
+            from functools import reduce
+            delta_x=self.arr[1:]-self.arr[:-1]
+            tmp=np.array([delta_x[lag-i:-i] for i in range(1,lag+1)])
+            y = delta_x[lag:]
+            if ct == 'c':
+                if lag>0:
+                    x=reduce(lambda x, y: np.append(x, y, axis=0), ([np.ones(len(delta_x)-lag)],[self.arr[lag:-1]],tmp))
+                else:
+                    x = reduce(lambda x, y: np.append(x, y, axis=0),
+                               ([np.ones(len(delta_x) - lag)], [self.arr[lag:-1]]))
+                beta = y @ x.T @ np.linalg.pinv(x @ x.T)
+                sigma = np.std(y - beta @ x)
+                return beta[1]/sigma/sqrt(np.linalg.pinv(x @ x.T)[1,1])
+            elif ct =='ct':
+                if lag>0:
+                    x = reduce(lambda x, y: np.append(x, y, axis=0), ([np.ones(len(delta_x) - lag)],\
+                                            [np.array(range(1,len(delta_x) - lag + 1))], [self.arr[lag:-1]], tmp))
+                else:
+                    x = reduce(lambda x, y: np.append(x, y, axis=0), ([np.ones(len(delta_x) - lag)],\
+                                                                      [np.array(range(1, len(delta_x) - lag + 1))],\
+                                                                      [self.arr[lag:-1]]))
+                beta=y @ x.T @ np.linalg.pinv(x @ x.T)
+                sigma=np.std(y-beta@x)
+                return beta[2]/sigma/sqrt(np.linalg.pinv(x @ x.T)[2,2])
+            elif ct=='ctt':
+                if lag>0:
+                    x = reduce(lambda x, y: np.append(x, y, axis=0), ([np.ones(len(delta_x) - lag)], \
+                        [np.array(range(1, len(delta_x) - lag + 1))],[(np.array(range(1,len(delta_x) - lag + 1)))**2],\
+                                                                      [self.arr[lag:-1]], tmp))
+                else:
+                    x = reduce(lambda x, y: np.append(x, y, axis=0), ([np.ones(len(delta_x) - lag)], \
+                        [np.array(range(1, len(delta_x) - lag + 1))],[(np.array(range(1, len(delta_x) - lag + 1))) ** 2],\
+                                                                      [self.arr[lag:-1]]))
+                beta=y @ x.T @ np.linalg.pinv(x @ x.T)
+                sigma=np.std(y-beta@x)
+                return beta[3]/sigma/sqrt(np.linalg.pinv(x @ x.T)[3,3])
             else:
-                x = reduce(lambda x, y: np.append(x, y, axis=0),
-                           ([np.ones(len(delta_x) - lag)], [self.arr[lag:-1]]))
-            beta = y @ x.T @ np.linalg.pinv(x @ x.T)
-            sigma = np.std(y - beta @ x)
-            return beta[1]/sigma/sqrt(np.linalg.pinv(x @ x.T)[1,1])
-        elif ct =='ct':
-            if lag>0:
-                x = reduce(lambda x, y: np.append(x, y, axis=0), ([np.ones(len(delta_x) - lag)],\
-                                        [np.array(range(1,len(delta_x) - lag + 1))], [self.arr[lag:-1]], tmp))
-            else:
-                x = reduce(lambda x, y: np.append(x, y, axis=0), ([np.ones(len(delta_x) - lag)],\
-                                                                  [np.array(range(1, len(delta_x) - lag + 1))],\
-                                                                  [self.arr[lag:-1]]))
-            beta=y @ x.T @ np.linalg.pinv(x @ x.T)
-            sigma=np.std(y-beta@x)
-            return beta[2]/sigma/sqrt(np.linalg.pinv(x @ x.T)[2,2])
-        elif ct=='ctt':
-            if lag>0:
-                x = reduce(lambda x, y: np.append(x, y, axis=0), ([np.ones(len(delta_x) - lag)], \
-                    [np.array(range(1, len(delta_x) - lag + 1))],[(np.array(range(1,len(delta_x) - lag + 1)))**2],\
-                                                                  [self.arr[lag:-1]], tmp))
-            else:
-                x = reduce(lambda x, y: np.append(x, y, axis=0), ([np.ones(len(delta_x) - lag)], \
-                    [np.array(range(1, len(delta_x) - lag + 1))],[(np.array(range(1, len(delta_x) - lag + 1))) ** 2],\
-                                                                  [self.arr[lag:-1]]))
-            beta=y @ x.T @ np.linalg.pinv(x @ x.T)
-            sigma=np.std(y-beta@x)
-            return beta[3]/sigma/sqrt(np.linalg.pinv(x @ x.T)[3,3])
+                if lag>0:
+                    x=np.append([self.arr[lag:-1]],tmp, axis=0)
+                else:
+                    x = self.arr[lag:-1]
+                beta = y @ x.T @ np.linalg.pinv(x @ x.T)
+                sigma = np.std(y - beta @ x)
+                return beta[0]/sigma/sqrt(np.linalg.pinv(x @ x.T)[0,0])
         else:
-            if lag>0:
-                x=np.append([self.arr[lag:-1]],tmp, axis=0)
-            else:
-                x = self.arr[lag:-1]
-            beta = y @ x.T @ np.linalg.pinv(x @ x.T)
-            sigma = np.std(y - beta @ x)
-            return beta[0]/sigma/sqrt(np.linalg.pinv(x @ x.T)[0,0])
+            return self._adfuller(max_lag=lag,regression=ct)
 
 # TODO 待自己编写
-    def adfuller(self, max_lag=None, regression='c'):
+    def _adfuller(self, max_lag=None, regression='c'):
         res = tsa_tools.adfuller(self.arr, maxlag=max_lag, regression=regression)
         print('Null hypothesis: There is a unit root')
         print('     Test statistics:',res[0])
@@ -314,6 +317,7 @@ class simulation:
     # TODO 理论自协方差值，根据总体谱计算
     def acov(self):
         pass
+
 
 
 
