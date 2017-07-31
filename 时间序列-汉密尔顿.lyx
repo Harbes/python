@@ -7923,7 +7923,15 @@ MSE(\hat{\boldsymbol{y}}_{t+s|t}) & =E[(\boldsymbol{y}_{t+s}-\hat{\boldsymbol{y}
 \begin_inset Formula $(u_{1t},u_{2t},...,u_{nt})$
 \end_inset
 
-中的每一项对MSE的贡献。
+中的每一项对MSE的贡献。首先
+\begin_inset Formula 
+\[
+\boldsymbol{\varepsilon}_{t}=\boldsymbol{A}\boldsymbol{u}_{t}=\boldsymbol{a}_{1}u_{1t}+\boldsymbol{a}_{2}u_{2t}+...+\boldsymbol{a}_{n}u_{nt}\tag{11.5.4}
+\]
+
+\end_inset
+
+
 \end_layout
 
 \end_body
