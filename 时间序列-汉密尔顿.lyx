@@ -7810,11 +7810,79 @@ p的选取以及对序列潜在的非平稳问题所选取的方法都是极为�
 \end_layout
 
 \begin_layout Section
-脉冲响应函数
+脉冲响应函数(究竟想说什么？建议看原版)
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
+将一个VAR写成
+\begin_inset Formula $MA(\infty)$
+\end_inset
 
+形式
+\begin_inset Formula 
+\[
+\boldsymbol{y}_{t}=\boldsymbol{\mu}+\boldsymbol{\varepsilon}_{t}+\boldsymbol{\Psi}_{1}\boldsymbol{\varepsilon}_{t-1}+\boldsymbol{\Psi}_{2}\boldsymbol{\varepsilon}_{t-2}+...\equiv\boldsymbol{\mu}+\boldsymbol{\Psi}(L)\boldsymbol{\varepsilon}_{t}\tag{10.1.15}
+\]
+
+\end_inset
+
+因此
+\begin_inset Formula $\frac{\partial\boldsymbol{y}_{t+s}}{\partial\boldsymbol{\varepsilon}_{t}'}=\boldsymbol{\Psi}_{s}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+若已知在同一时点上
+\begin_inset Formula $\boldsymbol{\varepsilon}_{t}$
+\end_inset
+
+的n个元素变化分别为
+\begin_inset Formula $\delta_{1},\delta_{2},...,\delta_{n}$
+\end_inset
+
+，则这些变化对
+\begin_inset Formula $\boldsymbol{y}_{t+s}$
+\end_inset
+
+总的影响为
+\begin_inset Formula 
+\[
+\Delta\boldsymbol{y}_{t+s}=\frac{\partial\boldsymbol{y}_{t+s}}{\partial\varepsilon_{1t}}\delta_{1}+\frac{\partial\boldsymbol{y}_{t+s}}{\partial\varepsilon_{2t}}\delta_{2}+...+\frac{\partial\boldsymbol{y}_{t+s}}{\partial\varepsilon_{nt}}\delta_{n}=\boldsymbol{\Psi}_{s}\boldsymbol{\delta}\tag{11.4.3}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+将
+\begin_inset Formula $\boldsymbol{\Psi}_{s}$
+\end_inset
+
+的第i行第j列元素
+\begin_inset Formula $\frac{\partial y_{i,t+s}}{\partial\varepsilon_{jt}}$
+\end_inset
+
+作为s的函数来绘制，这就是
+\bar under
+脉冲响应函数
+\bar default
+。它描述了在时期t以及更早期的所有其他变量都保持不变的情况下，
+\begin_inset Formula $y_{i,t+s}$
+\end_inset
+
+对于
+\begin_inset Formula $y_{jt}$
+\end_inset
+
+的某个一次性脉冲
+\begin_inset Formula $\varepsilon_{jt}$
+\end_inset
+
+的反应。
 \end_layout
 
 \end_body

@@ -9,21 +9,27 @@ class matrix:
     @property
     def det(self):
         return np.linalg.det(self.mat)
-    @property
-    def tri_decomposition(self):
-        n=self.mat.shape[0]
-        A=np.eye(n)
-        D=self.mat
-        for i in range(n-1):
-            E=np.eye(n)
-            E[i+1:,i]=-D[i+1:,i]/D[i,i]
-            D=E@D@E.T
-            E[i + 1:, i] *=-1
-            A=A@E
-        return A,D
-    def cholesky(self,origin='my'):
+    def tri_decomposition(self,origin='other'):
         if origin=='my':
-            A,D=self.tri_decomposition
+            n=self.mat.shape[0]
+            A=np.eye(n)
+            D=self.mat
+            for i in range(n-1):
+                E=np.eye(n)
+                E[i+1:,i]=-D[i+1:,i]/D[i,i]
+                D=E@D@E.T
+                E[i + 1:, i] *=-1
+                A=A@E
+            return A,D
+        else:
+            P=np.linalg.cholesky(self.mat)
+            D_tmp=np.diag(np.diag(P)**(-1))
+            A=P@D_tmp
+            D=np.diag(np.diag(P)**(2))
+            return A,D
+    def cholesky(self,origin='other'):
+        if origin=='my':
+            A,D=self.tri_decomposition()
             return A@np.sqrt(D)
         else:
             return np.linalg.cholesky(self.mat)
