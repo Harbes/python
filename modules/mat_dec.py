@@ -29,7 +29,7 @@ class matrix:
             return A,D
     def cholesky(self,origin='other'):
         if origin=='my':
-            A,D=self.tri_decomposition()
+            A,D=self.tri_decomposition(origin='my')
             return A@np.sqrt(D)
         else:
             return np.linalg.cholesky(self.mat)
