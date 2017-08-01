@@ -8470,6 +8470,8 @@ E[y_{t+s}-\hat{y}_{t+s|t}]^{2}=\{1+(1+\psi_{1})^{2}+(1+\psi_{1}+\psi_{2})^{2}+..
 \end_layout
 
 \begin_layout Section
+
+\color red
 单位根检验的含义
 \end_layout
 
@@ -8488,6 +8490,271 @@ E[y_{t+s}-\hat{y}_{t+s|t}]^{2}=\{1+(1+\psi_{1})^{2}+(1+\psi_{1}+\psi_{2})^{2}+..
 对于一个有限样本的单位根过程，都有一个近似的平稳表示，使得从有限样本中无法区分二者
 \bar default
 ；逆命题也真：对任意平稳过程和给定的有限样本容量，都存在一个近似的单位根过程使其无法与平稳过程相区分。
+\end_layout
+
+\begin_layout Itemize
+检验一个特定的时间序列是否“包含一个单位根”，或者检验新息是否“对序列的水平有永久性影响”，这些都几乎不可能完成（
+\series bold
+\bar under
+见教材
+\series default
+\bar default
+）
+\end_layout
+
+\begin_layout Itemize
+选择单位根过程还是趋势平稳过程？首先，对于单位跟过程，
+\begin_inset Formula $\Delta y_{t}$
+\end_inset
+
+的自协方差生成函数为
+\begin_inset Formula 
+\[
+g_{\Delta Y}(z)=\psi(z)\sigma^{2}\psi(z^{-1})
+\]
+
+\end_inset
+
+对应的总体谱为
+\begin_inset Formula 
+\[
+s_{\Delta Y}(\omega)=\frac{1}{2\pi}g_{\Delta Y}(e^{-i\omega})
+\]
+
+\end_inset
+
+它在频率
+\begin_inset Formula $\omega=0$
+\end_inset
+
+处的取值为
+\begin_inset Formula 
+\[
+s_{\Delta Y}(0)=\frac{1}{2\pi}g_{\Delta Y}(1)=\frac{1}{2\pi}[\psi(1)]^{2}\sigma^{2}\neq0
+\]
+
+\end_inset
+
+而对于一个趋势平稳过程，
+\begin_inset Formula $\Delta y_{t}$
+\end_inset
+
+的自协方差生成函数为
+\begin_inset Formula 
+\[
+g_{\Delta Y}(z)=(1-z)\psi(z)\sigma^{2}\psi(z^{-1})(1-z^{-1})
+\]
+
+\end_inset
+
+对应的总体谱在频率
+\begin_inset Formula $\omega=0$
+\end_inset
+
+处的取值为
+\begin_inset Formula 
+\[
+s_{\Delta Y}(0)=\frac{1}{2\pi}g_{\Delta Y}(1)=0
+\]
+
+\end_inset
+
+综上：如果真实过程是趋势平稳的，那么
+\begin_inset Formula $\Delta y$
+\end_inset
+
+在频率为0上的总体谱是0；而如果真实过程是单位根过程，则
+\begin_inset Formula $\Delta y$
+\end_inset
+
+在频率为0上的总体谱不为0。
+\end_layout
+
+\begin_layout Section
+趋势时间序列的其他方法
+\end_layout
+
+\begin_layout Subsection
+分数单整
+\end_layout
+
+\begin_layout Itemize
+一个d阶单整过程
+\begin_inset Formula 
+\[
+(1-L)^{d}y_{t}=\psi(L)\varepsilon_{t}\tag{15.5.1}
+\]
+
+\end_inset
+
+之前接触的d取值一般为正整数，但是Granger and Joyeux(1980)以及Hosking(1981)认为d取非整数值也可能是有用的。
+\end_layout
+
+\begin_layout Itemize
+首先，给出(15.5.1)的
+\begin_inset Formula $MA(\infty)$
+\end_inset
+
+表示
+\begin_inset Formula 
+\[
+y_{t}=(1-L)^{-d}\psi(L)\varepsilon_{t}\tag{15.5.2}
+\]
+
+\end_inset
+
+对于数z，定义函数
+\begin_inset Formula $f(z)\equiv(1-z)^{-d}$
+\end_inset
+
+，这个函数的倒数为
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial f}{\partial z} & =d\cdot(1-z)^{-d-1}\\
+\frac{\partial^{2}f}{\partial z^{2}} & =(d+1)\cdot d\cdot(1-z)^{-d-2}\\
+\frac{\partial^{3}f}{\partial z^{3}} & =(d+2)\cdot(d+1)\cdot d\cdot(1-z)^{-d-3}\\
+ & \vdots\\
+\frac{\partial^{3}f}{\partial z^{3}} & (d+j-1)\cdot(d+j-2)...(d+1)\cdot d\cdot(1-z)^{-d-j}
+\end{align*}
+
+\end_inset
+
+因此，
+\begin_inset Formula $f(z)$
+\end_inset
+
+在z=0处的幂级数展开为
+\begin_inset Formula 
+\begin{align*}
+(1-z)^{-d} & =f(0)+\frac{\partial f}{\partial z}|_{z=0}\cdot z+\frac{1}{2!}\frac{\partial^{2}f}{\partial z^{2}}|_{z=0}\cdot z^{2}+...\\
+ & =1+dz+\frac{1}{2!}(d+1)dz^{2}+...
+\end{align*}
+
+\end_inset
+
+这说明算子
+\begin_inset Formula $(1-L)^{-d}$
+\end_inset
+
+可以用下面的滤子表示
+\begin_inset Formula 
+\[
+(1-L)^{-d}=1+dL+\frac{1}{2!}(d+1)dL^{2}+...=\sum_{j=0}^{\infty}h_{j}L^{j}\tag{15.5.3}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $h_{0}\equiv1$
+\end_inset
+
+且
+\begin_inset Formula 
+\[
+h_{j}\equiv\frac{1}{j!}(d+j-1)(d+j-2)...(d+1)d\tag{15.5.4}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+本章附录证明了当
+\begin_inset Formula $d<1$
+\end_inset
+
+，则对于足够大的j，
+\begin_inset Formula $h_{j}$
+\end_inset
+
+近似等于
+\begin_inset Formula 
+\[
+h_{j}\cong(j+1)^{d-1}\tag{15.5.5}
+\]
+
+\end_inset
+
+因此，时间序列
+\begin_inset Formula $y_{t}=(1-L)^{-d}\varepsilon_{t}=h_{0}\varepsilon_{t}+h_{1}\varepsilon_{t-1}+h_{2}\varepsilon_{t-2}+...$
+\end_inset
+
+描述了一个
+\begin_inset Formula $MA(\infty)$
+\end_inset
+
+表示，其中，对于足够大的j，脉冲响应系数
+\begin_inset Formula $h_{j}$
+\end_inset
+
+的行为与
+\begin_inset Formula $(j+1)^{d-1}$
+\end_inset
+
+相同。我们知道，一般一个平稳ARMA过程的脉冲响应系数呈现几何衰减，显然，(15.5.5)衰减的速度相对而言要缓慢许多，因此Granger和Joyeux认为，部分积
+分过程可以作为一种设置时间序列中长期记忆模型的方法。
+\end_layout
+
+\begin_layout Itemize
+在一个有限样本中，我们也可以用高阶的ARMA过程取近似地捕捉这种长期记忆，但是使用部分差分设定可以使用较少的参数去有效捕捉衰退非常缓慢的长期乘子。
+\end_layout
+
+\begin_layout Itemize
+给定条件
+\begin_inset Formula $d<\frac{1}{2}$
+\end_inset
+
+，可以证明移动平均悉数
+\begin_inset Formula $h_{j}$
+\end_inset
+
+的的平方和极限满足：
+\begin_inset Formula 
+\[
+\sum_{j=0}^{\infty}h_{j}^{2}<\infty,d<\frac{1}{2}
+\]
+
+\end_inset
+
+因此，当
+\begin_inset Formula $d<\frac{1}{2}$
+\end_inset
+
+时，(15.5.6)定义了一个协方差平稳过程。当
+\begin_inset Formula $d>\frac{1}{2}$
+\end_inset
+
+，建议先对该过程进行差分，例如
+\begin_inset Formula $d=0.7$
+\end_inset
+
+，于是差分后：
+\begin_inset Formula 
+\[
+(1-L)y_{t}=(1-L)(1-L)^{-0.7}\psi(L)\varepsilon_{t}=(1-L)^{0.3}\psi(L)\varepsilon_{t}
+\]
+
+\end_inset
+
+此时
+\begin_inset Formula $d=-0.3<\frac{1}{2}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Geweke and Porter-Hudak(1983)以及Sowell(1992)提出了估计d的方法。Diebold and Rudebusch(1989)
+用此方法分析了GNP数据和经济周期波动的持续性，而Lo(1991)给出了一个关于股票价格波动的持续性的有趣的研究。
+\end_layout
+
+\begin_layout Subsection
+趋势的季节性中断
+\end_layout
+
+\begin_layout Standard
+
 \end_layout
 
 \end_body
