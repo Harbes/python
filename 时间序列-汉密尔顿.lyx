@@ -9102,7 +9102,7 @@ u_{1}/T & \text{，}\frac{1}{T}\leq r<\frac{2}{T}\\
 \end_layout
 
 \begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 (a) 对于k个特定时期的任意有限集合
 \begin_inset Formula $0\leq r_{1}<r_{2}<...<r_{k}\leq1$
 \end_inset
@@ -9136,7 +9136,7 @@ S(r_{k})
 
 \end_layout
 
-\begin_layout Itemize
+\begin_layout Standard
 (b) 对每一个
 \begin_inset Formula $\varepsilon>0$
 \end_inset
@@ -9168,7 +9168,7 @@ S(r_{k})
 的概率收敛于0
 \end_layout
 
-\begin_layout Itemize
+\begin_layout Standard
 (c) 当
 \begin_inset Formula $\lambda\rightarrow\infty$
 \end_inset
@@ -9177,9 +9177,13 @@ S(r_{k})
 \begin_inset Formula $P\{|S_{T}(0)|>\lambda\}\rightarrow0$
 \end_inset
 
-关于T一致地成立
+关于T一致地成立。
 \end_layout
 
 \end_deeper
+\begin_layout Itemize
+
+\end_layout
+
 \end_body
 \end_document
