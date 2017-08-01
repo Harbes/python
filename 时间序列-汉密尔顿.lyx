@@ -8158,6 +8158,14 @@ status collapsed
 
 \end_layout
 
+\begin_layout Itemize
+单位根过程一个略微不同的表示
+\end_layout
+
+\begin_layout Itemize
+ARIMA
+\end_layout
+
 \begin_layout Section
 为什么考虑线性时间趋势和单位根？
 \end_layout
@@ -8175,8 +8183,311 @@ status collapsed
 预测
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
+首先，利用趋势平稳方程预测
+\begin_inset Formula 
+\[
+\hat{y}_{t+s|t}=\alpha+\delta(t+s)+\psi_{s}\varepsilon_{t}+\psi_{s+1}\varepsilon_{t-1}+...\tag{15.3.1}
+\]
 
+\end_inset
+
+当预测水平s增大时，
+\begin_inset Formula $\{\psi_{j}\}$
+\end_inset
+
+的绝对可加意味着该预测依均方收敛：
+\begin_inset Formula 
+\[
+E[\hat{y}_{t+s}-\alpha-\delta(t+s)]^{2}\rightarrow0,s\rightarrow\infty
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+其次，利用单位根方程式进行预测，
+\begin_inset Formula $\Delta y_{t}$
+\end_inset
+
+是一个平稳过程，它可以利用标准公式预测
+\begin_inset Formula 
+\begin{align*}
+\Delta\hat{y}_{t+s|t} & =\hat{E}[(y_{t+s}-y_{t+s-1})|y_{t},y_{t-1},...]\\
+ & =\delta+\psi_{s}\varepsilon_{t}+\psi_{s+1}\varepsilon_{t-1}+...\tag{15.3.2}
+\end{align*}
+
+\end_inset
+
+又
+\begin_inset Formula $y_{t+s}=(y_{t+s}-y_{t+s-1})+(y_{t+s-1}-y_{t+s-2})+...+(y_{t+1}-y_{t})+y_{t}$
+\end_inset
+
+，取该式在一个常数项和
+\begin_inset Formula $y_{t},y_{t-1},...$
+\end_inset
+
+上的投影，可得
+\begin_inset Formula 
+\begin{align*}
+\hat{y}_{t+s|t} & =\Delta\hat{y}_{t+s-1|t}+\Delta\hat{y}_{t+s-2|t}+...+\Delta\hat{y}_{t+1|t}+y_{t}\\
+ & =\{\delta+\psi_{s}\varepsilon_{t}+\psi_{s+1}\varepsilon_{t-1}+...\}\\
+ & +\{\delta+\psi_{s-1}\varepsilon_{t}+\psi_{s}\varepsilon_{t-1}+...\}+...\\
+ & +\{\delta+\psi_{1}\varepsilon_{t}+\psi_{2}\varepsilon_{t-1}+...\}+y_{t}\\
+ & =s\delta+y_{t}+(\psi_{s}+\psi_{s-1}+...+\psi_{1})\varepsilon_{t}+(\psi_{s+1}+\psi_{s+2}+...+\psi_{2})\varepsilon_{t-1}+...\tag{15.3.4}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+适应性预期
+\end_layout
+
+\begin_layout Itemize
+总结：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+单位根过程式中的
+\begin_inset Formula $\delta$
+\end_inset
+
+扮演了时间趋势式中的
+\begin_inset Formula $\delta$
+\end_inset
+
+的角色
+\end_layout
+
+\begin_layout Itemize
+不论哪种设定，预测值都收敛于一条斜率为
+\begin_inset Formula $\delta$
+\end_inset
+
+的线性函数，而差别在于截距：对于趋势平稳式来说，其=相应预测值收敛于一条截距不随
+\begin_inset Formula $y_{t}$
+\end_inset
+
+值变化的直线；而单位根过程式收敛于一条截距随着
+\begin_inset Formula $y_{t}$
+\end_inset
+
+值变化的直线。
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+预测误差的比较
+\end_layout
+
+\begin_layout Itemize
+对于趋势平稳式来说，s期预测误差为
+\begin_inset Formula 
+\begin{align*}
+y_{t+s}-\hat{y}_{t+s|t} & =\{\alpha+\delta(t+s)+\varepsilon_{t+s}+\psi_{1}\varepsilon_{t+s-1}+...+\psi_{s-1}\varepsilon_{t+1}+\psi_{s}\varepsilon_{t}+\psi_{s+1}\varepsilon_{t-1}+...\}\\
+ & -\{\alpha+\delta(t+s)+\psi_{s}\varepsilon_{t}+\psi_{s+1}\varepsilon_{t-1}+...\}\\
+ & =\varepsilon_{t+s}+\psi_{1}\varepsilon_{t+s-1}+...+\psi_{s-1}\varepsilon_{t+1}
+\end{align*}
+
+\end_inset
+
+于是，预测的均方误差为
+\begin_inset Formula 
+\[
+MSE(y_{t+s}-\hat{y}_{t+s|t})=(1+\psi_{1}^{2}+\psi_{2}^{2}+...+\psi_{s-1}^{2})\sigma^{2}
+\]
+
+\end_inset
+
+注意到极限MSE恰好是
+\begin_inset Formula $\psi(L)\varepsilon_{t}$
+\end_inset
+
+的无条件方差。
+\end_layout
+
+\begin_layout Itemize
+对于单位根过程式来说，s期预测误差为
+\begin_inset Formula 
+\begin{align*}
+y_{t+s}-\hat{y}_{t+s|t} & =\{\Delta y_{t+s}+\Delta y_{t+s-1}+...+\Delta y_{t+1}+y_{t}\}\\
+ & -\{\Delta\hat{y}_{t+s-1|t}+\Delta\hat{y}_{t+s-2|t}+...+\Delta\hat{y}_{t+1|t}+y_{t}\}\\
+ & =\{\varepsilon_{t+s}+\psi_{1}\varepsilon_{t+s-1}+...+\psi_{s-1}\varepsilon_{t+1}\}\\
+ & +\{\varepsilon_{t+s-1}+\psi_{1}\varepsilon_{t+s-2}+...+\psi_{s-2}\varepsilon_{t+1}\}+...+\{\varepsilon_{t+1}\}\\
+ & =\varepsilon_{t+s}+(1+\psi_{1})\varepsilon_{t+s-1}+(1+\psi_{1}\psi_{2})\varepsilon_{t+s-2}+...+(1+\psi_{1}+...+\psi_{s-1})\varepsilon_{t+1}
+\end{align*}
+
+\end_inset
+
+对应的MSE为
+\begin_inset Formula 
+\[
+E[y_{t+s}-\hat{y}_{t+s|t}]^{2}=\{1+(1+\psi_{1})^{2}+(1+\psi_{1}+\psi_{2})^{2}+...+(1+\psi_{1}+...+\psi_{s-1})^{2}\}\sigma^{2}
+\]
+
+\end_inset
+
+注意当s趋于无穷时，上述MSE不再收敛于任何固定值，而是趋近于一个关于变量s的斜率为
+\begin_inset Formula $(1+\psi_{1}+\psi_{2}+...)^{2}\sigma^{2}$
+\end_inset
+
+的线性函数。另一方面，预测误差的标准差增大的速度相对于预测水平的增长(渐进一条关于s的线性函数)来说缓慢得多，95%的置信区间扩展速度也缓慢，因此，当观察期间足
+够长是，那么漂移项为正(
+\begin_inset Formula $\delta>0$
+\end_inset
+
+)的单位根过程产生的数据一定表现出向上的趋势。从这个意义上说，由非零漂移
+\begin_inset Formula $\delta$
+\end_inset
+
+产生的趋势渐近住到了由单位根项引起的随时间推移产生的增长变化率。
+\end_layout
+
+\begin_layout Subsection
+动态乘子的比较
+\end_layout
+
+\begin_layout Itemize
+考虑
+\begin_inset Formula $\varepsilon_{t}$
+\end_inset
+
+增加一个单位，而其他各期
+\begin_inset Formula $\varepsilon$
+\end_inset
+
+不变时对
+\begin_inset Formula $y_{t+s}$
+\end_inset
+
+产生的影响。
+\end_layout
+
+\begin_layout Itemize
+对于趋势平稳过程式来说，这个动态乘子为
+\begin_inset Formula 
+\[
+\frac{\partial y_{t+s}}{\partial\varepsilon_{t}}=\psi_{s}
+\]
+
+\end_inset
+
+当s趋于无穷时，任意随机扰动的影响最终都会消失，由
+\begin_inset Formula 
+\[
+\underset{s\rightarrow\infty}{lim}\frac{\partial y_{t+s}}{\partial\varepsilon_{t}}=0
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+对于单位根过程来说，这个动态乘子为
+\begin_inset Formula 
+\[
+\frac{\partial y_{t+s}}{\partial\varepsilon_{t}}=\frac{\partial y_{t}}{\partial\varepsilon_{t}}+\psi_{s}+\psi_{s-1}+...+\psi_{1}=1+\psi_{1}+\psi_{2}+...+\psi_{s}
+\]
+
+\end_inset
+
+于是，一个新息
+\begin_inset Formula $\varepsilon_{t}$
+\end_inset
+
+对y的水平有着永久性影响，由
+\begin_inset Formula 
+\[
+\underset{s\rightarrow\infty}{lim}\frac{\partial y_{t+s}}{\partial\varepsilon_{t}}=1+\psi_{1}+\psi_{2}+...+\psi_{s}=\psi(1)\tag{15.3.10}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+一个例子，美国实际GNP是一个ARIMA(4,1,0)：
+\begin_inset Formula $\Delta y_{t}=0.555+0.312\Delta y_{t-1}+0.122\Delta y_{t-2}-0.116\Delta y_{t-3}-0.081\Delta y_{t-4}+\varepsilon_{t}$
+\end_inset
+
+，对于这种设定，
+\begin_inset Formula $\varepsilon_{t}$
+\end_inset
+
+的变化对于实际GNP
+\bar under
+水平
+\bar default
+的永久影响的估计为
+\begin_inset Formula 
+\[
+\psi(1)=\frac{1}{1-0.312-0.122+0.116+0.081}=1.31
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+为达到平稳所需的变换
+\end_layout
+
+\begin_layout Itemize
+对于时间趋势过程来说，恰当的处理方式是从
+\begin_inset Formula $y_{t}$
+\end_inset
+
+中减去
+\begin_inset Formula $\delta t$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+如果是单位根过程，只是减去
+\begin_inset Formula $\delta t$
+\end_inset
+
+可以消除均值的时间依赖，但方差仍取决于时间，例如
+\begin_inset Formula $y_{t}-\delta t=y_{0}+(\varepsilon_{1}+\varepsilon_{2}+...+\varepsilon_{t})$
+\end_inset
+
+，于是相应的方差为
+\begin_inset Formula $t\sigma^{2}$
+\end_inset
+
+，即此时它不是一个平稳过程。正确的做法是求序列的差分。
+\end_layout
+
+\begin_layout Section
+单位根检验的含义
+\end_layout
+
+\begin_layout Itemize
+宏观经济学家很感兴趣的一个问题是，经济萧条对未来GNP水平用永久性影响，还是只是暂时的经济滑坡且经济终将复苏。Nelson and Plosser(1982)曾
+讨论过，比起确定时间趋势，单位根更能反应许多经济学列的特征。不少经济学家都曾试图对以GNP增长的各种时间序列表示的
+\begin_inset Formula $\psi(1)$
+\end_inset
+
+进行估计，来测定永久性影响的程度。
+\end_layout
+
+\begin_layout Itemize
+
+\bar under
+对于一个有限样本的单位根过程，都有一个近似的平稳表示，使得从有限样本中无法区分二者
+\bar default
+；逆命题也真：对任意平稳过程和给定的有限样本容量，都存在一个近似的单位根过程使其无法与平稳过程相区分。
 \end_layout
 
 \end_body
