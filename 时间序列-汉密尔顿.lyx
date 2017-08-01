@@ -8753,8 +8753,13 @@ Geweke and Porter-Hudak(1983)以及Sowell(1992)提出了估计d的方法。Diebo
 趋势的季节性中断
 \end_layout
 
-\begin_layout Standard
-
+\begin_layout Itemize
+单位根过程中，一个冲击会永久性地影响y的进程。Perron(1989)以及Rappoport and Reichlin(1989)指出，能够产生较大持久性影响的
+经济事件是比较少见的。
+\color red
+一个模型可以解释这个观点
+\color inherit
+。（疑问：现实中，趋势平稳过程更多？？？）
 \end_layout
 
 \end_body
