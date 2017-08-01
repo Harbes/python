@@ -8960,9 +8960,226 @@ E[\sum_{t=1}^{T}y_{t-1}^{2}]=\sum_{t=1}^{T}\sigma^{2}(t-1)=\sigma^{2}(T-1)T/2
 泛函中心极限定理
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
+布朗运动的作用是引出了一个更为一般化的中心极限定理。
+\end_layout
+
+\begin_layout Itemize
+假定
+\begin_inset Formula $r\in[0,1]$
+\end_inset
+
+，有一个样本容量为T的样本
+\begin_inset Formula $u_{1},u_{2},...,u_{T}$
+\end_inset
+
+，现在定义一个变量
+\begin_inset Formula $X_{T}(r)$
+\end_inset
+
+，如下
+\begin_inset Formula 
+\[
+X_{T}(r)\equiv\frac{1}{T}\sum_{t=1}^{[Tr]^{*}}u_{t}\tag{17.3.2}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $[Tr]^{*}$
+\end_inset
+
+表示不超过
+\begin_inset Formula $Tr$
+\end_inset
+
+的最大整数，显然
+\begin_inset Formula $X_{T}(r)$
+\end_inset
+
+是一个分段函数(T+1段)：
+\begin_inset Formula 
+\[
+X_{T}(r)=\begin{cases}
+0 & \text{，}0\leq r<\frac{1}{T}\\
+u_{1}/T & \text{，}\frac{1}{T}\leq r<\frac{2}{T}\\
+(u_{1}+u_{2})/T & \text{，}\frac{2}{T}\leq r<\frac{3}{T}\\
+\vdots\\
+(u_{1}+u_{2}+...+u_{T})/T & \text{，}r=1
+\end{cases}\tag{17.3.3}
+\]
+
+\end_inset
+
+然后
+\begin_inset Formula 
+\begin{align*}
+\sqrt{T}X_{T}(r) & =\frac{1}{\sqrt{T}}\sum_{t=1}^{[Tr]^{*}}u_{t}=\frac{\sqrt{[Tr]^{*}}}{\sqrt{T}}\cdot\frac{1}{[Tr]^{*}}\sum_{t=1}^{[Tr]^{*}}u_{t}\\
+ & \overset{L}{\rightarrow}\sqrt{r}\cdot N(0,\sigma^{2})
+\end{align*}
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\[
+\sqrt{T}X_{T}(r)/\sigma\overset{L}{\rightarrow}N(0,r)
+\]
+
+\end_inset
+
+与之类似的
+\begin_inset Formula 
+\[
+\sqrt{T}[X_{T}(r_{2})-X_{T}(r_{1})]/\sigma\overset{L}{\rightarrow}N(0,r_{2}-r_{1})
+\]
+
+\end_inset
+
+因此可以总结：随机函数
+\begin_inset Formula $\{\sqrt{T}X_{T}(\cdot)/\sigma\}_{T=1}^{\infty}$
+\end_inset
+
+有一个称为布朗运动
+\begin_inset Formula $W(\cdot)$
+\end_inset
+
+的渐近概率定律：
+\begin_inset Formula 
+\[
+\sqrt{T}X_{T}(\cdot)/\sigma\overset{L}{\rightarrow}W(\cdot)\tag{17.3.6}
+\]
+
+\end_inset
+
+上式就是
+\series bold
+\bar under
+泛函中心极限定理
+\series default
+\bar default
+。注意：
+\begin_inset Formula $X_{T}(\cdot)$
+\end_inset
+
+是一个(随机)函数，
+\begin_inset Formula $X_{T}(r)$
+\end_inset
+
+是一个随机变量；在推导过程中假定
+\begin_inset Formula $u_{t}$
+\end_inset
+
+为独立同分布的(17.5)将给出一个更为一般的结论。
+\end_layout
+
+\begin_layout Itemize
+拓展随机变量的依概率收敛的定义，使之包含随机函数：令
+\begin_inset Formula $S(\cdot)$
+\end_inset
+
+表示一个连续时间随机过程，
+\begin_inset Formula $S(r)$
+\end_inset
+
+表示某个时期r的值，
+\begin_inset Formula $r\in[0,1]$
+\end_inset
+
+。进一步假定对于任意给定实现，
+\begin_inset Formula $S(\cdot)$
+\end_inset
+
+是r的一个连续函数且概率为1。如果一个连续函数序列
+\begin_inset Formula $\{S_{T}(\cdot)\}_{T=1}^{\infty}$
+\end_inset
+
+，如果满足下列条件，就有
+\begin_inset Formula $S_{T}(\cdot)\overset{L}{\rightarrow}S(\cdot)$
+\end_inset
+
+：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+(a) 对于k个特定时期的任意有限集合
+\begin_inset Formula $0\leq r_{1}<r_{2}<...<r_{k}\leq1$
+\end_inset
+
+，这个k维随机向量序列
+\begin_inset Formula $\{\boldsymbol{y}_{T}\}_{T=1}^{\infty}$
+\end_inset
+
+的分布收敛于向量
+\begin_inset Formula $\boldsymbol{y}$
+\end_inset
+
+的分布，其中
+\begin_inset Formula 
+\[
+\boldsymbol{y}_{T}\equiv\left[\begin{array}{c}
+S_{T}(r_{1})\\
+S_{T}(r_{2})\\
+\vdots\\
+S_{T}(r_{k})
+\end{array}\right],\boldsymbol{y}\equiv\left[\begin{array}{c}
+S(r_{1})\\
+S(r_{2})\\
+\vdots\\
+S(r_{k})
+\end{array}\right]
+\]
+
+\end_inset
+
 
 \end_layout
 
+\begin_layout Itemize
+(b) 对每一个
+\begin_inset Formula $\varepsilon>0$
+\end_inset
+
+，当
+\begin_inset Formula $\delta\rightarrow0$
+\end_inset
+
+时，对于
+\begin_inset Formula $\delta$
+\end_inset
+
+之内任意时期
+\begin_inset Formula $r_{1}$
+\end_inset
+
+和
+\begin_inset Formula $r_{2}$
+\end_inset
+
+，
+\begin_inset Formula $S_{T}(r_{1})$
+\end_inset
+
+不同于
+\begin_inset Formula $S_{T}(r_{2})$
+\end_inset
+
+的概率收敛于0
+\end_layout
+
+\begin_layout Itemize
+(c) 当
+\begin_inset Formula $\lambda\rightarrow\infty$
+\end_inset
+
+时，
+\begin_inset Formula $P\{|S_{T}(0)|>\lambda\}\rightarrow0$
+\end_inset
+
+关于T一致地成立
+\end_layout
+
+\end_deeper
 \end_body
 \end_document
