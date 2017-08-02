@@ -9594,7 +9594,7 @@ T^{-3/2}\sum_{t=1}^{T}tu_{t}\overset{L}{\rightarrow}\sigma\cdot W(1)-\sigma\cdot
 (d)
 \begin_inset Formula 
 \[
-T^{-3/2}\sum_{t=1}^{T}\xi_{t-1}\overset{L}{\rightarrow}\sigma\cdot\int_{0}^{1}W(1)dr\tag{17.3.16}
+T^{-3/2}\sum_{t=1}^{T}\xi_{t-1}\overset{L}{\rightarrow}\sigma\cdot\int_{0}^{1}W(r)dr\tag{17.3.16}
 \]
 
 \end_inset
@@ -9656,11 +9656,11 @@ T^{-(v+1)}\sum_{t=1}^{T}t^{v}\rightarrow\frac{1}{v+1},v=0,1,...\tag{16.1.15}
 \end_layout
 
 \begin_layout Subsection
-情况1：回归中没有常数项或时间趋势，真实过程为随机游走
+情况1：回归中没有常数项或时间趋势；真实过程为随机游走
 \end_layout
 
-\begin_layout Itemize
-对于一个AR(1)的OLS估计量，前文已经得到
+\begin_layout Enumerate
+真实过程是随机游走，回归方程是不含常数或时间趋势的AR(1)，对于其OLS估计量，前文已经得到
 \begin_inset Formula 
 \[
 T(\hat{\rho}_{T}-1)=\frac{T^{-1}\sum_{t=1}^{T}y_{t-1}u_{t}}{T^{-2}\sum_{t=1}^{T}y_{t-1}^{2}}\tag{17.4.3}
@@ -9738,7 +9738,7 @@ t_{T} & =\frac{T^{-1}\sum_{t=1}^{T}y_{t-1}u_{t}}{\{T^{-2}\sum_{t=1}^{T}y_{t-1}^{
 \end_layout
 
 \begin_layout Itemize
-一个包含常数项的AR(1)过程
+真实过程时随机游走，而回归方程是一个包含常数项的AR(1)
 \begin_inset Formula 
 \[
 y_{t}=\alpha+\rho y_{t-1}+u_{t}\tag{17.4.14}
@@ -9795,7 +9795,7 @@ T & \sum y_{t-1}\\
 仍然满足性质17.1的结论，于是，由(d)可得：
 \begin_inset Formula 
 \[
-T^{-3/2}\sum y_{t-1}\overset{L}{\rightarrow}\sigma\cdot\int_{0}^{1}W(1)dr\tag{17.4.18}
+T^{-3/2}\sum y_{t-1}\overset{L}{\rightarrow}\sigma\cdot\int_{0}^{1}W(r)dr\tag{17.4.18}
 \]
 
 \end_inset
@@ -9912,6 +9912,467 @@ T^{-1}\sum y_{t-1}u_{t}
 \end_inset
 
 考虑上式右边第一项
+\begin_inset Formula 
+\begin{align*}
+\left[\begin{array}{cc}
+1 & T^{-3/2}\sum y_{t-1}\\
+T^{-3/2}\sum y_{t-1} & T^{-2}\sum y_{t-1}^{2}
+\end{array}\right] & \overset{L}{\rightarrow}\left[\begin{array}{cc}
+1 & \sigma\cdot\int_{0}^{1}W(r)dr\\
+\sigma\cdot\int_{0}^{1}W(r)dr & \sigma^{2}\cdot\int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]\\
+ & =\left[\begin{array}{cc}
+1 & 0\\
+0 & \sigma
+\end{array}\right]\left[\begin{array}{cc}
+1 & \int_{0}^{1}W(r)dr\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]\left[\begin{array}{cc}
+1 & 0\\
+0 & \sigma
+\end{array}\right]\tag{17.4.23}
+\end{align*}
+
+\end_inset
+
+由性质17.1(a)和(b)可得
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+T^{-1/2}\sum u_{t}\\
+T^{-1}\sum y_{t-1}u_{t}
+\end{array}\right]\overset{L}{\rightarrow}\left[\begin{array}{c}
+\sigma\cdot W(1)\\
+\frac{1}{2}\sigma^{2}\{[W(1)]^{2}-1\}
+\end{array}\right]=\sigma\cdot\left[\begin{array}{cc}
+1 & 0\\
+0 & \sigma
+\end{array}\right]\left[\begin{array}{c}
+W(1)\\
+\frac{1}{2}\{[W(1)]^{2}-1\}
+\end{array}\right]\tag{17.4.24}
+\]
+
+\end_inset
+
+由此
+\begin_inset Formula 
+\begin{align*}
+\left[\begin{array}{c}
+T^{1/2}\hat{\alpha}_{T}\\
+T(\hat{\rho}_{T}-1)
+\end{array}\right] & \overset{L}{\rightarrow}\left[\begin{array}{cc}
+1 & 0\\
+0 & \sigma
+\end{array}\right]^{-1}\left[\begin{array}{cc}
+1 & \int_{0}^{1}W(r)dr\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]^{-1}\left[\begin{array}{cc}
+1 & 0\\
+0 & \sigma
+\end{array}\right]^{-1}\cdot\sigma\cdot\left[\begin{array}{cc}
+1 & 0\\
+0 & \sigma
+\end{array}\right]\left[\begin{array}{c}
+W(1)\\
+\frac{1}{2}\{[W(1)]^{2}-1\}
+\end{array}\right]\\
+ & =\left[\begin{array}{cc}
+\sigma & 0\\
+0 & 1
+\end{array}\right]\left[\begin{array}{cc}
+1 & \int_{0}^{1}W(r)dr\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]^{-1}\left[\begin{array}{c}
+W(1)\\
+\frac{1}{2}\{[W(1)]^{2}-1\}
+\end{array}\right]\tag{17.4.25}
+\end{align*}
+
+\end_inset
+
+注意
+\begin_inset Formula 
+\[
+\left[\begin{array}{cc}
+1 & \int_{0}^{1}W(r)dr\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]^{-1}=\Delta^{-1}\left[\begin{array}{cc}
+\int_{0}^{1}[W(r)]^{2}dr & -\int_{0}^{1}W(r)dr\\
+-\int_{0}^{1}W(r)dr & 1
+\end{array}\right]
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\[
+\Delta\equiv\int_{0}^{1}[W(r)]^{2}dr-[\int_{0}^{1}W(r)dr]^{2}\tag{17.4.27}
+\]
+
+\end_inset
+
+于是，(17.4.25)中向量的第二个元素表明
+\begin_inset Formula 
+\[
+T(\hat{\rho}_{T}-1)\overset{L}{\rightarrow}\frac{\frac{1}{2}\{[W(1)]^{2}-1\}-W(1)\cdot\int_{0}^{1}W(r)dr}{\int_{0}^{1}[W(r)]^{2}dr-[\int_{0}^{1}W(r)dr]^{2}}\tag{17.4.28}
+\]
+
+\end_inset
+
+首先，上面两个参估计量的渐进分布都不是正态分布；其次，(17.4.28)与(17.4.7)不同，也就是说，当包含常数项时，渐近分布发生了变化，因而需要使用不同的临界值表
+。
+\end_layout
+
+\begin_layout Itemize
+Dickey and Fuller也给出了另一种检验：原假设
+\begin_inset Formula $H_{0}:\rho=1$
+\end_inset
+
+，OLS的t检验统计量
+\begin_inset Formula $t_{T}=\frac{\hat{\rho}_{T}-1}{\hat{\sigma}_{\hat{\rho}_{T}}}$
+\end_inset
+
+，其中
+\begin_inset Formula 
+\begin{align*}
+\hat{\sigma}_{\hat{\rho}_{T}}^{2} & =s_{T}^{2}\left[\begin{array}{cc}
+0 & 1\end{array}\right]\left[\begin{array}{cc}
+T & \sum y_{t-1}\\
+\sum y_{t-1} & \sum y_{t-1}^{2}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+0\\
+1
+\end{array}\right]\tag{17.4.30}\\
+s_{T}^{2} & =\frac{1}{T-2}\sum_{t=1}^{T}(y_{t}-\hat{\alpha}_{T}-\hat{\rho}_{T}y_{t-1})^{2}
+\end{align*}
+
+\end_inset
+
+將(17.4.30)两边同时乘以
+\begin_inset Formula $T^{2}$
+\end_inset
+
+可得
+\begin_inset Formula 
+\begin{align*}
+T^{2}\cdot\hat{\sigma}_{\hat{\rho}_{T}}^{2} & =s_{T}^{2}\left[\begin{array}{cc}
+0 & T\end{array}\right]\left[\begin{array}{cc}
+T & \sum y_{t-1}\\
+\sum y_{t-1} & \sum y_{t-1}^{2}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+0\\
+T
+\end{array}\right]\\
+ & =s_{T}^{2}\left[\begin{array}{cc}
+0 & 1\end{array}\right]\boldsymbol{Y}_{T}\left[\begin{array}{cc}
+T & \sum y_{t-1}\\
+\sum y_{t-1} & \sum y_{t-1}^{2}
+\end{array}\right]^{-1}\boldsymbol{Y}_{T}\left[\begin{array}{c}
+0\\
+1
+\end{array}\right]\tag{17.4.31}\\
+ & \overset{L}{\rightarrow}\sigma^{2}\left[\begin{array}{cc}
+0 & 1\end{array}\right]\left[\begin{array}{cc}
+1 & 0\\
+0 & \sigma
+\end{array}\right]^{-1}\left[\begin{array}{cc}
+1 & \int_{0}^{1}W(r)dr\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]^{-1}\left[\begin{array}{cc}
+1 & 0\\
+0 & \sigma
+\end{array}\right]^{-1}\left[\begin{array}{c}
+0\\
+1
+\end{array}\right]\\
+ & =\sigma^{2}\left[\begin{array}{cc}
+0 & \sigma^{-1}\end{array}\right]\left[\begin{array}{cc}
+1 & \int_{0}^{1}W(r)dr\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]^{-1}\left[\begin{array}{c}
+0\\
+\sigma^{-1}
+\end{array}\right]\tag{17.4.33}\\
+ & =\left[\begin{array}{cc}
+0 & 1\end{array}\right]\left[\begin{array}{cc}
+1 & \int_{0}^{1}W(r)dr\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]^{-1}\left[\begin{array}{c}
+0\\
+1
+\end{array}\right]\\
+ & =\frac{1}{\int_{0}^{1}[W(r)]^{2}dr-[\int_{0}^{1}W(r)dr]^{2}}\tag{17.4.35}
+\end{align*}
+
+\end_inset
+
+因此，OLS的t检验统计量的渐近分布为
+\begin_inset Formula 
+\begin{align*}
+t_{T}=\frac{\hat{\rho}_{T}-1}{\hat{\sigma}_{\hat{\rho}_{T}}}=\frac{T(\hat{\rho}_{T}-1)}{\{T^{2}\cdot\hat{\sigma}_{\hat{\rho}_{T}}^{2}\}^{1/2}} & \overset{p}{\rightarrow}T(\hat{\rho}_{T}-1)\{\int_{0}^{1}[W(r)]^{2}dr-[\int_{0}^{1}W(r)dr]^{2}\}^{1/2}\\
+ & \overset{L}{\rightarrow}\frac{\frac{1}{2}\{[W(1)]^{2}-1\}-W(1)\cdot\int_{0}^{1}W(r)dr}{\{\int_{0}^{1}[W(r)]^{2}dr-[\int_{0}^{1}W(r)dr]^{2}\}^{1/2}}\tag{17.4.36}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+两个例子
+\end_layout
+
+\begin_layout Subsection
+情况3：回归中包含常数项却无时间趋势；真实过程是含漂移的随机游走
+\end_layout
+
+\begin_layout Itemize
+真实过程
+\begin_inset Formula $y_{t}=\alpha+y_{t-1}+u_{t}$
+\end_inset
+
+，其中
+\begin_inset Formula $\alpha$
+\end_inset
+
+真实值不为0。注意，此时
+\begin_inset Formula $\hat{\alpha}$
+\end_inset
+
+和
+\begin_inset Formula $\hat{\rho}$
+\end_inset
+
+的渐近分布发生了根本性变化。首先，含漂移项的随机游走意味着
+\begin_inset Formula 
+\[
+y_{t}=y_{0}+\alpha t+(u_{1}+u_{2}+...+u_{t})=y_{0}+\alpha t+\xi_{t}\tag{17.4.39}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\xi_{0}=0$
+\end_inset
+
+。考虑
+\begin_inset Formula $\sum_{t=1}^{T}y_{t-1}=\sum_{t=1}^{T}[y_{0}+\alpha(t-1)+\xi_{t-1}]$
+\end_inset
+
+，注意到
+\begin_inset Formula 
+\begin{align*}
+\sum_{t=1}^{T}y_{0}/T & =y_{0}\\
+\sum_{t=1}^{T}\alpha(t-1)/T^{2} & \rightarrow\alpha/2\\
+\sum_{t=1}^{T}\xi_{t-1}/T^{3/2} & \overset{L}{\rightarrow}\sigma\cdot\int_{0}^{1}W(r)dr
+\end{align*}
+
+\end_inset
+
+显然，时间趋势相
+\begin_inset Formula $\alpha(t-1)$
+\end_inset
+
+主导了另外两项：
+\begin_inset Formula 
+\[
+\frac{1}{T^{2}}\sum_{t=1}^{T}y_{t-1}\overset{p}{\rightarrow}\alpha/2\tag{17.4.41}
+\]
+
+\end_inset
+
+同理，有
+\begin_inset Formula 
+\[
+\sum_{t=1}^{T}y_{t-1}^{2}=\underset{O_{p}(T)}{\underbrace{\sum_{t=1}^{T}y_{0}^{2}}}+\underset{O_{p}(T^{3})}{\underbrace{\sum_{t=1}^{T}\alpha^{2}(t-1)^{2}}}+\underset{O_{p}(T^{2})}{\underbrace{\sum_{t=1}^{T}\xi_{t-1}^{2}}}+\underset{O_{p}(T^{2})}{\underbrace{\sum_{t=1}^{T}2y_{0}\alpha(t-1)}}+\underset{O_{p}(T^{3/2})}{\underbrace{\sum_{t=1}^{T}2y_{0}\xi_{t-1}}}+\underset{O_{p}(T^{5/2})}{\underbrace{\sum_{t=1}^{T}2\alpha(t-1)\xi_{t-1}}}
+\]
+
+\end_inset
+
+因此
+\begin_inset Formula 
+\[
+T^{-3}\sum_{t=1}^{T}y_{t-1}^{2}\overset{p}{\rightarrow}\alpha^{2}/3\tag{17.4.42}
+\]
+
+\end_inset
+
+最后观察到
+\begin_inset Formula 
+\[
+\sum_{t=1}^{T}y_{t-1}u_{t}=\underset{O_{p}(T^{1/2})}{\underbrace{\sum_{t=1}^{T}y_{0}u_{t}}}+\underset{O_{p}(T^{3/2})}{\underbrace{\sum_{t=1}^{T}\alpha(t-1)u_{t}}}+\underset{O_{p}(T)}{\underbrace{\sum_{t=1}^{T}\xi_{t-1}u_{t}}}
+\]
+
+\end_inset
+
+因此
+\begin_inset Formula 
+\[
+T^{-3/2}\sum_{t=1}^{T}y_{t-1}u_{t}\overset{p}{\rightarrow}T^{-3/2}\sum_{t=1}^{T}\alpha(t-1)u_{t}\tag{17.4.43}
+\]
+
+\end_inset
+
+因此当真实过程为含漂移的随机游走，则OLS估计系数满足：
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+\hat{\alpha}_{T}-\alpha\\
+\hat{\rho}_{T}-1
+\end{array}\right]=\left[\begin{array}{cc}
+O_{p}(T) & O_{p}(T^{2})\\
+O_{p}(T^{2}) & O_{p}(T^{3})
+\end{array}\right]^{-1}\left[\begin{array}{c}
+O_{p}(T^{1/2})\\
+O_{p}(T^{3/2})
+\end{array}\right]
+\]
+
+\end_inset
+
+在这种情况下，Sims、Stock和Watson建议标度矩阵为
+\begin_inset Formula 
+\[
+\boldsymbol{Y}_{T}=\left[\begin{array}{cc}
+T^{1/2} & 0\\
+0 & T^{3/2}
+\end{array}\right]
+\]
+
+\end_inset
+
+于是(17.4.20)变为
+\begin_inset Formula 
+\[
+\left[\begin{array}{cc}
+T^{1/2} & 0\\
+0 & T^{3/2}
+\end{array}\right]\left[\begin{array}{c}
+\hat{\alpha}_{T}-\alpha\\
+\hat{\rho}_{T}-1
+\end{array}\right]=\left\{ \left[\begin{array}{cc}
+T^{-1/2} & 0\\
+0 & T^{-3/2}
+\end{array}\right]\left[\begin{array}{cc}
+T & \sum y_{t-1}\\
+\sum y_{t-1} & \sum y_{t-1}^{2}
+\end{array}\right]\left[\begin{array}{cc}
+T^{-1/2} & 0\\
+0 & T^{-3/2}
+\end{array}\right]\right\} ^{-1}\left\{ \left[\begin{array}{cc}
+T^{-1/2} & 0\\
+0 & T^{-3/2}
+\end{array}\right]\left[\begin{array}{c}
+\sum u_{t}\\
+\sum y_{t-1}u_{t}
+\end{array}\right]\right\} 
+\]
+
+\end_inset
+
+或
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+T^{1/2}\text{（}\hat{\alpha}_{T}-\alpha)\\
+T^{3/2}(\hat{\rho}_{T}-1)
+\end{array}\right]=\left[\begin{array}{cc}
+1 & T^{-2}\sum y_{t-1}\\
+T^{-2}\sum y_{t-1} & T^{-3}\sum y_{t-1}^{2}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+T^{-1/2}\sum u_{t}\\
+T^{-3/2}\sum y_{t-1}u_{t}
+\end{array}\right]\tag{17.4.44}
+\]
+
+\end_inset
+
+根据(17.4.41-42)，上式右侧第一项收敛于
+\begin_inset Formula 
+\[
+\left[\begin{array}{cc}
+1 & T^{-2}\sum y_{t-1}\\
+T^{-2}\sum y_{t-1} & T^{-3}\sum y_{t-1}^{2}
+\end{array}\right]^{-1}\overset{p}{\rightarrow}\left[\begin{array}{cc}
+1 & \alpha/2\\
+\alpha/2 & \alpha^{2}/3
+\end{array}\right]^{-1}\equiv\boldsymbol{Q}^{-1}\tag{17.4.45}
+\]
+
+\end_inset
+
+根据(17.4.43)和(17.3.18)，有
+\begin_inset Formula 
+\begin{align*}
+\left[\begin{array}{c}
+T^{-1/2}\sum u_{t}\\
+T^{-3/2}\sum y_{t-1}u_{t}
+\end{array}\right] & \overset{p}{\rightarrow}\left[\begin{array}{c}
+T^{-1/2}\sum u_{t}\\
+T^{-3/2}\sum_{t=1}^{T}\alpha(t-1)u_{t}
+\end{array}\right]\\
+ & \overset{L}{\rightarrow}N(\left[\begin{array}{c}
+0\\
+0
+\end{array}\right],\sigma^{2}\left[\begin{array}{cc}
+1 & \alpha/2\\
+\alpha/2 & \alpha^{2}/3
+\end{array}\right])\\
+ & =N(\boldsymbol{0},\sigma^{2}\boldsymbol{Q})\tag{17.4.46}
+\end{align*}
+
+\end_inset
+
+综上
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+T^{1/2}\text{（}\hat{\alpha}_{T}-\alpha)\\
+T^{3/2}(\hat{\rho}_{T}-1)
+\end{array}\right]\overset{L}{\rightarrow}N(\boldsymbol{0},\boldsymbol{Q}^{-1}\cdot\sigma^{2}\boldsymbol{Q}\cdot\boldsymbol{Q}^{-1})=N(\boldsymbol{0},\sigma^{2}\boldsymbol{Q}^{-1})\tag{17.4.47}
+\]
+
+\end_inset
+
+因此，对于情况3，两个估计量都是渐近正态的
+\end_layout
+
+\begin_layout Itemize
+实际上，情况3对应的两个估计量的渐近性质恰好与第16张中所分析的确定性时间趋势回归中的相应参数估计的渐近性质相同。原因：回归量
+\begin_inset Formula $y_{t-1}$
+\end_inset
+
+渐近取决于时间趋势
+\begin_inset Formula $\alpha\cdot(t-1)$
+\end_inset
+
+，在大样本中，这正如解释变量
+\begin_inset Formula $y_{t-1}$
+\end_inset
+
+被时间趋势
+\begin_inset Formula $\alpha\cdot(t-1)$
+\end_inset
+
+所取代。
+\end_layout
+
+\begin_layout Subsection
+情况4：回归中包含常数项和时间趋势；真实过程是一个含或不含漂移的随机游走
+\end_layout
+
+\begin_layout Itemize
+假定真实过程
+\begin_inset Formula $y_{t}=\alpha+y_{t-1}+u_{t}$
+\end_inset
+
+，而OLS回归方程
+\begin_inset Formula $y_{t}=\alpha+\rho y_{t-1}+\delta t+u_{t}$
+\end_inset
+
+
 \end_layout
 
 \end_body
