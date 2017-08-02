@@ -10372,7 +10372,378 @@ T^{3/2}(\hat{\rho}_{T}-1)
 \begin_inset Formula $y_{t}=\alpha+\rho y_{t-1}+\delta t+u_{t}$
 \end_inset
 
+。如果
+\begin_inset Formula $\alpha\neq0$
+\end_inset
 
+，则
+\begin_inset Formula $y_{t-1}$
+\end_inset
+
+将渐近等价于一个时间趋势。由于时间趋势项已经作为一个独立变量包含在回归中，这会导致大样本中解释变量存在共线性。因此，藐视估计的线性分布不仅要求重新标度变量，而且
+也需要16.3节中介绍的那种
+\bar under
+旋转
+\bar default
+。注意
+\begin_inset Formula 
+\begin{align*}
+y_{t} & =(1-\rho)\alpha+\rho[y_{t-1}-\alpha(t-1)]+(\delta+\rho\alpha)t+u_{t}\\
+ & \equiv\alpha^{*}+\rho^{*}\xi_{t-1}+\delta^{*}t+u_{t}\tag{7.4.49}
+\end{align*}
+
+\end_inset
+
+在零假设
+\begin_inset Formula $\rho=1$
+\end_inset
+
+且
+\begin_inset Formula $\delta=0$
+\end_inset
+
+条件下：
+\begin_inset Formula 
+\[
+\xi_{t}=y_{0}+u_{1}+u_{2}+...+u_{t}
+\]
+
+\end_inset
+
+也就是说
+\begin_inset Formula $\xi_{t}$
+\end_inset
+
+是性质17.1中描述的随机游走。考虑OLS估计量
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+\hat{\alpha}_{T}^{*}\\
+\hat{\rho}_{T}^{*}\\
+\hat{\delta}_{T}^{*}
+\end{array}\right]=\left[\begin{array}{ccc}
+T & \sum\xi_{t-1} & \sum t\\
+\sum\xi_{t-1} & \sum\xi_{t-1}^{2} & \sum\xi_{t-1}t\\
+\sum t & \sum t\xi_{t-1} & \sum t^{2}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+\sum y_{t}\\
+\sum\xi_{t-1}y_{t}\\
+\sum ty_{t}
+\end{array}\right]\tag{17.4.50}
+\]
+
+\end_inset
+
+零假设
+\begin_inset Formula $\alpha=\alpha_{0},\rho=1$
+\end_inset
+
+且
+\begin_inset Formula $\delta=0$
+\end_inset
+
+意味着
+\begin_inset Formula $\alpha^{*}=0,\rho^{*}=1,\delta^{*}=\alpha_{0}$
+\end_inset
+
+，于是
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+\hat{\alpha}_{T}^{*}\\
+\hat{\rho}_{T}^{*}-1\\
+\hat{\delta}_{T}^{*}-\alpha_{0}
+\end{array}\right]=\left[\begin{array}{ccc}
+T & \sum\xi_{t-1} & \sum t\\
+\sum\xi_{t-1} & \sum\xi_{t-1}^{2} & \sum\xi_{t-1}t\\
+\sum t & \sum t\xi_{t-1} & \sum t^{2}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+\sum u_{t}\\
+\sum\xi_{t-1}u_{t}\\
+\sum tu_{t}
+\end{array}\right]\tag{17.4.51}
+\]
+
+\end_inset
+
+参考性质17.1中的收敛速度，建议标度矩阵为
+\begin_inset Formula 
+\[
+\boldsymbol{Y}_{T}=\left[\begin{array}{ccc}
+T^{1/2} & 0 & 0\\
+0 & T & 0\\
+0 & 0 & T^{3/2}
+\end{array}\right]
+\]
+
+\end_inset
+
+于是(17.4.20)变为
+\begin_inset Formula 
+\begin{align*}
+\left[\begin{array}{ccc}
+T^{1/2} & 0 & 0\\
+0 & T & 0\\
+0 & 0 & T^{3/2}
+\end{array}\right]\left[\begin{array}{c}
+\hat{\alpha}_{T}^{*}\\
+\hat{\rho}_{T}^{*}-1\\
+\hat{\delta}_{T}^{*}-\alpha_{0}
+\end{array}\right] & =\left\{ \left[\begin{array}{ccc}
+T^{-1/2} & 0 & 0\\
+0 & T^{-1} & 0\\
+0 & 0 & T^{-3/2}
+\end{array}\right]\left[\begin{array}{ccc}
+T & \sum\xi_{t-1} & \sum t\\
+\sum\xi_{t-1} & \sum\xi_{t-1}^{2} & \sum\xi_{t-1}t\\
+\sum t & \sum t\xi_{t-1} & \sum t^{2}
+\end{array}\right]\left[\begin{array}{ccc}
+T^{-1/2} & 0 & 0\\
+0 & T^{-1} & 0\\
+0 & 0 & T^{-3/2}
+\end{array}\right]\right\} ^{-1}\\
+ & \times\left\{ \left[\begin{array}{ccc}
+T^{-1/2} & 0 & 0\\
+0 & T^{-1} & 0\\
+0 & 0 & T^{-3/2}
+\end{array}\right]\left[\begin{array}{c}
+\sum u_{t}\\
+\sum\xi_{t-1}u_{t}\\
+\sum tu_{t}
+\end{array}\right]\right\} 
+\end{align*}
+
+\end_inset
+
+或者
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+T^{1/2}\hat{\alpha}_{T}^{*}\\
+T(\hat{\rho}_{T}^{*}-1)\\
+T^{3/2}(\hat{\delta}_{T}^{*}-\alpha_{0})
+\end{array}\right]=\left[\begin{array}{ccc}
+1 & T^{-3/2}\sum\xi_{t-1} & T^{-2}\sum t\\
+T^{-3/2}\sum\xi_{t-1} & T^{-2}\sum\xi_{t-1}^{2} & T^{-5/2}\sum\xi_{t-1}t\\
+T^{-2}\sum t & T^{-5/2}\sum t\xi_{t-1} & T^{-3}\sum t^{2}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+T^{-1/2}\sum u_{t}\\
+T^{-1}\sum\xi_{t-1}u_{t}\\
+T^{-3/2}\sum tu_{t}
+\end{array}\right]\tag{17.4.52}
+\]
+
+\end_inset
+
+由性质17.1可以得到相应的渐进分布
+\begin_inset Formula 
+\begin{align*}
+\left[\begin{array}{c}
+T^{1/2}\hat{\alpha}_{T}^{*}\\
+T(\hat{\rho}_{T}^{*}-1)\\
+T^{3/2}(\hat{\delta}_{T}^{*}-\alpha_{0})
+\end{array}\right] & \overset{L}{\rightarrow}\left[\begin{array}{ccc}
+1 & \sigma\cdot\int_{0}^{1}W(r)dr & \frac{1}{2}\\
+\sigma\cdot\int_{0}^{1}W(r)dr & \sigma^{2}\cdot\int_{0}^{1}[W(r)]^{2}dr & \sigma\cdot\int_{0}^{1}rW(r)dr\\
+\frac{1}{2} & \sigma\cdot\int_{0}^{1}rW(r)dr & \frac{1}{3}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+\sigma\cdot W(1)\\
+\frac{1}{2}\sigma^{2}\{[W(1)]^{2}-1\}\\
+\sigma\cdot W(1)-\sigma\cdot\int_{0}^{1}W(r)dr
+\end{array}\right]\\
+ & =\sigma\left[\begin{array}{ccc}
+1 & 0 & 0\\
+0 & \sigma & 0\\
+0 & 0 & 1
+\end{array}\right]^{-1}\left[\begin{array}{ccc}
+1 & \int_{0}^{1}W(r)dr & \frac{1}{2}\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr & \int_{0}^{1}rW(r)dr\\
+\frac{1}{2} & \int_{0}^{1}rW(r)dr & \frac{1}{3}
+\end{array}\right]^{-1}\left[\begin{array}{ccc}
+1 & 0 & 0\\
+0 & \sigma & 0\\
+0 & 0 & 1
+\end{array}\right]^{-1}\\
+ & \times\left[\begin{array}{ccc}
+1 & 0 & 0\\
+0 & \sigma & 0\\
+0 & 0 & 1
+\end{array}\right]\left[\begin{array}{c}
+W(1)\\
+\frac{1}{2}\{[W(1)]^{2}-1\}\\
+W(1)-\int_{0}^{1}W(r)dr
+\end{array}\right]\\
+ & =\left[\begin{array}{ccc}
+\sigma & 0 & 0\\
+0 & 1 & 0\\
+0 & 0 & \sigma
+\end{array}\right]\left[\begin{array}{ccc}
+1 & \int_{0}^{1}W(r)dr & \frac{1}{2}\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr & \int_{0}^{1}rW(r)dr\\
+\frac{1}{2} & \int_{0}^{1}rW(r)dr & \frac{1}{3}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+W(1)\\
+\frac{1}{2}\{[W(1)]^{2}-1\}\\
+W(1)-\int_{0}^{1}W(r)dr
+\end{array}\right]
+\end{align*}
+
+\end_inset
+
+注意，基于(17.4.49)的
+\begin_inset Formula $\rho$
+\end_inset
+
+的OLS估计
+\begin_inset Formula $\hat{\rho}_{T}^{*}$
+\end_inset
+
+等价于基于(17.4.48)的
+\begin_inset Formula $\rho$
+\end_inset
+
+的OLS估计，因此，
+\begin_inset Formula $T(\hat{\rho}_{T}-1)$
+\end_inset
+
+的渐近分布由上式的中间一行给出。这个分布不依赖于
+\begin_inset Formula $\sigma$
+\end_inset
+
+或
+\begin_inset Formula $\alpha$
+\end_inset
+
+，实际上，
+\begin_inset Formula $\alpha$
+\end_inset
+
+的真实值是否为0并不重要。
+\end_layout
+
+\begin_layout Itemize
+同样，可以利用与(17.4.31-32)相似的方法计算
+\begin_inset Formula $\hat{\sigma}_{\hat{\rho}_{T}}$
+\end_inset
+
+的渐近分布，以及
+\begin_inset Formula $\hat{\rho}_{T}$
+\end_inset
+
+的OLS标准误：
+\begin_inset Formula 
+\begin{align*}
+T^{2}\cdot\hat{\sigma}_{\hat{\rho}_{T}}^{2} & =T^{2}\cdot s_{T}^{2}\left[\begin{array}{ccc}
+0 & 1 & 0\end{array}\right]\left[\begin{array}{ccc}
+T & \sum\xi_{t-1} & \sum t\\
+\sum\xi_{t-1} & \sum\xi_{t-1}^{2} & \sum\xi_{t-1}t\\
+\sum t & \sum t\xi_{t-1} & \sum t^{2}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+0\\
+1\\
+0
+\end{array}\right]\\
+ & =s_{T}^{2}\left[\begin{array}{ccc}
+0 & 1 & 0\end{array}\right]\boldsymbol{Y}_{T}\left[\begin{array}{ccc}
+T & \sum\xi_{t-1} & \sum t\\
+\sum\xi_{t-1} & \sum\xi_{t-1}^{2} & \sum\xi_{t-1}t\\
+\sum t & \sum t\xi_{t-1} & \sum t^{2}
+\end{array}\right]^{-1}\boldsymbol{Y}_{T}\left[\begin{array}{c}
+0\\
+1\\
+0
+\end{array}\right]\\
+ & =s_{T}^{2}\left[\begin{array}{ccc}
+0 & 1 & 0\end{array}\right]\left[\begin{array}{ccc}
+1 & T^{-3/2}\sum\xi_{t-1} & T^{-2}\sum t\\
+T^{-3/2}\sum\xi_{t-1} & T^{-2}\sum\xi_{t-1}^{2} & T^{-5/2}\sum\xi_{t-1}t\\
+T^{-2}\sum t & T^{-5/2}\sum t\xi_{t-1} & T^{-3}\sum t^{2}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+0\\
+1\\
+0
+\end{array}\right]\\
+ & \overset{L}{\rightarrow}\sigma^{2}\left[\begin{array}{ccc}
+0 & 1 & 0\end{array}\right]\left[\begin{array}{ccc}
+1 & 0 & 0\\
+0 & \sigma & 0\\
+0 & 0 & 1
+\end{array}\right]^{-1}\left[\begin{array}{ccc}
+1 & \int_{0}^{1}W(r)dr & \frac{1}{2}\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr & \int_{0}^{1}rW(r)dr\\
+\frac{1}{2} & \int_{0}^{1}rW(r)dr & \frac{1}{3}
+\end{array}\right]^{-1}\left[\begin{array}{ccc}
+1 & 0 & 0\\
+0 & \sigma & 0\\
+0 & 0 & 1
+\end{array}\right]^{-1}\left[\begin{array}{c}
+0\\
+1\\
+0
+\end{array}\right]\\
+ & =\left[\begin{array}{ccc}
+0 & 1 & 0\end{array}\right]\left[\begin{array}{ccc}
+1 & \int_{0}^{1}W(r)dr & \frac{1}{2}\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr & \int_{0}^{1}rW(r)dr\\
+\frac{1}{2} & \int_{0}^{1}rW(r)dr & \frac{1}{3}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+0\\
+1\\
+0
+\end{array}\right]\\
+ & \equiv\boldsymbol{Q}\tag{17.4.53}
+\end{align*}
+
+\end_inset
+
+于是，假设
+\begin_inset Formula $\rho=1$
+\end_inset
+
+的OLS的t检验统计量的渐近分布为
+\begin_inset Formula 
+\[
+t_{t}=T(\hat{\rho}_{T}-1)/(T^{2}\cdot\hat{\sigma}_{\hat{\rho}_{T}}^{2})^{1/2}\overset{p}{\rightarrow}T(\hat{\rho}_{T}-1)/\sqrt{\boldsymbol{Q}}\tag{17.4.54}
+\]
+
+\end_inset
+
+这个分布同样不依赖于
+\begin_inset Formula $\sigma$
+\end_inset
+
+或
+\begin_inset Formula $\alpha$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\delta$
+\end_inset
+
+真实值为0的假设也是一个与检验相关的渐近性质的辅助假设，因此，需要考虑联合零假设：
+\begin_inset Formula $\delta=0,\rho=1$
+\end_inset
+
+的OLS的F检验，不过请注意F统计量的渐近分布不再是标准的F分布了(渐近分布是非标准的)
+\end_layout
+
+\begin_layout Subsection
+无序列相关时Dickey-Fuller检验的总结
+\end_layout
+
+\begin_layout Itemize
+(对本节前面内容的)总结
+\end_layout
+
+\begin_layout Itemize
+一些例子
+\end_layout
+
+\begin_layout Section
+存在一般序列相关的单位根过程的渐近结论
 \end_layout
 
 \end_body
