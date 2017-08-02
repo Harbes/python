@@ -9182,6 +9182,354 @@ S(r_{k})
 
 \end_deeper
 \begin_layout Itemize
+注意，尽管(17.3.2)中的函数是一个非连续分段函数，但这种非连续性仅出现在可数点集中；该定义同样适用于连续函数序列。
+\end_layout
+
+\begin_layout Subsection
+连续映射定理
+\end_layout
+
+\begin_layout Itemize
+在第7章中：如果
+\begin_inset Formula $\{x_{T}\}_{T=1}^{\infty}$
+\end_inset
+
+是随机变量序列，其中
+\begin_inset Formula $x_{T}\overset{L}{\rightarrow}x$
+\end_inset
+
+，且如果
+\begin_inset Formula $g:\mathbb{R}^{1}\rightarrow\mathbb{R}^{1}$
+\end_inset
+
+是一个连续函数，那么
+\begin_inset Formula $g(x_{T})\overset{L}{\rightarrow}g(x)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+连续映射定理表明，如果
+\begin_inset Formula $S_{T}(\cdot)\overset{L}{\rightarrow}S(\cdot)$
+\end_inset
+
+且
+\begin_inset Formula $g(\cdot)$
+\end_inset
+
+是一个连续泛函数，则有
+\begin_inset Formula $g(S_{T}(\cdot))\overset{L}{\rightarrow}g(S(\cdot))$
+\end_inset
+
+。连续映射定理也可适用于吧
+\begin_inset Formula $[0,1]$
+\end_inset
+
+上的连续有界函数映射到
+\begin_inset Formula $[0,1]$
+\end_inset
+
+上另一个连续有界函数的连续泛函数
+\begin_inset Formula $g(\cdot)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+考虑函数
+\begin_inset Formula $S_{T}(\cdot)$
+\end_inset
+
+，它在r处的值为
+\begin_inset Formula 
+\[
+S_{T}(r)\equiv[\sqrt{T}X_{T}(r)]^{2}\tag{17.3.9}
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\[
+S_{T}(\cdot)\overset{L}{\rightarrow}\sigma^{2}[W(\cdot)]^{2}\tag{17.3.10}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+单位根过程的应用
+\end_layout
+
+\begin_layout Itemize
+Phillips(1986,1987)开创了用泛函中心极限定理计算
+\bar under
+由单位根过程构造的统计量的渐进分布
+\bar default
+的先河。
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+\bar under
+随机游走积分的渐近分布
+\series default
+\bar default
+：首先有一个随机游走
+\begin_inset Formula 
+\[
+y_{t}=y_{t-1}+u_{t}\tag{17.3.11}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $y_{0}=0$
+\end_inset
+
+，于是
+\begin_inset Formula 
+\[
+y_{t}=u_{1}+u_{2}+...+u_{t}\tag{17.3.12}
+\]
+
+\end_inset
+
+代入(17.3.3)中
+\begin_inset Formula 
+\[
+X_{T}(r)=\begin{cases}
+0 & \text{，}0\leq r<\frac{1}{T}\\
+y_{1}/T & \text{，}\frac{1}{T}\leq r<\frac{2}{T}\\
+y_{2}/T & \text{，}\frac{2}{T}\leq r<\frac{3}{T}\\
+\vdots\\
+y_{T}/T & \text{，}r=1
+\end{cases}\tag{17.3.13}
+\]
+
+\end_inset
+
+这个分段函数在
+\begin_inset Formula $[0,1]$
+\end_inset
+
+上由T个矩形组成，对其进行积分(
+\series bold
+\bar under
+\color red
+(17.3.15)将随机变量的积分与随机变量的求和联系在了一起
+\series default
+\bar default
+\color inherit
+)：
+\begin_inset Formula 
+\begin{align*}
+ & \int_{0}^{1}X_{T}(r)dr=\frac{y_{1}}{T^{2}}+\frac{y_{2}}{T^{2}}+...+\frac{y_{T-1}}{T^{2}}\tag{17.3.14}\\
+\Rightarrow & \int_{0}^{1}\sqrt{T}X_{T}(r)dr=T^{-\frac{3}{2}}\sum_{t=1}^{T}y_{t-1}\tag{17.3.15}
+\end{align*}
+
+\end_inset
+
+我们知道
+\begin_inset Formula $\int_{0}^{1}\sqrt{T}X_{T}(r)dr\overset{L}{\rightarrow}\sigma\int_{0}^{1}W(r)dr$
+\end_inset
+
+，于是
+\begin_inset Formula 
+\[
+T^{-\frac{3}{2}}\sum_{t=1}^{T}y_{t-1}\overset{L}{\rightarrow}\sigma\int_{0}^{1}W(r)dr\tag{17.3.16}
+\]
+
+\end_inset
+
+进一步
+\begin_inset Formula 
+\begin{align*}
+T^{-\frac{3}{2}}\sum_{t=1}^{T}y_{t-1} & =T^{-\frac{3}{2}}[u_{1}+(u_{1}+u_{2})+(u_{1}+u_{2}+u_{3})+...+(u_{1}+u_{2}+...+u_{T-1})]\\
+ & =T^{-\frac{3}{2}}[(T-1)u_{1}+(T-2)u_{2}+...+u_{T-1}]\\
+ & =T^{-\frac{3}{2}}\sum_{t=1}^{T}(T-t)u_{t}\\
+ & =T^{-\frac{1}{2}}\sum_{t=1}^{T}u_{t}-T^{-\frac{3}{2}}\sum_{t=1}^{T}tu_{t}\tag{17.3.17}
+\end{align*}
+
+\end_inset
+
+由(16.1.24)可知
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+T^{-\frac{1}{2}}\sum_{t=1}^{T}u_{t}\\
+T^{-\frac{3}{2}}\sum_{t=1}^{T}tu_{t}
+\end{array}\right]\overset{L}{\rightarrow}N(\left[\begin{array}{c}
+0\\
+0
+\end{array}\right],\sigma^{2}\left[\begin{array}{cc}
+1 & \frac{1}{2}\\
+\frac{1}{2} & \frac{1}{3}
+\end{array}\right])\tag{17.3.18}
+\]
+
+\end_inset
+
+因此，
+\begin_inset Formula $T^{-\frac{3}{2}}\sum_{t=1}^{T}y_{t-1}$
+\end_inset
+
+是渐近正态的，且均值为0，方差为
+\begin_inset Formula $Var(A-B)=Var(A)-2cov(A,B)+Var(B)=\frac{\sigma^{2}}{3}$
+\end_inset
+
+。也就是说，
+\begin_inset Formula $\sigma\int_{0}^{1}W(r)dr$
+\end_inset
+
+描述了一个分布为
+\begin_inset Formula $N(0,\frac{\sigma^{2}}{3})$
+\end_inset
+
+的随机变量。
+\end_layout
+
+\begin_layout Itemize
+从上面的推到中，我们看到了如果
+\begin_inset Formula $y_{t}$
+\end_inset
+
+是一个不含漂移的随机游走，则样本均值是发散的，但
+\begin_inset Formula $T^{-\frac{3}{2}}\sum_{t=1}^{T}y_{t}$
+\end_inset
+
+收敛于一个正态随机变量，其分布由方差为
+\begin_inset Formula $\sigma^{2}$
+\end_inset
+
+的布朗运动实现的积分。
+\end_layout
+
+\begin_layout Itemize
+上面的推导也提供了一种用布朗运动的泛函数来描述
+\begin_inset Formula $T^{-\frac{3}{2}}\sum_{t=1}^{T}tu_{t}$
+\end_inset
+
+的渐近分布的方法：
+\begin_inset Formula 
+\[
+T^{-\frac{3}{2}}\sum_{t=1}^{T}tu_{t}=T^{-\frac{1}{2}}\sum_{t=1}^{T}u_{t}-T^{-\frac{3}{2}}\sum_{t=1}^{T}y_{t-1}\overset{L}{\rightarrow}\sigma W(1)-\sigma\int_{0}^{1}W(r)dr\tag{17.3.19}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+\bar under
+随机游走平方和的渐近分布
+\series default
+\bar default
+：首先，定义统计量
+\begin_inset Formula $S_{T}(r)\equiv T[X_{T}(r)]^{2}$
+\end_inset
+
+，具体
+\begin_inset Formula 
+\[
+S_{T}(r)=\begin{cases}
+0 & \text{，}0\leq r<\frac{1}{T}\\
+y_{1}^{2}/T & \text{，}\frac{1}{T}\leq r<\frac{2}{T}\\
+y_{2}^{2}/T & \text{，}\frac{2}{T}\leq r<\frac{3}{T}\\
+\vdots\\
+y_{T}^{2}/T & \text{，}r=1
+\end{cases}\tag{17.3.21}
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\[
+\int_{0}^{1}S_{T}(r)dr=\frac{y_{1}^{2}}{T^{2}}+\frac{y_{2}^{2}}{T^{2}}+...+\frac{y_{T-1}^{2}}{T^{2}}
+\]
+
+\end_inset
+
+由(17.3.10)和连续映射定理
+\begin_inset Formula 
+\[
+\int_{0}^{1}S_{T}(r)dr=\frac{1}{T^{2}}\sum_{t=1}^{T}y_{t-1}^{2}\overset{L}{\rightarrow}\sigma^{2}\int_{0}^{1}[W(r)]^{2}dr\tag{17.3.22}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+另外一些有用的结论(
+\color red
+待证明
+\color inherit
+)：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+对于
+\begin_inset Formula $r=\frac{t}{T}$
+\end_inset
+
+，有
+\begin_inset Formula 
+\[
+T^{-\frac{5}{2}}\sum_{t=1}^{T}ty_{t-1}==T^{-\frac{3}{2}}\sum_{t=1}^{T}(t/T)y_{t-1}\overset{L}{\rightarrow}\sigma\int_{0}^{1}rW(r)dr\tag{17.3.23}
+\]
+
+\end_inset
+
+且
+\begin_inset Formula 
+\[
+\frac{1}{T^{3}}\sum_{t=1}^{T}ty_{t-1}^{2}=\frac{1}{T^{2}}\sum_{t=1}^{T}(t/T)y_{t-1}^{2}\overset{L}{\rightarrow}\sigma^{2}\int_{0}^{1}r[W(r)]^{2}dr\tag{17.3.24}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+考虑(17.1.11)中的统计量
+\begin_inset Formula 
+\[
+\frac{1}{T}\sum_{t=1}^{T}y_{t-1}u_{t}=\frac{1}{2}(\frac{y_{T}}{\sqrt{T}})^{2}-\frac{1}{2}\frac{1}{T}\sum_{t=1}^{T}u_{t}^{2}
+\]
+
+\end_inset
+
+依据(17.3.21)它可以写成
+\begin_inset Formula 
+\begin{align*}
+\frac{1}{T}\sum_{t=1}^{T}y_{t-1}u_{t} & =\frac{1}{2}S_{T}(1)-\frac{1}{2}\frac{1}{T}\sum_{t=1}^{T}u_{t}^{2}\\
+ & \overset{L}{\rightarrow}\frac{1}{2}\sigma^{2}[W(1)]^{2}-\frac{1}{2}\sigma^{2}\tag{17.3.26}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Section
+真实系数为1时一阶自回归的渐近性质
+\end_layout
+
+\begin_layout Standard
 
 \end_layout
 
