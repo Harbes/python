@@ -9529,8 +9529,389 @@ T^{-\frac{5}{2}}\sum_{t=1}^{T}ty_{t-1}==T^{-\frac{3}{2}}\sum_{t=1}^{T}(t/T)y_{t-
 真实系数为1时一阶自回归的渐近性质
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
+性质17.1：假定
+\begin_inset Formula $\xi_{t}$
+\end_inset
 
+服从一个不含漂移的随机游走
+\begin_inset Formula $\xi_{t}=\xi_{t-1}+u_{t}$
+\end_inset
+
+，其中
+\begin_inset Formula $\xi_{0}=0$
+\end_inset
+
+且
+\begin_inset Formula $\{u_{t}\}$
+\end_inset
+
+是一个独立同分布的序列，均值为0，方差为
+\begin_inset Formula $\sigma^{2}$
+\end_inset
+
+。则
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+(a) 
+\begin_inset Formula 
+\[
+\frac{1}{\sqrt{T}}\sum_{t=1}^{T}u_{t}\overset{L}{\rightarrow}\sigma\cdot W(1)\tag{17.3.7}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+(b)
+\begin_inset Formula 
+\[
+\frac{1}{T}\sum_{t=1}^{T}\xi_{t-1}u_{t}\overset{L}{\rightarrow}\frac{1}{2}\sigma^{2}\{[W(1)]^{2}-1\}\tag{17.3.26}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+(c)
+\begin_inset Formula 
+\[
+T^{-3/2}\sum_{t=1}^{T}tu_{t}\overset{L}{\rightarrow}\sigma\cdot W(1)-\sigma\cdot\int_{0}^{1}W(r)dr\tag{17.3.19}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+(d)
+\begin_inset Formula 
+\[
+T^{-3/2}\sum_{t=1}^{T}\xi_{t-1}\overset{L}{\rightarrow}\sigma\cdot\int_{0}^{1}W(1)dr\tag{17.3.16}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+(e)
+\begin_inset Formula 
+\[
+T^{-2}\sum_{t=1}^{T}\xi_{t-1}^{2}\overset{L}{\rightarrow}\sigma^{2}\cdot\int_{0}^{1}[W(r)]^{2}dr\tag{17.3.22}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+(f)
+\begin_inset Formula 
+\[
+T^{-5/2}\sum_{t=1}^{T}t\xi_{t-1}\overset{L}{\rightarrow}\sigma\cdot\int_{0}^{1}rW(r)dr\tag{17.3.23}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+(g)
+\begin_inset Formula 
+\[
+T^{-3}\sum_{t=1}^{T}t\xi_{t-1}^{2}\overset{L}{\rightarrow}\sigma^{2}\cdot\int_{0}^{1}r\cdot[W(r)]^{2}dr\tag{17.3.24}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+(h)
+\begin_inset Formula 
+\[
+T^{-(v+1)}\sum_{t=1}^{T}t^{v}\rightarrow\frac{1}{v+1},v=0,1,...\tag{16.1.15}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+注意到(a)~(g)涉及同一个布朗运动，因此一般来说性质17.1的值都相关，练习17.1给出了一种计算由这些布朗运动上的泛函描述的随机变量间的协方差的方法。
+\end_layout
+
+\begin_layout Subsection
+情况1：回归中没有常数项或时间趋势，真实过程为随机游走
+\end_layout
+
+\begin_layout Itemize
+对于一个AR(1)的OLS估计量，前文已经得到
+\begin_inset Formula 
+\[
+T(\hat{\rho}_{T}-1)=\frac{T^{-1}\sum_{t=1}^{T}y_{t-1}u_{t}}{T^{-2}\sum_{t=1}^{T}y_{t-1}^{2}}\tag{17.4.3}
+\]
+
+\end_inset
+
+由性质17.1的(b)和(e)：
+\begin_inset Formula 
+\[
+T(\hat{\rho}_{T}-1)\overset{L}{\rightarrow}\frac{\frac{1}{2}\sigma^{2}\{[W(1)]^{2}-1\}}{\sigma^{2}\cdot\int_{0}^{1}[W(r)]^{2}dr}\tag{17.4.7}
+\]
+
+\end_inset
+
+该极限分布是非对称的，且负值的数量约为正值数量的2倍；临界值可以通过Monte Carlo方法(Fuller(1976))得到，也可以使用Evans
+ and Savin(1981)描述的精确数值计算法得到。
+\end_layout
+
+\begin_layout Itemize
+实际上，(17.4.7)本身可以用于用于点估计
+\begin_inset Formula $\hat{\rho}_{T}$
+\end_inset
+
+对单位根的零假设
+\begin_inset Formula $\rho=1$
+\end_inset
+
+进行检验，而不需要计算标准误。当然了，另一种方法是OLS的t检验
+\begin_inset Formula 
+\[
+t_{T}=\frac{(\hat{\rho}_{T}-1)}{\hat{\sigma}_{\hat{\rho}_{T}}}=\frac{(\hat{\rho}_{T}-1)}{\{s_{T}^{2}/\sum_{t=1}^{T}y_{t-1}^{2}\}^{1/2}}\tag{17.4.9}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $s_{T}^{2}$
+\end_inset
+
+表示残差方差的OLS估计量：
+\begin_inset Formula 
+\[
+s_{T}^{2}=\sum_{t=1}^{T}(y_{t}-\hat{\rho}_{T}y_{t-1})/(T-1)
+\]
+
+\end_inset
+
+但是注意此时的t统计量的极限分布不是正态分布，为研究其极限分布，首先对(17.4.9)转换
+\begin_inset Formula 
+\[
+t_{T}=T(\hat{\rho}_{T}-1)\{T^{-2}\sum_{t=1}^{T}y_{t-1}^{2}\}^{1/2}/\{s_{T}^{2}\}^{1/2}\tag{17.4.10}
+\]
+
+\end_inset
+
+然后把(17.4.3)代入可得
+\begin_inset Formula 
+\begin{align*}
+t_{T} & =\frac{T^{-1}\sum_{t=1}^{T}y_{t-1}u_{t}}{\{T^{-2}\sum_{t=1}^{T}y_{t-1}^{2}\}^{1/2}\{s_{T}^{2}\}^{1/2}}\tag{17.4.11}\\
+ & \overset{L}{\rightarrow}\frac{\frac{1}{2}\sigma^{2}\{[W(1)]^{2}-1\}}{\{\sigma^{2}\cdot\int_{0}^{1}[W(r)]^{2}dr\}^{1/2}\{\sigma^{2}\}^{1/2}}=\frac{\frac{1}{2}\{[W(1)]^{2}-1\}}{\{\int_{0}^{1}[W(r)]^{2}dr\}^{1/2}}\tag{17.4.12}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+一个例子：例17.3
+\end_layout
+
+\begin_layout Subsection
+回归中包含常数项但无时间趋势；真实过程是随机游走
+\end_layout
+
+\begin_layout Itemize
+一个包含常数项的AR(1)过程
+\begin_inset Formula 
+\[
+y_{t}=\alpha+\rho y_{t-1}+u_{t}\tag{17.4.14}
+\]
+
+\end_inset
+
+其参数的OLS估计为
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+\hat{\alpha}_{T}\\
+\hat{\rho}_{T}
+\end{array}\right]=\left[\begin{array}{cc}
+T & \sum y_{t-1}\\
+\sum y_{t-1} & \sum y_{t-1}^{2}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+\sum y_{t}\\
+\sum y_{t-1}y_{t}
+\end{array}\right]\tag{17.4.15}
+\]
+
+\end_inset
+
+相应的检验原假设为：
+\begin_inset Formula $H_{0}:\alpha=0,\rho=1$
+\end_inset
+
+，于是
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+\hat{\alpha}_{T}\\
+\hat{\rho}_{T}-1
+\end{array}\right]=\left[\begin{array}{cc}
+T & \sum y_{t-1}\\
+\sum y_{t-1} & \sum y_{t-1}^{2}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+\sum u_{t}\\
+\sum y_{t-1}u_{t}
+\end{array}\right]\tag{17.4.17}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+在现有条件下，
+\begin_inset Formula $y_{t}$
+\end_inset
+
+仍然满足性质17.1的结论，于是，由(d)可得：
+\begin_inset Formula 
+\[
+T^{-3/2}\sum y_{t-1}\overset{L}{\rightarrow}\sigma\cdot\int_{0}^{1}W(1)dr\tag{17.4.18}
+\]
+
+\end_inset
+
+换句话说，
+\begin_inset Formula $\sum y_{t-1}=O_{p}(T^{3/2})$
+\end_inset
+
+，同样的，(17.4.5)和(17.4.6)说明：
+\begin_inset Formula 
+\begin{align*}
+\sum y_{t-1}u_{t} & =O_{p}(T)\\
+\sum y_{t-1}^{2} & =O_{p}(T^{2})
+\end{align*}
+
+\end_inset
+
+由性质17.1(a)得：
+\begin_inset Formula 
+\[
+\sum u_{t}=O_{p}(T^{1/2})
+\]
+
+\end_inset
+
+因此，可以推导(17.4.17)中各项的阶：
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+\hat{\alpha}_{T}\\
+\hat{\rho}_{T}-1
+\end{array}\right]=\left[\begin{array}{cc}
+O_{p}(T) & O_{p}(T^{3/2})\\
+O_{p}(T^{3/2}) & O_{p}(T^{2})
+\end{array}\right]^{-1}\left[\begin{array}{c}
+O_{p}(T^{1/2})\\
+O_{p}(T)
+\end{array}\right]\tag{17.4.19}
+\]
+
+\end_inset
+
+由此可知，两个估计量的收敛速度不同。由此需要引入一个标度矩阵
+\begin_inset Formula $\boldsymbol{Y}_{T}$
+\end_inset
+
+描述极限分布
+\begin_inset Formula 
+\[
+\boldsymbol{Y}_{T}(\boldsymbol{b}_{T}-\boldsymbol{\beta})=\{\boldsymbol{Y}_{T}^{-1}[\sum\boldsymbol{x}_{t}\boldsymbol{x}_{t}']\boldsymbol{Y}_{T}^{-1}\}^{-1}\{\boldsymbol{Y}_{T}^{-1}[\sum\boldsymbol{x}_{t}u_{t}]\}\tag{17.4.20}
+\]
+
+\end_inset
+
+由(17.4.19)，建议指定
+\begin_inset Formula $\boldsymbol{Y}_{T}$
+\end_inset
+
+为如下矩阵：
+\begin_inset Formula 
+\[
+\boldsymbol{Y}_{T}=\left[\begin{array}{cc}
+T^{1/2} & 0\\
+0 & T
+\end{array}\right]\tag{17.4.21}
+\]
+
+\end_inset
+
+于是(17.4.20)变为
+\begin_inset Formula 
+\[
+\left[\begin{array}{cc}
+T^{1/2} & 0\\
+0 & T
+\end{array}\right]\left[\begin{array}{c}
+\hat{\alpha}_{T}\\
+\hat{\rho}_{T}-1
+\end{array}\right]=\left\{ \left[\begin{array}{cc}
+T^{-1/2} & 0\\
+0 & T^{-1}
+\end{array}\right]\left[\begin{array}{cc}
+T & \sum y_{t-1}\\
+\sum y_{t-1} & \sum y_{t-1}^{2}
+\end{array}\right]\left[\begin{array}{cc}
+T^{-1/2} & 0\\
+0 & T^{-1}
+\end{array}\right]\right\} ^{-1}\left\{ \left[\begin{array}{cc}
+T^{-1/2} & 0\\
+0 & T^{-1}
+\end{array}\right]\left[\begin{array}{c}
+\sum u_{t}\\
+\sum y_{t-1}u_{t}
+\end{array}\right]\right\} 
+\]
+
+\end_inset
+
+或
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+T^{1/2}\hat{\alpha}_{T}\\
+T(\hat{\rho}_{T}-1)
+\end{array}\right]=\left[\begin{array}{cc}
+1 & T^{-3/2}\sum y_{t-1}\\
+T^{-3/2}\sum y_{t-1} & T^{-2}\sum y_{t-1}^{2}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+T^{-1/2}\sum u_{t}\\
+T^{-1}\sum y_{t-1}u_{t}
+\end{array}\right]\tag{17.4.22}
+\]
+
+\end_inset
+
+考虑上式右边第一项
 \end_layout
 
 \end_body
