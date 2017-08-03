@@ -11971,8 +11971,414 @@ T^{-1}\sum y_{t-1}\varepsilon_{t}
 的系数
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
+(17.7.25)的前p-1个元素
+\begin_inset Formula 
+\[
+\sqrt{T}\left[\begin{array}{c}
+\hat{\xi}_{1}-\xi_{1}\\
+\hat{\xi}_{2}-\xi_{2}\\
+\vdots\\
+\hat{\xi}_{p-1}-\xi_{p-1}
+\end{array}\right]\overset{L}{\rightarrow}\boldsymbol{V}^{-1}\boldsymbol{h}_{1}=N(\boldsymbol{0},\sigma^{2}\boldsymbol{V}^{-1})\tag{17.7.26}
+\]
 
+\end_inset
+
+这意味着通常意义上的标准t统计量和F统计量都是渐近有效的。具体而言，首先原假设
+\begin_inset Formula $H_{0}:\boldsymbol{R\beta}=\boldsymbol{r}$
+\end_inset
+
+，其中
+\begin_inset Formula $R$
+\end_inset
+
+为
+\begin_inset Formula $m\times(p+1)$
+\end_inset
+
+矩阵，
+\begin_inset Formula $m$
+\end_inset
+
+是约束个数。于是OLS
+\begin_inset Formula $\chi^{2}$
+\end_inset
+
+检验式(8.2.23)的Wald形式为
+\begin_inset Formula 
+\begin{align*}
+\chi_{T}^{2} & =(\boldsymbol{Rb}_{T}-\boldsymbol{r})'\{s_{T}^{2}\boldsymbol{R}[\sum\boldsymbol{x}_{t}\boldsymbol{x}_{t}']^{-1}\boldsymbol{R}'\}^{-1}(\boldsymbol{Rb}_{T}-\boldsymbol{r})\\
+ & =[\boldsymbol{R}\sqrt{T}(\boldsymbol{b}_{T}-\boldsymbol{\beta})]'\{s_{T}^{2}\boldsymbol{R}\sqrt{T}[\sum\boldsymbol{x}_{t}\boldsymbol{x}_{t}']^{-1}\sqrt{T}\boldsymbol{R}'\}^{-1}[\boldsymbol{R}\sqrt{T}(\boldsymbol{b}_{T}-\boldsymbol{\beta})]\tag{17.7.28}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\begin{align*}
+s_{T}^{2} & =\frac{1}{T-(p+1)}\sum_{t=1}^{T}(y_{t}-\hat{\xi}_{1}\Delta y_{t-1}-\hat{\xi}_{2}\Delta y_{t-2}-...-\hat{\xi}_{p-1}\Delta y_{t-p+1}-\hat{\alpha}_{T}-\hat{\rho}_{T}y_{t-1})^{2}\\
+ & \overset{p}{\rightarrow}E(\varepsilon_{t}^{2})=\sigma^{2}\tag{17.7.29}
+\end{align*}
+
+\end_inset
+
+如果约束不包括
+\begin_inset Formula $\alpha$
+\end_inset
+
+和
+\begin_inset Formula $\rho$
+\end_inset
+
+，那么
+\begin_inset Formula $\boldsymbol{R}$
+\end_inset
+
+的最后两列都为0：
+\begin_inset Formula 
+\[
+\underset{m\times(p+1)}{\boldsymbol{R}}=\left[\begin{array}{cc}
+\underset{m\times(p-1)}{\boldsymbol{R}_{1}} & \underset{m\times2}{\boldsymbol{0}}\end{array}\right]\tag{17.7.30}
+\]
+
+\end_inset
+
+此时
+\begin_inset Formula 
+\begin{align*}
+\chi_{T}^{2} & \overset{L}{\rightarrow}\left\{ \left[\begin{array}{cc}
+\boldsymbol{R}_{1} & \boldsymbol{0}\end{array}\right]\left[\begin{array}{c}
+\boldsymbol{V}^{-1}\boldsymbol{h}_{1}\\
+\boldsymbol{Q}^{-1}\boldsymbol{h}_{2}
+\end{array}\right]\right\} '\left\{ \sigma^{2}\left[\begin{array}{cc}
+\boldsymbol{R}_{1} & \boldsymbol{0}\end{array}\right]\left[\begin{array}{cc}
+\boldsymbol{V} & \boldsymbol{0}\\
+\boldsymbol{0} & \boldsymbol{Q}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+\boldsymbol{R}_{1}\\
+\boldsymbol{0}
+\end{array}\right]\right\} ^{-1}\left\{ \left[\begin{array}{cc}
+\boldsymbol{R}_{1} & \boldsymbol{0}\end{array}\right]\left[\begin{array}{c}
+\boldsymbol{V}^{-1}\boldsymbol{h}_{1}\\
+\boldsymbol{Q}^{-1}\boldsymbol{h}_{2}
+\end{array}\right]\right\} \\
+ & =[\boldsymbol{R}_{1}\boldsymbol{V}^{-1}\boldsymbol{h}_{1}]'[\sigma^{2}\boldsymbol{R}_{1}\boldsymbol{V}^{-1}\boldsymbol{R}_{1}']^{-1}[\boldsymbol{R}_{1}\boldsymbol{V}^{-1}\boldsymbol{h}_{1}]\tag{17.7.31}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula $[\boldsymbol{R}_{1}\boldsymbol{V}^{-1}\boldsymbol{h}_{1}]$
+\end_inset
+
+的分布为
+\begin_inset Formula $N(\boldsymbol{0},[\sigma^{2}\boldsymbol{R}_{1}\boldsymbol{V}^{-1}\boldsymbol{R}_{1}'])$
+\end_inset
+
+，因为
+\begin_inset Formula $\boldsymbol{h}_{1}\sim N(\boldsymbol{0},\sigma^{2}\boldsymbol{V})$
+\end_inset
+
+。因此(17.7.31)满足性质8.1条件的高斯向量的二次形式：
+\begin_inset Formula 
+\[
+\chi_{T}^{2}\overset{L}{\rightarrow}\chi^{2}(m)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+常数项和
+\begin_inset Formula $y_{t-1}$
+\end_inset
+
+的系数
+\end_layout
+
+\begin_layout Itemize
+考察
+\begin_inset Formula $\boldsymbol{\beta}$
+\end_inset
+
+的后两个元素
+\begin_inset Formula 
+\begin{align*}
+\left[\begin{array}{cc}
+T^{1/2} & 0\\
+0 & T
+\end{array}\right]\left[\begin{array}{c}
+\hat{\alpha}_{T}\\
+\hat{\rho}_{T}-1
+\end{array}\right] & \overset{L}{\rightarrow}\left[\begin{array}{cc}
+1 & \lambda\cdot\int_{0}^{1}W(r)dr\\
+\lambda\cdot\int_{0}^{1}W(r)dr & \lambda^{2}\cdot\int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]^{-1}\left[\begin{array}{c}
+\sigma\cdot W(1)\\
+\frac{1}{2}\sigma\lambda\{[W(1)]^{2}-1\}
+\end{array}\right]\\
+ & =\sigma\left[\begin{array}{cc}
+1 & 0\\
+0 & \lambda
+\end{array}\right]^{-1}\left[\begin{array}{cc}
+1 & \int_{0}^{1}W(r)dr\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]^{-1}\left[\begin{array}{cc}
+1 & 0\\
+0 & \lambda
+\end{array}\right]^{-1}\\
+ & \times\left[\begin{array}{cc}
+1 & 0\\
+0 & \lambda
+\end{array}\right]\left[\begin{array}{c}
+W(1)\\
+\frac{1}{2}\{[W(1)]^{2}-1\}
+\end{array}\right]\\
+ & =\left[\begin{array}{cc}
+\sigma & 0\\
+0 & \sigma/\lambda
+\end{array}\right]\left[\begin{array}{cc}
+1 & \int_{0}^{1}W(r)dr\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]^{-1}\left[\begin{array}{c}
+W(1)\\
+\frac{1}{2}\{[W(1)]^{2}-1\}
+\end{array}\right]\tag{17.7.32}
+\end{align*}
+
+\end_inset
+
+该向量的第二个元素意味着
+\begin_inset Formula $T\frac{\lambda}{\sigma}(\hat{\rho}_{T}-1)$
+\end_inset
+
+渐近分布与(17.4.28)一样，它描述了回归中不含
+\begin_inset Formula $\Delta y$
+\end_inset
+
+滞后项且扰动项序列不相关时
+\begin_inset Formula $\rho$
+\end_inset
+
+的估计：
+\begin_inset Formula 
+\[
+T\frac{\lambda}{\sigma}(\hat{\rho}_{T}-1)\overset{L}{\rightarrow}\frac{\frac{1}{2}\{[W(1)]^{2}-1\}-W(1)\cdot\int_{0}^{1}W(r)dr}{\int_{0}^{1}[W(r)]^{2}dr-[\int_{0}^{1}W(r)dr]^{2}}\tag{17.7.33}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\frac{\lambda}{\sigma}=\frac{1}{1-\xi_{1}-\xi_{2}-...-\xi_{p-1}}$
+\end_inset
+
+可以通过
+\begin_inset Formula $\frac{1}{1-\hat{\xi}_{1}-\hat{\xi}_{2}-...-\hat{\xi}_{p-1}}$
+\end_inset
+
+来一致估计。因此，当回归中包含
+\begin_inset Formula $y$
+\end_inset
+
+的滞后项时，Dickey-Fuller 
+\begin_inset Formula $\rho$
+\end_inset
+
+检验可拓展为
+\begin_inset Formula 
+\[
+\frac{T(\hat{\rho}_{T}-1)}{1-\hat{\xi}_{1}-\hat{\xi}_{2}-...-\hat{\xi}_{p-1}}\overset{L}{\rightarrow}\frac{\frac{1}{2}\{[W(1)]^{2}-1\}-W(1)\cdot\int_{0}^{1}W(r)dr}{\int_{0}^{1}[W(r)]^{2}dr-[\int_{0}^{1}W(r)dr]^{2}}\tag{17.7.35}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+考察原假设
+\begin_inset Formula $H_{0}:\rho=1$
+\end_inset
+
+的t检验(OLS)：
+\begin_inset Formula 
+\begin{align*}
+t_{T} & =\frac{\hat{\rho}_{T}-1}{\{s_{T}^{2}\cdot\boldsymbol{e}_{p+1}'[\sum\boldsymbol{x}_{t}\boldsymbol{x}_{t}']^{-1}\boldsymbol{e}_{p+1}\}^{1/2}}\\
+ & =\frac{T(\hat{\rho}_{T}-1)}{\{s_{T}^{2}\cdot\boldsymbol{e}_{p+1}'\boldsymbol{Y}_{T}[\sum\boldsymbol{x}_{t}\boldsymbol{x}_{t}']^{-1}\boldsymbol{Y}_{T}\boldsymbol{e}_{p+1}\}^{1/2}}\tag{17.3.37}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula $\boldsymbol{e}_{p+1}$
+\end_inset
+
+表示一个
+\begin_inset Formula $(p+1)\times1$
+\end_inset
+
+向量，它最后一个元素为1，其他位置为0.根据(17.7.18)和(17.7.20)
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{e}_{p+1}'\boldsymbol{Y}_{T}[\sum\boldsymbol{x}_{t}\boldsymbol{x}_{t}']^{-1}\boldsymbol{Y}_{T}\boldsymbol{e}_{p+1} & =\boldsymbol{e}_{p+1}'\{\boldsymbol{Y}_{T}^{-1}[\sum\boldsymbol{x}_{t}\boldsymbol{x}_{t}']\boldsymbol{Y}_{T}^{-1}\}^{-1}\boldsymbol{e}_{p+1}\\
+ & \overset{L}{\rightarrow}\boldsymbol{e}_{p+1}'\left[\begin{array}{cc}
+\boldsymbol{V}^{-1} & \boldsymbol{0}\\
+\boldsymbol{0} & \boldsymbol{Q}^{-1}
+\end{array}\right]\boldsymbol{e}_{p+1}\\
+ & =\frac{1}{\lambda^{2}\{\int_{0}^{1}[W(r)]^{2}dr-[\int_{0}^{1}W(r)dr]^{2}\}}
+\end{align*}
+
+\end_inset
+
+因此，由(17.7.37)和(17.7.33)可得
+\begin_inset Formula 
+\begin{align*}
+t_{T} & \overset{L}{\rightarrow}\frac{\sigma}{\lambda}\frac{\frac{1}{2}\{[W(1)]^{2}-1\}-W(1)\cdot\int_{0}^{1}W(r)dr}{\int_{0}^{1}[W(r)]^{2}dr-[\int_{0}^{1}W(r)dr]^{2}}/\left\{ \frac{\sigma^{2}}{\lambda^{2}\{\int_{0}^{1}[W(r)]^{2}dr-[\int_{0}^{1}W(r)dr]^{2}\}}\right\} ^{1/2}\\
+ & =\frac{\frac{1}{2}\{[W(1)]^{2}-1\}-W(1)\cdot\int_{0}^{1}W(r)dr}{\{\int_{0}^{1}[W(r)]^{2}dr-[\int_{0}^{1}W(r)dr]^{2}\}^{1/2}}\tag{17.7.38}
+\end{align*}
+
+\end_inset
+
+上式结果与(17.4.36)中的分布相同。因此，对于(17.7.11)的OLS估计的
+\begin_inset Formula $\rho=1$
+\end_inset
+
+的t检验无需对回归中包含
+\begin_inset Formula $\Delta y$
+\end_inset
+
+的滞后值这一事实进行任何修正。
+\end_layout
+
+\begin_layout Itemize
+对联合假设
+\begin_inset Formula $H_{0}:\alpha=0,\rho=1$
+\end_inset
+
+进行Dickey-Fuller的F检验，原假设可以表示为
+\begin_inset Formula $\boldsymbol{R\beta}=\boldsymbol{r}$
+\end_inset
+
+，其中
+\begin_inset Formula 
+\[
+\underset{2\times(p+1)}{\boldsymbol{R}}=\left[\begin{array}{cc}
+\underset{2\times(p-1)}{\boldsymbol{0}} & \underset{2\times2}{\boldsymbol{I}_{2}}\end{array}\right]
+\]
+
+\end_inset
+
+且
+\begin_inset Formula $\boldsymbol{r}=(0,1)'$
+\end_inset
+
+，于是，它的F检验为
+\begin_inset Formula 
+\[
+F_{T}=[\boldsymbol{R}(\boldsymbol{b}_{T}-\boldsymbol{\beta})]'\{s_{T}^{2}\boldsymbol{R}[\sum\boldsymbol{x}_{t}\boldsymbol{x}_{t}']^{-1}\boldsymbol{R}'\}^{-1}[\boldsymbol{R}(\boldsymbol{b}_{T}-\boldsymbol{\beta})]/2\tag{17.7.39}
+\]
+
+\end_inset
+
+定义
+\begin_inset Formula 
+\[
+\tilde{\boldsymbol{Y}}_{T}\equiv\left[\begin{array}{cc}
+T^{1/2} & 0\\
+0 & T
+\end{array}\right]\tag{17.7.40}
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\[
+F_{T}=[\tilde{\boldsymbol{Y}}_{T}\boldsymbol{R}(\boldsymbol{b}_{T}-\boldsymbol{\beta})]'\{s_{T}^{2}\tilde{\boldsymbol{Y}}_{T}\boldsymbol{R}[\sum\boldsymbol{x}_{t}\boldsymbol{x}_{t}']^{-1}\boldsymbol{R}'\tilde{\boldsymbol{Y}}_{T}\}^{-1}[\tilde{\boldsymbol{Y}}_{T}\boldsymbol{R}(\boldsymbol{b}_{T}-\boldsymbol{\beta})]/2\tag{17.7.41}
+\]
+
+\end_inset
+
+注意到
+\begin_inset Formula $\tilde{\boldsymbol{Y}}_{T}\boldsymbol{R}=\boldsymbol{R}\boldsymbol{Y}_{T}$
+\end_inset
+
+，其中
+\begin_inset Formula $\boldsymbol{R}=\left[\begin{array}{cc}
+\boldsymbol{0} & \boldsymbol{I}_{2}\end{array}\right]$
+\end_inset
+
+且
+\begin_inset Formula $\boldsymbol{Y}_{T}$
+\end_inset
+
+是(17.7.15)定义的矩阵，从(17.7.25)中可知，
+\begin_inset Formula $\boldsymbol{R}\boldsymbol{Y}_{T}(\boldsymbol{b}_{T}-\boldsymbol{\beta})\overset{L}{\rightarrow}\boldsymbol{Q}^{-1}\boldsymbol{h}_{2}$
+\end_inset
+
+，因此，(17.7.41)意味着
+\begin_inset Formula 
+\begin{align*}
+F_{T} & =[\boldsymbol{R}\boldsymbol{Y}_{T}(\boldsymbol{b}_{T}-\boldsymbol{\beta})]'\{s_{T}^{2}\boldsymbol{R}\boldsymbol{Y}_{T}[\sum\boldsymbol{x}_{t}\boldsymbol{x}_{t}']^{-1}\boldsymbol{Y}_{T}\boldsymbol{R}'\}^{-1}[\boldsymbol{R}\boldsymbol{Y}_{T}(\boldsymbol{b}_{T}-\boldsymbol{\beta})]/2\\
+ & \overset{L}{\rightarrow}(\boldsymbol{Q}^{-1}\boldsymbol{h}_{2})'\{\sigma^{2}\boldsymbol{Q}^{-1}\}^{-1}(\boldsymbol{Q}^{-1}\boldsymbol{h}_{2})/2\\
+ & =\boldsymbol{h}_{2}'\boldsymbol{Q}^{-1}\boldsymbol{h}_{2}/(2\sigma^{2})\\
+ & =\frac{1}{2\sigma^{2}}\left[\begin{array}{cc}
+\sigma\cdot W(1) & \frac{1}{2}\sigma\lambda\{[W(1)]^{2}-1\}\end{array}\right]\left[\begin{array}{cc}
+1 & \lambda\cdot\int_{0}^{1}W(r)dr\\
+\lambda\cdot\int_{0}^{1}W(r)dr & \lambda^{2}\cdot\int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]^{-1}\left[\begin{array}{c}
+\sigma\cdot W(1)\\
+\frac{1}{2}\sigma\lambda\{[W(1)]^{2}-1\}
+\end{array}\right]\\
+ & =\frac{1}{2\sigma^{2}}\sigma^{2}\left[\begin{array}{cc}
+W(1) & \frac{1}{2}\{[W(1)]^{2}-1\}\end{array}\right]\left[\begin{array}{cc}
+1 & 0\\
+0 & \lambda
+\end{array}\right]\left[\begin{array}{cc}
+1 & 0\\
+0 & \lambda
+\end{array}\right]^{-1}\left[\begin{array}{cc}
+1 & \int_{0}^{1}W(r)dr\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]^{-1}\left[\begin{array}{cc}
+1 & 0\\
+0 & \lambda
+\end{array}\right]^{-1}\\
+ & \times\left[\begin{array}{cc}
+1 & 0\\
+0 & \lambda
+\end{array}\right]\left[\begin{array}{c}
+W(1)\\
+\frac{1}{2}\{[W(1)]^{2}-1\}
+\end{array}\right]\\
+ & =\frac{1}{2}\left[\begin{array}{cc}
+W(1) & \frac{1}{2}\{[W(1)]^{2}-1\}\end{array}\right]\left[\begin{array}{cc}
+1 & \int_{0}^{1}W(r)dr\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]^{-1}\left[\begin{array}{c}
+W(1)\\
+\frac{1}{2}\{[W(1)]^{2}-1\}
+\end{array}\right]\tag{17.7.42}
+\end{align*}
+
+\end_inset
+
+当回归不包含
+\begin_inset Formula $\Delta y$
+\end_inset
+
+的滞后，且随机扰动项为独立同分布时，它与该回归F检验的渐近分布相同。
+\end_layout
+
+\begin_layout Itemize
+考虑一个包含
+\begin_inset Formula $\xi_{1},\xi_{2},...,\xi_{p-1},\rho$
+\end_inset
+
+的约束的建设检验
 \end_layout
 
 \end_body
