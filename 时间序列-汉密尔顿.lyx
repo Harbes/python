@@ -11202,16 +11202,389 @@ y_{t}=y_{0}+u_{1}+u_{2}+...+u_{t}
 
 根据性质17.3的(f)和(h)，有
 \begin_inset Formula 
-\[
+\begin{align*}
 \left[\begin{array}{cc}
 1 & T^{-3/2}\sum y_{t-1}\\
 T^{-3/2}\sum y_{t-1} & T^{-2}\sum y_{t-1}^{2}
-\end{array}\right]^{-1}\overset{L}{\rightarrow}
+\end{array}\right]^{-1} & \overset{L}{\rightarrow}\left[\begin{array}{cc}
+1 & \lambda\cdot\int_{0}^{1}W(r)dr\\
+\lambda\cdot\int_{0}^{1}W(r)dr & \lambda^{2}\cdot\int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]^{-1}\\
+ & =\left[\begin{array}{cc}
+1 & 0\\
+0 & \lambda
+\end{array}\right]^{-1}\left[\begin{array}{cc}
+1 & \int_{0}^{1}W(r)dr\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]^{-1}\left[\begin{array}{cc}
+1 & 0\\
+0 & \lambda
+\end{array}\right]^{-1}\tag{17.6.3}
+\end{align*}
+
+\end_inset
+
+由(a)和(e)给出
+\begin_inset Formula 
+\begin{align*}
+\left[\begin{array}{c}
+T^{-1/2}\sum u_{t}\\
+T^{-1}\sum y_{t-1}u_{t}
+\end{array}\right] & \overset{L}{\rightarrow}\left[\begin{array}{c}
+\lambda\cdot W(1)\\
+\frac{1}{2}\lambda^{2}\{[W(1)]^{2}-\gamma_{0}\}
+\end{array}\right]\\
+ & =\left[\begin{array}{c}
+\lambda\cdot W(1)\\
+\frac{1}{2}\lambda^{2}\{[W(1)]^{2}-1\}
+\end{array}\right]+\left[\begin{array}{c}
+0\\
+\frac{1}{2}\{\lambda^{2}-\gamma_{0}\}
+\end{array}\right]\\
+ & =\lambda\cdot\left[\begin{array}{cc}
+1 & 0\\
+0 & \lambda
+\end{array}\right]\left[\begin{array}{c}
+W(1)\\
+\frac{1}{2}\{[W(1)]^{2}-1\}
+\end{array}\right]+\left[\begin{array}{c}
+0\\
+\frac{1}{2}\{\lambda^{2}-\gamma_{0}\}
+\end{array}\right]\tag{17.6.4}
+\end{align*}
+
+\end_inset
+
+整合后
+\begin_inset Formula 
+\begin{align*}
+\left[\begin{array}{c}
+T^{1/2}\hat{\alpha}_{T}\\
+T(\hat{\rho}_{T}-1)
+\end{array}\right] & \overset{L}{\rightarrow}\left[\begin{array}{cc}
+1 & 0\\
+0 & \lambda
+\end{array}\right]^{-1}\left[\begin{array}{cc}
+1 & \int_{0}^{1}W(r)dr\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]^{-1}\left[\begin{array}{cc}
+1 & 0\\
+0 & \lambda
+\end{array}\right]^{-1}\\
+ & \times\left\{ \lambda\cdot\left[\begin{array}{cc}
+1 & 0\\
+0 & \lambda
+\end{array}\right]\left[\begin{array}{c}
+W(1)\\
+\frac{1}{2}\{[W(1)]^{2}-1\}
+\end{array}\right]+\left[\begin{array}{c}
+0\\
+\frac{1}{2}\{\lambda^{2}-\gamma_{0}\}
+\end{array}\right]\right\} \\
+ & =\left[\begin{array}{cc}
+\lambda & 0\\
+0 & 1
+\end{array}\right]\left[\begin{array}{cc}
+1 & \int_{0}^{1}W(r)dr\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]^{-1}\left[\begin{array}{c}
+W(1)\\
+\frac{1}{2}\{[W(1)]^{2}-1\}
+\end{array}\right]\\
+ & +\left[\begin{array}{cc}
+1 & 0\\
+0 & \lambda^{-1}
+\end{array}\right]\left[\begin{array}{cc}
+1 & \int_{0}^{1}W(r)dr\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]^{-1}\left[\begin{array}{c}
+0\\
+\frac{1}{2}\{\lambda^{2}-\gamma_{0}\}/\lambda
+\end{array}\right]\tag{17.6.5}
+\end{align*}
+
+\end_inset
+
+该向量的第二个元素表明
+\begin_inset Formula 
+\begin{align*}
+T(\hat{\rho}_{T}-1) & \overset{L}{\rightarrow}\left[\begin{array}{cc}
+0 & 1\end{array}\right]\left[\begin{array}{cc}
+1 & \int_{0}^{1}W(r)dr\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]^{-1}\left[\begin{array}{c}
+W(1)\\
+\frac{1}{2}\{[W(1)]^{2}-1\}
+\end{array}\right]\\
+ & +\frac{\frac{1}{2}\{\lambda^{2}-\gamma_{0}\}}{\lambda^{2}}\left[\begin{array}{cc}
+0 & 1\end{array}\right]\left[\begin{array}{cc}
+1 & \int_{0}^{1}W(r)dr\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]^{-1}\left[\begin{array}{c}
+0\\
+1
+\end{array}\right]\\
+ & =\frac{\frac{1}{2}\{[W(1)]^{2}-1\}-W(1)\int_{0}^{1}W(r)dr}{\int_{0}^{1}[W(r)]^{2}dr-[\int_{0}^{1}W(r)dr]^{2}}+\frac{\frac{1}{2}(\lambda^{2}-\gamma_{0})}{\lambda^{2}\{\int_{0}^{1}[W(r)]^{2}dr-[\int_{0}^{1}W(r)dr]^{2}\}}\tag{17.6.6}
+\end{align*}
+
+\end_inset
+
+注意到(17.6.6)中最后一个等式的第一项与(17.4.28)相同，它描述了当
+\begin_inset Formula $u_{t}$
+\end_inset
+
+为
+\begin_inset Formula $iid$
+\end_inset
+
+时
+\begin_inset Formula $T(\hat{\rho}_{T}-1)$
+\end_inset
+
+的渐近分布；而第二项是关于序列相关的修正项。当
+\begin_inset Formula $u_{t}$
+\end_inset
+
+是
+\begin_inset Formula $iid$
+\end_inset
+
+时，
+\begin_inset Formula $\psi_{0}=0,\text{且},\psi_{j}=0,j>0$
+\end_inset
+
+，此时
+\begin_inset Formula $\lambda^{2}=\sigma^{2}[\psi(1)]^{2}=\sigma^{2}=\gamma_{0}$
+\end_inset
+
+，因此，(17.4.28)可以看做是(17.6.6)的一个特例。
+\end_layout
+
+\begin_layout Itemize
+用
+\begin_inset Formula $\hat{\rho}_{T}$
+\end_inset
+
+的OLS标准差
+\begin_inset Formula $\hat{\sigma}_{\hat{\rho}_{T}}$
+\end_inset
+
+构造一个用于估计修正了序列相关的样本统计量。建议标度矩阵为
+\begin_inset Formula 
+\[
+\boldsymbol{Y}_{T}=\left[\begin{array}{cc}
+T^{1/2} & 0\\
+0 & T
+\end{array}\right]
+\]
+
+\end_inset
+
+则
+\begin_inset Formula 
+\[
+s_{T}^{2}=\frac{1}{T-2}\sum_{t=1}^{T}(y_{t}-\hat{\alpha}_{T}-\hat{\rho}_{T}y_{t-1})^{2}\overset{p}{\rightarrow}E(u_{t}^{2})=\gamma_{0}
 \]
 
 \end_inset
 
 
+\begin_inset Formula $T^{2}\cdot\hat{\sigma}_{\hat{\rho}_{T}}^{2}$
+\end_inset
+
+的渐近分布为
+\begin_inset Formula 
+\begin{align*}
+T^{2}\cdot\hat{\sigma}_{\hat{\rho}_{T}}^{2} & =s_{T}^{2}\left[\begin{array}{cc}
+0 & 1\end{array}\right]\boldsymbol{Y}_{T}\left[\begin{array}{cc}
+T & \sum y_{t-1}\\
+\sum y_{t-1} & \sum y_{t-1}^{2}
+\end{array}\right]^{-1}\boldsymbol{Y}_{T}\left[\begin{array}{c}
+0\\
+1
+\end{array}\right]\\
+ & \overset{p}{\rightarrow}s_{T}^{2}\left[\begin{array}{cc}
+0 & 1\end{array}\right]\left[\begin{array}{cc}
+1 & 0\\
+0 & \lambda
+\end{array}\right]^{-1}\left[\begin{array}{cc}
+1 & \int_{0}^{1}W(r)dr\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]^{-1}\left[\begin{array}{cc}
+1 & 0\\
+0 & \lambda
+\end{array}\right]^{-1}\left[\begin{array}{c}
+0\\
+1
+\end{array}\right]\\
+ & =s_{T}^{2}/\lambda^{2}\left[\begin{array}{cc}
+0 & 1\end{array}\right]\left[\begin{array}{cc}
+1 & \int_{0}^{1}W(r)dr\\
+\int_{0}^{1}W(r)dr & \int_{0}^{1}[W(r)]^{2}dr
+\end{array}\right]^{-1}\left[\begin{array}{c}
+0\\
+1
+\end{array}\right]\\
+ & =s_{T}^{2}/\lambda^{2}\frac{1}{\int_{0}^{1}[W(r)]^{2}dr-[\int_{0}^{1}W(r)dr]^{2}}
+\end{align*}
+
+\end_inset
+
+结合(17.6.6)，有
+\begin_inset Formula 
+\[
+T(\hat{\rho}_{T}-1)-\frac{1}{2}(T^{2}\cdot\hat{\sigma}_{\hat{\rho}_{T}}^{2}/s_{T}^{2})\cdot(\lambda^{2}-\gamma_{0})\overset{L}{\rightarrow}\frac{\frac{1}{2}\{[W(1)]^{2}-1\}-W(1)\int_{0}^{1}W(r)dr}{\int_{0}^{1}[W(r)]^{2}dr-[\int_{0}^{1}W(r)dr]^{2}}\tag{17.6.8}
+\]
+
+\end_inset
+
+于是可以计算左边的统计量，进行统计推断。当然，也可以利用OLS估计t检验统计量进行检验：
+\begin_inset Formula 
+\begin{align*}
+t_{T} & =\frac{\hat{\rho}_{T}-1}{\hat{\sigma}_{\hat{\rho}_{T}}}=\frac{T(\hat{\rho}_{T}-1)}{\{T^{2}\cdot\hat{\sigma}_{\hat{\rho}_{T}}^{2}\}^{1/2}}\\
+ & \overset{p}{\rightarrow}\left\{ \frac{\frac{1}{2}\{[W(1)]^{2}-1\}-W(1)\int_{0}^{1}W(r)dr}{\int_{0}^{1}[W(r)]^{2}dr-[\int_{0}^{1}W(r)dr]^{2}}+\frac{1}{2}(T^{2}\cdot\hat{\sigma}_{\hat{\rho}_{T}}^{2}/s_{T}^{2})\cdot(\lambda^{2}-\gamma_{0})\right\} /\{T^{2}\cdot\hat{\sigma}_{\hat{\rho}_{T}}^{2}\}^{1/2}\\
+ & \overset{p}{\rightarrow}\frac{\frac{1}{2}\{[W(1)]^{2}-1\}-W(1)\int_{0}^{1}W(r)dr}{\int_{0}^{1}[W(r)]^{2}dr-[\int_{0}^{1}W(r)dr]^{2}}\cdot(\frac{\lambda^{2}}{s_{T}^{2}})^{1/2}\cdot\left\{ \int_{0}^{1}[W(r)]^{2}dr-[\int_{0}^{1}W(r)dr]^{2}\right\} ^{1/2}\\
+ & +\frac{1}{2}\frac{1}{s_{T}}(T^{2}\cdot\hat{\sigma}_{\hat{\rho}_{T}}^{2}/s_{T}^{2})^{1/2}\cdot(\lambda^{2}-\gamma_{0})\tag{17.6.9}
+\end{align*}
+
+\end_inset
+
+结合
+\begin_inset Formula $s_{T}^{2}\overset{p}{\rightarrow}\gamma_{0}$
+\end_inset
+
+，有
+\begin_inset Formula 
+\[
+(\frac{\gamma_{0}}{\lambda^{2}})^{1/2}\cdot t_{T}\overset{p}{\rightarrow}\frac{\frac{1}{2}\{[W(1)]^{2}-1\}-W(1)\int_{0}^{1}W(r)dr}{\left\{ \int_{0}^{1}[W(r)]^{2}dr-[\int_{0}^{1}W(r)dr]^{2}\right\} ^{1/2}}+\frac{1}{2}(\lambda^{2}-\gamma_{0})/\lambda\cdot(T^{2}\cdot\hat{\sigma}_{\hat{\rho}_{T}}^{2}/s_{T}^{2})^{1/2}
+\]
+
+\end_inset
+
+注意上式右侧第一项与(17.4.36)相同，第二项视作对序列相关的修正项。对于(17.6.8)和(17.6.12)中的
+\begin_inset Formula $\gamma_{0}$
+\end_inset
+
+和
+\begin_inset Formula $\lambda^{2}$
+\end_inset
+
+，可以通过下面的方法一致估计：
+\begin_inset Formula 
+\[
+\hat{\gamma}_{0}=\frac{1}{T}\sum_{t=1}^{T}\hat{u}_{t}^{2}
+\]
+
+\end_inset
+
+或者
+\begin_inset Formula 
+\[
+\hat{\gamma}_{0}=\frac{1}{T-2}\sum_{t=1}^{T}\hat{u}_{t}^{2}\text{【Phillips and Perron】}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\hat{u}_{t}$
+\end_inset
+
+是OLS样本回归残差。而
+\begin_inset Formula $\lambda^{2}$
+\end_inset
+
+是
+\begin_inset Formula $u_{t}$
+\end_inset
+
+样本均值的渐近方差，根据7.2节和10.5节的讨论，有
+\begin_inset Formula 
+\[
+\lambda^{2}=\sigma^{2}[\psi(1)]^{2}=\gamma_{0}+2\sum_{j=1}^{\infty}\gamma_{j}=2\pi s_{U}(0)\tag{17.6.15}
+\]
+
+\end_inset
+
+如果只认为前q阶中的自协方差相关，则可以使用Newey-West估计量：
+\begin_inset Formula 
+\[
+\hat{\lambda}^{2}=\hat{\gamma}_{0}+2\sum_{j=1}^{q}[1-\frac{j}{q+1}]\hat{\gamma}_{j}\tag{17.6.16}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\[
+\hat{\gamma}_{j}=\frac{1}{T}\sum_{j+1}^{T}\hat{u}_{t}\hat{u}_{t-j}\tag{17.6.17}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+总结：当原假设为“
+\begin_inset Formula $y_{t}$
+\end_inset
+
+的一阶差分是零均值协方差平稳过程”时，Phillips和Perron给出的方法是，先用OLS估计参数
+\begin_inset Formula $\hat{\rho}$
+\end_inset
+
+，并计算相应的标准差
+\begin_inset Formula $\hat{\sigma}_{\hat{\rho}_{T}}$
+\end_inset
+
+；然后，利用(17.6.17)计算第j阶协方差；最后利用
+\begin_inset Formula $\hat{\gamma}_{0}$
+\end_inset
+
+和
+\begin_inset Formula $\hat{\lambda}^{2}$
+\end_inset
+
+按(17.6.8)或者(17.6.12)构造相应的检验统计量(修正后的)
+\end_layout
+
+\begin_layout Itemize
+一个例子
+\end_layout
+
+\begin_layout Subsection
+对情况1和4的Phillips-Perron检验
+\end_layout
+
+\begin_layout Itemize
+表17.2（见课后题与答案）
+\end_layout
+
+\begin_layout Itemize
+一个例子
+\end_layout
+
+\begin_layout Subsection
+关于
+\begin_inset Formula $u_{t}$
+\end_inset
+
+的更一般过程
+\end_layout
+
+\begin_layout Subsection
+单位根过程和协方差平稳过程上的观测等价
+\end_layout
+
+\begin_layout Section
+p阶自回归的渐近性质和Augmented Dickey-Fuller单位根检验
+\end_layout
+
+\begin_layout Subsection
+\begin_inset Formula $AR(p)$
+\end_inset
+
+过程的另一种表示
 \end_layout
 
 \end_body
