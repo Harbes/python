@@ -9742,7 +9742,7 @@ t_{T} & =\frac{T^{-1}\sum_{t=1}^{T}y_{t-1}u_{t}}{\{T^{-2}\sum_{t=1}^{T}y_{t-1}^{
 \end_layout
 
 \begin_layout Itemize
-真实过程时随机游走，而回归方程是一个包含常数项的AR(1)
+真实过程是随机游走，而回归方程是一个包含常数项的AR(1)
 \begin_inset Formula 
 \[
 y_{t}=\alpha+\rho y_{t-1}+u_{t}\tag{17.4.14}
@@ -11102,7 +11102,115 @@ T^{-(v+1)}\sum_{t=1}^{T}t^{v}\rightarrow\frac{1}{v+1}\text{，}v=0,1,2,...
 扰动项序列相关假设下情况2的渐近分布
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
+回归模型
+\begin_inset Formula $y_{t}=\alpha+\rho y_{t-1}+u_{t}$
+\end_inset
+
+，而真实过程是不含漂移的随机游走意味着
+\begin_inset Formula $\alpha=0,\rho=1$
+\end_inset
+
+。Phillips和Perron放宽了对
+\begin_inset Formula $u_{t}$
+\end_inset
+
+的假设，允许存在序列相关、异方差。于是假定
+\begin_inset Formula 
+\[
+y_{t}-y_{t-1}=u_{t}=\psi(L)\varepsilon_{t}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\psi(L)$
+\end_inset
+
+和
+\begin_inset Formula $\varepsilon_{t}$
+\end_inset
+
+满足性质17.3中的条件(本节末尾讨论了同样有效的方法下更为一般的条件)。
+\end_layout
+
+\begin_layout Itemize
+注意到，在存在序列相关且
+\begin_inset Formula $|\rho|<1$
+\end_inset
+
+的前提下，回归方程的OLS估计
+\begin_inset Formula $\hat{\rho}_{T}$
+\end_inset
+
+不会给出
+\begin_inset Formula $\rho$
+\end_inset
+
+的一致估计量。然而，若
+\begin_inset Formula $\rho=1$
+\end_inset
+
+，则即使存在序列相关，
+\begin_inset Formula $\hat{\rho}_{T}$
+\end_inset
+
+的收敛速度T也能保证
+\begin_inset Formula $\hat{\rho}_{T}\overset{p}{\rightarrow}1$
+\end_inset
+
+。因此，Phillips和Perron(1988)据此提出，当
+\begin_inset Formula $u_{t}$
+\end_inset
+
+序列相关时，可以先用OLS估计，然后在修正17.4节中的统计量以v序列相关性。令
+\begin_inset Formula $\hat{\alpha}_{T}$
+\end_inset
+
+和
+\begin_inset Formula $\hat{\rho}_{T}$
+\end_inset
+
+是相应的OLS估计量，且没有进行序列相关的修正，于是
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+T^{1/2}\hat{\alpha}_{T}\\
+T(\hat{\rho}_{T}-1)
+\end{array}\right]=\left[\begin{array}{cc}
+1 & T^{-3/2}\sum y_{t-1}\\
+T^{-3/2}\sum y_{t-1} & T^{-2}\sum y_{t-1}^{2}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+T^{-1/2}\sum u_{t}\\
+T^{-1}\sum y_{t-1}u_{t}
+\end{array}\right]\tag{17.6.2}
+\]
+
+\end_inset
+
+在原假设
+\begin_inset Formula $\alpha=0,\rho=1$
+\end_inset
+
+下，由(17.4.4)可得
+\begin_inset Formula 
+\[
+y_{t}=y_{0}+u_{1}+u_{2}+...+u_{t}
+\]
+
+\end_inset
+
+根据性质17.3的(f)和(h)，有
+\begin_inset Formula 
+\[
+\left[\begin{array}{cc}
+1 & T^{-3/2}\sum y_{t-1}\\
+T^{-3/2}\sum y_{t-1} & T^{-2}\sum y_{t-1}^{2}
+\end{array}\right]^{-1}\overset{L}{\rightarrow}
+\]
+
+\end_inset
+
 
 \end_layout
 
