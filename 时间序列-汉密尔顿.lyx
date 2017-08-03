@@ -11587,5 +11587,200 @@ p阶自回归的渐近性质和Augmented Dickey-Fuller单位根检验
 过程的另一种表示
 \end_layout
 
+\begin_layout Itemize
+假定数据由
+\begin_inset Formula $AR(p)$
+\end_inset
+
+过程产生：
+\begin_inset Formula 
+\[
+(1-\phi_{1}L-\phi_{2}L^{2}-...-\phi_{p}L^{p})y_{t}=\varepsilon_{t}\tag{17.7.1}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\{\varepsilon_{t}\}$
+\end_inset
+
+为独立同分布序列，均值为0，方差为
+\begin_inset Formula $\sigma^{2}$
+\end_inset
+
+，且四阶矩有限。现在对上式进行变形：
+\begin_inset Formula 
+\begin{align*}
+\rho & \equiv\phi_{1}+\phi_{2}+...+\phi_{p}\\
+\xi_{j} & \equiv-[\phi_{j+1}+\phi_{j+2}+...+\phi_{p}]\text{，}j=1,2,3,...,p-1
+\end{align*}
+
+\end_inset
+
+对于任意的
+\begin_inset Formula $\phi_{1},\phi_{2},...,\phi_{p}$
+\end_inset
+
+，下面的变换都是恒成立的：
+\begin_inset Formula 
+\begin{align*}
+(1-\rho L)-(\xi_{1}L+\xi_{2}L^{2}+...+\xi_{p-1}L^{p-1})(1-L) & =1-\rho L-\xi_{1}L+\xi_{1}L^{2}-\xi_{2}L^{2}+\xi_{2}L^{3}-...-\xi_{p-1}L^{p-1}+\xi_{p-1}L^{p}\\
+ & =1-(\rho+\xi_{1})L-(\xi_{2}-\xi_{1})L^{2}-...-(\xi_{p-1}-\xi_{p-2})L^{p-1}+\xi_{p-1}L^{p}\\
+ & =1-\phi_{1}L-\phi_{2}L^{2}-...-\phi_{p}L^{p}\tag{17.7.4}
+\end{align*}
+
+\end_inset
+
+于是(17.7.1)可以等价地表示为
+\begin_inset Formula 
+\[
+\left\{ (1-\rho L)-(\xi_{1}L+\xi_{2}L^{2}+...+\xi_{p-1}L^{p-1})(1-L)\right\} y_{t}=\varepsilon_{t}\tag{17.7.5}
+\]
+
+\end_inset
+
+或者
+\begin_inset Formula 
+\[
+y_{t}=\rho y_{t-1}+\xi_{1}\Delta y_{t-1}+\xi_{2}\Delta y_{t-2}+...+\xi_{p-1}\Delta y_{t-p+1}+\varepsilon_{t}\tag{17.7.6}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+假定
+\begin_inset Formula $y_{t}$
+\end_inset
+
+的真实过程包含一个单个的单位根，即
+\begin_inset Formula 
+\[
+(1-\phi_{1}z-\phi_{2}z^{2}-...-\phi_{p}z^{p})=0
+\]
+
+\end_inset
+
+的一个根为1：
+\begin_inset Formula $1-\phi_{1}-\phi_{2}-...-\phi_{p}=0$
+\end_inset
+
+，而其他所有根都在单位圆之外。因此，当
+\begin_inset Formula $\rho=\phi_{1}+\phi_{2}+...+\phi_{p}=1$
+\end_inset
+
+时，(17.7.4)意味着
+\begin_inset Formula 
+\[
+1-\phi_{1}z-\phi_{2}z^{2}-...-\phi_{p}z^{p}=(1-z)[1-(\xi_{1}z+\xi_{2}z^{2}+...+\xi_{p-1}z^{p-1})]\tag{17.7.9}
+\]
+
+\end_inset
+
+因此，在原假设
+\begin_inset Formula $\rho=1$
+\end_inset
+
+下，(17.7.5)可以写成
+\begin_inset Formula 
+\[
+(1-\xi_{1}L-\xi_{2}L^{2}-...-\xi_{p-1}L^{p-1})\Delta y_{t}=\varepsilon_{t}
+\]
+
+\end_inset
+
+或者
+\begin_inset Formula 
+\[
+\Delta y_{t}=u_{t}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $u_{t}=(1-\xi_{1}L-\xi_{2}L^{2}-...-\xi_{p-1}L^{p-1})^{-1}\varepsilon_{t}$
+\end_inset
+
+。此时
+\begin_inset Formula $y_{t}$
+\end_inset
+
+与性质17.3描述的
+\begin_inset Formula $\xi_{t}$
+\end_inset
+
+相似。
+\end_layout
+
+\begin_layout Itemize
+当估计的回归式如(17.7.6)中不含常数项的形式时，可以得到17.4节中情况1的结果；若加入常数项，则得到情况2和情况3的结果；若加入常数项和时间趋势可得到情况4的
+结果。
+\end_layout
+
+\begin_layout Subsection
+情况2：回归方程中包含常数项；真实过程是不含漂移的单位根过程
+\end_layout
+
+\begin_layout Itemize
+假定初始样本容量为T+p个，观察值为
+\begin_inset Formula $\{y_{-p+1},y_{-p+2},...,y_{T}\}$
+\end_inset
+
+，回归方程
+\begin_inset Formula 
+\begin{align*}
+y_{t} & =\xi_{1}\Delta y_{t-1}+\xi_{2}\Delta y_{t-2}+...+\xi_{p-1}\Delta y_{t-p+1}+\alpha+\rho y_{t-1}+\varepsilon_{t}\\
+ & \equiv\boldsymbol{x}_{t}'\boldsymbol{\beta}+\varepsilon_{t}\tag{17.7.11}
+\end{align*}
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\[
+\boldsymbol{b}_{T}-\boldsymbol{\beta}=[\sum_{t=1}^{T}\boldsymbol{x}_{t}\boldsymbol{x}_{t}']^{-1}[\sum_{t=1}^{T}\boldsymbol{x}_{t}\varepsilon_{t}]\tag{17.7.12}
+\]
+
+\end_inset
+
+令
+\begin_inset Formula $u_{t}\equiv y_{t}-y_{t-1}$
+\end_inset
+
+，则
+\begin_inset Formula 
+\[
+\sum_{t=1}^{T}\boldsymbol{x}_{t}\boldsymbol{x}_{t}'=\left[\begin{array}{cccccc}
+\sum u_{t-1}^{2} & \sum u_{t-1}u_{t-2} & \cdots & \sum u_{t-1}u_{t-p+1} & \sum u_{t-1} & \sum u_{t-1}y_{t-1}\\
+\sum u_{t-2}u_{t-1} & \sum u_{t-2}^{2} & \cdots & \sum u_{t-2}u_{t-p+1} & \sum u_{t-2} & \sum u_{t-2}y_{t-1}\\
+\vdots & \vdots & \cdots & \vdots & \vdots & \vdots\\
+\sum u_{t-p+1}u_{t-1} & \sum u_{t-p+1}u_{t-2} & \cdots & \sum u_{t-p+1}^{2} & \sum u_{t-p+1} & \sum u_{t-p+1}y_{t-1}\\
+\sum u_{t-1} & \sum u_{t-2} & \cdots & \sum u_{t-p+1} & T & \sum y_{t-1}\\
+\sum y_{t-1}u_{t-1} & \sum y_{t-1}u_{t-2} & \cdots & \sum y_{t-1}u_{t-p+1} & \sum y_{t-1} & \sum y_{t-1}^{2}
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\sum_{t=1}^{T}\boldsymbol{x}_{t}\varepsilon_{t}=\left[\begin{array}{c}
+\sum u_{t-1}\varepsilon_{t}\\
+\sum u_{t-2}\varepsilon_{t}\\
+\vdots\\
+\sum u_{t-p+1}\varepsilon_{t}\\
+\sum\varepsilon_{t}\\
+\sum y_{t-1}\varepsilon_{t}
+\end{array}\right]\tag{17.7.14}
+\]
+
+\end_inset
+
+
+\end_layout
+
 \end_body
 \end_document
