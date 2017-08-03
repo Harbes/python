@@ -11779,6 +11779,199 @@ y_{t} & =\xi_{1}\Delta y_{t-1}+\xi_{2}\Delta y_{t-2}+...+\xi_{p-1}\Delta y_{t-p+
 
 \end_inset
 
+参考性质17.3的收敛速度，建议标度矩阵为
+\begin_inset Formula 
+\[
+\underset{(p+1)\times(p+1)}{\boldsymbol{Y}_{T}}=\left[\begin{array}{ccccc}
+\sqrt{T} & 0 & \cdots & 0 & 0\\
+0 & \sqrt{T} & \cdots & 0 & 0\\
+\vdots & \vdots & \cdots & \vdots & \vdots\\
+0 & 0 & \cdots & \sqrt{T} & 0\\
+0 & 0 & \cdots & 0 & T
+\end{array}\right]\tag{17.7.15}
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\[
+\boldsymbol{Y}_{T}(\boldsymbol{b}_{T}-\boldsymbol{\beta})=\{\boldsymbol{Y}_{T}^{-1}[\sum\boldsymbol{x}_{t}\boldsymbol{x}_{t}']\boldsymbol{Y}_{T}^{-1}\}^{-1}\{\boldsymbol{Y}_{T}^{-1}[\sum\boldsymbol{x}_{t}\varepsilon_{t}]\}\tag{17.7.16}
+\]
+
+\end_inset
+
+由性质17.3可得
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $T^{-1}\sum u_{t-i}u_{t-j}\overset{p}{\rightarrow}\gamma_{|i-j|}$
+\end_inset
+
+【性质17.3(c)】
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $T^{-1}\sum u_{t-j}\overset{p}{\rightarrow}0$
+\end_inset
+
+【大数定理】
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $T^{-3/2}\sum y_{t-1}u_{t-j}\overset{p}{\rightarrow}0$
+\end_inset
+
+【性质17.3(e)】
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $T^{-3/2}\sum y_{t-1}\overset{L}{\rightarrow}\lambda\cdot\int W(r)dr$
+\end_inset
+
+【性质17.3(f)】
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $T^{-2}\sum y_{t-1}^{2}\overset{L}{\rightarrow}\lambda^{2}\cdot\int[W(r)]^{2}dr$
+\end_inset
+
+【性质17.3(h)】
+\end_layout
+
+\begin_layout Itemize
+其中
+\begin_inset Formula 
+\begin{align*}
+\gamma_{j} & =E[(\Delta y_{t})(\Delta y_{t-j})]\\
+\lambda & \equiv\sigma\cdot\psi(1)=\frac{\sigma}{1-\xi_{1}-\xi_{2}-...-\xi_{p-1}}\\
+\sigma^{2} & =E(\varepsilon_{t}^{2})
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+于是
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{Y}_{T}^{-1}[\sum\boldsymbol{x}_{t}\boldsymbol{x}_{t}']\boldsymbol{Y}_{T}^{-1} & \overset{L}{\rightarrow}\left[\begin{array}{cccccc}
+\gamma_{0} & \gamma_{1} & \cdots & \gamma_{p-2} & 0 & 0\\
+\gamma_{1} & \gamma_{0} & \cdots & \gamma_{p-3} & 0 & 0\\
+\vdots & \vdots & \cdots & \vdots & \vdots & \vdots\\
+\gamma_{p-2} & \gamma_{p-3} & \cdots & \gamma_{0} & 0 & 0\\
+0 & 0 & \cdots & 0 & 1 & \lambda\cdot\int W(r)dr\\
+0 & 0 & \cdots & 0 & \lambda\cdot\int W(r)dr & \lambda^{2}\cdot\int[W(r)]^{2}dr
+\end{array}\right]\\
+ & \equiv\left[\begin{array}{cc}
+\boldsymbol{V} & \boldsymbol{0}\\
+\boldsymbol{0} & \boldsymbol{Q}
+\end{array}\right]\tag{17.7.18}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+接下来考察(17.7.16)的第二项
+\begin_inset Formula 
+\[
+\boldsymbol{Y}_{T}^{-1}[\sum\boldsymbol{x}_{t}\varepsilon_{t}]=\left[\begin{array}{c}
+T^{-1/2}\sum u_{t-1}\varepsilon_{t}\\
+T^{-1/2}\sum u_{t-2}\varepsilon_{t}\\
+\vdots\\
+T^{-1/2}\sum u_{t-p+1}\varepsilon_{t}\\
+T^{-1/2}\sum\varepsilon_{t}\\
+T^{-1}\sum y_{t-1}\varepsilon_{t}
+\end{array}\right]
+\]
+
+\end_inset
+
+该向量前p-1个元素是
+\begin_inset Formula $\sqrt{T}$
+\end_inset
+
+乘以一个方差-协方差矩阵为
+\begin_inset Formula 
+\[
+E\left[\begin{array}{c}
+u_{t-1}\varepsilon_{t}\\
+u_{t-2}\varepsilon_{t}\\
+\vdots\\
+u_{t-p+1}\varepsilon_{t}
+\end{array}\right]\left[\begin{array}{cccc}
+u_{t-1}\varepsilon_{t} & u_{t-2}\varepsilon_{t} & \cdots & u_{t-p+1}\varepsilon_{t}\end{array}\right]=\sigma^{2}\left[\begin{array}{cccc}
+\gamma_{0} & \gamma_{1} & \cdots & \gamma_{p-2}\\
+\gamma_{1} & \gamma_{0} & \cdots & \gamma_{p-3}\\
+\vdots & \vdots & \cdots & \vdots\\
+\gamma_{p-2} & \gamma_{p-3} & \cdots & \gamma_{0}
+\end{array}\right]=\sigma^{2}\boldsymbol{V}\tag{17.7.22}
+\]
+
+\end_inset
+
+的鞅差序列的样本均值，因此由中心极限定理
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+T^{-1/2}\sum u_{t-1}\varepsilon_{t}\\
+T^{-1/2}\sum u_{t-2}\varepsilon_{t}\\
+\vdots\\
+T^{-1/2}\sum u_{t-p+1}\varepsilon_{t}
+\end{array}\right]\overset{L}{\rightarrow}\boldsymbol{h}_{1}\sim N(0,\sigma^{2}\boldsymbol{V})\tag{17.7.23}
+\]
+
+\end_inset
+
+又根据性质17.3的(a)和(d)可以得到
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+T^{-1/2}\sum\varepsilon_{t}\\
+T^{-1}\sum y_{t-1}\varepsilon_{t}
+\end{array}\right]\overset{L}{\rightarrow}\boldsymbol{h}_{2}\sim\left[\begin{array}{c}
+\sigma\cdot W(1)\\
+\frac{1}{2}\sigma\lambda\{[W(1)]^{2}-1\}
+\end{array}\right]\tag{17.7.24}
+\]
+
+\end_inset
+
+因此
+\begin_inset Formula 
+\[
+\boldsymbol{Y}_{T}(\boldsymbol{b}_{T}-\boldsymbol{\beta})\overset{L}{\rightarrow}\left[\begin{array}{cc}
+\boldsymbol{V} & \boldsymbol{0}\\
+\boldsymbol{0} & \boldsymbol{Q}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+\boldsymbol{h}_{1}\\
+\boldsymbol{h}_{2}
+\end{array}\right]=\left[\begin{array}{c}
+\boldsymbol{V}^{-1}\boldsymbol{h}_{1}\\
+\boldsymbol{Q}^{-1}\boldsymbol{h}_{2}
+\end{array}\right]\tag{17.7.25}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+\begin_inset Formula $\Delta y_{t-j}$
+\end_inset
+
+的系数
+\end_layout
+
+\begin_layout Standard
 
 \end_layout
 
