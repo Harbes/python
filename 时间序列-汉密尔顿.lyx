@@ -9530,7 +9530,11 @@ T^{-\frac{5}{2}}\sum_{t=1}^{T}ty_{t-1}==T^{-\frac{3}{2}}\sum_{t=1}^{T}(t/T)y_{t-
 \end_layout
 
 \begin_layout Itemize
-性质17.1：假定
+
+\series bold
+性质17.1
+\series default
+：假定
 \begin_inset Formula $\xi_{t}$
 \end_inset
 
@@ -9805,6 +9809,10 @@ T^{-3/2}\sum y_{t-1}\overset{L}{\rightarrow}\sigma\cdot\int_{0}^{1}W(r)dr\tag{17
 \end_inset
 
 ，同样的，(17.4.5)和(17.4.6)说明：
+\series bold
+性质17.2
+\series default
+
 \begin_inset Formula 
 \begin{align*}
 \sum y_{t-1}u_{t} & =O_{p}(T)\\
@@ -10744,6 +10752,358 @@ t_{t}=T(\hat{\rho}_{T}-1)/(T^{2}\cdot\hat{\sigma}_{\hat{\rho}_{T}}^{2})^{1/2}\ov
 
 \begin_layout Section
 存在一般序列相关的单位根过程的渐近结论
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+\bar under
+性质17.2
+\series default
+\bar default
+：令
+\begin_inset Formula 
+\[
+u_{t}=\psi(L)\varepsilon_{t}=\sum_{j=0}^{\infty}\psi_{j}\varepsilon_{t-j}\tag{17.5.1}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\begin{align*}
+ & E(\varepsilon_{t})=0\\
+ & E(\varepsilon_{t}\varepsilon_{\tau})=\begin{cases}
+\sigma^{2} & \text{，}t=\tau\\
+0 & \text{，}\text{其他}
+\end{cases}\\
+ & \sum_{j=0}^{\infty}{\color{red}j\cdot|\psi_{j}|}<\infty\tag{17.5.2}
+\end{align*}
+
+\end_inset
+
+那么
+\begin_inset Formula 
+\[
+u_{1}+u_{2}+...+u_{t}=\psi(1)\cdot(\varepsilon_{1}+\varepsilon_{2}+...+\varepsilon_{t})+\eta_{t}-\eta_{0}\tag{17.5.3}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\psi(1)=\sum_{j=0}^{\infty}\psi_{j},\eta_{t}=\sum_{j=0}^{\infty}\alpha_{j}\varepsilon_{t-j},\alpha_{j}=-(\psi_{j+1}+\psi_{j+2}+...),\text{且}\sum_{j=0}^{\infty}|\alpha_{j}|<\infty$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+注意，(17.5.2)的条件略强于绝对可加性，因此，也对应着平稳过程。
+\end_layout
+
+\begin_layout Itemize
+贝弗里奇-尼尔森(Beveridge-Nelson)分解：性质17.2说明，只要某个过程的一阶差分满足(17.5.1-2)，那么这个过程就可以写成一个
+\bar under
+随机游走
+\bar default
+
+\begin_inset Formula $\psi(1)\cdot(\varepsilon_{1}+\varepsilon_{2}+...+\varepsilon_{t})$
+\end_inset
+
+、
+\bar under
+初始条件
+\bar default
+
+\begin_inset Formula $y_{0}-\eta_{0}$
+\end_inset
+
+以及一个
+\bar under
+平稳过程
+\bar default
+
+\begin_inset Formula $\eta_{t}$
+\end_inset
+
+的和。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+平稳过程
+\begin_inset Formula $\eta_{t}$
+\end_inset
+
+意味着，若把(17.5.3)两端同除以
+\begin_inset Formula $\sqrt{t}$
+\end_inset
+
+时，当
+\begin_inset Formula $t\rightarrow\infty$
+\end_inset
+
+，对于
+\begin_inset Formula $1/\sqrt{t}\cdot(u_{1}+u_{2}+...+u_{t})$
+\end_inset
+
+的分布而言，只有第一项
+\begin_inset Formula $1/\sqrt{t}\cdot\psi(1)\cdot(\varepsilon_{1}+\varepsilon_{2}+...+\varepsilon_{t})$
+\end_inset
+
+的分布是重要的。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+一个应用：与前面类似的，定义
+\begin_inset Formula 
+\[
+X_{T}(r)\equiv\frac{1}{T}\sum_{t=1}^{[Tr]^{*}}u_{t}\tag{17.5.4}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $u_{t}$
+\end_inset
+
+满足性质17.2中的条件，
+\begin_inset Formula $\varepsilon_{t}$
+\end_inset
+
+是独立同分布的，且
+\begin_inset Formula $E(\varepsilon_{t}^{4})<\infty$
+\end_inset
+
+。于是，可以推导：连续时间过程
+\begin_inset Formula $\sqrt{T}\cdot X_{T}(r)$
+\end_inset
+
+收敛于
+\begin_inset Formula $\sigma\cdot\psi(1)$
+\end_inset
+
+乘以标准布朗运动，即
+\begin_inset Formula 
+\[
+\sqrt{T}\cdot X_{T}(\cdot)\overset{L}{\rightarrow}\sigma\cdot\psi(1)\cdot W(\cdot)\tag{17.5.5}
+\]
+
+\end_inset
+
+证明过程如下：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+首先，由性质17.2可得
+\begin_inset Formula 
+\begin{align*}
+\sqrt{T}\cdot X_{T}(r) & =\frac{1}{\sqrt{T}}\sum_{t=1}^{[Tr]^{*}}u_{t}\\
+ & =\psi(1)\frac{1}{\sqrt{T}}\sum_{t=1}^{[Tr]^{*}}\varepsilon_{t}+\frac{1}{\sqrt{T}}(\eta_{[Tr]^{*}}-\eta_{0})\\
+ & \equiv\psi(1)\frac{1}{\sqrt{T}}\sum_{t=1}^{[Tr]^{*}}\varepsilon_{t}+S_{T}(r)\tag{17.5.6}\\
+ & \overset{L}{\rightarrow}\psi(1)\cdot\sigma\cdot W(r)+0
+\end{align*}
+
+\end_inset
+
+得证
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+\bar under
+性质17.3
+\series default
+\bar default
+：令
+\begin_inset Formula $u_{t}=\psi(L)\varepsilon_{t}=\sum_{j=0}^{\infty}\psi_{j}\varepsilon_{t-j}$
+\end_inset
+
+，其中
+\begin_inset Formula $\sum_{j=0}^{\infty}{\color{red}j\cdot|\psi_{j}|}<\infty$
+\end_inset
+
+，且
+\begin_inset Formula $\{\varepsilon_{t}\}$
+\end_inset
+
+是一个均值为0、方差为
+\begin_inset Formula $\sigma^{2}$
+\end_inset
+
+、四阶矩有限的
+\begin_inset Formula $iid$
+\end_inset
+
+序列。定义：
+\begin_inset Formula 
+\begin{align*}
+\gamma_{j} & \equiv E(u_{t}u_{t-j})=\sigma^{2}\sum_{s=0}^{\infty}\psi_{s}\psi_{s+j}\text{，}j=0,1,2,...\tag{17.5.10}\\
+\lambda & \equiv\sigma\sum_{j=0}^{\infty}\psi_{j}=\sigma\cdot\psi(1)\\
+\xi_{t} & \equiv u_{1}+u_{2}+...+u_{t}\text{，}t=1,2,...,T\text{且}\xi_{0}=0\tag{17.5.11}
+\end{align*}
+
+\end_inset
+
+于是：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+(a) 
+\begin_inset Formula 
+\[
+\frac{1}{\sqrt{T}}\sum_{t=1}^{T}u_{t}\overset{L}{\rightarrow}\lambda\cdot W(1)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+(b)
+\begin_inset Formula 
+\[
+\frac{1}{\sqrt{T}}\sum_{t=1}^{T}u_{t-j}\varepsilon_{t}\overset{L}{\rightarrow}N(0,\sigma^{2}\gamma_{0})\text{，}j=1,2,...
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+(c)
+\begin_inset Formula 
+\[
+T^{-1}\sum_{t=1}^{T}u_{t}u_{t-j}\overset{p}{\rightarrow}\gamma_{j}\text{，}j=1,2,...
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+(d)
+\begin_inset Formula 
+\[
+T^{-1}\sum^{T}\varepsilon_{t-1}\varepsilon_{t}\overset{L}{\rightarrow}\frac{1}{2}\sigma\cdot\lambda\cdot\{[W(1)]^{2}-1\}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+(e)
+\begin_inset Formula 
+\[
+T^{-1}\sum_{t=1}^{T}\xi_{t-1}u_{t-j}\overset{L}{\rightarrow}\begin{cases}
+\frac{1}{2}\{\lambda^{2}\cdot[W(1)]^{2}-\gamma_{0}\} & \text{，}j=0\\
+\frac{1}{2}\{\lambda^{2}\cdot[W(1)]^{2}-\gamma_{0}\}+\gamma_{0}+\gamma_{1}+...+\gamma_{j-1} & \text{，}j=1,2,...
+\end{cases}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+(f)
+\begin_inset Formula 
+\[
+T^{-3/2}\sum_{t=1}^{T}\xi_{t-1}\overset{L}{\rightarrow}\lambda\cdot\int_{0}^{1}W(r)dr
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+(g)
+\begin_inset Formula 
+\[
+T^{-3/2}\sum_{t=1}^{T}tu_{t-j}\overset{L}{\rightarrow}\lambda\cdot\{W(1)-\int_{0}^{1}W(r)dr\}\text{，}j=1,2,3,...
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+(h)
+\begin_inset Formula 
+\[
+T^{-2}\sum_{t=1}^{T}\xi_{t-1}^{2}\overset{L}{\rightarrow}\lambda^{2}\cdot\int_{0}^{1}[W(r)]^{2}dr
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+(i)
+\begin_inset Formula 
+\[
+T^{-5/2}\sum_{t=1}^{T}t\xi_{t-1}\overset{L}{\rightarrow}\lambda\cdot\int_{0}^{1}rW(r)dr
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+(j)
+\begin_inset Formula 
+\[
+T^{-3}\sum_{t=1}^{T}t\xi_{t-1}^{2}\overset{L}{\rightarrow}\lambda^{2}\cdot\int_{0}^{1}r[W(r)]^{2}dr
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+(k)
+\begin_inset Formula 
+\[
+T^{-(v+1)}\sum_{t=1}^{T}t^{v}\rightarrow\frac{1}{v+1}\text{，}v=0,1,2,...
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+这些结果可以帮助用于两种方法构造序列相关的观察的单位根检验。其一是Phillips-Perron检验，17.6节详述；另一种是Dickey-Fuller检验，17.
+7节详述。
+\end_layout
+
+\begin_layout Section
+单位根的Phillips-Perron(菲利普斯-佩龙)检验
+\end_layout
+
+\begin_layout Subsection
+扰动项序列相关假设下情况2的渐近分布
+\end_layout
+
+\begin_layout Standard
+
 \end_layout
 
 \end_body
