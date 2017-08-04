@@ -13098,8 +13098,8 @@ a_{h1} & a_{h2} & a_{h3} & \cdots & a_{hn}
 Stock-Watson共同趋势表示
 \end_layout
 
-\begin_layout Standard
-
+\begin_layout Itemize
+对于任意协整系统，另一个有用表示由Stock和Watson(1988)提出。
 \end_layout
 
 \end_body
