@@ -13290,6 +13290,280 @@ Stock-Watson共同趋势表示
 \end_inset
 
 将(19.1.35、40)代入(19.1.39)得
+\begin_inset Formula 
+\[
+\Delta\boldsymbol{y}_{t}=\boldsymbol{\xi}_{1}\Delta\boldsymbol{y}_{t-1}+\boldsymbol{\xi}_{2}\Delta\boldsymbol{y}_{t-2}+...+\boldsymbol{\xi}_{p-1}\Delta\boldsymbol{y}_{t-p+1}+\boldsymbol{\alpha}-\boldsymbol{BA}'\boldsymbol{y}_{t-1}+\boldsymbol{\varepsilon}_{t}\tag{19.1.41}
+\]
+
+\end_inset
+
+定义
+\begin_inset Formula $\boldsymbol{z}_{t}\equiv\boldsymbol{A}'\boldsymbol{y}_{t}$
+\end_inset
+
+(
+\begin_inset Formula $\boldsymbol{z}_{t}$
+\end_inset
+
+是一个平稳
+\begin_inset Formula $h\times1$
+\end_inset
+
+向量)，于是(19.1.41)可以写成
+\begin_inset Formula 
+\[
+\Delta\boldsymbol{y}_{t}=\boldsymbol{\xi}_{1}\Delta\boldsymbol{y}_{t-1}+\boldsymbol{\xi}_{2}\Delta\boldsymbol{y}_{t-2}+...+\boldsymbol{\xi}_{p-1}\Delta\boldsymbol{y}_{t-p+1}+\boldsymbol{\alpha}-\boldsymbol{B}\boldsymbol{z}_{t}+\boldsymbol{\varepsilon}_{t}\tag{19.1.42}
+\]
+
+\end_inset
+
+这就是协整系统的误差修正表示。例如第一个方程形如下式
+\begin_inset Formula 
+\begin{align*}
+\Delta y_{1t} & =\xi_{11}^{(1)}\Delta y_{1,t-1}+\xi_{12}^{(1)}\Delta y_{2,t-1}+...+\xi_{1n}^{(1)}\Delta y_{n,t-1}\\
+ & +\xi_{11}^{(2)}\Delta y_{1,t-2}+\xi_{12}^{(2)}\Delta y_{2,t-2}+...+\xi_{1n}^{(2)}\Delta y_{n,t-2}\\
+ & +...\\
+ & +\xi_{11}^{(p-1)}\Delta y_{1,t-p+1}+\xi_{12}^{(p-1)}\Delta y_{2,t-p+1}+...+\xi_{1n}^{(p-1)}\Delta y_{n,t-p+1}\\
+ & +\alpha_{1}-b_{11}z_{1,t-1}-b_{12}z_{2,t-1}-...-b_{1n}z_{h,t-1}+\varepsilon_{1t}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula $\xi_{ij}^{(s)}$
+\end_inset
+
+表示矩阵
+\begin_inset Formula $\boldsymbol{\xi}_{s}$
+\end_inset
+
+的第i行第j列的元素，
+\begin_inset Formula $b_{ij}$
+\end_inset
+
+表示矩阵
+\begin_inset Formula $\boldsymbol{B}$
+\end_inset
+
+的第i行第j列的元素，
+\begin_inset Formula $z_{i,t}$
+\end_inset
+
+表示
+\begin_inset Formula $\boldsymbol{z}_{t}$
+\end_inset
+
+的第i个元素。因此，误差修正形式，每一个变量的变化都对常数项、该变量自身变化的
+\begin_inset Formula $(p-1)$
+\end_inset
+
+阶滞后、其他每个变量变化的
+\begin_inset Formula $(p-1)$
+\end_inset
+
+阶滞后以及
+\begin_inset Formula $\boldsymbol{z}_{t-1}$
+\end_inset
+
+中h个元素的每一个元素的水平作回归。
+\end_layout
+
+\begin_layout Itemize
+一个例子
+\end_layout
+
+\begin_layout Subsection
+关于VAR表示中常数项的限制
+\end_layout
+
+\begin_layout Itemize
+注意到误差修正表示式(19.1.42)中的变量都是平稳的，对方程两边同时取期望，得
+\begin_inset Formula 
+\[
+(\boldsymbol{I}_{n}-\boldsymbol{\xi}_{1}-\boldsymbol{\xi}_{2}-...-\boldsymbol{\xi}_{p-1})\boldsymbol{\delta}=\boldsymbol{\alpha}-\boldsymbol{B}\boldsymbol{\mu}_{1}^{*}\tag{19.1.43}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\boldsymbol{\delta}=E(\Delta\boldsymbol{y}_{t}),\boldsymbol{\mu}_{1}^{*}=E(\boldsymbol{z}_{t})$
+\end_inset
+
+。假定
+\begin_inset Formula $|\boldsymbol{I}_{n}-\boldsymbol{\xi}_{1}z-\boldsymbol{\xi}_{2}z^{2}-...-\boldsymbol{\xi}_{p-1}z^{p-1}|=0$
+\end_inset
+
+的根都在单位圆之外，矩阵
+\begin_inset Formula $(\boldsymbol{I}_{n}-\boldsymbol{\xi}_{1}-\boldsymbol{\xi}_{2}-...-\boldsymbol{\xi}_{p-1})$
+\end_inset
+
+是非奇异的。因此，为了保证系统中任意变量都无漂移
+\begin_inset Formula $(\boldsymbol{\delta}=\boldsymbol{0})$
+\end_inset
+
+，必须加上限制
+\begin_inset Formula $\boldsymbol{\alpha}=\boldsymbol{B}\boldsymbol{\mu}_{1}^{*}$
+\end_inset
+
+。若对
+\begin_inset Formula $\boldsymbol{\alpha}$
+\end_inset
+
+不加任何限制，则系统(19.1.42)表明存在g个不同的时间趋势可以解释
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+中的趋势。
+\end_layout
+
+\begin_layout Subsection
+格兰杰(Granger)表示定理
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+\bar under
+性质19.1
+\series default
+\bar default
+：(Granger表示定理)考虑一个
+\begin_inset Formula $(n\times1)$
+\end_inset
+
+向量
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+，其中
+\begin_inset Formula $\Delta\boldsymbol{y}_{t}$
+\end_inset
+
+满足(19.1.29)，
+\begin_inset Formula $\boldsymbol{\varepsilon}_{t}$
+\end_inset
+
+是白噪声且有正定方差-协方差矩阵，
+\begin_inset Formula $\{s\cdot\Psi_{s}\}_{s=0}^{\infty}$
+\end_inset
+
+是绝对可加的，假定
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+的元素之间恰好存在h个协整关系。于是存在一个
+\begin_inset Formula $(h\times n)$
+\end_inset
+
+矩阵
+\begin_inset Formula $\boldsymbol{A}'$
+\end_inset
+
+，它的各行线性无关，使得定义为
+\begin_inset Formula $\boldsymbol{z}_{t}\equiv\boldsymbol{A}'\boldsymbol{y}_{t}$
+\end_inset
+
+的
+\begin_inset Formula $(h\times1)$
+\end_inset
+
+向量
+\begin_inset Formula $\boldsymbol{z}_{t}$
+\end_inset
+
+是平稳的。矩阵
+\begin_inset Formula $\boldsymbol{A}'$
+\end_inset
+
+具有性质
+\begin_inset Formula $\boldsymbol{A}'\boldsymbol{\Psi}(1)=\boldsymbol{0}$
+\end_inset
+
+。此外，若过程可表示成(19.1.26)的水平p阶VAR，则存在一个
+\begin_inset Formula $(n\times h)$
+\end_inset
+
+矩阵
+\begin_inset Formula $\boldsymbol{B}$
+\end_inset
+
+使得
+\begin_inset Formula $\boldsymbol{\Psi}(1)=\boldsymbol{B}\boldsymbol{A}'$
+\end_inset
+
+，且更进一步，还存在
+\begin_inset Formula $(n\times n)$
+\end_inset
+
+矩阵
+\begin_inset Formula $\boldsymbol{\xi}_{1},\boldsymbol{\xi}_{2},...,\boldsymbol{\xi}_{p-1}$
+\end_inset
+
+，使得
+\begin_inset Formula $\Delta\boldsymbol{y}_{t}=\boldsymbol{\xi}_{1}\Delta\boldsymbol{y}_{t-1}+\boldsymbol{\xi}_{2}\Delta\boldsymbol{y}_{t-2}+...+\boldsymbol{\xi}_{p-1}\Delta\boldsymbol{y}_{t-p+1}+\boldsymbol{\alpha}-\boldsymbol{B}\boldsymbol{z}_{t}+\boldsymbol{\varepsilon}_{t}$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Section
+零假设为没有协整关系的检验
+\end_layout
+
+\begin_layout Subsection
+协整向量已知时协整的检验
+\end_layout
+
+\begin_layout Itemize
+实际中，有些理论推断某些变量是协整的，这些理论是基于已知
+\begin_inset Formula $\boldsymbol{a}$
+\end_inset
+
+的特定值，例如前面提到的购买力平价例子中
+\begin_inset Formula $\boldsymbol{a}=(1,-1,-1)'$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+首先检验
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+中的每个元素各自是否为
+\begin_inset Formula $I(1)$
+\end_inset
+
+【第17章内容】；假定每个序列中单位根的零检验是被接受的，则接下来构造标量
+\begin_inset Formula $z_{t}=\boldsymbol{a}'\boldsymbol{y}_{t}$
+\end_inset
+
+，此时的零假设为
+\begin_inset Formula $z_{t}$
+\end_inset
+
+是
+\begin_inset Formula $I(1)$
+\end_inset
+
+【等价于说
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+是非协整的】
+\end_layout
+
+\begin_layout Itemize
+一个例子
+\end_layout
+
+\begin_layout Subsection
+估计协整向量
+\end_layout
+
+\begin_layout Standard
+
 \end_layout
 
 \end_body
