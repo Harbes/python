@@ -13099,7 +13099,197 @@ Stock-Watson共同趋势表示
 \end_layout
 
 \begin_layout Itemize
-对于任意协整系统，另一个有用表示由Stock和Watson(1988)提出。
+对于任意协整系统，另一个有用表示由Stock和Watson(1988)提出。假定一个
+\begin_inset Formula $(n\times1)$
+\end_inset
+
+向量
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+恰好由h个协整关系所表征，于是可以对
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+的元素排列，使得形如(19.1.20-21)的三角形表示存在，
+\begin_inset Formula $(\boldsymbol{z}_{t}^{*}',\boldsymbol{u}_{2t}')'$
+\end_inset
+
+是一个零均值的平稳
+\begin_inset Formula $(n\times1)$
+\end_inset
+
+向量。假定
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+\boldsymbol{z}_{t}^{*}\\
+\boldsymbol{u}_{2t}
+\end{array}\right]=\sum_{s=0}^{\infty}\left[\begin{array}{c}
+\boldsymbol{H}_{s}\boldsymbol{\varepsilon}_{t-s}\\
+\boldsymbol{J}_{s}\boldsymbol{\varepsilon}_{t-s}
+\end{array}\right]
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\boldsymbol{\varepsilon}_{t}$
+\end_inset
+
+是一个
+\begin_inset Formula $(n\times1)$
+\end_inset
+
+白噪声过程，
+\begin_inset Formula $\{s\cdot\boldsymbol{H}_{s}\}_{s=0}^{\infty}$
+\end_inset
+
+和
+\begin_inset Formula $\{s\cdot\boldsymbol{J}_{s}\}_{s=0}^{\infty}$
+\end_inset
+
+分别是绝对可加的
+\begin_inset Formula $(h\times n)$
+\end_inset
+
+和
+\begin_inset Formula $(g\times n)$
+\end_inset
+
+矩阵序列，利用(18.1.6)将(19.1.21)变形：
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{y}_{2t} & =\boldsymbol{y}_{2,0}+\boldsymbol{\delta}_{2}t+\sum_{s=1}^{t}\boldsymbol{u}_{2t}\\
+ & =\boldsymbol{y}_{2,0}+\boldsymbol{\delta}_{2}t+J(1)\cdot(\boldsymbol{\varepsilon}_{1}+\boldsymbol{\varepsilon}_{2}+...+\boldsymbol{\varepsilon}_{t})+\boldsymbol{\eta}_{2,t}-\boldsymbol{\eta}_{2,0}\tag{19.1.22}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula $\boldsymbol{J}(1)\equiv(\boldsymbol{J}_{0}+\boldsymbol{J}_{1}+\boldsymbol{J}_{2}+...)$
+\end_inset
+
+，
+\begin_inset Formula $\boldsymbol{\eta}_{2,t}\equiv\sum_{s=0}^{\infty}\boldsymbol{\alpha}_{2s}\boldsymbol{\varepsilon}_{t-s}$
+\end_inset
+
+，
+\begin_inset Formula $\boldsymbol{\alpha}_{2s}\equiv-(\boldsymbol{J}_{s+1}+\boldsymbol{J}_{s+2}+...)$
+\end_inset
+
+。由于
+\begin_inset Formula $\boldsymbol{\varepsilon}_{t}$
+\end_inset
+
+是一个白噪声，于是
+\begin_inset Formula $\boldsymbol{J}(1)\boldsymbol{\varepsilon}_{t}$
+\end_inset
+
+也是白噪声，于是这也意味着
+\begin_inset Formula 
+\[
+\xi_{2t}\equiv\boldsymbol{J}(1)\cdot(\boldsymbol{\varepsilon}_{1}+\boldsymbol{\varepsilon}_{2}+...+\boldsymbol{\varepsilon}_{t})\tag{19.1.23}
+\]
+
+\end_inset
+
+中的每个元素都可被描述为随机游走。将上式代入(19.1.22)得
+\begin_inset Formula 
+\[
+\boldsymbol{y}_{2t}=\tilde{\boldsymbol{\mu}}_{2}+\boldsymbol{\delta}_{2}t+\boldsymbol{\xi}_{2t}+\boldsymbol{\eta}_{2t}\tag{19.1.24}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\tilde{\boldsymbol{\mu}}_{2}\equiv(\boldsymbol{y}_{2,0}-\boldsymbol{\eta}_{2,0})$
+\end_inset
+
+。将上式代入(19.1.22)有
+\begin_inset Formula 
+\[
+\boldsymbol{y}_{1t}=\tilde{\boldsymbol{\mu}}_{1}+\boldsymbol{\Gamma}'(\boldsymbol{\delta}_{2}t+\boldsymbol{\xi}_{2t})+\boldsymbol{\tilde{\eta}}_{1t}\tag{19.1.25}
+\]
+
+\end_inset
+
+于是(19.1.24-25)给出了Stock和Watson(1988)的共同趋势表示。这些方程证明了向量
+\begin_inset Formula $y_{t}$
+\end_inset
+
+可描述为一个平稳成分
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+\tilde{\boldsymbol{\mu}}_{1}\\
+\tilde{\boldsymbol{\mu}}_{2}
+\end{array}\right]+\left[\begin{array}{c}
+\boldsymbol{\tilde{\eta}}_{1t}\\
+\boldsymbol{\tilde{\eta}}_{2t}
+\end{array}\right]
+\]
+
+\end_inset
+
+加上g个共同确定性趋势的线性组合
+\begin_inset Formula $\boldsymbol{\delta}_{2}t$
+\end_inset
+
+，以及g个共同随机游走变量的线性组合
+\begin_inset Formula $\boldsymbol{\xi}_{2t}$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Subsection
+向量自回归表示的协整含义
+\end_layout
+
+\begin_layout Subsection
+误差修正表示
+\end_layout
+
+\begin_layout Itemize
+协整系统的最后一个表示可以通过(18.2.5)得到。首先，一个VAR可以等价地写成
+\begin_inset Formula 
+\[
+\boldsymbol{y}_{t}=\boldsymbol{\xi}_{1}\Delta\boldsymbol{y}_{t-1}+\boldsymbol{\xi}_{2}\Delta\boldsymbol{y}_{t-2}+...+\boldsymbol{\xi}_{p-1}\Delta\boldsymbol{y}_{t-p+1}+\boldsymbol{\alpha}+\boldsymbol{\rho}\boldsymbol{y}_{t-1}+\boldsymbol{\varepsilon}_{t}\tag{19.1.36}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{\rho} & \equiv\boldsymbol{\Phi}_{1}+\boldsymbol{\Phi}_{2}+...+\boldsymbol{\Phi}_{p}\tag{19.1.37}\\
+\boldsymbol{\xi}_{s} & \equiv-[\boldsymbol{\Phi}_{s+1}+\boldsymbol{\Phi}_{s+2}+...+\boldsymbol{\Phi}_{p}]\text{，}s=1,2,...,p-1\tag{19.1.38}
+\end{align*}
+
+\end_inset
+
+(19.1.36)两端同时减去
+\begin_inset Formula $\boldsymbol{y}_{t-1}$
+\end_inset
+
+得
+\begin_inset Formula 
+\[
+\Delta\boldsymbol{y}_{t}=\boldsymbol{\xi}_{1}\Delta\boldsymbol{y}_{t-1}+\boldsymbol{\xi}_{2}\Delta\boldsymbol{y}_{t-2}+...+\boldsymbol{\xi}_{p-1}\Delta\boldsymbol{y}_{t-p+1}+\boldsymbol{\alpha}+\boldsymbol{\xi}_{0}\boldsymbol{y}_{t-1}+\boldsymbol{\varepsilon}_{t}\tag{19.1.39}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\[
+\boldsymbol{\xi}_{0}\equiv\boldsymbol{\rho}-\boldsymbol{I}_{n}=-[\boldsymbol{I}_{n}-(\boldsymbol{\Phi}_{1}+\boldsymbol{\Phi}_{2}+...+\boldsymbol{\Phi}_{p})]\tag{19.1.40}
+\]
+
+\end_inset
+
+将(19.1.35、40)代入(19.1.39)得
 \end_layout
 
 \end_body
