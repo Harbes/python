@@ -12611,7 +12611,364 @@ y_{t}=\xi_{1}\Delta y_{t-1}+\xi_{2}\Delta y_{t-2}+...+\xi_{\bar{p}-m}\Delta y_{t
 协整
 \end_layout
 
-\begin_layout Standard
+\begin_layout Section
+简介
+\end_layout
+
+\begin_layout Subsection
+协整的描述
+\end_layout
+
+\begin_layout Itemize
+对于一个
+\begin_inset Formula $(n\times1)$
+\end_inset
+
+时间序列向量
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+，如果任意单个序列都是
+\begin_inset Formula $I(1)$
+\end_inset
+
+，而序列的某个线性组合
+\begin_inset Formula $\boldsymbol{a}'\boldsymbol{y}_{t}$
+\end_inset
+
+却是平稳的或者说是
+\begin_inset Formula $I(0)$
+\end_inset
+
+的，其中
+\begin_inset Formula $\boldsymbol{a}$
+\end_inset
+
+为某个非零的
+\begin_inset Formula $(n\times1)$
+\end_inset
+
+向量，此时我们称
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+是协整的。
+\end_layout
+
+\begin_layout Itemize
+一个二元系统的例子
+\end_layout
+
+\begin_layout Itemize
+协整意味着，尽管有很多因素可以引起
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+的单个元素的持久变化，但是存在某个长期均衡关系将各个部分紧密联系在一起，而这个关系就由性组合
+\begin_inset Formula $\boldsymbol{a}'\boldsymbol{y}_{t}$
+\end_inset
+
+表示。例如Davidson、Hendry、Srba和Yeo(1978)的消费支出模型，他们的结果表明，虽然消费和支出都显示出一个单位根，但是长期而言，消费占收入
+的比例大致为一个常数，所以消费的对数和收入的对数之差显示为一个平稳的过程。另一个例子就是购买力平价理论
+\end_layout
+
+\begin_layout Subsection
+(19.1.1)和(19.1.2)的讨论
+\end_layout
+
+\begin_layout Itemize
+在一个协整系统中，解释
+\begin_inset Formula $\Delta\boldsymbol{y}_{t}$
+\end_inset
+
+的向量自回归
+\bar under
+应当同时包含滞后水平和滞后差分
+\bar default
+。
+\end_layout
+
+\begin_layout Subsection
+协整向量的一般表征
+\end_layout
+
+\begin_layout Itemize
+前文提到的向量
+\begin_inset Formula $\boldsymbol{a}$
+\end_inset
+
+就是一个协整向量。
+\end_layout
+
+\begin_layout Itemize
+协整向量
+\begin_inset Formula $\boldsymbol{a}$
+\end_inset
+
+并不是唯一的。例如对于任意的非零数b，
+\begin_inset Formula $b\boldsymbol{a}$
+\end_inset
+
+也是一个协整向量。事实上，也许存在
+\begin_inset Formula $h<n$
+\end_inset
+
+个线性无关的
+\begin_inset Formula $(n\times1)$
+\end_inset
+
+向量组
+\begin_inset Formula $(\boldsymbol{a}_{1},\boldsymbol{a}_{2},...,\boldsymbol{a}_{h})$
+\end_inset
+
+，使得
+\begin_inset Formula $\boldsymbol{A}'\boldsymbol{y}_{t}$
+\end_inset
+
+是平稳的
+\begin_inset Formula $(h\times1)$
+\end_inset
+
+向量，其中
+\begin_inset Formula 
+\[
+\underset{(h\times n)}{\boldsymbol{A}'}\equiv\left[\begin{array}{c}
+\boldsymbol{a}_{1}'\\
+\boldsymbol{a}_{2}'\\
+\vdots\\
+\boldsymbol{a}_{h}'
+\end{array}\right]\tag{19.1.10}
+\]
+
+\end_inset
+
+但是，请注意矩阵
+\begin_inset Formula $\boldsymbol{A}'$
+\end_inset
+
+也不是唯一的，因为对于任意非零
+\begin_inset Formula $(1\times h)$
+\end_inset
+
+向量
+\begin_inset Formula $\boldsymbol{b}'$
+\end_inset
+
+，
+\bar under
+标量
+\bar default
+
+\begin_inset Formula $\boldsymbol{b}'\boldsymbol{A}'\boldsymbol{y}_{t}$
+\end_inset
+
+也是平稳的，即向量组
+\begin_inset Formula $(\boldsymbol{a}_{1},\boldsymbol{a}_{2},...,\boldsymbol{a}_{h})$
+\end_inset
+
+的某个非零线性组合也可以得到一个平稳过程。假定存在一个各行线性无关的
+\begin_inset Formula $(h\times n)$
+\end_inset
+
+矩阵
+\begin_inset Formula $\boldsymbol{A}'$
+\end_inset
+
+，使得
+\begin_inset Formula $\boldsymbol{A}'\boldsymbol{y}_{t}$
+\end_inset
+
+是一个平稳的
+\begin_inset Formula $(h\times1)$
+\end_inset
+
+向量，于是
+\begin_inset Formula $(\boldsymbol{a}_{1},\boldsymbol{a}_{2},...,\boldsymbol{a}_{h})$
+\end_inset
+
+就是协整向量空间的基。
+\end_layout
+
+\begin_layout Subsection
+向量MA表示的协整含义
+\end_layout
+
+\begin_layout Itemize
+假定
+\begin_inset Formula $\Delta\boldsymbol{y}_{t}$
+\end_inset
+
+是平稳的，令
+\begin_inset Formula $\boldsymbol{\delta}\equiv E(\Delta\boldsymbol{y}_{t})$
+\end_inset
+
+并定义
+\begin_inset Formula 
+\[
+\boldsymbol{u}_{t}\equiv\Delta\boldsymbol{y}_{t}-\boldsymbol{\delta}\tag{19.1.11}
+\]
+
+\end_inset
+
+假定
+\begin_inset Formula $\boldsymbol{u}_{t}$
+\end_inset
+
+有一个
+\bar under
+沃尔德表示
+\bar default
+：
+\begin_inset Formula 
+\[
+\boldsymbol{u}_{t}=\boldsymbol{\varepsilon}_{t}+\boldsymbol{\Psi}_{1}\boldsymbol{\varepsilon}_{t-1}+\boldsymbol{\Psi}_{2}\boldsymbol{\varepsilon}_{t-2}+...=\boldsymbol{\Psi}(L)\boldsymbol{\varepsilon}_{t}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\begin{align*}
+E(\boldsymbol{\varepsilon}_{t}) & =\boldsymbol{0}\\
+E(\boldsymbol{\varepsilon}_{t}\boldsymbol{\varepsilon}_{t}') & =\begin{cases}
+\boldsymbol{\Omega} & \text{，}t=\tau\\
+\boldsymbol{0} & \text{，}\text{其他}
+\end{cases}
+\end{align*}
+
+\end_inset
+
+若
+\begin_inset Formula $\boldsymbol{A}'\boldsymbol{y}_{t}$
+\end_inset
+
+平稳，则有
+\begin_inset Formula 
+\[
+\boldsymbol{A}'\boldsymbol{\Psi}(1)=\boldsymbol{0}\tag{19.1.12}
+\]
+
+\end_inset
+
+理由：只要
+\begin_inset Formula $\{s\cdot\boldsymbol{\Psi}_{s}\}_{s=0}^{\infty}$
+\end_inset
+
+是绝对可加的，则差分方程(19.1.11)表明
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{y}_{t} & =\boldsymbol{y}_{0}+\boldsymbol{\delta}t+\boldsymbol{u}_{1}+\boldsymbol{u}_{2}+...+\boldsymbol{u}_{t}\\
+ & =\boldsymbol{y}_{0}+\boldsymbol{\delta}t+\boldsymbol{\Psi}(1)\cdot(\boldsymbol{\varepsilon}_{1}+\boldsymbol{\varepsilon}_{2}+...+\boldsymbol{\varepsilon}_{t})+\boldsymbol{\eta}_{t}-\boldsymbol{\eta}_{0}\tag{19.1.13}
+\end{align*}
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\[
+\boldsymbol{A}'\boldsymbol{y}_{t}=\boldsymbol{A}'(\boldsymbol{y}_{0}-\boldsymbol{\eta}_{0})+\boldsymbol{A}'\boldsymbol{\delta}t+\boldsymbol{A}'\boldsymbol{\Psi}(1)\cdot(\boldsymbol{\varepsilon}_{1}+\boldsymbol{\varepsilon}_{2}+...+\boldsymbol{\varepsilon}_{t})+\boldsymbol{A}'\boldsymbol{\eta}_{t}\tag{19.1.14}
+\]
+
+\end_inset
+
+如果
+\begin_inset Formula $E(\boldsymbol{\varepsilon}_{t}\boldsymbol{\varepsilon}_{t}')$
+\end_inset
+
+是非奇异的，则对于任何非零
+\begin_inset Formula $(n\times1)$
+\end_inset
+
+向量
+\begin_inset Formula $\boldsymbol{c}'$
+\end_inset
+
+，
+\begin_inset Formula $\boldsymbol{c}'(\boldsymbol{\varepsilon}_{1}+\boldsymbol{\varepsilon}_{2}+...+\boldsymbol{\varepsilon}_{t})$
+\end_inset
+
+是
+\begin_inset Formula $I(1)$
+\end_inset
+
+的。然而，上式左边要求是平稳的，这仅当
+\begin_inset Formula $\boldsymbol{A}'\boldsymbol{\Psi}(1)=\boldsymbol{0}$
+\end_inset
+
+时才成立，因此(19.1.12)是协整的必要条件，得证。但是，(19.1.12)并不足以保证
+\begin_inset Formula $\boldsymbol{A}'\boldsymbol{y}_{t}$
+\end_inset
+
+是平稳的，由(19.1.14)，平稳性进一步要求
+\begin_inset Formula 
+\[
+\boldsymbol{A}'\boldsymbol{\delta}=\boldsymbol{0}\tag{19.1.15}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+注意，(19.1.12)表明
+\begin_inset Formula $\boldsymbol{\Psi}(1)$
+\end_inset
+
+的各行的某个线性组合，如
+\begin_inset Formula $\boldsymbol{a}_{1}'\boldsymbol{\Psi}(1)$
+\end_inset
+
+为0，也就意味着
+\begin_inset Formula $|\boldsymbol{\Psi}(1)|=0$
+\end_inset
+
+，于是矩阵算子
+\begin_inset Formula $\boldsymbol{\Psi}(L)$
+\end_inset
+
+是不可逆的，因此，一个协整系统不能由差分后数据
+\begin_inset Formula $\Delta\boldsymbol{y}_{t}$
+\end_inset
+
+的有限阶向量自回归来表示。
+\end_layout
+
+\begin_layout Subsection
+Phillips的三角表示
+\end_layout
+
+\begin_layout Itemize
+协整系统的另一个简便表示由Phillips(1991)提出。假设
+\begin_inset Formula $(h\times n)$
+\end_inset
+
+矩阵
+\begin_inset Formula $\boldsymbol{A}'$
+\end_inset
+
+的各行构成协整向量空间的基。将
+\begin_inset Formula $\boldsymbol{A}'$
+\end_inset
+
+的第(1,1)个元素标准化为1，于是
+\begin_inset Formula 
+\[
+\boldsymbol{A}'=\left[\begin{array}{c}
+\boldsymbol{a}_{1}'\\
+\boldsymbol{a}_{2}'\\
+\vdots\\
+\boldsymbol{a}_{h}'
+\end{array}\right]=\left[\begin{array}{ccccc}
+1 & a_{12} & a_{13} & \cdots & a_{1n}\\
+a_{21} & a_{22} & a_{23} & \cdots & a_{2n}\\
+\vdots & \vdots & \vdots & \cdots & \vdots\\
+a_{h1} & a_{h2} & a_{h3} & \cdots & a_{hn}
+\end{array}\right]
+\]
+
+\end_inset
+
 
 \end_layout
 
