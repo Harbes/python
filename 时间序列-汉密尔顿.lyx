@@ -13112,7 +13112,7 @@ Stock-Watson共同趋势表示
 \end_inset
 
 的元素排列，使得形如(19.1.20-21)的三角形表示存在，
-\begin_inset Formula $(\boldsymbol{z}_{t}^{*}',\boldsymbol{u}_{2t}')'$
+\begin_inset Formula $(\boldsymbol{z}_{t}^{*'},\boldsymbol{u}_{2t}')'$
 \end_inset
 
 是一个零均值的平稳
@@ -13562,8 +13562,517 @@ Stock-Watson共同趋势表示
 估计协整向量
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
+如果动态系统的理论模型没有设定协整向量
+\begin_inset Formula $\boldsymbol{a}$
+\end_inset
 
+一个特定值，则检验协整的一种方法是先对
+\begin_inset Formula $\boldsymbol{a}$
+\end_inset
+
+进行OLS估计(一个合理的初始估计)。原因：若
+\begin_inset Formula $z_{t}=\boldsymbol{a}'\boldsymbol{y}_{t}$
+\end_inset
+
+是平稳的且关于二阶矩是遍历的，则
+\begin_inset Formula 
+\[
+T^{-1}\sum_{t=1}^{T}z_{t}^{2}=T^{-1}\sum_{t=1}^{T}(\boldsymbol{a}'\boldsymbol{y}_{t})^{2}\overset{p}{\rightarrow}E(z_{t}^{2})\tag{19.2.3}
+\]
+
+\end_inset
+
+相反的，若
+\begin_inset Formula $\boldsymbol{a}$
+\end_inset
+
+不是一个协整向量，则
+\begin_inset Formula $z_{t}=\boldsymbol{a}'\boldsymbol{y}_{t}$
+\end_inset
+
+是
+\begin_inset Formula $I(1)$
+\end_inset
+
+，于是，由性质17.3(h)，有
+\begin_inset Formula 
+\[
+T^{-2}\sum_{t=1}^{T}(\boldsymbol{a}'\boldsymbol{y}_{t})^{2}\overset{L}{\rightarrow}\lambda^{2}\cdot\int_{0}^{1}[W(r)]^{2}dr\tag{19.2.4}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\lambda$
+\end_inset
+
+是由
+\begin_inset Formula $(1-L)z_{t}$
+\end_inset
+
+的自协方差决定的参数。此时，按(19.2.3)计算的统计量会发散到
+\begin_inset Formula $+\infty$
+\end_inset
+
+。这表明了，在
+\begin_inset Formula $\boldsymbol{a}$
+\end_inset
+
+的某个正则条件下，选择
+\begin_inset Formula $\boldsymbol{a}$
+\end_inset
+
+使得(19.2.3)最小，从而得到一个协整向量的一致估计。(实际上，这个估计量是超一致的，以速度
+\begin_inset Formula $T$
+\end_inset
+
+而不是
+\begin_inset Formula $T^{1/2}$
+\end_inset
+
+收敛）。
+\end_layout
+
+\begin_layout Itemize
+令协整向量的第一个元素
+\begin_inset Formula $a_{1}$
+\end_inset
+
+为1(标准化条件)，具体
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+a_{1}\\
+a_{2}\\
+a_{3}\\
+\vdots\\
+a_{n}
+\end{array}\right]=\left[\begin{array}{c}
+1\\
+-\gamma_{2}\\
+-\gamma_{3}\\
+\vdots\\
+-\gamma_{n}
+\end{array}\right]\tag{19.2.5}
+\]
+
+\end_inset
+
+在这种情况下，目标是选择
+\begin_inset Formula $\gamma_{i}$
+\end_inset
+
+来最小化
+\begin_inset Formula 
+\[
+T^{-1}\sum_{t=1}^{T}z_{t}^{2}=T^{-1}\sum_{t=1}^{T}(y_{1t}-\gamma_{2}y_{2t}-\gamma_{3}y_{3t}-...-\gamma_{n}y_{nt})^{2}\tag{19.2.6}
+\]
+
+\end_inset
+
+显然，可以通过对下面回归式的OLS回归得到相应参数估计值
+\begin_inset Formula 
+\[
+y_{1t}=\gamma_{2}y_{2t}+\gamma_{3}y_{3t}+...+\gamma_{n}y_{nt}+u_{t}\tag{19.2.7}
+\]
+
+\end_inset
+
+也可以在上式中添加一个常数项
+\begin_inset Formula 
+\[
+y_{1t}=\alpha+\gamma_{2}y_{2t}+\gamma_{3}y_{3t}+...+\gamma_{n}y_{nt}+u_{t}\tag{19.2.8}
+\]
+
+\end_inset
+
+或
+\begin_inset Formula 
+\[
+y_{1t}=\alpha+\boldsymbol{\gamma}'\boldsymbol{y}_{2t}+u_{t}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+\bar under
+性质19.2
+\series default
+\bar default
+：令
+\begin_inset Formula $y_{1t}$
+\end_inset
+
+为一个标量，
+\begin_inset Formula $\boldsymbol{y}_{2t}$
+\end_inset
+
+为一个
+\begin_inset Formula $(g\times1)$
+\end_inset
+
+向量。令
+\begin_inset Formula $n\equiv g+1$
+\end_inset
+
+，并假定
+\begin_inset Formula $(n\times1)$
+\end_inset
+
+向量
+\begin_inset Formula $(y_{1t},\boldsymbol{y}_{2t}')'$
+\end_inset
+
+可恰由一个协整关系
+\begin_inset Formula $(h=1)$
+\end_inset
+
+表征【即协整关系只有一个】，该协整关系具有关于
+\begin_inset Formula $y_{1t}$
+\end_inset
+
+的非零系数。令这一系统的三角形表示为
+\begin_inset Formula 
+\begin{align*}
+y_{1t} & =\alpha+\boldsymbol{\gamma}'\boldsymbol{y}_{2t}+u_{t}\tag{19.2.9}\\
+\Delta\boldsymbol{y}_{2t} & =\boldsymbol{u}_{2t}\tag{19.2.10}
+\end{align*}
+
+\end_inset
+
+假设
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+z_{t}^{*}\\
+\boldsymbol{u}_{2t}
+\end{array}\right]=\boldsymbol{\Psi}^{*}(L)\boldsymbol{\varepsilon}_{t}\tag{19.2.11}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\boldsymbol{\varepsilon}_{t}$
+\end_inset
+
+是一个零均值
+\begin_inset Formula $(n\times1)$
+\end_inset
+
+iid向量，其四阶矩有限，正定方差-协方差矩阵
+\begin_inset Formula $E(\boldsymbol{\varepsilon}_{t}\boldsymbol{\varepsilon}_{t}')=\boldsymbol{P}\boldsymbol{P}'$
+\end_inset
+
+。进一步假定
+\begin_inset Formula $(n\times n)$
+\end_inset
+
+矩阵序列
+\begin_inset Formula $\{s\cdot\boldsymbol{\Psi}_{s}^{*}\}_{s=0}^{\infty}$
+\end_inset
+
+是绝对可加的，且
+\begin_inset Formula $\boldsymbol{\Psi}^{*}(1)$
+\end_inset
+
+的各行是线性无关的。令
+\begin_inset Formula $\hat{\alpha}_{T}$
+\end_inset
+
+和
+\begin_inset Formula $\hat{\boldsymbol{\gamma}}_{T}$
+\end_inset
+
+为基于式(19.2.9)的OLS估计的值，
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+\hat{\alpha}_{T}\\
+\hat{\boldsymbol{\gamma}}_{T}
+\end{array}\right]=\left[\begin{array}{cc}
+T & \sum\boldsymbol{y}_{2t}'\\
+\sum\boldsymbol{y}_{2t} & \sum\boldsymbol{y}_{2t}\boldsymbol{y}_{2t}'
+\end{array}\right]^{-1}\left[\begin{array}{c}
+\sum y_{1t}\\
+\sum\boldsymbol{y}_{2t}y_{1t}
+\end{array}\right]\tag{19.2.12}
+\]
+
+\end_inset
+
+将
+\begin_inset Formula $\boldsymbol{\Psi}^{*}(1)\cdot\boldsymbol{P}$
+\end_inset
+
+分块为
+\begin_inset Formula 
+\[
+\underset{(n\times n)}{\boldsymbol{\Psi}^{*}(1)\cdot\boldsymbol{P}}=\left[\begin{array}{c}
+\underset{(1\times n)}{\lambda_{1}^{*'}}\\
+\underset{(g\times n)}{\Lambda_{2}^{*}}
+\end{array}\right]
+\]
+
+\end_inset
+
+则有
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+T^{1/2}(\hat{\alpha}_{T}-\alpha)\\
+T(\hat{\boldsymbol{\gamma}}_{T}-\boldsymbol{\gamma})
+\end{array}\right]\overset{L}{\rightarrow}\left[\begin{array}{cc}
+1 & \int[\boldsymbol{W}(r)]'dr\cdot\Lambda_{2}^{*'}\\
+\Lambda_{2}^{*}\cdot\int\boldsymbol{W}(r)dr & \Lambda_{2}^{*}\cdot\{\int[\boldsymbol{W}(r)]\cdot[\boldsymbol{W}(r)]'dr\}\cdot\Lambda_{2}^{*'}
+\end{array}\right]^{-1}\left[\begin{array}{c}
+h_{1}\\
+\boldsymbol{h}_{2}
+\end{array}\right]\tag{19.2.13}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $h_{1}\equiv\lambda_{1}^{*'}\cdot\boldsymbol{W}(1)$
+\end_inset
+
+，
+\begin_inset Formula $\boldsymbol{h}_{2}\equiv\Lambda_{2}^{*}\cdot\{\int[\boldsymbol{W}(r)]\cdot[\boldsymbol{W}(r)]'dr\}\cdot\lambda_{1}^{*}+\sum_{v=0}^{\infty}E(\boldsymbol{u}_{2t}z_{t+v}^{*})$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+注意，协整向量的OLS估计是一致的，即使(19.2.8)中的误差项
+\begin_inset Formula $u_{t}$
+\end_inset
+
+可能序列相关或者与
+\begin_inset Formula $\Delta y_{2t},\Delta y_{3t},...,\Delta y_{nt}$
+\end_inset
+
+相关。后一个相关可能引起
+\begin_inset Formula $T(\hat{\boldsymbol{\gamma}}_{T}-\boldsymbol{\gamma})$
+\end_inset
+
+的极限分布的一个偏倚(因此
+\begin_inset Formula $\boldsymbol{h}_{2}$
+\end_inset
+
+不具有零均值)，但这种偏倚是
+\begin_inset Formula $O_{p}(T^{-1})$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+一个例子
+\end_layout
+
+\begin_layout Itemize
+注意尽管OLS估计是一致的，但还存在其他更优的估计，OLS估计仅作为一个初始估计。
+\end_layout
+
+\begin_layout Subsection
+标准化的作用
+\end_layout
+
+\begin_layout Subsection
+当有超过一个协整关系时，回归估计是什么？
+\end_layout
+
+\begin_layout Itemize
+当协整关系不止一个(h>1)
+\end_layout
+
+\begin_layout Itemize
+考虑一个向量的一般三角形式，该向量有由(19.1.20-21)给出的h个协整关系，表示为：
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{y}_{1t} & =\boldsymbol{\mu}_{1}^{*}+\boldsymbol{\Gamma}'\boldsymbol{y}_{2t}+\boldsymbol{z}_{t}^{*}\tag{19.2.16}\\
+\Delta\boldsymbol{y}_{2t} & =\boldsymbol{\delta}_{2}+\boldsymbol{u}_{2t}\tag{19.2.17}
+\end{align*}
+
+\end_inset
+
+由于
+\begin_inset Formula $\boldsymbol{z}_{t}^{*}\equiv(\boldsymbol{z}_{1t}^{*},\boldsymbol{z}_{2t}^{*},...,\boldsymbol{z}_{ht}^{*})'$
+\end_inset
+
+是协方差平稳的且均值为
+\begin_inset Formula $\boldsymbol{0}$
+\end_inset
+
+，可以定义
+\begin_inset Formula $\beta_{2},\beta_{3},...,\beta_{h}$
+\end_inset
+
+为对应于
+\begin_inset Formula $z_{1t}^{*}$
+\end_inset
+
+关于
+\begin_inset Formula $(z_{2t}^{*},z_{3t}^{*},...,z_{ht}^{*})$
+\end_inset
+
+的线性投影的总体参数：
+\begin_inset Formula 
+\[
+z_{1t}^{*}=\beta_{2}z_{2t}^{*}+\beta_{3}z_{3t}^{*}+...+\beta_{h}z_{ht}^{*}+u_{t}\tag{19.2.18}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+\bar under
+性质19.3
+\series default
+\bar default
+：令
+\begin_inset Formula $\boldsymbol{y}_{t}=(\boldsymbol{y}_{1t}',\boldsymbol{y}_{2t}')'$
+\end_inset
+
+满足(19.2.16-17)，其中
+\begin_inset Formula $\boldsymbol{y}_{1t}$
+\end_inset
+
+是一个
+\begin_inset Formula $(h\times1)$
+\end_inset
+
+向量，h>1，且令
+\begin_inset Formula $\beta_{2},\beta_{3},...,\beta_{h}$
+\end_inset
+
+为(19.2.18)线性投影的系数。假定
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+\boldsymbol{z}_{t}^{*}\\
+\boldsymbol{u}_{2t}
+\end{array}\right]=\sum_{s=0}^{\infty}\boldsymbol{\Psi}_{s}^{*}\boldsymbol{\varepsilon}_{t-s}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\{s\cdot\boldsymbol{\Psi}_{s}^{*}\}_{s=0}^{\infty}$
+\end_inset
+
+是绝对可加的，且
+\begin_inset Formula $\boldsymbol{\varepsilon}_{t}$
+\end_inset
+
+是
+\begin_inset Formula $(n\times1)$
+\end_inset
+
+iid向量，均值为
+\begin_inset Formula $\boldsymbol{0}$
+\end_inset
+
+，方差为
+\begin_inset Formula $\boldsymbol{P}\boldsymbol{P}'$
+\end_inset
+
+，以及四阶矩有限。进一步假定
+\begin_inset Formula $\boldsymbol{\Psi}^{*}(1)\cdot\boldsymbol{P}$
+\end_inset
+
+的各行之间是线性独立的。则回归方程
+\begin_inset Formula 
+\[
+y_{1t}=\alpha+\gamma_{2}y_{2t}+\gamma_{3}y_{3t}+...+\gamma_{n}y_{nt}+u_{t}\tag{19.2.19}
+\]
+
+\end_inset
+
+的OLS估计的系数满足
+\begin_inset Formula 
+\[
+\hat{\alpha}_{T}\overset{p}{\rightarrow}\left[\begin{array}{cc}
+1 & -\boldsymbol{\beta}'\end{array}\right]\boldsymbol{u}_{1}^{*}\tag{19.2.20}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\[
+\underset{(h-1)\times1}{\boldsymbol{\beta}}\equiv(\beta_{2},\beta_{3},...,\beta_{h})'
+\]
+
+\end_inset
+
+且
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+\hat{\gamma}_{2,T}\\
+\hat{\gamma}_{3,T}\\
+\vdots\\
+\hat{\gamma}_{n,T}
+\end{array}\right]\overset{p}{\rightarrow}\left[\begin{array}{c}
+\boldsymbol{\beta}\\
+\boldsymbol{\gamma}_{2}
+\end{array}\right]\tag{19.2.21}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\underset{(g\times1)}{\boldsymbol{\gamma}_{2}}\equiv\boldsymbol{\Gamma}\left[\begin{array}{c}
+1\\
+-\boldsymbol{\beta}
+\end{array}\right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+性质19.3表明，(19.2.19)的OLS估计相对应的样本残差依概率收敛于
+\begin_inset Formula 
+\begin{align*}
+y_{1t}-\hat{\alpha}_{T}+\hat{\gamma}_{2,T}y_{2t}+\hat{\gamma}_{3,T}y_{3t}+...+\hat{\gamma}_{n,T}y_{nt} & \overset{p}{\rightarrow}y_{1t}-\left[\begin{array}{cc}
+1 & -\boldsymbol{\beta}'\end{array}\right]\boldsymbol{u}_{1}^{*}-\boldsymbol{\beta}'\left[\begin{array}{c}
+y_{2t}\\
+y_{3t}\\
+\vdots\\
+y_{ht}
+\end{array}\right]-\left[\begin{array}{cc}
+1 & -\boldsymbol{\beta}'\end{array}\right]\boldsymbol{\Gamma}'\left[\begin{array}{c}
+y_{h+1,t}\\
+y_{h+2,t}\\
+\vdots\\
+y_{nt}
+\end{array}\right]\\
+ & =\left[\begin{array}{cc}
+1 & -\boldsymbol{\beta}'\end{array}\right]\cdot\{\boldsymbol{y}_{1t}-\boldsymbol{\mu}_{1}^{*}-\boldsymbol{\Gamma}'\boldsymbol{y}_{2t}\}\\
+ & =\left[\begin{array}{cc}
+1 & -\boldsymbol{\beta}'\end{array}\right]\cdot\boldsymbol{z}_{t}^{*}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+当不存在协整关系时，回归估计是什么？
 \end_layout
 
 \end_body
