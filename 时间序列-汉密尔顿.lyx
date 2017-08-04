@@ -12972,5 +12972,135 @@ a_{h1} & a_{h2} & a_{h3} & \cdots & a_{hn}
 
 \end_layout
 
+\begin_layout Itemize
+算法(略)
+\end_layout
+
+\begin_layout Itemize
+经过变换后
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{A}' & =\left[\begin{array}{cccccccc}
+1 & 0 & \cdots & 0 & -\gamma_{1,h+1} & -\gamma_{1,h+2} & \cdots & -\gamma_{1,n}\\
+0 & 1 & \cdots & 0 & -\gamma_{2,h+1} & -\gamma_{2,h+2} & \cdots & -\gamma_{2,n}\\
+\vdots & \vdots & \cdots & \vdots & \vdots & \vdots & \cdots & \vdots\\
+0 & 0 & \cdots & 1 & -\gamma_{h,h+1} & -\gamma_{h,h+2} & \cdots & -\gamma_{h,n}
+\end{array}\right]\\
+ & =\left[\begin{array}{cc}
+\boldsymbol{I}_{h} & -\boldsymbol{\Gamma}'\end{array}\right]\tag{19.1.16}
+\end{align*}
+
+\end_inset
+
+令
+\begin_inset Formula $\boldsymbol{z}_{t}$
+\end_inset
+
+表示对应于协整关系集的残差：
+\begin_inset Formula 
+\[
+\underset{(h\times1)}{\boldsymbol{z}_{t}}\equiv\boldsymbol{A}'\boldsymbol{y}_{t}\tag{19.1.17}
+\]
+
+\end_inset
+
+由于
+\begin_inset Formula $\boldsymbol{z}_{t}$
+\end_inset
+
+是平稳的，均值
+\begin_inset Formula $\boldsymbol{\mu}_{1}^{*}\equiv E(\boldsymbol{z}_{t})$
+\end_inset
+
+存在，于是定义
+\begin_inset Formula 
+\[
+\boldsymbol{z}_{t}^{*}\equiv\boldsymbol{z}_{t}-\boldsymbol{\mu}_{1}^{*}\tag{19.1.18}
+\]
+
+\end_inset
+
+将
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+分块
+\begin_inset Formula 
+\[
+\underset{(n\times1)}{\boldsymbol{y}_{t}}=\left[\begin{array}{c}
+\underset{(h\times1)}{\boldsymbol{y}_{1t}}\\
+\underset{(g\times1)}{\boldsymbol{y}_{2t}}
+\end{array}\right]\tag{19.1.19}
+\]
+
+\end_inset
+
+将(19.1.16、18、19)代入(19.1.16)可得
+\begin_inset Formula 
+\[
+\boldsymbol{z}_{t}^{*}+\boldsymbol{\mu}_{1}^{*}=\left[\begin{array}{cc}
+\boldsymbol{I}_{h} & -\boldsymbol{\Gamma}'\end{array}\right]\left[\begin{array}{c}
+\underset{(h\times1)}{\boldsymbol{y}_{1t}}\\
+\underset{(g\times1)}{\boldsymbol{y}_{2t}}
+\end{array}\right]
+\]
+
+\end_inset
+
+或
+\begin_inset Formula 
+\[
+\underset{(h\times1)}{\boldsymbol{y}_{1t}}=\boldsymbol{\Gamma}'\underset{(g\times1)}{\boldsymbol{y}_{2t}}+\boldsymbol{\mu}_{1}^{*}+\boldsymbol{z}_{t}^{*}\tag{19.1.20}
+\]
+
+\end_inset
+
+由(19.1.11)可知
+\begin_inset Formula 
+\[
+\underset{(g\times1)}{\Delta\boldsymbol{y}_{2t}}=\boldsymbol{\delta}_{2}+\boldsymbol{u}_{2t}\tag{19.1.21}
+\]
+
+\end_inset
+
+(19.1.20-21)两式构成了恰好h个协整关系系统的Phillips(1991)三角表示，
+\begin_inset Formula $\boldsymbol{z}_{t}^{*}$
+\end_inset
+
+和
+\begin_inset Formula $\boldsymbol{u}_{2t}$
+\end_inset
+
+表示这个表达中零均值平稳扰动项。
+\end_layout
+
+\begin_layout Itemize
+如果向量
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+由恰好h个协整关系所表征，将变量排列使得(19.1.20-21)成立，则
+\begin_inset Formula $(g\times1)$
+\end_inset
+
+向量
+\begin_inset Formula $\boldsymbol{y}_{2t}$
+\end_inset
+
+是
+\begin_inset Formula $I(1)$
+\end_inset
+
+，且无协整关系。
+\end_layout
+
+\begin_layout Subsection
+Stock-Watson共同趋势表示
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
 \end_body
 \end_document
