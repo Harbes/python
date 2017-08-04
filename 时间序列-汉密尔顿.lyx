@@ -12378,7 +12378,241 @@ W(1)\\
 \begin_inset Formula $\xi_{1},\xi_{2},...,\xi_{p-1},\rho$
 \end_inset
 
-的约束的建设检验
+的约束的建设检验：
+\begin_inset Formula 
+\[
+r_{1}\xi_{1}+r_{2}\xi_{2}+...+r_{p-1}\xi_{p-1}+0\alpha+r_{p+1}\rho=r
+\]
+
+\end_inset
+
+或
+\begin_inset Formula 
+\[
+\boldsymbol{r}'\boldsymbol{\beta}=r\tag{17.7.43}
+\]
+
+\end_inset
+
+该假设的t检验的分布渐近取决于收敛速度最慢的参数，即
+\begin_inset Formula $\xi_{1},\xi_{2},...,\xi_{p-1}$
+\end_inset
+
+，由于这些项都是渐近正态的，因此统计量也是渐近正态的。具体：
+\begin_inset Formula 
+\[
+t_{T}=\frac{\boldsymbol{r}'\boldsymbol{b}-r}{\{s_{T}^{2}\boldsymbol{r}'(\sum\boldsymbol{x}_{t}\boldsymbol{x}_{t}')^{-1}\boldsymbol{r}\}^{1/2}}=\frac{T^{1/2}(\boldsymbol{r}'\boldsymbol{b}-r)}{\{s_{T}^{2}T^{1/2}\boldsymbol{r}'(\sum\boldsymbol{x}_{t}\boldsymbol{x}_{t}')^{-1}\boldsymbol{r}T^{1/2}\}^{1/2}}\tag{17.7.44}
+\]
+
+\end_inset
+
+定义
+\begin_inset Formula $\tilde{\boldsymbol{r}}_{T}$
+\end_inset
+
+为当
+\begin_inset Formula $\boldsymbol{r}$
+\end_inset
+
+的最后一个元素被
+\begin_inset Formula $r_{P+1}/\sqrt{T}$
+\end_inset
+
+取代后得到的向量：
+\begin_inset Formula 
+\[
+\tilde{\boldsymbol{r}}_{T}\equiv\left[\begin{array}{c}
+r_{1}\\
+r_{2}\\
+\vdots\\
+r_{p-1}\\
+0\\
+r_{p+1}/\sqrt{T}
+\end{array}\right]\rightarrow\left[\begin{array}{c}
+r_{1}\\
+r_{2}\\
+\vdots\\
+r_{p-1}\\
+0\\
+0
+\end{array}\right]\equiv\tilde{\boldsymbol{r}}\tag{17.7.45}
+\]
+
+\end_inset
+
+且注意到
+\begin_inset Formula 
+\[
+T^{1/2}\boldsymbol{r}=\boldsymbol{Y}_{T}\tilde{\boldsymbol{r}}_{T}\tag{17.7.46}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\boldsymbol{Y}_{T}$
+\end_inset
+
+是(17.7.15)定义的矩阵。因此，(17.7.44)可写成
+\begin_inset Formula 
+\[
+t_{T}=\frac{\tilde{\boldsymbol{r}}_{T}'\boldsymbol{Y}_{T}(\boldsymbol{b}_{T}-\boldsymbol{\beta})}{\{s_{T}^{2}\tilde{\boldsymbol{r}}_{T}'\boldsymbol{Y}_{T}(\sum\boldsymbol{x}_{t}\boldsymbol{x}_{t}')^{-1}\boldsymbol{Y}_{T}\tilde{\boldsymbol{r}}_{T}\}^{1/2}}\tag{17.7.47}
+\]
+
+\end_inset
+
+结合(17.7.18)和(17.7.25)，有
+\begin_inset Formula 
+\begin{align*}
+t_{T} & \overset{L}{\rightarrow}\frac{\tilde{\boldsymbol{r}}'\left[\begin{array}{c}
+\boldsymbol{V}^{-1}\boldsymbol{h}_{1}\\
+\boldsymbol{Q}^{-1}\boldsymbol{h}_{2}
+\end{array}\right]}{\left\{ \sigma^{2}\tilde{\boldsymbol{r}}'\left[\begin{array}{cc}
+\boldsymbol{V}^{-1} & \boldsymbol{0}\\
+\boldsymbol{0} & \boldsymbol{Q}^{-1}
+\end{array}\right]\tilde{\boldsymbol{r}}\right\} ^{1/2}}\\
+ & =\frac{\left[\begin{array}{cccc}
+r_{1} & r_{2} & \cdots & r_{p-1}\end{array}\right]\boldsymbol{V}^{-1}\boldsymbol{h}_{1}}{\left\{ \sigma^{2}\left[\begin{array}{cccc}
+r_{1} & r_{2} & \cdots & r_{p-1}\end{array}\right]\boldsymbol{V}^{-1}\left[\begin{array}{cccc}
+r_{1} & r_{2} & \cdots & r_{p-1}\end{array}\right]'\right\} ^{1/2}}\tag{17.7.48}
+\end{align*}
+
+\end_inset
+
+由于
+\begin_inset Formula $\boldsymbol{h}_{1}\sim N(0,\sigma^{2}\boldsymbol{V})$
+\end_inset
+
+，于是
+\begin_inset Formula $\left[\begin{array}{cccc}
+r_{1} & r_{2} & \cdots & r_{p-1}\end{array}\right]\boldsymbol{V}^{-1}\boldsymbol{h}_{1}\sim N(0,\sigma^{2}\left[\begin{array}{cccc}
+r_{1} & r_{2} & \cdots & r_{p-1}\end{array}\right]\boldsymbol{V}^{-1}\left[\begin{array}{cccc}
+r_{1} & r_{2} & \cdots & r_{p-1}\end{array}\right]')$
+\end_inset
+
+，因此(17.7.48)的极限分布是一个标准正态。
+\end_layout
+
+\begin_layout Itemize
+如果
+\begin_inset Formula $AR(p)$
+\end_inset
+
+不是以变形后的(17.7.11)进行估计，而是以原本的形式，那么可以得到关于最后结果的一个与估计系数的渐近性质有关的有趣推论。首先，注意到变形后的系数与变形之前的系
+数存在一个关系：
+\begin_inset Formula 
+\begin{align*}
+\hat{\phi}_{p} & =-\hat{\xi}_{p-1}\\
+\hat{\phi}_{j} & =\hat{\xi}_{j}-\hat{\xi}_{j-1}\text{，}j=2,3,...,p-1\\
+\hat{\phi}_{1} & =\hat{\rho}+\hat{\xi}_{1}
+\end{align*}
+
+\end_inset
+
+每个回归系数
+\begin_inset Formula $\hat{\phi}_{1},\hat{\phi}_{2},...,\hat{\phi}_{p}$
+\end_inset
+
+都是
+\begin_inset Formula $(\hat{\xi}_{1},\hat{\xi}_{2},...,\hat{\xi}_{p-1},\hat{\rho})$
+\end_inset
+
+中元素的线性组合。(17.7.43)的分析证明了，任何单个估计
+\begin_inset Formula $\hat{\phi}_{j}$
+\end_inset
+
+都以
+\begin_inset Formula $\sqrt{T}$
+\end_inset
+
+的速度收敛于一个正态随机变量。因此，对于单个的
+\begin_inset Formula $\hat{\phi}_{j}$
+\end_inset
+
+的检验仍然使用通常的t检验；而
+\begin_inset Formula $\hat{\phi}_{1}+\hat{\phi}_{2}+...+\hat{\phi}_{p}$
+\end_inset
+
+的检验需要使用(17.7.33)中描述的估计
+\begin_inset Formula $\hat{\rho}$
+\end_inset
+
+的非标准分布。
+\end_layout
+
+\begin_layout Subsection
+包含常数项的估计的自回归函数的渐近结论的总结
+\end_layout
+
+\begin_layout Subsection
+其他自回归的渐近结论
+\end_layout
+
+\begin_layout Subsection
+p未知的单位根
+\begin_inset Formula $AR(p)$
+\end_inset
+
+过程
+\end_layout
+
+\begin_layout Itemize
+先假定一个上界
+\begin_inset Formula $\bar{p}$
+\end_inset
+
+，然后对(17.7.11)进行估计。对
+\begin_inset Formula $\xi_{\bar{p}-1}=0$
+\end_inset
+
+进行ｔ检验，若接受原假设，再对原假设
+\begin_inset Formula $\xi_{\bar{p}-1}=0,\xi_{\bar{p}-2}=0$
+\end_inset
+
+进行联合检验(F检验)，以此类推，直到联合检验拒绝了原假设
+\begin_inset Formula $\xi_{\bar{p}-1}=0,\xi_{\bar{p}-2}=0,...,\xi_{\bar{p}-m}=0$
+\end_inset
+
+，此时推荐的回归为
+\begin_inset Formula 
+\[
+y_{t}=\xi_{1}\Delta y_{t-1}+\xi_{2}\Delta y_{t-2}+...+\xi_{\bar{p}-m}\Delta y_{t-\bar{p}+m}+\alpha+\rho y_{t-1}+\varepsilon_{t}
+\]
+
+\end_inset
+
+若不存在ｍ的值使得所有联合假设呗拒绝，则可以使用表17.1的简单Dickey-Fuller检验
+\end_layout
+
+\begin_layout Section
+单位根检验的其他方法
+\end_layout
+
+\begin_layout Subsection
+方差比检验
+\end_layout
+
+\begin_layout Subsection
+单位根的其他检验
+\end_layout
+
+\begin_layout Section
+贝叶斯分析和单位根
+\end_layout
+
+\begin_layout Section
+附录 性质证明
+\end_layout
+
+\begin_layout Chapter
+多变量时间序列的单位根
+\end_layout
+
+\begin_layout Chapter
+协整
+\end_layout
+
+\begin_layout Standard
+
 \end_layout
 
 \end_body
