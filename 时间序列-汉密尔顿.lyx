@@ -14075,5 +14075,440 @@ y_{nt}
 当不存在协整关系时，回归估计是什么？
 \end_layout
 
+\begin_layout Itemize
+当不存在协整关系关系时，(19.2.19)是一个
+\begin_inset Formula $I(1)$
+\end_inset
+
+变量关于一组
+\begin_inset Formula $I(1)$
+\end_inset
+
+变量的回归，其中没有一个系数可产生
+\begin_inset Formula $I(0)$
+\end_inset
+
+误差项。该回归因此收18.3节叙述的伪回归问题的影响。系数
+\begin_inset Formula $\hat{\alpha}_{T}$
+\end_inset
+
+和
+\begin_inset Formula $\hat{\boldsymbol{\gamma}}_{T}$
+\end_inset
+
+不再一致估计，且OLS样本残差
+\begin_inset Formula $\hat{u}_{t}$
+\end_inset
+
+不是平稳的，因此可以通过对残差项是否存在单位根来检验是否存在协整关系。注意此时用于检验统计量的临界值与第17章所使用的不同。
+\end_layout
+
+\begin_layout Itemize
+令
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+为一个
+\begin_inset Formula $(n\times1)$
+\end_inset
+
+向量，分块为
+\begin_inset Formula 
+\[
+\underset{(n\times1)}{\boldsymbol{y}_{t}}=\left[\begin{array}{c}
+\underset{(1\times1)}{y_{1t}}\\
+\underset{(g\times1)}{\boldsymbol{y}_{2t}}
+\end{array}\right]\tag{19.2.23}
+\]
+
+\end_inset
+
+考虑回归
+\begin_inset Formula 
+\[
+y_{1t}=\alpha+\boldsymbol{\gamma}'\boldsymbol{y}_{2t}+u_{t}\tag{19.2.24}
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\[
+\hat{u}_{t}=y_{1t}-\hat{\alpha}_{T}+\hat{\boldsymbol{\gamma}}_{T}'\boldsymbol{y}_{2t}\tag{19.2.25}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+\hat{\alpha}_{T}\\
+\hat{\boldsymbol{\gamma}}_{T}
+\end{array}\right]=\left[\begin{array}{cc}
+T & \sum\boldsymbol{y}_{2t}'\\
+\sum\boldsymbol{y}_{2t} & \sum\boldsymbol{y}_{2t}\boldsymbol{y}_{2t}'
+\end{array}\right]^{-1}\left[\begin{array}{c}
+\sum y_{1t}\\
+\sum\boldsymbol{y}_{2t}y_{1t}
+\end{array}\right]
+\]
+
+\end_inset
+
+对残差
+\begin_inset Formula $\hat{u}_{t}$
+\end_inset
+
+关于自身滞后项
+\begin_inset Formula $\hat{u}_{t-1}$
+\end_inset
+
+进行回归
+\begin_inset Formula 
+\[
+\hat{u}_{t}=\rho\hat{u}_{t-1}+e_{t}\tag{19.2.26}
+\]
+
+\end_inset
+
+得出估计
+\begin_inset Formula 
+\[
+\hat{\rho}_{T}=\frac{\sum_{t=2}^{T}\hat{u}_{t-1}\hat{u}_{t}}{\sum_{t=2}^{T}\hat{u}_{t-1}^{2}}\tag{19.2.27}
+\]
+
+\end_inset
+
+令
+\begin_inset Formula $s_{T}^{2}$
+\end_inset
+
+为(19.2.26)的回归中
+\begin_inset Formula $e_{t}$
+\end_inset
+
+的OLS方差估计：
+\begin_inset Formula 
+\[
+s_{T}^{2}=\frac{1}{T-2}\sum_{t=2}^{T}(\hat{u}_{t}-\rho\hat{u}_{t-1})^{2}
+\]
+
+\end_inset
+
+令
+\begin_inset Formula $\hat{\sigma}_{\hat{\rho}_{T}}$
+\end_inset
+
+为
+\begin_inset Formula $\hat{\rho}_{T}$
+\end_inset
+
+的标准误(OLS)：
+\begin_inset Formula 
+\[
+\hat{\sigma}_{\hat{\rho}_{T}}^{2}=s_{T}^{2}/(\sum_{t=2}^{T}\hat{u}_{t-1}^{2})\tag{19.2.29}
+\]
+
+\end_inset
+
+最后，令
+\begin_inset Formula $\hat{c}_{j,T}$
+\end_inset
+
+为(19.2.26)估计残差的样本自协方差：
+\begin_inset Formula 
+\[
+\hat{c}_{j,T}=\frac{1}{T-1}\sum_{t=j+2}^{T}\hat{e}_{t}\hat{e}_{t-j}\text{，},j=0,1,2,...,T-2\tag{19.2.30}
+\]
+
+\end_inset
+
+令
+\begin_inset Formula $\hat{\lambda}_{T}$
+\end_inset
+
+的平方为
+\begin_inset Formula 
+\[
+\hat{\lambda}_{T}^{2}=\hat{c}_{0,T}+2\sum_{j=1}^{q}[1-\frac{j}{q+1}]\hat{c}_{j,T}\tag{19.2.31}
+\]
+
+\end_inset
+
+Phillips(1987)的
+\begin_inset Formula $z_{\rho}$
+\end_inset
+
+统计量可以如(17.6.8)计算：
+\begin_inset Formula 
+\[
+Z_{\rho,T}=(T-1)(\hat{\rho}_{T}-1)-\frac{1}{2}\{(T-1)^{2}\hat{\sigma}_{\hat{\rho}_{T}}^{2}/s_{T}^{2}\}\{\hat{\lambda}_{T}^{2}-\hat{c}_{0,T}\}\tag{19.2.32}
+\]
+
+\end_inset
+
+但是这一统计量的渐近分布并不是(17.6.8)描述的那样，而是下面的性质19.4描述的分布。
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+\bar under
+性质19.4
+\series default
+\bar default
+：考察一个
+\begin_inset Formula $(n\times1)$
+\end_inset
+
+向量
+\begin_inset Formula $\boldsymbol{y}_{t}$
+\end_inset
+
+，使
+\begin_inset Formula 
+\[
+\Delta\boldsymbol{y}_{t}=\sum_{s=0}^{\infty}\boldsymbol{\Psi}_{s}\boldsymbol{\varepsilon}_{t-s}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\boldsymbol{\varepsilon}_{t}$
+\end_inset
+
+是iid，均值为0，方差为
+\begin_inset Formula $E(\boldsymbol{\varepsilon}_{t}\boldsymbol{\varepsilon}_{t}')=\boldsymbol{P}\boldsymbol{P}'$
+\end_inset
+
+，且四阶矩有限，
+\begin_inset Formula $\{s\cdot\boldsymbol{\Psi}_{s}\}_{s=0}^{\infty}$
+\end_inset
+
+是绝对可加的。令
+\begin_inset Formula $g\equiv n-1$
+\end_inset
+
+且
+\begin_inset Formula $\boldsymbol{\Lambda}=\boldsymbol{\Psi}(1)\cdot\boldsymbol{P}$
+\end_inset
+
+。假定
+\begin_inset Formula $(n\times n)$
+\end_inset
+
+矩阵
+\begin_inset Formula $\boldsymbol{\Lambda}\boldsymbol{\Lambda}'$
+\end_inset
+
+是非奇异的，且令
+\begin_inset Formula $\boldsymbol{L}$
+\end_inset
+
+表示
+\begin_inset Formula $(\boldsymbol{\Lambda}\boldsymbol{\Lambda}')^{-1}$
+\end_inset
+
+的Cholesky因子：
+\begin_inset Formula 
+\[
+(\boldsymbol{\Lambda}\boldsymbol{\Lambda}')^{-1}=\boldsymbol{L}\boldsymbol{L}'\tag{19.2.35}
+\]
+
+\end_inset
+
+则如下结论成立：
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+(a) （19.2.27）定义
+\begin_inset Formula $\hat{\rho}_{T}$
+\end_inset
+
+为统计量，它满足
+\begin_inset Formula 
+\begin{align*}
+ & (T-1)(\hat{\rho}_{T}-1)\overset{L}{\rightarrow}\\
+ & \left\{ \frac{1}{2}\{\left[\begin{array}{cc}
+1 & -\boldsymbol{h}_{2}'\end{array}\right]\cdot[\boldsymbol{W}^{*}(1)]\cdot[\boldsymbol{W}^{*}(1)]'\left[\begin{array}{c}
+1\\
+-\boldsymbol{h}_{2}
+\end{array}\right]\}-h_{1}[\boldsymbol{W}^{*}(1)]'\left[\begin{array}{c}
+1\\
+-\boldsymbol{h}_{2}
+\end{array}\right]-\frac{1}{2}\left[\begin{array}{cc}
+1 & -\boldsymbol{h}_{2}'\end{array}\right]\boldsymbol{L}'\{E(\Delta\boldsymbol{y}_{t})(\Delta\boldsymbol{y}_{t}')\}\boldsymbol{L}\left[\begin{array}{c}
+1\\
+-\boldsymbol{h}_{2}
+\end{array}\right]\right\} /H_{n}\tag{19.2.36}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula $\boldsymbol{W}^{*}(r)$
+\end_inset
+
+表示n维标准布朗运动，将其分块为
+\begin_inset Formula 
+\[
+\underset{(n\times1)}{\boldsymbol{W}^{*}(r)}=\left[\begin{array}{c}
+\underset{(1\times1)}{\boldsymbol{W}_{1}^{*}(r)}\\
+\underset{(g\times1)}{\boldsymbol{W}_{2}^{*}(r)}
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\begin_inset Formula $h_{1}$
+\end_inset
+
+是一个标量，
+\begin_inset Formula $\boldsymbol{h}_{2}$
+\end_inset
+
+是一个
+\begin_inset Formula $(g\times1)$
+\end_inset
+
+向量，具体
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+h_{1}\\
+\boldsymbol{h}_{2}
+\end{array}\right]\equiv\left[\begin{array}{cc}
+1 & \int[\boldsymbol{W}_{2}^{*}(r)]'dr\\
+\int[\boldsymbol{W}_{2}^{*}(r)]dr & \int[\boldsymbol{W}_{2}^{*}(r)]\cdot[\boldsymbol{W}_{2}^{*}(r)]'dr
+\end{array}\right]^{-1}\left[\begin{array}{c}
+\int\boldsymbol{W}_{1}^{*}(r)dr\\
+\int\boldsymbol{W}_{2}^{*}(r)\cdot\boldsymbol{W}_{1}^{*}(r)dr
+\end{array}\right]
+\]
+
+\end_inset
+
+且
+\begin_inset Formula 
+\[
+H_{n}\equiv\int[\boldsymbol{W}_{1}^{*}(r)]^{2}dr-\left[\begin{array}{cc}
+\int\boldsymbol{W}_{1}^{*}(r)dr & \int[\boldsymbol{W}_{1}^{*}(r)]\cdot[\boldsymbol{W}_{2}^{*}(r)]'dr\end{array}\right]\left[\begin{array}{c}
+h_{1}\\
+\boldsymbol{h}_{2}
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+(b) 如果当
+\begin_inset Formula $T\rightarrow\infty$
+\end_inset
+
+时，
+\begin_inset Formula $q\rightarrow\infty$
+\end_inset
+
+，但
+\begin_inset Formula $\frac{q}{T}\rightarrow0$
+\end_inset
+
+，则(19.2.32)中的统计量
+\begin_inset Formula $Z_{\rho,T}$
+\end_inset
+
+满足
+\begin_inset Formula 
+\[
+Z_{\rho,T}\overset{L}{\rightarrow}Z_{n}\tag{19.2.37}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\[
+Z_{n}\equiv\left\{ \frac{1}{2}\{\left[\begin{array}{cc}
+1 & -\boldsymbol{h}_{2}'\end{array}\right]\cdot[\boldsymbol{W}^{*}(1)]\cdot[\boldsymbol{W}^{*}(1)]'\left[\begin{array}{c}
+1\\
+-\boldsymbol{h}_{2}
+\end{array}\right]\}-h_{1}[\boldsymbol{W}^{*}(1)]'\left[\begin{array}{c}
+1\\
+-\boldsymbol{h}_{2}
+\end{array}\right]-\frac{1}{2}(1+\boldsymbol{h}_{2}'\boldsymbol{h}_{2})\right\} /H_{n}\tag{19.2.38}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+(c) 如果当
+\begin_inset Formula $T\rightarrow\infty$
+\end_inset
+
+时，
+\begin_inset Formula $q\rightarrow\infty$
+\end_inset
+
+，但
+\begin_inset Formula $\frac{q}{T}\rightarrow0$
+\end_inset
+
+，则(19.2.33)中的统计量
+\begin_inset Formula $Z_{t,T}$
+\end_inset
+
+满足
+\begin_inset Formula 
+\[
+Z_{t,T}\overset{L}{\rightarrow}Z_{n}\cdot\sqrt{H_{n}}/(1+\boldsymbol{h}_{2}'\boldsymbol{h}_{2})^{1/2}\tag{19.2.39}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+(d) 若在之前假设基础上再加上“
+\begin_inset Formula $\Delta y_{t}$
+\end_inset
+
+服从一个零均值平稳向量ARMA过程，并且当
+\begin_inset Formula $T\rightarrow\infty$
+\end_inset
+
+时，
+\begin_inset Formula $q\rightarrow\infty$
+\end_inset
+
+，但
+\begin_inset Formula $\frac{q}{T^{1/3}}\rightarrow0$
+\end_inset
+
+”，则对应于(19.2.34)的ADF-t检验与(19.2.37)给出的检验统计量
+\begin_inset Formula $Z_{\rho,T}$
+\end_inset
+
+有相同的渐近分布
+\begin_inset Formula $Z_{n}$
+\end_inset
+
+。
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+不同趋势序列间协整的检验
+\end_layout
+
 \end_body
 \end_document
