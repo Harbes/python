@@ -14479,7 +14479,7 @@ Z_{t,T}\overset{L}{\rightarrow}Z_{n}\cdot\sqrt{H_{n}}/(1+\boldsymbol{h}_{2}'\bol
 
 \begin_layout Standard
 (d) 若在之前假设基础上再加上“
-\begin_inset Formula $\Delta y_{t}$
+\begin_inset Formula $\Delta\boldsymbol{y}_{t}$
 \end_inset
 
 服从一个零均值平稳向量ARMA过程，并且当
@@ -14508,6 +14508,166 @@ Z_{t,T}\overset{L}{\rightarrow}Z_{n}\cdot\sqrt{H_{n}}/(1+\boldsymbol{h}_{2}'\bol
 \end_deeper
 \begin_layout Subsection
 不同趋势序列间协整的检验
+\end_layout
+
+\begin_layout Itemize
+性质19.4中假定
+\begin_inset Formula $E(\Delta\boldsymbol{y}_{t})=0$
+\end_inset
+
+，没有任何一个序列显示出非零漂移。Hansen(1992)描述了当
+\begin_inset Formula $E(\Delta\boldsymbol{y}_{t})$
+\end_inset
+
+包含一个或更多的非零元素时，结果会如何变化。考虑形式(19.2.42)的设计n-1个随机解释变量的回归。令
+\begin_inset Formula $\delta_{i}$
+\end_inset
+
+表示第i个变量中的趋势：
+\begin_inset Formula 
+\[
+E(\Delta y_{it})=\delta_{i}
+\]
+
+\end_inset
+
+假定至少有一个解释变量含有非零趋势，例如第n个变量
+\begin_inset Formula $\delta_{n}\neq0$
+\end_inset
+
+。(19.2.42)的拟合值等于由
+\begin_inset Formula 
+\[
+y_{1t}^{*}=\alpha^{*}+\gamma_{2}^{*}y_{2t}^{*}+\gamma_{3}^{*}y_{3t}^{*}+...+\gamma_{n-1}^{*}y_{n-1,t}^{*}+\gamma_{n}^{*}y_{nt}+u_{t}\tag{19.2.46}
+\]
+
+\end_inset
+
+的OLS估计而得到的拟合值。其中
+\begin_inset Formula $y_{it}^{*}\equiv y_{it}-\frac{\delta_{i}}{\delta_{n}}y_{nt}\text{，}i=1,2,...,n-1$
+\end_inset
+
+。正如(18.2.44)的分析中一样，涉及
+\begin_inset Formula $y_{nt}$
+\end_inset
+
+的矩由时间趋势
+\begin_inset Formula $\delta_{n}t$
+\end_inset
+
+主导，而
+\begin_inset Formula $y_{it}^{*}\text{，}i=1,2,...,n-1$
+\end_inset
+
+是无漂移
+\begin_inset Formula $I(1)$
+\end_inset
+
+变量，因此，(19.2.46)中的残差与
+\begin_inset Formula 
+\[
+y_{1t}^{*}=\alpha^{*}+\gamma_{2}^{*}y_{2t}^{*}+\gamma_{3}^{*}y_{3t}^{*}+...+\gamma_{n-1}^{*}y_{n-1,t}^{*}+\gamma_{n}^{*}\delta_{n}t+u_{t}\tag{19.2.47}
+\]
+
+\end_inset
+
+的OLS估计得到的残差具有相同的渐近性质。临界值？？？
+\end_layout
+
+\begin_layout Itemize
+当然也可以设想回归中直接包含一个时间趋势
+\begin_inset Formula 
+\[
+y_{1t}=\alpha+\gamma_{2}y_{2t}+\gamma_{3}y_{3t}+...+\gamma_{n-1}y_{n-1,t}+\gamma_{n}y_{nt}+\delta t+u_{t}\tag{19.2.48}
+\]
+
+\end_inset
+
+临界值的求法：(暂略)
+\end_layout
+
+\begin_layout Subsection
+基于残差的协整检验综述
+\end_layout
+
+\begin_layout Subsection
+协整的其他检验
+\end_layout
+
+\begin_layout Section
+协整向量的假设检验
+\end_layout
+
+\begin_layout Subsection
+特殊情形OLS估计的分布
+\end_layout
+
+\begin_layout Subsection
+加上
+\begin_inset Formula $\Delta\boldsymbol{y}_{2}$
+\end_inset
+
+的前期和滞后以修正相关
+\end_layout
+
+\begin_layout Subsection
+例证——检验消费和收入间协整关系的假设
+\end_layout
+
+\begin_layout Subsection
+进一步的评论和扩展
+\end_layout
+
+\begin_layout Subsection
+Phillips和Hansen完全修正的OLS估计
+\end_layout
+
+\begin_layout Subsection
+Park的典则协整回归
+\end_layout
+
+\begin_layout Section
+附录 性质证明
+\end_layout
+
+\begin_layout Chapter
+协整系统的完全信息极大似然分析
+\end_layout
+
+\begin_layout Chapter
+带有异方差的时间序列模型
+\end_layout
+
+\begin_layout Chapter
+机制变化的时间序列建模
+\end_layout
+
+\begin_layout Chapter
+数学回归
+\end_layout
+
+\begin_layout Section
+三角学
+\end_layout
+
+\begin_layout Section
+复数
+\end_layout
+
+\begin_layout Section
+微积分
+\end_layout
+
+\begin_layout Section
+矩阵代数
+\end_layout
+
+\begin_layout Section
+概率和统计
+\end_layout
+
+\begin_layout Standard
+
 \end_layout
 
 \end_body
