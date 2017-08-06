@@ -1,0 +1,238 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+```{r}
+x=1:10
+y=x+rnorm(10,0,1)
+fit=lm(y~x)
+summary(fit)
+plot(y)
+```
+```{r}
+data("discoveries")
+plot(discoveries,col="#333333",lwd=0.3,xlab="Year",main="Number of important discoveries per year")
+```
+```{r}
+y=runif(1000,min=0,max=1)
+r_y=round(y)
+plot(y)
+plot(r_y)
+```
+```{r}
+5L
+class(5L)
+5L*6
+```
+```{r}
+1+2.0
+6.66-0.06
+6*8
+9/5
+10%%3
+```
+```{r}
+class(NaN)
+class(Inf)
+class(NA)
+class(NULL)
+integrate(dnorm,-3,Inf)
+```
+```{r}
+c(1,2,3,4,5,6,7,8)
+c('a','b','c','d')
+c('a','b','c','d')=='abcd'
+c('a','b','c','d')=='a'
+```
+```{r}
+1:10
+seq(from=0,to=100,by=2)
+letters
+LETTERS
+month.name
+month.abb
+```
+```{r}
+letters[8]
+month.name[8]
+c(1,2,3,4,5,6,7,8)[8]
+(1:10)[8]
+seq(from=0,to=100,by=2)[8]
+```
+```{r}
+'Harbes'
+class('Harbes')
+substr("My name is Harbes",12,18)
+gsub('a','A',"My name is Harbes")
+```
+```{r}
+class(TRUE)
+class(FALSE)
+class(NA)
+TRUE==TRUE
+TRUE==1
+TRUE==c(0)
+TRUE!=FALSE
+TRUE!=NA# use "is.na" to check whether expression evaluates NA
+is.na(NA)#TRUE
+```
+```{r}
+list=c(1,2,3,'a',1,2,3,'a','b','c')
+list2=c(1,2,3)
+f=factor(list)
+levels(f)
+```
+```{r}
+class(list2[1])
+```
+```{r}
+data(infert)
+infert$education
+```
+```{r}
+x=5
+y<- "1" #推荐
+1->z #可行，但很怪
+```
+```{r}
+as.numeric(y)
+as.character(x)
+```
+```{r}
+for (i in 1:8){
+    print(i)
+}
+#或者
+for (i in 1:9){print(i)}
+```
+```{r}
+a=10
+while(a>0){cat(a,"...",sep='');a=a-1}
+#或者
+while(a>-10){
+    cat(a,"...",sep='')
+    a=a-1
+}
+```
+```{r}
+if (4>3){
+    print('Yes!')
+}else{
+    print('No!')
+}
+```
+```{r}
+jiggle=function(x){
+    x=x+rnorm(1,sd=.1)
+    return(x)
+}
+set.seed(2716057)
+jiggle(5)
+```
+```{r}
+vec=c(1,2,3,4)
+c(TRUE,8)
+c('Harbes',TRUE,8)
+```
+```{r}
+vec[1]
+which(vec%%2==0)
+head(vec,1)
+tail(vec,1)
+vec[6]#c超出索引范围，NA
+length(vec)
+vec[2:3]
+vec*4
+
+```
+```{r}
+mean(vec)
+sum(vec)
+var(vec)
+sd(vec)
+abs((sd(vec))^2-var(vec))<1e-8
+max(vec)
+min(vec)
+```
+```{r}
+mat=matrix(nrow=6,ncol=8,1:48)
+mat
+class(mat)
+mat[1,]
+mat[,1]
+mat[6,6]
+t(mat)
+mat2=cbind(matrix(nrow=4,ncol=2,1:8),7:10)#把两个矩阵按列合并
+mat2
+```
+```{r}
+df=data.frame(c(6,7,8,9),c('dog','cat','bird','dog'))
+names(df)=c('number','species')
+class(df)
+df
+df$number
+df[,1]
+df[,'number']
+class(df$number)
+df[,2]
+class(df[,2])
+```
+```{r}
+array(c(c(1,2,3,4),c(8,9,3,6)),dim=c(2,4))
+array(c(c(c(2,300,4),c(8,9,0)),c(c(5,6,0),c(66,7,8))),dim=c(3,2,2))
+```
+```{r}
+list1=list(time=1:40)
+#list1
+list1$price=c(rnorm(40,0.5*list1$time,4))
+list1
+plot(list1$time,list1$price)
+```
+```{r}
+mat
+myFun=function(x){return(x%%2)}
+apply(mat,MAR=2,myFun)
+?lapply
+?sapply
+```
+```{r}
+require(plyr)
+```
+```{r}
+pets=read.csv("http://learnxinyminutes.com/docs/pets.csv")
+head(pets,2)#前两行
+```
+```{r}
+write.csv(pets,"pets.csv")
+```
+```{r}
+getwd()
+```
+```{r}
+plot(list1$time,list1$price,main='fake data')
+```
+```{r}
+linearModel=lm(price~time,data=list1)
+linearModel#拟合结果
+#abline(linearModel,col='red')#展示拟合结果
+plot(linearModel)
+```
+```{r}
+hist(rpois(n=10000,lambda=5),col='thistle')
+```
+```{r}
+barplot(c(1,4,5,1,2),names.arg=c('red','blue','purple','green','yellow'))
+```
+
