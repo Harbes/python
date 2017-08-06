@@ -19,9 +19,9 @@
 \language_package default
 \inputencoding auto
 \fontencoding global
-\font_roman "default" "华文仿宋"
-\font_sans "default" "华文中宋"
-\font_typewriter "default" "华文楷体"
+\font_roman "default" "仿宋"
+\font_sans "default" "楷体"
+\font_typewriter "default" "楷体"
 \font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts true

@@ -19,7 +19,7 @@
 \language_package default
 \inputencoding auto
 \fontencoding global
-\font_roman "default" "华文仿宋"
+\font_roman "default" "微软雅黑"
 \font_sans "default" "楷体"
 \font_typewriter "default" "楷体"
 \font_math "auto" "auto"
