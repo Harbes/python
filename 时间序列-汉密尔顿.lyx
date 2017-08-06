@@ -19,9 +19,9 @@
 \language_package default
 \inputencoding auto
 \fontencoding global
-\font_roman "default" "微软雅黑"
-\font_sans "default" "楷体"
-\font_typewriter "default" "楷体"
+\font_roman "default" "Kaiti SC"
+\font_sans "default" "Kaiti SC"
+\font_typewriter "default" "Kaiti SC"
 \font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts true
@@ -338,11 +338,11 @@ t_{11} & t_{12} & \cdots & t_{1p}\\
 t_{21} & t_{22} & \cdots & t_{2p}\\
 \vdots & \vdots & \ddots & \vdots\\
 t_{p1} & t_{p2} & \cdots & t_{pp}
-\end{array}\right]\left[\begin{array}{ccccc}
-\lambda_{1}^{j} & 0 & 0 & \cdots & 0\\
-0 & \lambda_{2}^{j} & 0 & \cdots & 0\\
-\vdots & \vdots & \vdots & \ddots & \vdots\\
-0 & 0 & 0 & \cdots & \lambda_{p}^{j}
+\end{array}\right]\left[\begin{array}{cccc}
+\lambda_{1}^{j} & 0 & \cdots & 0\\
+0 & \lambda_{2}^{j} & \cdots & 0\\
+\vdots & \vdots & \ddots & \vdots\\
+0 & 0 & \cdots & \lambda_{p}^{j}
 \end{array}\right]\left[\begin{array}{cccc}
 t^{11} & t^{12} & \cdots & t^{1p}\\
 t^{21} & t^{22} & \cdots & t^{2p}\\
