@@ -125,7 +125,7 @@ dist(y_hat).hist(disp_norm=1)
 
 
 
-
+[i+j for i in range(1,4) for j in range(4,7)]
 
 
 
