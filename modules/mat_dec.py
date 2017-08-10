@@ -1,4 +1,5 @@
 import numpy as np
+from numba import jit
 class matrix:
     def __init__(self,mat):
         self.mat=mat
@@ -9,18 +10,22 @@ class matrix:
     @property
     def det(self):
         return np.linalg.det(self.mat)
+    @jit
+    def _tri_decom(self):
+        n = self.mat.shape[0]
+        A = np.eye(n)
+        D = self.mat
+        for i in range(n - 1):
+            A[i + 1:, i] = D[i + 1:, i] / D[i, i]
+            for j in range(i+1,n):
+                for jj in range(i+1,n):
+                    D[j,jj]=D[j,jj]-D[j,i]*D[i,jj]/D[i,i]
+            D[i + 1:, i] = 0.0
+            D[i, i + 1:] = 0.0
+        return A, D
     def tri_decomposition(self,origin='other'):
         if origin=='my':
-            n=self.mat.shape[0]
-            A=np.eye(n)
-            D=self.mat
-            for i in range(n-1):
-                E=np.eye(n)
-                E[i+1:,i]=-D[i+1:,i]/D[i,i]
-                D=E@D@E.T
-                E[i + 1:, i] *=-1
-                A=A@E
-            return A,D
+            return self._tri_decom()
         else:
             P=np.linalg.cholesky(self.mat)
             D_tmp=np.diag(np.diag(P)**(-1))
