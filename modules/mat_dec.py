@@ -14,14 +14,16 @@ class matrix:
     def _tri_decom(self):
         n = self.mat.shape[0]
         A = np.eye(n)
-        D = self.mat
+        D = np.copy(self.mat)
         for i in range(n - 1):
-            A[i + 1:, i] = D[i + 1:, i] / D[i, i]
             for j in range(i+1,n):
-                for jj in range(i+1,n):
-                    D[j,jj]=D[j,jj]-D[j,i]*D[i,jj]/D[i,i]
-            D[i + 1:, i] = 0.0
-            D[i, i + 1:] = 0.0
+                A[j,i]=D[j,i]/D[i,i]
+            for j in range(i + 1, n):
+                for jj in range(i + 1, n):
+                    D[j, jj] = D[j, jj] - D[j, i] * D[i, jj] / D[i, i]
+            for j in range(i+1,n):
+                D[j,i]=0.0
+                D[i,j]=0.0
         return A, D
     def tri_decomposition(self,origin='other'):
         if origin=='my':
