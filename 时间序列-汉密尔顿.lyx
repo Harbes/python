@@ -19,9 +19,9 @@
 \language_package default
 \inputencoding auto
 \fontencoding global
-\font_roman "default" "Kaiti SC"
-\font_sans "default" "Kaiti SC"
-\font_typewriter "default" "Kaiti SC"
+\font_roman "default" "微软雅黑"
+\font_sans "default" "楷体"
+\font_typewriter "default" "新宋体"
 \font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts true
@@ -112,6 +112,28 @@ LatexCommand tableofcontents
 
 \end_layout
 
+\begin_layout Standard
+字体设置
+\end_layout
+
+\begin_layout Itemize
+Windows：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+衬线字体：微软雅黑
+\end_layout
+
+\begin_layout Itemize
+无衬线字体：微软雅黑、楷体
+\end_layout
+
+\begin_layout Itemize
+等宽字体：微软雅黑、楷体、新宋体
+\end_layout
+
+\end_deeper
 \begin_layout Chapter
 差分方程
 \end_layout

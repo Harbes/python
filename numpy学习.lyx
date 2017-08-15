@@ -17,9 +17,9 @@
 \maintain_unincluded_children false
 \language chinese-simplified
 \language_package default
-\inputencoding auto
+\inputencoding utf8-plain
 \fontencoding global
-\font_roman "default" "仿宋"
+\font_roman "default" "微软雅黑"
 \font_sans "default" "楷体"
 \font_typewriter "default" "楷体"
 \font_math "auto" "auto"
@@ -112,6 +112,28 @@ LatexCommand tableofcontents
 
 \end_layout
 
+\begin_layout Standard
+字体设置
+\end_layout
+
+\begin_layout Itemize
+Windows：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+衬线字体：微软雅黑
+\end_layout
+
+\begin_layout Itemize
+无衬线字体：微软雅黑、楷体
+\end_layout
+
+\begin_layout Itemize
+等宽字体：微软雅黑、楷体
+\end_layout
+
+\end_deeper
 \begin_layout Chapter
 numpy基础
 \end_layout
