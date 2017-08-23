@@ -122,3 +122,103 @@ plt.plot(S0,c_antithetic-exact,label="antithetic")
 plt.plot(S0,c_control-exact,label="control")
 plt.legend()
 plt.show()
+
+
+# European call by binomial tree
+import numpy as np
+from numba import jit
+import math
+import matplotlib.pyplot as plt
+from modules import euro_option as e_option
+M=1000  # nb of time steps of size dt
+N=100000 #nb of stochastic realization
+L=100  #nb of sampling point for S
+K=100;sigma=0.2;r=0.1;er=np.exp(-r)
+T=1
+dt=T/M;sdt=np.sqrt(dt)
+
+@jit
+def option_binomial(S0):
+    disc=math.exp(-r*dt)
+    u=(1+math.sqrt(math.exp(sigma**2*dt)-1))/disc
+    d=(1-math.sqrt(math.exp(sigma**2*dt)-1))/disc
+    p=0.5
+    S=np.empty(M);S[0]=S0
+    for m in range(1,M):
+        for n in range(m,0,-1):
+            S[n]=u*S[n-1]
+        S[0]=d*S[0]
+    C=np.empty(M)
+    for n in range(M):
+        C[n]=S[n]-K if S[n]>K else 0
+    for m in range(M-1,0,-1):
+        for n in range(m):
+            C[n]=(p*C[n+1]+(1-p)*C[n])*disc
+    return C[0]
+
+S0=np.arange(70,130)
+c_binomial=np.empty(60)
+for i in range(60):
+    c_binomial[i]=option_binomial(S0[i])
+exact=e_option(St=S0,r=0.1).value_BSM
+plt.plot(S0,c_binomial,label="binomial")
+plt.plot(S0,exact,label='BSM')
+plt.legend()
+plt.show()
+
+%timeit e_option().value_BSM
+%timeit option_binomial(100)
+exact=e_option(r=0.1).value_BSM
+
+
+# binary tree for an American put
+import numpy as np
+from numba import jit
+import math
+import matplotlib.pyplot as plt
+from modules import ame_option as a_option
+M=1000  # nb of time steps of size dt
+N=100000 #nb of stochastic realization
+L=100  #nb of sampling point for S
+K=100;sigma=0.2;r=0.1;
+T=1
+dt=T/M;sdt=np.sqrt(dt)
+
+@jit
+def option_binomial(S0):
+    disc=math.exp(-r*dt)
+    u=(1+math.sqrt(math.exp(sigma**2*dt)-1))/disc
+    d=(1-math.sqrt(math.exp(sigma**2*dt)-1))/disc
+    p=0.5
+    S=np.empty(M);S[0]=S0
+    um=np.empty(M);um[0]=1
+    du=np.empty(M);du[0]=1
+    for m in range(1,M):
+        for n in range(m,0,-1):
+            S[n]=u*S[n-1]
+        S[0]=d*S[0]
+        um[m]=u*um[m-1];du[m]=d*du[m-1]/u
+    P=np.zeros(M)
+    for n in range(M):
+        P[n]=K-S[n] if K>S[n] else 0
+    for m in range(M-1,0,-1):
+        for n in range(m):
+            P[n]=(p*P[n+1]+(1-p)*P[n])*disc
+            gain=K-S0*um[m]*du[n]
+            if gain>P[n]:
+                P[n]=gain
+    return P[0]
+
+S0=np.arange(70,130)
+p_binomial=np.empty(60)
+for i in range(60):
+    p_binomial[i]=option_binomial(S0[i])
+exact=a_option(St=S0,r=0.1,otype='put').value_binomial_2(M=100)
+plt.plot(S0,p_binomial,label="binomial")
+plt.plot(S0,exact,label='for comparison')
+plt.legend()
+plt.show()
+
+%timeit e_option().value_BSM
+%timeit option_binomial(100)
+exact=e_option(r=0.1).value_BSM
