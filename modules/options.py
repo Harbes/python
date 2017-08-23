@@ -17,6 +17,7 @@ a.value_BSM()
 import numpy as np
 import scipy.stats as scis
 from numba import jit
+import math
 norm=scis.norm
 class euro_option:
     def __init__(self,St=100,K=100,t=0,T=1,r=.05,sigma=.2,otype='call'):
