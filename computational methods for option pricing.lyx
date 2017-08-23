@@ -19,9 +19,9 @@
 \language_package default
 \inputencoding utf8-plain
 \fontencoding global
-\font_roman "default" "微软雅黑"
-\font_sans "default" "楷体"
-\font_typewriter "default" "楷体"
+\font_roman "default" "Noto Sans Mono CJK SC"
+\font_sans "default" "Noto Sans CJK SC"
+\font_typewriter "default" "Noto Sans Mono CJK SC"
 \font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts true
@@ -30,7 +30,7 @@
 \font_sf_scale 100 100
 \font_tt_scale 100 100
 \graphics default
-\default_output_format pdf4
+\default_output_format default
 \output_sync 0
 \bibtex_command default
 \index_command default
@@ -130,7 +130,25 @@ Windows：
 \end_layout
 
 \begin_layout Itemize
-等宽字体：微软雅黑、楷体
+等宽字体：微软雅黑、楷体、新宋体
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Ubuntu：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+衬线字体：Noto Sans CJK SC
+\end_layout
+
+\begin_layout Itemize
+无衬线字体：Noto Sans CJK SC
+\end_layout
+
+\begin_layout Itemize
+等宽字体：Noto Sans Mono CJK SC
 \end_layout
 
 \end_deeper
@@ -288,6 +306,41 @@ x=\sqrt{-2ln(\omega_{1})}cos(2\pi\omega_{2})
 
 \end_layout
 
+\begin_layout Itemize
+Theorem 1.2(central limit).
+ let x be a random variable with probability density p.
+ expectation 
+\begin_inset Formula $\mathbb{E}(x)$
+\end_inset
+
+, and variance
+\begin_inset Formula $var(x)=\mathbb{E}[(x-\mathbb{E}(x))^{2}]$
+\end_inset
+
+.
+ The approximation
+\begin_inset Formula 
+\[
+E(x):=\int_{-\infty}^{+\infty}p(x)xdx\approx E_{N}(x):=\frac{1}{N}\Sigma_{1}^{N}x_{i}
+\]
+
+\end_inset
+
+satisfies, for all 
+\begin_inset Formula $c_{1}<0<c_{2}$
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\underset{N\rightarrow\infty}{lim}\mathbb{P}(E(x)-E_{N}(x)\in(c_{1}\sqrt{\frac{var(x)}{N}},c_{2}\sqrt{\frac{var(x)}{N}}))=\frac{1}{\sqrt{2\pi}}\int_{c_{1}}^{c_{2}}e^{-x^{2}/2}dx
+\]
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 Random Variables Using the GSL
 \end_layout
@@ -297,7 +350,143 @@ Variance Reduction
 \end_layout
 
 \begin_layout Standard
+from the central limit theorem we see that the accuracy of the Monte-Carlo
+ method fro simulating the expectation of X is controlled by 
+\begin_inset Formula $\sqrt{\frac{var(X)}{N}}$
+\end_inset
 
+, thus the computing time for a given accuracy 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+ behaves like 
+\begin_inset Formula $\frac{var(x)}{\epsilon^{2}}$
+\end_inset
+
+。因此，尽量减少Var(x)可以提高模拟的效率
+\end_layout
+
+\begin_layout Itemize
+Control Variates：假定
+\begin_inset Formula $Z=X-b(Y-\bar{Y})$
+\end_inset
+
+，于是
+\begin_inset Formula $var(Z)=E[(Z-\bar{Z})^{2}]=var(X)+b^{2}var(Y)-2bE[(X-\bar{X})(Y-\bar{Y})]$
+\end_inset
+
+，解二次方程，可得，当
+\begin_inset Formula 
+\[
+b=\frac{E[(X-\bar{X})(Y-\bar{Y})]}{var(Y)}\approx\frac{\Sigma_{1}^{n}(X_{i}-\bar{X})(Y_{i}-\bar{Y})}{\Sigma_{1}^{n}(Y_{i}-\bar{Y})^{2}}
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\[
+\frac{var(Z)}{var(X)}=1-\frac{E[(X-\bar{X})(Y-\bar{Y})]^{2}}{E[(X-\bar{X})^{2}]E[(Y-\bar{Y})^{2}]}
+\]
+
+\end_inset
+
+在计算option价格时候，可以设定
+\begin_inset Formula $X_{T}=e^{-rT}(S_{T}-K)_{+},Y_{T}=S_{T}$
+\end_inset
+
+，又注意到
+\begin_inset Formula $E^{*}(Y_{T})=e^{rT}S_{0}$
+\end_inset
+
+，因此
+\begin_inset Formula 
+\[
+C_{0}=E^{*}(X_{T})=E^{*}(Z_{T})\approx\frac{1}{n}\Sigma_{1}^{n}[e^{-rT}(S_{i}-K)_{+}-b(S_{i}-e^{rt}S_{0})]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Antithetic Variates：consider the stochastic ordinary differential equation
+ with a change of sign in the term containing the Brownian motion and athe
+ process 
+\begin_inset Formula $\xi_{T}$
+\end_inset
+
+ given by 
+\begin_inset Formula 
+\[
+dS_{t}=S_{r}(rdt+\sigma_{t}dW_{t}),S_{0}=x
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+dS_{t}^{-}=S_{r}^{-}(rdt-\sigma_{t}dW_{t}),S_{0}^{-}=x
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\xi_{t}=\frac{e^{-rt}}{2}[(S_{t}-K)_{+}+(S_{t}^{-}-K)_{+}]
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\[
+E^{*}(\xi_{t})=E^{*}[e^{-rt}(S_{t}-K)_{+}]
+\]
+
+\end_inset
+
+且
+\begin_inset Formula 
+\[
+C_{0}=E^{*}(\xi_{T})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+other options
+\end_layout
+
+\begin_layout Subsection
+American options
+\end_layout
+
+\begin_layout Subsection
+Asian options
+\end_layout
+
+\begin_layout Standard
+a typical example of an Asian option is a contract giving its owner the
+ right to buy an asset for its average price over some prescribed period.
+\end_layout
+
+\begin_layout Section
+Complement: Binomial Trees
+\end_layout
+
+\begin_layout Subsection
+the tree for S
+\end_layout
+
+\begin_layout Subsection
+the tree for C
 \end_layout
 
 \end_body

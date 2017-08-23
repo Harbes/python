@@ -134,6 +134,24 @@ Windows：
 \end_layout
 
 \end_deeper
+\begin_layout Itemize
+Ubuntu：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+衬线字体：Noto Sans CJK SC
+\end_layout
+
+\begin_layout Itemize
+无衬线字体：Noto Sans CJK SC
+\end_layout
+
+\begin_layout Itemize
+等宽字体：Noto Sans Mono CJK SC
+\end_layout
+
+\end_deeper
 \begin_layout Chapter
 numpy基础
 \end_layout
