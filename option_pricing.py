@@ -176,8 +176,8 @@ import numpy as np
 from numba import jit
 import math
 import matplotlib.pyplot as plt
-from modules import ame_option as a_option
-M=1000  # nb of time steps of size dt
+from modules import ame_option as a_option,euro_option as e_option
+M=500  # nb of time steps of size dt
 N=100000 #nb of stochastic realization
 L=100  #nb of sampling point for S
 K=100;sigma=0.2;r=0.1;
@@ -209,13 +209,16 @@ def option_binomial(S0):
                 P[n]=gain
     return P[0]
 
-S0=np.arange(70,130)
-p_binomial=np.empty(60)
-for i in range(60):
+S0=np.arange(10,130)
+p_binomial=np.empty(S0.size)
+exact=np.empty(S0.size)
+for i in range(S0.size):
     p_binomial[i]=option_binomial(S0[i])
-exact=a_option(St=S0,r=0.1,otype='put').value_binomial_2(M=100)
+    exact[i]=a_option(St=S0[i],r=0.1,otype='put').value_binomial_0(M=100)
+exact1=e_option(St=S0,r=0.1,otype='put').value_BSM
 plt.plot(S0,p_binomial,label="binomial")
 plt.plot(S0,exact,label='for comparison')
+plt.plot(S0,exact1,label="Euro put")
 plt.legend()
 plt.show()
 
