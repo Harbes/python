@@ -156,9 +156,9 @@ def option_binomial(S0):
             C[n]=(p*C[n+1]+(1-p)*C[n])*disc
     return C[0]
 
-S0=np.arange(70,130)
-c_binomial=np.empty(60)
-for i in range(60):
+S0=np.arange(20,130)
+c_binomial=np.empty(S0.size)
+for i in range(S0.size):
     c_binomial[i]=option_binomial(S0[i])
 exact=e_option(St=S0,r=0.1).value_BSM
 plt.plot(S0,c_binomial,label="binomial")
@@ -177,7 +177,7 @@ from numba import jit
 import math
 import matplotlib.pyplot as plt
 from modules import ame_option as a_option,euro_option as e_option
-M=600  # nb of time steps of size dt
+M=50  # nb of time steps of size dt
 N=100000 #nb of stochastic realization
 L=100  #nb of sampling point for S
 K=100;sigma=0.2;r=0.1;
@@ -187,9 +187,13 @@ dt=T/M;sdt=np.sqrt(dt)
 @jit
 def option_binomial(S0):
     disc=math.exp(-r*dt)
-    u=(1+math.sqrt(math.exp(sigma**2*dt)-1))/disc
-    d=(1-math.sqrt(math.exp(sigma**2*dt)-1))/disc
-    p=0.5
+    #u=(1+math.sqrt(math.exp(sigma**2*dt)-1))/disc
+    #d=(1-math.sqrt(math.exp(sigma**2*dt)-1))/disc
+    #p=0.5
+    alpha=(math.exp(-r*dt)+math.exp((r+sigma**2)*dt))/2
+    u=alpha+math.sqrt(alpha**1-1)
+    d=1/u
+    p=(1/disc-d)/(u-d)
     S=np.empty(M);S[0]=S0
     um=np.empty(M);um[0]=1
     du=np.empty(M);du[0]=1
@@ -197,7 +201,8 @@ def option_binomial(S0):
         for n in range(m,0,-1):
             S[n]=u*S[n-1]
         S[0]=d*S[0]
-        um[m]=u*um[m-1];du[m]=d*du[m-1]/u
+        um[m]=u*um[m-1]
+        du[m]=du[m-1]*d/u
     P=np.zeros(M)
     for n in range(M):
         P[n]=K-S[n] if K>S[n] else 0

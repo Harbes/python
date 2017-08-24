@@ -553,11 +553,40 @@ d & =e^{r\delta t}(1-\sqrt{e^{\sigma^{2}\delta t}-1})
 
 \end_inset
 
+another choice is 
+\begin_inset Formula $u=1/d$
+\end_inset
+
+ which yields
+\begin_inset Formula 
+\begin{align*}
+u & =\alpha+\sqrt{\alpha^{2}-1}\\
+d & =\alpha-\sqrt{\alpha^{2}-1}
+\end{align*}
+
+\end_inset
+
+with 
+\begin_inset Formula $\alpha=\frac{1}{2}(e^{-r\delta t}+e^{(r+\sigma^{2})\delta t})$
+\end_inset
+
+ and 
+\begin_inset Formula $p=\frac{e^{r\delta t}-d}{u-d}$
+\end_inset
+
 
 \end_layout
 
 \begin_layout Subsection
 the tree for C
+\end_layout
+
+\begin_layout Chapter
+The Black-Scholes Equation: Mathematical Analysis
+\end_layout
+
+\begin_layout Section
+Orientation
 \end_layout
 
 \end_body
