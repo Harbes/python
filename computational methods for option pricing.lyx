@@ -457,11 +457,29 @@ C_{0}=E^{*}(\xi_{T})
 
 \end_inset
 
+because 
+\begin_inset Formula $S_{t}^{-}$
+\end_inset
 
+and 
+\begin_inset Formula $S_{t}$
+\end_inset
+
+ have the same law, and 
+\begin_inset Formula 
+\begin{align*}
+var(\xi_{t}) & =\frac{e^{-2rt}}{4}var((S_{t}-K)_{+})+\frac{e^{-2rt}}{4}var((S_{t}^{-}-K)_{+})+\frac{e^{-2rt}}{2}cov^{*}((S_{t}-K)_{+},(S_{t}^{-}-K)_{+})\\
+ & =\frac{e^{-2rt}}{2}var((S_{t}-K)_{+})+\frac{e^{-2rt}}{2}cov^{*}((S_{t}-K)_{+},(S_{t}^{-}-K)_{+})\leq\frac{1}{2}var(e^{-rt}(S_{t}-K)_{+})
+\end{align*}
+
+\end_inset
+
+therefore we have obtained a new process with the same expectation and with
+ a smaller variance【注意，前提是单调的payoff function】.
 \end_layout
 
 \begin_layout Section
-other options
+other options 
 \end_layout
 
 \begin_layout Subsection
@@ -483,6 +501,59 @@ Complement: Binomial Trees
 
 \begin_layout Subsection
 the tree for S
+\end_layout
+
+\begin_layout Itemize
+when 
+\begin_inset Formula $dS_{t}=S_{t}(rdt+\sigma dW_{t})$
+\end_inset
+
+, under the risk neutral probability 
+\begin_inset Formula $\mathbb{P}^{*}$
+\end_inset
+
+, the mean and variance of 
+\begin_inset Formula $S_{t}$
+\end_inset
+
+ are 
+\begin_inset Formula $S_{t}e^{r\delta t}$
+\end_inset
+
+ and 
+\begin_inset Formula $S_{t}e^{(2r+\sigma^{2})\delta t}$
+\end_inset
+
+ and therefore it is necessary that 
+\begin_inset Formula 
+\[
+up+d(1-p)=e^{r\delta t}
+\]
+
+\end_inset
+
+and
+\begin_inset Formula 
+\[
+p(1-p)(u-d)^{2}=e^{(2r+\sigma^{2})\delta t}
+\]
+
+\end_inset
+
+a popular choice is 
+\begin_inset Formula $p=\frac{1}{2}$
+\end_inset
+
+ which implies 
+\begin_inset Formula 
+\begin{align*}
+u & =e^{r\delta t}(1+\sqrt{e^{\sigma^{2}\delta t}-1})\\
+d & =e^{r\delta t}(1-\sqrt{e^{\sigma^{2}\delta t}-1})
+\end{align*}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection

@@ -177,7 +177,7 @@ from numba import jit
 import math
 import matplotlib.pyplot as plt
 from modules import ame_option as a_option,euro_option as e_option
-M=500  # nb of time steps of size dt
+M=600  # nb of time steps of size dt
 N=100000 #nb of stochastic realization
 L=100  #nb of sampling point for S
 K=100;sigma=0.2;r=0.1;
