@@ -96,11 +96,11 @@
 \begin_body
 
 \begin_layout Title
-computational methods for option pricing学习笔记
+computational methods for option pricing(笔记由Harbes整理)
 \end_layout
 
 \begin_layout Author
-Harbes
+Yves Achdou, Olivier Pironneau
 \end_layout
 
 \begin_layout Standard
@@ -670,6 +670,118 @@ Vanilla Options: Behavior for Extremal Values of
 
 \begin_layout Subsection
 The BLack-Scholes Equation in Logarithmic Prices
+\end_layout
+
+\begin_layout Section
+Mathematical Analysis of the Black-Scholes Equation with Local Volatility
+\end_layout
+
+\begin_layout Subsection
+Some Functions Spaces
+\end_layout
+
+\begin_layout Subsection
+The Weak Formulation of the Black-Scholes Equation
+\end_layout
+
+\begin_layout Subsection
+Regularity of the Weak Solutions
+\end_layout
+
+\begin_layout Subsection
+The Maximum Principle
+\end_layout
+
+\begin_layout Subsection
+Consequences of the Maximum Principle
+\end_layout
+
+\begin_layout Subsection
+Dupire's Equation
+\end_layout
+
+\begin_layout Section
+Barriers Options
+\end_layout
+
+\begin_layout Section
+Levy Driven Assets
+\end_layout
+
+\begin_layout Section
+Options on a Basket of Assets
+\end_layout
+
+\begin_layout Section
+Stochastic Volatility
+\end_layout
+
+\begin_layout Chapter
+Finite Differences
+\end_layout
+
+\begin_layout Section
+Finite Differences in Logarithmic Prices
+\end_layout
+
+\begin_layout Subsection
+Basic Estimates from Taylor Expansions
+\end_layout
+
+\begin_layout Subsection
+Ruler Explicit Scheme
+\end_layout
+
+\begin_layout Subsection
+The Euler Implicit Scheme
+\end_layout
+
+\begin_layout Subsection
+The Crank-Nicolson Scheme
+\end_layout
+
+\begin_layout Section
+Upwinding
+\end_layout
+
+\begin_layout Section
+Finite Differences in the Primitive Variables
+\end_layout
+
+\begin_layout Subsection
+Euler Implicit Scheme
+\end_layout
+
+\begin_layout Section
+Numerical Results
+\end_layout
+
+\begin_layout Section
+Which variable is Better?
+\end_layout
+
+\begin_layout Section
+Options on a Basket of Two Assets
+\end_layout
+
+\begin_layout Section
+An Asian Put with Fixed Strike
+\end_layout
+
+\begin_layout Subsection
+An Upwind Scheme with Respect to 
+\begin_inset Formula $A$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+A Program in C++
+\end_layout
+
+\begin_layout Chapter
+The Finite Element Method
 \end_layout
 
 \end_body

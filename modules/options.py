@@ -14,11 +14,13 @@ from modules import euro_option
 temp=euro_option(otype='put')
 a.value_BSM()
 """
+
 import numpy as np
 import scipy.stats as scis
 from numba import jit
 import math
 norm=scis.norm
+# TODO 尝试利用broadcasting将所有methods向量化；或者丢弃class，全都写成函数的形式，将参数以字典形式储存
 class euro_option:
     def __init__(self,St=100,K=100,t=0,T=1,r=.05,sigma=.2,otype='call'):
         # (self,St,K,t,T,r,sigma,otype):#
@@ -50,9 +52,9 @@ class euro_option:
         else:
             return np.exp(-self.r * (self.T-self.t)) * self.K * norm(0, 1).cdf(-d2) - self.St * norm(0, 1).cdf(-d1)
 
-#TODO 使用CRR运行太慢，待改进
+#TODO 尝试向量化
     @jit
-    def value_CRR(self, M=100):
+    def value_CRR(self, M=80):
         '''
         Cox-Ross-Rubinstein European option valuation
 
