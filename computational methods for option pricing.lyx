@@ -961,8 +961,64 @@ The Exercise Boundary
 Discrete Approximations to the Variational Inequality
 \end_layout
 
+\begin_layout Subsection
+Existence and Uniqueness of (6.28)
+\end_layout
+
+\begin_layout Subsection
+Stability
+\end_layout
+
+\begin_layout Subsection
+Convergence
+\end_layout
+
+\begin_layout Subsection
+The Discrete Excecise Boundary
+\end_layout
+
+\begin_layout Section
+Solution Procedures
+\end_layout
+
+\begin_layout Subsection
+the projected SOR Algorithm
+\end_layout
+
+\begin_layout Subsection
+the Brennan and Schwartz Algorithm
+\end_layout
+
+\begin_layout Subsection
+A Front-Tracking Algorithm
+\end_layout
+
+\begin_layout Subsection
+A Regularized Active Set Strategy
+\end_layout
+
+\begin_layout Section
+Results
+\end_layout
+
+\begin_layout Subsection
+Uniform Coefficients
+\end_layout
+
+\begin_layout Subsection
+Local Volatility
+\end_layout
+
+\begin_layout Section
+More Complex American Options
+\end_layout
+
+\begin_layout Chapter
+Sensitivities and Calibration
+\end_layout
+
 \begin_layout Standard
-Existence and Uniqueness
+
 \end_layout
 
 \end_body
