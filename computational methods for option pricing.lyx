@@ -490,11 +490,74 @@ American options
 Asian options
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 a typical example of an Asian option is a contract giving its owner the
  right to buy an asset for its average price over some prescribed period.
 \end_layout
 
+\begin_layout Itemize
+算法：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $S_{0}$
+\end_inset
+
+ given ,set 
+\begin_inset Formula $A=0$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+for (
+\begin_inset Formula $t=0;t\leq T;t=t+\delta t$
+\end_inset
+
+)
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+call the random generator to simulate 
+\begin_inset Formula $W_{t+\delta t}-W_{t}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+compute 
+\begin_inset Formula $S_{t+\delta t}=S_{t}(1+r\delta t+W_{t+\delta t}-W_{t})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+do 
+\begin_inset Formula $A=A+\frac{\delta t}{2T}(S_{t}+S_{t+\delta t})$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+compute 
+\begin_inset Formula $e^{-rT}Q(S,A)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+repeat the above to obtain M values and average them
+\end_layout
+
+\end_deeper
 \begin_layout Section
 Complement: Binomial Trees
 \end_layout
@@ -587,6 +650,26 @@ The Black-Scholes Equation: Mathematical Analysis
 
 \begin_layout Section
 Orientation
+\end_layout
+
+\begin_layout Section
+The Partial Differential Equation
+\end_layout
+
+\begin_layout Subsection
+Infinitesimal Generator of the Diffusion Process
+\end_layout
+
+\begin_layout Subsection
+Vanilla Options: Behavior for Extremal Values of 
+\begin_inset Formula $S$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+The BLack-Scholes Equation in Logarithmic Prices
 \end_layout
 
 \end_body

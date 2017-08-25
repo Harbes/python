@@ -33,7 +33,7 @@ class euro_option:
     def d1f(self):
         return (np.log(self.St / self.K) + (self.r + self.sigma ** 2 / 2) * (self.T-self.t)) / (self.sigma \
                                                                                                 * np.sqrt(self.T-self.t))
-    @property
+
     def value_BSM(self):
         '''
         using the BSM model to calculate the value of option
@@ -52,7 +52,7 @@ class euro_option:
 
 #TODO 使用CRR运行太慢，待改进
     @jit
-    def value_CRR(self, M=1000):
+    def value_CRR(self, M=100):
         '''
         Cox-Ross-Rubinstein European option valuation
 
@@ -68,23 +68,24 @@ class euro_option:
         d = 1 / u
         p = (np.exp(self.r * dt) - d) / (u - d)
 
-        mu = np.arange(M + 1)
-        mu = np.resize(mu, (M + 1, M + 1))
-        md = np.transpose(mu)
-        mu = u ** (mu - md)
-        md = d ** md
-        S = self.St * mu * md
-
-        # inner value
-        if self.otype == 'call':
-            V = np.maximum(S - self.K, 0)
+        S = np.empty(M)
+        S[0] = self.St
+        for m in range(1, M):
+            for n in range(m, 0, -1):
+                S[n] = u * S[n - 1]
+            S[0] = d * S[0]
+        opt = np.empty(M)
+        if self.otype=="call":
+            for n in range(M):
+                opt[n] = S[n] - self.K if S[n] > self.K else 0
         else:
-            V = np.maximum(self.K - S, 0)
-        z = 0
-        for t in range(M - 1, -1, -1):  # backwards iteration
-            V[0:M - z, t] = (p * V[0:M - z, t + 1] + (1 - p) * V[1:M - z + 1, t + 1]) * df
-            z += 1
-        return V[0, 0]
+            for n in range(M):
+                opt[n] = self.K-S[n] if self.K>S[n] else 0
+        for m in range(M - 1, 0, -1):
+            for n in range(m):
+                opt[n] = (p * opt[n + 1] + (1 - p) * opt[n]) * df
+        return opt[0]
+
     @property
     def delta(self):
         '''
