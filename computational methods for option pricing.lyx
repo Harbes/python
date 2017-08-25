@@ -784,5 +784,186 @@ A Program in C++
 The Finite Element Method
 \end_layout
 
+\begin_layout Section
+Orientation
+\end_layout
+
+\begin_layout Section
+A Generic Problem
+\end_layout
+
+\begin_layout Subsection
+Variational Formulation
+\end_layout
+
+\begin_layout Subsection
+The TIme Semidiscrete Problem
+\end_layout
+
+\begin_layout Subsection
+The Full Discretization: Language Finite Elements
+\end_layout
+
+\begin_layout Subsection
+The Discrete Problem in Matrix Form
+\end_layout
+
+\begin_layout Subsection
+The Nodal Basis
+\end_layout
+
+\begin_layout Subsection
+Stabilization by Least Squares
+\end_layout
+
+\begin_layout Section
+The Black-Scholes Equation with Local Volatility
+\end_layout
+
+\begin_layout Section
+A Black-Scholes Equation Solver in C++
+\end_layout
+
+\begin_layout Section
+A Transparent Boundary Condition
+\end_layout
+
+\begin_layout Section
+Levy Driven Assets
+\end_layout
+
+\begin_layout Subsection
+A Scheme with an Explicit Discretization of the Nonlocal Term
+\end_layout
+
+\begin_layout Subsection
+A Semi-Implicit Scheme and a Program for Options on CGMY Driven Assets
+\end_layout
+
+\begin_layout Section
+Programs for Two-Dimensional Cases
+\end_layout
+
+\begin_layout Subsection
+Options on a Bakset of Assets
+\end_layout
+
+\begin_layout Subsection
+A Stochastic Volatility Model
+\end_layout
+
+\begin_layout Subsection
+Matrix Storage: The Compressed Sparse Row Format
+\end_layout
+
+\begin_layout Section
+Programming in Dimension 
+\begin_inset Formula $d>2$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+High Dimensions: An Introduction to Galerkin Methods with Sparse Tensor
+ Product Spaces
+\end_layout
+
+\begin_layout Subsection
+Wavelets in 
+\begin_inset Formula $\mathbb{R}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Appendix: The Full Program for Two-Dimensional Black-Scholes
+\end_layout
+
+\begin_layout Chapter
+Adaptive Mesh Refinement
+\end_layout
+
+\begin_layout Section
+The Black-Scholes Equation and Some Discretization
+\end_layout
+
+\begin_layout Subsection
+The Black-Scholes Equation and Its Variational Formulation
+\end_layout
+
+\begin_layout Subsection
+The Time Semidiscrete Problem
+\end_layout
+
+\begin_layout Subsection
+The Fully Discrete Problem
+\end_layout
+
+\begin_layout Section
+Error Indicators for the Black-Scholes Equation
+\end_layout
+
+\begin_layout Subsection
+An upper Bound for the Error
+\end_layout
+
+\begin_layout Subsection
+An upper Bound for the Error Indicators
+\end_layout
+
+\begin_layout Section
+Conclusion
+\end_layout
+
+\begin_layout Section
+A Taste of theh Software
+\end_layout
+
+\begin_layout Section
+Results
+\end_layout
+
+\begin_layout Subsection
+Test with a Uniform Volatility
+\end_layout
+
+\begin_layout Subsection
+Result woth a Nonuniform Local Volatility
+\end_layout
+
+\begin_layout Section
+Mesh Adaption fro a Put on a Basket of Two Assets
+\end_layout
+
+\begin_layout Section
+Appendix: Proofs
+\end_layout
+
+\begin_layout Chapter
+American Options
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Section
+The Variational Inequality
+\end_layout
+
+\begin_layout Section
+The Exercise Boundary
+\end_layout
+
+\begin_layout Section
+Discrete Approximations to the Variational Inequality
+\end_layout
+
+\begin_layout Standard
+Existence and Uniqueness
+\end_layout
+
 \end_body
 \end_document
