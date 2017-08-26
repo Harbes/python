@@ -96,11 +96,11 @@
 \begin_body
 
 \begin_layout Title
-computational methods for option pricing学习笔记
+computational methods for option pricing(笔记由Harbes整理)
 \end_layout
 
 \begin_layout Author
-Harbes
+Yves Achdou, Olivier Pironneau
 \end_layout
 
 \begin_layout Standard
@@ -490,11 +490,74 @@ American options
 Asian options
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 a typical example of an Asian option is a contract giving its owner the
  right to buy an asset for its average price over some prescribed period.
 \end_layout
 
+\begin_layout Itemize
+算法：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $S_{0}$
+\end_inset
+
+ given ,set 
+\begin_inset Formula $A=0$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+for (
+\begin_inset Formula $t=0;t\leq T;t=t+\delta t$
+\end_inset
+
+)
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+call the random generator to simulate 
+\begin_inset Formula $W_{t+\delta t}-W_{t}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+compute 
+\begin_inset Formula $S_{t+\delta t}=S_{t}(1+r\delta t+W_{t+\delta t}-W_{t})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+do 
+\begin_inset Formula $A=A+\frac{\delta t}{2T}(S_{t}+S_{t+\delta t})$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+compute 
+\begin_inset Formula $e^{-rT}Q(S,A)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+repeat the above to obtain M values and average them
+\end_layout
+
+\end_deeper
 \begin_layout Section
 Complement: Binomial Trees
 \end_layout
@@ -587,6 +650,375 @@ The Black-Scholes Equation: Mathematical Analysis
 
 \begin_layout Section
 Orientation
+\end_layout
+
+\begin_layout Section
+The Partial Differential Equation
+\end_layout
+
+\begin_layout Subsection
+Infinitesimal Generator of the Diffusion Process
+\end_layout
+
+\begin_layout Subsection
+Vanilla Options: Behavior for Extremal Values of 
+\begin_inset Formula $S$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+The BLack-Scholes Equation in Logarithmic Prices
+\end_layout
+
+\begin_layout Section
+Mathematical Analysis of the Black-Scholes Equation with Local Volatility
+\end_layout
+
+\begin_layout Subsection
+Some Functions Spaces
+\end_layout
+
+\begin_layout Subsection
+The Weak Formulation of the Black-Scholes Equation
+\end_layout
+
+\begin_layout Subsection
+Regularity of the Weak Solutions
+\end_layout
+
+\begin_layout Subsection
+The Maximum Principle
+\end_layout
+
+\begin_layout Subsection
+Consequences of the Maximum Principle
+\end_layout
+
+\begin_layout Subsection
+Dupire's Equation
+\end_layout
+
+\begin_layout Section
+Barriers Options
+\end_layout
+
+\begin_layout Section
+Levy Driven Assets
+\end_layout
+
+\begin_layout Section
+Options on a Basket of Assets
+\end_layout
+
+\begin_layout Section
+Stochastic Volatility
+\end_layout
+
+\begin_layout Chapter
+Finite Differences
+\end_layout
+
+\begin_layout Section
+Finite Differences in Logarithmic Prices
+\end_layout
+
+\begin_layout Subsection
+Basic Estimates from Taylor Expansions
+\end_layout
+
+\begin_layout Subsection
+Ruler Explicit Scheme
+\end_layout
+
+\begin_layout Subsection
+The Euler Implicit Scheme
+\end_layout
+
+\begin_layout Subsection
+The Crank-Nicolson Scheme
+\end_layout
+
+\begin_layout Section
+Upwinding
+\end_layout
+
+\begin_layout Section
+Finite Differences in the Primitive Variables
+\end_layout
+
+\begin_layout Subsection
+Euler Implicit Scheme
+\end_layout
+
+\begin_layout Section
+Numerical Results
+\end_layout
+
+\begin_layout Section
+Which variable is Better?
+\end_layout
+
+\begin_layout Section
+Options on a Basket of Two Assets
+\end_layout
+
+\begin_layout Section
+An Asian Put with Fixed Strike
+\end_layout
+
+\begin_layout Subsection
+An Upwind Scheme with Respect to 
+\begin_inset Formula $A$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+A Program in C++
+\end_layout
+
+\begin_layout Chapter
+The Finite Element Method
+\end_layout
+
+\begin_layout Section
+Orientation
+\end_layout
+
+\begin_layout Section
+A Generic Problem
+\end_layout
+
+\begin_layout Subsection
+Variational Formulation
+\end_layout
+
+\begin_layout Subsection
+The TIme Semidiscrete Problem
+\end_layout
+
+\begin_layout Subsection
+The Full Discretization: Language Finite Elements
+\end_layout
+
+\begin_layout Subsection
+The Discrete Problem in Matrix Form
+\end_layout
+
+\begin_layout Subsection
+The Nodal Basis
+\end_layout
+
+\begin_layout Subsection
+Stabilization by Least Squares
+\end_layout
+
+\begin_layout Section
+The Black-Scholes Equation with Local Volatility
+\end_layout
+
+\begin_layout Section
+A Black-Scholes Equation Solver in C++
+\end_layout
+
+\begin_layout Section
+A Transparent Boundary Condition
+\end_layout
+
+\begin_layout Section
+Levy Driven Assets
+\end_layout
+
+\begin_layout Subsection
+A Scheme with an Explicit Discretization of the Nonlocal Term
+\end_layout
+
+\begin_layout Subsection
+A Semi-Implicit Scheme and a Program for Options on CGMY Driven Assets
+\end_layout
+
+\begin_layout Section
+Programs for Two-Dimensional Cases
+\end_layout
+
+\begin_layout Subsection
+Options on a Bakset of Assets
+\end_layout
+
+\begin_layout Subsection
+A Stochastic Volatility Model
+\end_layout
+
+\begin_layout Subsection
+Matrix Storage: The Compressed Sparse Row Format
+\end_layout
+
+\begin_layout Section
+Programming in Dimension 
+\begin_inset Formula $d>2$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+High Dimensions: An Introduction to Galerkin Methods with Sparse Tensor
+ Product Spaces
+\end_layout
+
+\begin_layout Subsection
+Wavelets in 
+\begin_inset Formula $\mathbb{R}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Appendix: The Full Program for Two-Dimensional Black-Scholes
+\end_layout
+
+\begin_layout Chapter
+Adaptive Mesh Refinement
+\end_layout
+
+\begin_layout Section
+The Black-Scholes Equation and Some Discretization
+\end_layout
+
+\begin_layout Subsection
+The Black-Scholes Equation and Its Variational Formulation
+\end_layout
+
+\begin_layout Subsection
+The Time Semidiscrete Problem
+\end_layout
+
+\begin_layout Subsection
+The Fully Discrete Problem
+\end_layout
+
+\begin_layout Section
+Error Indicators for the Black-Scholes Equation
+\end_layout
+
+\begin_layout Subsection
+An upper Bound for the Error
+\end_layout
+
+\begin_layout Subsection
+An upper Bound for the Error Indicators
+\end_layout
+
+\begin_layout Section
+Conclusion
+\end_layout
+
+\begin_layout Section
+A Taste of theh Software
+\end_layout
+
+\begin_layout Section
+Results
+\end_layout
+
+\begin_layout Subsection
+Test with a Uniform Volatility
+\end_layout
+
+\begin_layout Subsection
+Result woth a Nonuniform Local Volatility
+\end_layout
+
+\begin_layout Section
+Mesh Adaption fro a Put on a Basket of Two Assets
+\end_layout
+
+\begin_layout Section
+Appendix: Proofs
+\end_layout
+
+\begin_layout Chapter
+American Options
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Section
+The Variational Inequality
+\end_layout
+
+\begin_layout Section
+The Exercise Boundary
+\end_layout
+
+\begin_layout Section
+Discrete Approximations to the Variational Inequality
+\end_layout
+
+\begin_layout Subsection
+Existence and Uniqueness of (6.28)
+\end_layout
+
+\begin_layout Subsection
+Stability
+\end_layout
+
+\begin_layout Subsection
+Convergence
+\end_layout
+
+\begin_layout Subsection
+The Discrete Excecise Boundary
+\end_layout
+
+\begin_layout Section
+Solution Procedures
+\end_layout
+
+\begin_layout Subsection
+the projected SOR Algorithm
+\end_layout
+
+\begin_layout Subsection
+the Brennan and Schwartz Algorithm
+\end_layout
+
+\begin_layout Subsection
+A Front-Tracking Algorithm
+\end_layout
+
+\begin_layout Subsection
+A Regularized Active Set Strategy
+\end_layout
+
+\begin_layout Section
+Results
+\end_layout
+
+\begin_layout Subsection
+Uniform Coefficients
+\end_layout
+
+\begin_layout Subsection
+Local Volatility
+\end_layout
+
+\begin_layout Section
+More Complex American Options
+\end_layout
+
+\begin_layout Chapter
+Sensitivities and Calibration
+\end_layout
+
+\begin_layout Standard
+
 \end_layout
 
 \end_body
