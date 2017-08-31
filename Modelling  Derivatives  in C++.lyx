@@ -19,9 +19,9 @@
 \language_package default
 \inputencoding utf8-plain
 \fontencoding global
-\font_roman "default" "Noto Sans Mono CJK SC"
-\font_sans "default" "Noto Sans CJK SC"
-\font_typewriter "default" "Noto Sans Mono CJK SC"
+\font_roman "default" "微软雅黑"
+\font_sans "default" "微软雅黑 Light"
+\font_typewriter "default" "新宋体"
 \font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts true
@@ -153,871 +153,858 @@ Ubuntu：
 
 \end_deeper
 \begin_layout Chapter
-Option Pricing
+Black-Scholes and Pricing Fundamentals
 \end_layout
 
 \begin_layout Section
-Orientation
+Forward contracts
+\end_layout
+
+\begin_layout Itemize
+forward contracts are traded over-the-counter(OTC) ——> standardized exchange-tra
+ded contracts, such as those on the Chicago Mercantile Exchange, are known
+ as 
+\begin_inset Formula $futures$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Notation：
+\begin_inset Formula $f_{t,T}$
+\end_inset
+
+ be the present value of a forward contract at time t maturing at time T;
+ 
+\begin_inset Formula $F_{t,T}$
+\end_inset
+
+ be the forward price at time t, and 
+\begin_inset Formula $r$
+\end_inset
+
+ be the risk-free rate per annum (with continuous compounding)
+\end_layout
+
+\begin_layout Itemize
+the forward price is such a delivery price K that makes the present value
+ of a forward contract equal to zero, 
+\begin_inset Formula $f_{0,T}=0$
+\end_inset
+
+:
+\begin_inset Formula 
+\[
+K=F_{0,T}=S_{0}e^{r(T-t_{0})}\tag{1.3}
+\]
+
+\end_inset
+
+也就是说，the forward price理应按照无风险利率增长（否则就会有套利机会）
+\end_layout
+
+\begin_layout Itemize
+PV of a
+\color red
+ seasoned forward position at some 
+\begin_inset Formula $t$
+\end_inset
+
+ after inception
+\color inherit
+, known as marking to market.
+ At some time 
+\begin_inset Formula $t$
+\end_inset
+
+ after inception, 
+\begin_inset Formula $0<t<T$
+\end_inset
+
+, the PV is generally different from zero:
+\begin_inset Formula 
+\begin{align*}
+f_{t,T} & =e^{-r(T-t)}E_{t}[S_{T}-K]=S_{t}-e^{-r(T-t)}K=S_{t}-e^{r(T-t_{0})}S_{0}\\
+ & =S_{t}-F_{0,t}=e^{-r(T-t)}[F_{t,T}-F_{0,T}]\tag{1.6}
+\end{align*}
+
+\end_inset
+
+(远期的PV与当期远期价格和期初远期价格之差之间存在正向关系) Thus the PV of a seasoned forward contract
+ can be valued by taking the difference between the forward price at time
+ 
+\begin_inset Formula $t$
+\end_inset
+
+ and tht forward price at time 
+\begin_inset Formula $0$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+it is important to note that the arbitrage-free and risk-neutral arguments
+ are valid only for traded assets.
+ 
+\end_layout
+
+\begin_layout Itemize
+Value a forward on an asset providing a known cash income such as coupon
+ bonds or stocks with discrete dividend payments.
+ 
+\begin_inset Formula $I_{0}$
+\end_inset
+
+: the PV at time 
+\begin_inset Formula $t_{0}$
+\end_inset
+
+of all income to be received from the asset between times 
+\begin_inset Formula $t_{0}$
+\end_inset
+
+and 
+\begin_inset Formula $T$
+\end_inset
+
+ (discounting at the risk-free rate), then
+\begin_inset Formula 
+\[
+K=F_{0,T}=e^{r(T-t_{0})}(S_{0}-I_{0})
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+f_{t,T}=e^{-r(T-t)}E_{t}[(S_{T}-I_{T})-K]=S_{t}-I_{t}-e^{-r(T-t)}K
+\]
+
+\end_inset
+
+if the asset pays a continuous known dividend yield 
+\begin_inset Formula $q$
+\end_inset
+
+, then the frowth and discount rates are 
+\begin_inset Formula $e^{(r-q)(T-t)}$
+\end_inset
+
+and 
+\begin_inset Formula $e^{-(r-q)(T-t)}$
+\end_inset
+
+, respectively ; if the underlying asset is a foreign currency, then we
+ can view the yield 
+\begin_inset Formula $q$
+\end_inset
+
+ as the foreign risk-free rate 
+\begin_inset Formula $r_{f}$
+\end_inset
+
+ so that the growth and discount rates of the underlying currency 
+\begin_inset Formula $S_{0}$
+\end_inset
+
+are 
+\begin_inset Formula $e^{(r-r_{f})(T-t)}$
+\end_inset
+
+ and 
+\begin_inset Formula $e^{-(r-r_{f})(T-t)}$
+\end_inset
+
+ , respectively , and the price of a forward contract on 
+\begin_inset Formula $S_{0}$
+\end_inset
+
+at time 0 is 
+\begin_inset Formula $F_{0,T}=S_{0}e^{(r-r_{f})(T-t)}$
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
-A brief Introduction to Options
-\end_layout
-
-\begin_layout Subsection
-the European Vanilla Call Option
-\end_layout
-
-\begin_layout Subsection
-Option Pricing: The Black-Scholes Model
-\end_layout
-
-\begin_layout Subsection
-Other European Options
+Black-Scholes partial differential equaiton
 \end_layout
 
 \begin_layout Itemize
-General European Oprions
-\end_layout
-
-\begin_layout Itemize
-Barrier Options: a barrier option with payoff 
-\begin_inset Formula $Q^{0}$
-\end_inset
-
- and maturity 
-\begin_inset Formula $T$
-\end_inset
-
- is a contract which yields a payoff 
-\begin_inset Formula $Q^{0}(S_{T})$
-\end_inset
-
- at maturity 
-\begin_inset Formula $T$
-\end_inset
-
- , as long as the spot price 
+假定
 \begin_inset Formula $S_{t}$
 \end_inset
 
- remains in the interval 
-\begin_inset Formula $(a(t),b(t))$
-\end_inset
+为t时期一个risky stock that pays no dividends的价格，考虑其过程要满足三个限制条件：
+\end_layout
 
- for all time 
-\begin_inset Formula $t\in[0,T]$
-\end_inset
-
-
+\begin_deeper
+\begin_layout Itemize
+价格永远非负（rules out arithmetic Brownian motion）
 \end_layout
 
 \begin_layout Itemize
-European Option on a Basket of Assets: consider a basket containing 
-\begin_inset Formula $I$
+当价格为0时，企业破产，此时价格永远不会再为正，so zero should be an 
+\begin_inset Formula $absorbing$
 \end_inset
 
- assets , whose prices 
-\begin_inset Formula $S_{it},i=1,2,...,I$
-\end_inset
-
- satisfy the system of stochastic differential equations
-\begin_inset Formula 
-\[
-dS_{it}=S_{it}(\mu_{i}dt+\frac{\sigma_{i}}{\sqrt{1+\Sigma_{j\neq i}\rho_{i,j}^{2}}}(dB_{it}+\Sigma_{j\neq i}\rho_{i,j}dB_{jt})),i=1,2,...,I
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $B_{1t},...,B_{It}$
-\end_inset
-
- are 
-\begin_inset Formula $I$
-\end_inset
-
- independent standard Brownian motions under probability 
-\begin_inset Formula $\mathbb{P}$
-\end_inset
-
-, and where the correlation coefficient 
-\begin_inset Formula $\rho_{i,j}$
-\end_inset
-
- satisfy 
-\begin_inset Formula $\rho_{i,j}=\rho_{j,i},1\leq i<j\leq I$
-\end_inset
-
-.
- The process 
-\begin_inset Formula $\frac{1}{\sqrt{1+\Sigma_{j\neq i}\rho_{i,j}^{2}}}(B_{it}+\Sigma_{j\neq i}\rho_{i,j}B_{jt})$
-\end_inset
-
- is a 
-\color red
-standard Brownian
-\color inherit
- motion, so 
-\begin_inset Formula 
-\[
-S_{it}=S_{i0}e^{(\mu_{i}-\frac{\sigma_{i}^{2}}{2})t+\frac{\sigma_{i}}{\sqrt{1+\Sigma_{j\neq i}\rho_{i,j}^{2}}}(B_{it}+\Sigma_{j\neq i}\rho_{i,j}B_{jt})}
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
-Constant Coefficients.
- The Black-Scholes Formula
-\end_layout
-
-\begin_layout Section
-Monte-Carlo Methods
-\end_layout
-
-\begin_layout Subsection
-Numerical Random Variables
+(cemetery) boundary。
 \end_layout
 
 \begin_layout Itemize
-利用均匀分布构建正态分布
+投资者要求的期望回报率应该独立于股票价格。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+we choose the stochastic model 
 \begin_inset Formula 
 \[
-\omega\rightarrow\tilde{\omega}:=\frac{\omega}{Rand_{-}Max}
+dS_{t}=mS_{t}dt+b(S_{t},t)dz_{t}\tag{1.10}
 \]
 
 \end_inset
 
 其中，
-\begin_inset Formula $\tilde{\omega}\in[0,1]$
+\begin_inset Formula $m$
 \end_inset
 
-，于是可以按下列方法构造标准正太随机变量
+是drift coefficient（此情况下表示constant股票期望回报率），
+\begin_inset Formula $b(S_{t},t)$
+\end_inset
+
+是diffusion coefficient，
+\begin_inset Formula $z_{t}$
+\end_inset
+
+是Wiener process。当
+\begin_inset Formula $b(S_{t},t)\equiv0$
+\end_inset
+
+，他表示一个risk-free asset。由于限制条件2，有
+\begin_inset Formula $b(0,t)=0$
+\end_inset
+
+。thus we can 
+\color red
+parameterize
+\color inherit
+ our diffusion coefficient as follows:
 \begin_inset Formula 
 \[
-x=\sqrt{-2ln(\omega_{1})}cos(2\pi\omega_{2})
+b(S,t)=\sigma(S,t)S\tag{1.11}
 \]
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Itemize
-Theorem 1.2(central limit).
- let x be a random variable with probability density p.
- expectation 
-\begin_inset Formula $\mathbb{E}(x)$
+其中，
+\begin_inset Formula $\sigma(S,t)$
 \end_inset
 
-, and variance
-\begin_inset Formula $var(x)=\mathbb{E}[(x-\mathbb{E}(x))^{2}]$
-\end_inset
-
-.
- The approximation
-\begin_inset Formula 
-\[
-E(x):=\int_{-\infty}^{+\infty}p(x)xdx\approx E_{N}(x):=\frac{1}{N}\Sigma_{1}^{N}x_{i}
-\]
-
-\end_inset
-
-satisfies, for all 
-\begin_inset Formula $c_{1}<0<c_{2}$
-\end_inset
-
-
-\begin_inset Formula 
-\[
-\underset{N\rightarrow\infty}{lim}\mathbb{P}(E(x)-E_{N}(x)\in(c_{1}\sqrt{\frac{var(x)}{N}},c_{2}\sqrt{\frac{var(x)}{N}}))=\frac{1}{\sqrt{2\pi}}\int_{c_{1}}^{c_{2}}e^{-x^{2}/2}dx
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Random Variables Using the GSL
-\end_layout
-
-\begin_layout Subsection
-Variance Reduction
-\end_layout
-
-\begin_layout Standard
-from the central limit theorem we see that the accuracy of the Monte-Carlo
- method fro simulating the expectation of X is controlled by 
-\begin_inset Formula $\sqrt{\frac{var(X)}{N}}$
-\end_inset
-
-, thus the computing time for a given accuracy 
-\begin_inset Formula $\epsilon$
-\end_inset
-
- behaves like 
-\begin_inset Formula $\frac{var(x)}{\epsilon^{2}}$
-\end_inset
-
-。因此，尽量减少Var(x)可以提高模拟的效率
-\end_layout
-
-\begin_layout Itemize
-Control Variates：假定
-\begin_inset Formula $Z=X-b(Y-\bar{Y})$
-\end_inset
-
-，于是
-\begin_inset Formula $var(Z)=E[(Z-\bar{Z})^{2}]=var(X)+b^{2}var(Y)-2bE[(X-\bar{X})(Y-\bar{Y})]$
-\end_inset
-
-，解二次方程，可得，当
-\begin_inset Formula 
-\[
-b=\frac{E[(X-\bar{X})(Y-\bar{Y})]}{var(Y)}\approx\frac{\Sigma_{1}^{n}(X_{i}-\bar{X})(Y_{i}-\bar{Y})}{\Sigma_{1}^{n}(Y_{i}-\bar{Y})^{2}}
-\]
-
-\end_inset
-
-于是
-\begin_inset Formula 
-\[
-\frac{var(Z)}{var(X)}=1-\frac{E[(X-\bar{X})(Y-\bar{Y})]^{2}}{E[(X-\bar{X})^{2}]E[(Y-\bar{Y})^{2}]}
-\]
-
-\end_inset
-
-在计算option价格时候，可以设定
-\begin_inset Formula $X_{T}=e^{-rT}(S_{T}-K)_{+},Y_{T}=S_{T}$
-\end_inset
-
-，又注意到
-\begin_inset Formula $E^{*}(Y_{T})=e^{rT}S_{0}$
-\end_inset
-
-，因此
-\begin_inset Formula 
-\[
-C_{0}=E^{*}(X_{T})=E^{*}(Z_{T})\approx\frac{1}{n}\Sigma_{1}^{n}[e^{-rT}(S_{i}-K)_{+}-b(S_{i}-e^{rt}S_{0})]
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-Antithetic Variates：consider the stochastic ordinary differential equation
- with a change of sign in the term containing the Brownian motion and athe
- process 
-\begin_inset Formula $\xi_{T}$
-\end_inset
-
- given by 
-\begin_inset Formula 
-\[
-dS_{t}=S_{r}(rdt+\sigma_{t}dW_{t}),S_{0}=x
-\]
-
-\end_inset
-
-
-\begin_inset Formula 
-\[
-dS_{t}^{-}=S_{r}^{-}(rdt-\sigma_{t}dW_{t}),S_{0}^{-}=x
-\]
-
-\end_inset
-
-
-\begin_inset Formula 
-\[
-\xi_{t}=\frac{e^{-rt}}{2}[(S_{t}-K)_{+}+(S_{t}^{-}-K)_{+}]
-\]
-
-\end_inset
-
-于是
-\begin_inset Formula 
-\[
-E^{*}(\xi_{t})=E^{*}[e^{-rt}(S_{t}-K)_{+}]
-\]
-
-\end_inset
-
-且
-\begin_inset Formula 
-\[
-C_{0}=E^{*}(\xi_{T})
-\]
-
-\end_inset
-
-because 
-\begin_inset Formula $S_{t}^{-}$
-\end_inset
-
-and 
-\begin_inset Formula $S_{t}$
-\end_inset
-
- have the same law, and 
-\begin_inset Formula 
-\begin{align*}
-var(\xi_{t}) & =\frac{e^{-2rt}}{4}var((S_{t}-K)_{+})+\frac{e^{-2rt}}{4}var((S_{t}^{-}-K)_{+})+\frac{e^{-2rt}}{2}cov^{*}((S_{t}-K)_{+},(S_{t}^{-}-K)_{+})\\
- & =\frac{e^{-2rt}}{2}var((S_{t}-K)_{+})+\frac{e^{-2rt}}{2}cov^{*}((S_{t}-K)_{+},(S_{t}^{-}-K)_{+})\leq\frac{1}{2}var(e^{-rt}(S_{t}-K)_{+})
-\end{align*}
-
-\end_inset
-
-therefore we have obtained a new process with the same expectation and with
- a smaller variance【注意，前提是单调的payoff function】.
-\end_layout
-
-\begin_layout Section
-other options 
-\end_layout
-
-\begin_layout Subsection
-American options
-\end_layout
-
-\begin_layout Subsection
-Asian options
-\end_layout
-
-\begin_layout Itemize
-a typical example of an Asian option is a contract giving its owner the
- right to buy an asset for its average price over some prescribed period.
-\end_layout
-
-\begin_layout Itemize
-算法：
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-\begin_inset Formula $S_{0}$
-\end_inset
-
- given ,set 
-\begin_inset Formula $A=0$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-for (
-\begin_inset Formula $t=0;t\leq T;t=t+\delta t$
-\end_inset
-
-)
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-call the random generator to simulate 
-\begin_inset Formula $W_{t+\delta t}-W_{t}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-compute 
-\begin_inset Formula $S_{t+\delta t}=S_{t}(1+r\delta t+W_{t+\delta t}-W_{t})$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-do 
-\begin_inset Formula $A=A+\frac{\delta t}{2T}(S_{t}+S_{t+\delta t})$
-\end_inset
-
-
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-compute 
-\begin_inset Formula $e^{-rT}Q(S,A)$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-repeat the above to obtain M values and average them
-\end_layout
-
-\end_deeper
-\begin_layout Section
-Complement: Binomial Trees
-\end_layout
-
-\begin_layout Subsection
-the tree for S
-\end_layout
-
-\begin_layout Itemize
-when 
-\begin_inset Formula $dS_{t}=S_{t}(rdt+\sigma dW_{t})$
-\end_inset
-
-, under the risk neutral probability 
-\begin_inset Formula $\mathbb{P}^{*}$
-\end_inset
-
-, the mean and variance of 
-\begin_inset Formula $S_{t}$
-\end_inset
-
- are 
-\begin_inset Formula $S_{t}e^{r\delta t}$
-\end_inset
-
- and 
-\begin_inset Formula $S_{t}e^{(2r+\sigma^{2})\delta t}$
-\end_inset
-
- and therefore it is necessary that 
-\begin_inset Formula 
-\[
-up+d(1-p)=e^{r\delta t}
-\]
-
-\end_inset
-
-and
-\begin_inset Formula 
-\[
-p(1-p)(u-d)^{2}=e^{(2r+\sigma^{2})\delta t}
-\]
-
-\end_inset
-
-a popular choice is 
-\begin_inset Formula $p=\frac{1}{2}$
-\end_inset
-
- which implies 
-\begin_inset Formula 
-\begin{align*}
-u & =e^{r\delta t}(1+\sqrt{e^{\sigma^{2}\delta t}-1})\\
-d & =e^{r\delta t}(1-\sqrt{e^{\sigma^{2}\delta t}-1})
-\end{align*}
-
-\end_inset
-
-another choice is 
-\begin_inset Formula $u=1/d$
-\end_inset
-
- which yields
-\begin_inset Formula 
-\begin{align*}
-u & =\alpha+\sqrt{\alpha^{2}-1}\\
-d & =\alpha-\sqrt{\alpha^{2}-1}
-\end{align*}
-
-\end_inset
-
-with 
-\begin_inset Formula $\alpha=\frac{1}{2}(e^{-r\delta t}+e^{(r+\sigma^{2})\delta t})$
-\end_inset
-
- and 
-\begin_inset Formula $p=\frac{e^{r\delta t}-d}{u-d}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-the tree for C
-\end_layout
-
-\begin_layout Chapter
-The Black-Scholes Equation: Mathematical Analysis
-\end_layout
-
-\begin_layout Section
-Orientation
-\end_layout
-
-\begin_layout Section
-The Partial Differential Equation
-\end_layout
-
-\begin_layout Subsection
-Infinitesimal Generator of the Diffusion Process
-\end_layout
-
-\begin_layout Subsection
-Vanilla Options: Behavior for Extremal Values of 
+是一个关于
 \begin_inset Formula $S$
 \end_inset
 
+和
+\begin_inset Formula $t$
+\end_inset
 
+的positive function，或者其他某个影响股票的随机变量，这里主要指股票价格的volatility。为便于分析，将其简化为一个常数
+\begin_inset Formula 
+\[
+dS_{t}=mS_{t}dt+\sigma S_{t}dz_{t}\tag{1.12}
+\]
+
+\end_inset
+
+the process is called 
+\begin_inset Formula $geometric\,Brownian\,motions$
+\end_inset
+
+(geometric refers to the multiplicative nature of fluctuations)
 \end_layout
 
-\begin_layout Subsection
-The BLack-Scholes Equation in Logarithmic Prices
+\begin_layout Itemize
+引入一个变量：
+\begin_inset Formula $x=f(S)=ln(S)$
+\end_inset
+
+，于是，依据Ito‘s lemma，任何一个关于S和t的函数满足：
+\begin_inset Formula 
+\[
+df=(\frac{\partial f}{\partial t}+mS\frac{\partial f}{\partial S}+\frac{1}{2}\sigma^{2}S^{2}\frac{\partial^{2}f}{\partial S^{2}})dt+\sigma S\frac{\partial f}{\partial S}dz\tag{1.14}
+\]
+
+\end_inset
+
+将
+\begin_inset Formula $x=f(S)=ln(S)$
+\end_inset
+
+’带入可得：
+\begin_inset Formula 
+\begin{align*}
+dx & =\mu dt+\sigma dz\\
+ & =(m-\frac{\sigma^{2}}{2})dt+\sigma dz\tag{1.15}
+\end{align*}
+
+\end_inset
+
+因此，股票价格的对数follows一个算术布朗运动，其drift rate是
+\begin_inset Formula $\mu=m-\frac{\sigma^{2}}{2}$
+\end_inset
+
+且diffusion coefficient是
+\begin_inset Formula $\sigma$
+\end_inset
+
+。对上式进行积分可得
+\begin_inset Formula 
+\[
+x_{T}=x_{t}+(m-\frac{\sigma^{2}}{2})\tau+\sigma\sqrt{\tau}\varepsilon_{T}\tag{1.16}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $dz=\varepsilon\sqrt{dt}$
+\end_inset
+
+，
+\begin_inset Formula $\tau=T-t$
+\end_inset
+
+，
+\begin_inset Formula $\varepsilon$
+\end_inset
+
+是一个标准正态随机变量。进一步可得
+\begin_inset Formula 
+\[
+ln\frac{S_{T}}{S_{t}}=(m-\frac{\sigma^{2}}{2})\tau+\sigma\sqrt{\tau}\varepsilon_{T}
+\]
+
+\end_inset
+
+或者
+\begin_inset Formula 
+\[
+S_{T}=S_{t}e^{(m-\frac{\sigma^{2}}{2})\tau+\sigma\sqrt{\tau}\varepsilon_{T}}
+\]
+
+\end_inset
+
+this is the closed-form solution to the Brownian motion SDE。
 \end_layout
 
-\begin_layout Section
-Mathematical Analysis of the Black-Scholes Equation with Local Volatility
-\end_layout
+\begin_layout Itemize
+the transition probability density(the probability distribution function
+ of 
+\begin_inset Formula $S_{T}$
+\end_inset
 
-\begin_layout Subsection
-Some Functions Spaces
-\end_layout
+ at T given S at t)。Given x at t， 
+\begin_inset Formula $x_{T}$
+\end_inset
 
-\begin_layout Subsection
-The Weak Formulation of the Black-Scholes Equation
-\end_layout
+ is normally distributed:
+\begin_inset Formula 
+\[
+x_{T}\sim N(x_{t}+(m-\frac{\sigma^{2}}{2})(T-t),\sigma\sqrt{T-t})
+\]
 
-\begin_layout Subsection
-Regularity of the Weak Solutions
-\end_layout
+\end_inset
 
-\begin_layout Subsection
-The Maximum Principle
-\end_layout
+或者
+\begin_inset Formula 
+\[
+p(x_{T},T|x_{t},t)dx_{T}=\frac{1}{\sqrt{2\pi\sigma^{2}(T-t)}}e^{-\frac{(x_{T}-x_{t}-\mu(T-t))^{2}}{2\sigma^{2}(T-t)}}dx_{T}\tag{1.20}
+\]
 
-\begin_layout Subsection
-Consequences of the Maximum Principle
-\end_layout
-
-\begin_layout Subsection
-Dupire's Equation
-\end_layout
-
-\begin_layout Section
-Barriers Options
-\end_layout
-
-\begin_layout Section
-Levy Driven Assets
-\end_layout
-
-\begin_layout Section
-Options on a Basket of Assets
-\end_layout
-
-\begin_layout Section
-Stochastic Volatility
-\end_layout
-
-\begin_layout Chapter
-Finite Differences
-\end_layout
-
-\begin_layout Section
-Finite Differences in Logarithmic Prices
-\end_layout
-
-\begin_layout Subsection
-Basic Estimates from Taylor Expansions
-\end_layout
-
-\begin_layout Subsection
-Ruler Explicit Scheme
-\end_layout
-
-\begin_layout Subsection
-The Euler Implicit Scheme
-\end_layout
-
-\begin_layout Subsection
-The Crank-Nicolson Scheme
-\end_layout
-
-\begin_layout Section
-Upwinding
-\end_layout
-
-\begin_layout Section
-Finite Differences in the Primitive Variables
-\end_layout
-
-\begin_layout Subsection
-Euler Implicit Scheme
-\end_layout
-
-\begin_layout Section
-Numerical Results
-\end_layout
-
-\begin_layout Section
-Which variable is Better?
-\end_layout
-
-\begin_layout Section
-Options on a Basket of Two Assets
-\end_layout
-
-\begin_layout Section
-An Asian Put with Fixed Strike
-\end_layout
-
-\begin_layout Subsection
-An Upwind Scheme with Respect to 
-\begin_inset Formula $A$
 \end_inset
 
 
 \end_layout
 
-\begin_layout Subsection
-A Program in C++
-\end_layout
+\begin_layout Itemize
+Calculate the moments of the lognormal distribution around zero
+\begin_inset Formula 
+\[
+M_{n}(0)=E_{t,S}[S_{T}^{n}]=\int_{0}^{\infty}S_{T}^{n}p(S_{T},T|S_{t},t)dS_{T}\tag{1.22}
+\]
 
-\begin_layout Chapter
-The Finite Element Method
-\end_layout
+\end_inset
 
-\begin_layout Section
-Orientation
-\end_layout
+注意积分区间从0开始，因为股价非负。由于
+\begin_inset Formula $S_{T}=e^{x_{T}}$
+\end_inset
 
-\begin_layout Section
-A Generic Problem
-\end_layout
+，于是，我们需要计算
+\begin_inset Formula $M_{n}(0)=E_{t,x}[e^{nx_{T}}]$
+\end_inset
 
-\begin_layout Subsection
-Variational Formulation
-\end_layout
+，可以利用正态分布的特征方程：
+\begin_inset Formula 
+\[
+\phi(\lambda)=E[e^{i\lambda x_{T}}]=exp[i\lambda(x+\mu\tau)-\frac{\sigma^{2}\tau\lambda^{2}}{2}]\tag{1.24}
+\]
 
-\begin_layout Subsection
-The TIme Semidiscrete Problem
-\end_layout
+\end_inset
 
-\begin_layout Subsection
-The Full Discretization: Language Finite Elements
-\end_layout
+将
+\begin_inset Formula $i\lambda$
+\end_inset
 
-\begin_layout Subsection
-The Discrete Problem in Matrix Form
-\end_layout
+换成
+\begin_inset Formula $n$
+\end_inset
 
-\begin_layout Subsection
-The Nodal Basis
-\end_layout
+，于是
+\begin_inset Formula 
+\begin{align*}
+M_{n}(0) & =E_{t,S}[e^{nx_{T}}]=S^{n}exp[n\mu\tau+\frac{n^{2}\sigma^{2}\tau}{2}]\tag{1.25}\\
+ & =S^{n}exp[nm\tau+\frac{n(n-1)}{2}\sigma^{2}\tau]\tag{1.26}
+\end{align*}
 
-\begin_layout Subsection
-Stabilization by Least Squares
-\end_layout
+\end_inset
 
-\begin_layout Section
-The Black-Scholes Equation with Local Volatility
-\end_layout
+当n=1时，可以得到
+\begin_inset Formula $S_{T}$
+\end_inset
 
-\begin_layout Section
-A Black-Scholes Equation Solver in C++
-\end_layout
+的期望为
+\begin_inset Formula 
+\[
+E_{t,S}[S_{T}]=e^{m\tau}S\tag{1.27}
+\]
 
-\begin_layout Section
-A Transparent Boundary Condition
-\end_layout
+\end_inset
 
-\begin_layout Section
-Levy Driven Assets
-\end_layout
+方差为
+\begin_inset Formula 
+\[
+Var_{t,S}=E_{t,S}[S_{T}^{2}]-[E_{t,S}(S_{T})]^{2}=S^{2}[e^{2m\tau+\sigma^{2}\tau}-e^{2m\tau}]=S^{2}e^{2m\tau}[e^{\sigma^{2}\tau}-1]
+\]
 
-\begin_layout Subsection
-A Scheme with an Explicit Discretization of the Nonlocal Term
-\end_layout
-
-\begin_layout Subsection
-A Semi-Implicit Scheme and a Program for Options on CGMY Driven Assets
-\end_layout
-
-\begin_layout Section
-Programs for Two-Dimensional Cases
-\end_layout
-
-\begin_layout Subsection
-Options on a Bakset of Assets
-\end_layout
-
-\begin_layout Subsection
-A Stochastic Volatility Model
-\end_layout
-
-\begin_layout Subsection
-Matrix Storage: The Compressed Sparse Row Format
-\end_layout
-
-\begin_layout Section
-Programming in Dimension 
-\begin_inset Formula $d>2$
 \end_inset
 
 
 \end_layout
 
-\begin_layout Section
-High Dimensions: An Introduction to Galerkin Methods with Sparse Tensor
- Product Spaces
+\begin_layout Itemize
+推导股票衍生品价格。假定衍生证券
+\begin_inset Formula $f_{T}=F(S_{T})$
+\end_inset
+
+，且标的资产价格服从几何布朗运动（如式(1.12)描述）。构建一个投资组合
+\begin_inset Formula $\Pi$
+\end_inset
+
+：short position in one derivative security 
+\begin_inset Formula $f$
+\end_inset
+
+ and long position in a certain number of shares 
+\begin_inset Formula $\Delta$
+\end_inset
+
+，于是
+\begin_inset Formula 
+\[
+\Pi=\Delta S-f\tag{1.28}
+\]
+
+\end_inset
+
+于是，由Ito‘s lemma，在一个足够小的时间区间
+\begin_inset Formula $dt$
+\end_inset
+
+内，
+\begin_inset Formula 
+\begin{align*}
+d\Pi & =\Delta dS-df\\
+ & =\Delta(mSdt+\sigma Sdz)-(\frac{\partial f}{\partial t}+mS\frac{\partial f}{\partial S}+\frac{1}{2}\sigma^{2}S^{2}\frac{\partial^{2}f}{\partial S^{2}})dt-\sigma S\frac{\partial f}{\partial S}dz\\
+ & =\sigma S(\Delta-\frac{\partial f}{\partial S})dz+[mS(\Delta-\frac{\partial f}{\partial S})-\frac{\partial f}{\partial t}-\frac{1}{2}\sigma^{2}S^{2}\frac{\partial^{2}f}{\partial S^{2}}]dt\tag{1.31}
+\end{align*}
+
+\end_inset
+
+当我们选取
+\begin_inset Formula $\Delta=\frac{\partial f}{\partial S}$
+\end_inset
+
+(the hedge ratio)，发现组合变成了无风险资产组合，于是
+\begin_inset Formula $d\Pi=r\Pi dt$
+\end_inset
+
+，结合式(1.31)有
+\begin_inset Formula 
+\[
+\frac{\partial f}{\partial t}+\frac{1}{2}\sigma^{2}S^{2}\frac{\partial^{2}f}{\partial S^{2}}+r\Pi=0\tag{1.34}
+\]
+
+\end_inset
+
+或者
+\begin_inset Formula 
+\[
+\frac{1}{2}\sigma^{2}S^{2}\frac{\partial^{2}f}{\partial S^{2}}+r(\frac{\partial f}{\partial S}S-f)=\frac{1}{2}\sigma^{2}S^{2}\frac{\partial^{2}f}{\partial S^{2}}+rS\frac{\partial f}{\partial S}-rf=-\frac{\partial f}{\partial t}\tag{1.35}
+\]
+
+\end_inset
+
+于是衍生证券
+\begin_inset Formula $f$
+\end_inset
+
+满足partial differential equations(PDEs) as a consequence of the no-arbitrage
+ assumption。这就是Black-Scholes equation，mathematically， this is a diffusion
+ or heat equation。
 \end_layout
 
-\begin_layout Subsection
-Wavelets in 
-\begin_inset Formula $\mathbb{R}$
+\begin_layout Section
+Risk-neutral pricing
+\end_layout
+
+\begin_layout Itemize
+在风险中性世界分析式(1.35)，将其重写为
+\begin_inset Formula 
+\[
+D_{s,t}f-rf=-\frac{\partial f}{\partial t}\tag{1.36}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\[
+D_{s,t}=\frac{1}{2}\sigma^{2}S^{2}\frac{\partial^{2}}{\partial S^{2}}+rS\frac{\partial}{\partial S}\tag{1.37}
+\]
+
+\end_inset
+
+注意真实世界中的drift rate 
+\begin_inset Formula $m$
+\end_inset
+
+并没有出现在上述方程中；从上述方程可以看出，在风险中性世界中，drift rate是risk-free rate 
+\begin_inset Formula $r$
+\end_inset
+
+，于是在风险中性世界中，价格过程满足
+\begin_inset Formula 
+\[
+dS=rSdt+\sigma Sdz\tag{1.38}
+\]
+
+\end_inset
+
+注意到delta(the hedge ratio) 依赖于具体的时间和标的价格：
+\begin_inset Formula 
+\[
+\Delta(S,t)=\frac{\partial f(S,t)}{\partial S}\tag{1.39}
+\]
+
+\end_inset
+
+因此，需要动态对冲策略，否则，前述复制的资产组合不再是无风险资产。
+\end_layout
+
+\begin_layout Itemize
+假定世界只存在三种不同的资产：股票，欧式齐全以及货币基金(one share priced at 
+\begin_inset Formula $A_{0}=1$
+\end_inset
+
+ at time 0)。据此构建资产组合：sell one option(short) for 
+\begin_inset Formula $f_{0}$
+\end_inset
+
+；buy 
+\begin_inset Formula $\Delta_{0}$
+\end_inset
+
+ shares of stock：sell(short) 
+\begin_inset Formula $N_{0}$
+\end_inset
+
+shares of the money market account(this is equivalent to borrowing 
+\begin_inset Formula $N_{0}$
+\end_inset
+
+dollars at the risk-free money market rate 
+\begin_inset Formula $r$
+\end_inset
+
+)，于是资产组合在期初的价值Wiener：
+\begin_inset Formula 
+\[
+\Pi_{0}=\Delta_{0}S_{0}-N_{0}-f_{0}\tag{1.40}
+\]
+
+\end_inset
+
+持有过程中，不断调整
+\begin_inset Formula $\Delta$
+\end_inset
+
+和
+\begin_inset Formula $N$
+\end_inset
+
+。在某个时间t，资产组合价值为
+\begin_inset Formula 
+\[
+\Pi_{t}=\Delta_{t}S_{t}-N_{t}A_{t}-f_{t}\tag{1.41}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $A_{t}=e^{rt}$
+\end_inset
+
+。 A pair of stochastic processes {(
+\begin_inset Formula $\Delta t$
+\end_inset
+
+,
+\begin_inset Formula $N_{t}$
+\end_inset
+
+),
+\begin_inset Formula $0\leq t\leq T$
+\end_inset
+
+} that is a sequence of trading decisions is a 
+\begin_inset Formula $dynamic\,trading\,strategy$
+\end_inset
+
+ ：the 
+\begin_inset Formula $\Delta_{t}$
+\end_inset
+
+ and 
+\begin_inset Formula $N_{t}$
+\end_inset
+
+, viewed as functions of time, are stochastic processes since we do not
+ know their values at the beginning of our future trading decisions
+\begin_inset Formula 
+\[
+\Delta_{t}=\Delta(S_{t},t)
+\]
+
 \end_inset
 
 
+\begin_inset Formula 
+\[
+N_{t}=N(S_{t},t)
+\]
+
+\end_inset
+
+在一段足够小的时间
+\begin_inset Formula $dt$
+\end_inset
+
+后，组合变化为
+\begin_inset Formula 
+\[
+d\Pi_{t}=\Delta_{t}dS_{t}-N_{t}dA_{t}-df_{t}+d\Delta_{t}(S_{t}+dS_{t})-dN_{t}(A_{t}+dA_{t})\tag{1.42}
+\]
+
+\end_inset
+
+源于
+\begin_inset Formula $\Pi_{t}+d\Pi_{t}=(\Delta_{t}+d\Delta_{t})(S_{t}+dS_{t})-(N_{t}+dN_{t})(A_{t}+dA_{t})-(f_{t}+df_{t})$
+\end_inset
+
+。
 \end_layout
 
-\begin_layout Section
-Appendix: The Full Program for Two-Dimensional Black-Scholes
+\begin_layout Itemize
+定义：a dynamic trading strategy 
+\begin_inset Formula $\phi\equiv\{(\Delta_{t},N_{t}),0\leq t\leq T\}$
+\end_inset
+
+ is said to be 
+\begin_inset Formula $self-financing$
+\end_inset
+
+ if no capital is added to or withdrawn from the portfolio 
+\begin_inset Formula $\Pi_{t}$
+\end_inset
+
+ after the initial setup at time 0。式(1.42)中， 
+\begin_inset Formula $self-financing$
+\end_inset
+
+发生，当且仅当
+\begin_inset Formula 
+\[
+d\Delta_{t}(S_{t}+dS_{t})-dN_{t}(A_{t}+dA_{t})=0\tag{1.45}
+\]
+
+\end_inset
+
+此方程被称为
+\begin_inset Formula $balance\,equation$
+\end_inset
+
+，事实上，
+\begin_inset Formula $d\Delta_{t}(S_{t}+dS_{t})$
+\end_inset
+
+表示投入到股票中的总资金的变化【注意是总资金变化，而不是总价值变化，二者是有区别的】，
+\begin_inset Formula $dN_{t}(A_{t}+dA_{t})$
+\end_inset
+
+是债务变化(同样是货币上的变化)。
 \end_layout
 
-\begin_layout Chapter
-Adaptive Mesh Refinement
+\begin_layout Itemize
+上述交易策略总的收益可以看成是每个小区间
+\begin_inset Formula $dt$
+\end_inset
+
+的总和
+\begin_inset Formula 
+\begin{align*}
+\Pi_{T}-\Pi_{0} & =\underset{\Delta t\rightarrow0}{lim}[\Sigma_{t=0}^{N-1}\Delta(S_{i},t_{i})(S_{i+1}-S_{i})-\Sigma_{i=0}^{N-1}N(S_{i},t_{i})(A(t_{i+1})-A(t_{i}))]-[f(S_{T},T)-f(S_{0},0)]\tag{1.46}\\
+ & =\int_{0}^{T}\Delta_{t}dS_{t}-\int_{0}^{T}N_{t}dA_{t}-[F(S_{T})-f(S_{0},0)]\tag{1.47}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula $F(S_{T})$
+\end_inset
+
+是payoff from the derivative，
+\begin_inset Formula $\int_{0}^{T}\Delta_{t}dS_{t}$
+\end_inset
+
+需要用到Ito integral（见Appendix B）
 \end_layout
 
-\begin_layout Section
-The Black-Scholes Equation and Some Discretization
-\end_layout
+\begin_layout Itemize
+如果存在一个self-financing策略能够完全复制出the option with the given payoff 
+\begin_inset Formula $F(S_{T})$
+\end_inset
 
-\begin_layout Subsection
-The Black-Scholes Equation and Its Variational Formulation
-\end_layout
+，那么根据无套利原则，对于任何时点t，有
+\begin_inset Formula 
+\[
+\Delta_{t}S_{t}-N_{t}A_{t}-f_{t}=0\tag{1.48}
+\]
 
-\begin_layout Subsection
-The Time Semidiscrete Problem
-\end_layout
+\end_inset
 
-\begin_layout Subsection
-The Fully Discrete Problem
-\end_layout
+根据Ito‘s lemma ，可以用一个过程描述期权价格：
+\begin_inset Formula 
+\[
+df=m_{f}fdt+\sigma_{f}fdz\tag{1.49}
+\]
 
-\begin_layout Section
-Error Indicators for the Black-Scholes Equation
-\end_layout
+\end_inset
 
-\begin_layout Subsection
-An upper Bound for the Error
-\end_layout
+由式(1.14)可知
+\begin_inset Formula 
+\[
+m_{f}=\frac{\frac{\partial f}{\partial t}+mS\frac{\partial f}{\partial S}+\frac{1}{2}\sigma^{2}S^{2}\frac{\partial^{2}f}{\partial S^{2}}}{f}\tag{1.50}
+\]
 
-\begin_layout Subsection
-An upper Bound for the Error Indicators
-\end_layout
+\end_inset
 
-\begin_layout Section
-Conclusion
-\end_layout
 
-\begin_layout Section
-A Taste of theh Software
-\end_layout
+\begin_inset Formula 
+\[
+\sigma_{f}=\frac{\sigma S\frac{\partial f}{\partial S}}{f}\tag{1.51}
+\]
 
-\begin_layout Section
-Results
-\end_layout
+\end_inset
 
-\begin_layout Subsection
-Test with a Uniform Volatility
-\end_layout
+由式(1.48)，在足够小的时间区间
+\begin_inset Formula $dt$
+\end_inset
 
-\begin_layout Subsection
-Result woth a Nonuniform Local Volatility
-\end_layout
+内
+\begin_inset Formula 
+\[
+\Delta_{t}dS_{t}-N_{t}dA_{t}-df_{t}=0
+\]
 
-\begin_layout Section
-Mesh Adaption fro a Put on a Basket of Two Assets
-\end_layout
+\end_inset
 
-\begin_layout Section
-Appendix: Proofs
-\end_layout
+或者
+\begin_inset Formula 
+\[
+\Delta(mSdt+\sigma Sdz)-NrAdt-(m_{f}fdt+\sigma_{f}fdz)=0\tag{1.52}
+\]
 
-\begin_layout Chapter
-American Options
-\end_layout
+\end_inset
 
-\begin_layout Section
-Introduction
-\end_layout
+又
+\begin_inset Formula $NA=\Delta S-f$
+\end_inset
 
-\begin_layout Section
-The Variational Inequality
-\end_layout
+，带入上式，得
+\begin_inset Formula 
+\[
+[(m_{f}-r)f-\Delta S(m-r)]dt+(\sigma_{f}f-\Delta\sigma S)dz=0\tag{1.53}
+\]
 
-\begin_layout Section
-The Exercise Boundary
-\end_layout
+\end_inset
 
-\begin_layout Section
-Discrete Approximations to the Variational Inequality
-\end_layout
+显然，由于
+\begin_inset Formula $dz$
+\end_inset
 
-\begin_layout Subsection
-Existence and Uniqueness of (6.28)
-\end_layout
+的存在，上式不恒等于0，除非
+\begin_inset Formula $(\sigma_{f}f-\Delta\sigma S=0$
+\end_inset
 
-\begin_layout Subsection
-Stability
-\end_layout
+，于是
+\begin_inset Formula 
+\[
+\Delta=\frac{\sigma_{f}f}{\sigma S}=\frac{\partial f}{\partial S}\tag{1.54}
+\]
 
-\begin_layout Subsection
-Convergence
-\end_layout
+\end_inset
 
-\begin_layout Subsection
-The Discrete Excecise Boundary
-\end_layout
+进一步，有
+\begin_inset Formula 
+\[
+m_{f}=r+\frac{\sigma_{f}}{\sigma}(m-r)
+\]
 
-\begin_layout Section
-Solution Procedures
-\end_layout
+\end_inset
 
-\begin_layout Subsection
-the projected SOR Algorithm
-\end_layout
+或者
+\begin_inset Formula 
+\[
+\frac{m_{f}-r}{\sigma_{f}}=\frac{m-r}{\sigma}\equiv\lambda\tag{1.55}
+\]
 
-\begin_layout Subsection
-the Brennan and Schwartz Algorithm
-\end_layout
+\end_inset
 
-\begin_layout Subsection
-A Front-Tracking Algorithm
-\end_layout
+式(1.54)说明delta（the hedge ratio）也是actual price volatility of the option to
+ the actual price volatility of the stock；式(1.55) is the central relation
+ of the arbitrage pricing theory，and is known as the 
+\begin_inset Formula $market\,price\,of\,risk$
+\end_inset
 
-\begin_layout Subsection
-A Regularized Active Set Strategy
-\end_layout
+ and is fundamental to general derivatives pricing since it is used to change
+ probability measures in one stochastic process to an equivalent martingale
+ measure in another process according to 
+\begin_inset Formula $Girsanov's\,theorem$
+\end_inset
 
-\begin_layout Section
-Results
-\end_layout
-
-\begin_layout Subsection
-Uniform Coefficients
-\end_layout
-
-\begin_layout Subsection
-Local Volatility
-\end_layout
-
-\begin_layout Section
-More Complex American Options
-\end_layout
-
-\begin_layout Chapter
-Sensitivities and Calibration
-\end_layout
-
-\begin_layout Standard
 
 \end_layout
 
