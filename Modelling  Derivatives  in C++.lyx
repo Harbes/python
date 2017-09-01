@@ -1335,11 +1335,197 @@ dx(t)=\mu(x(t),t)dt+\sigma(x(t),t)dz(t)
 
 \begin_inset Formula 
 \[
-\frac{d\tilde{Q}}{dQ}=exp[]
+\frac{d\tilde{Q}}{dQ}=exp[-\frac{1}{2}\int_{0}^{t}(\frac{\tilde{\mu}(x,s)-\mu(x,s)}{\sigma(x,s)})^{2}ds+\int_{0}^{t}\frac{\tilde{\mu}(x,s)-\mu(x,s)}{\sigma(x,s)}dz(s)]\tag{1.70}
 \]
 
 \end_inset
 
+此时，我们说
+\begin_inset Formula $\tilde{Q}$
+\end_inset
+
+等价于
+\begin_inset Formula $Q$
+\end_inset
+
+，进一步地，
+\begin_inset Formula 
+\[
+d\tilde{z}(t)=-[\frac{\tilde{\mu}(x,t)-\mu(x,t)}{\sigma(x,t)}]dt+dz(t)
+\]
+
+\end_inset
+
+在
+\begin_inset Formula $\tilde{Q}$
+\end_inset
+
+下是布朗运动，且有
+\begin_inset Formula 
+\[
+dx(t)=\tilde{\mu}(x(t),t)dt+\sigma(x(t),t)d\tilde{z}(t)
+\]
+
+\end_inset
+
+正如上面所示，利用Radon-Nikodym derivative，可以改变SDE的drift系数。
+\end_layout
+
+\begin_layout Itemize
+Girsanov‘s theorem的应用——从真实世界转向风险中性世界，利用该定理，有
+\begin_inset Formula 
+\[
+\tilde{E}(X)=E[X\frac{d\tilde{Q}}{dQ}]=E[Xexp(-\frac{1}{2}(\frac{r-\mu}{\sigma})^{2}t+(\frac{r-\mu}{\sigma})z(t))]
+\]
+
+\end_inset
+
+由于期望中包含几何布朗运动，因此利用矩母函数(moment-generating function)：
+\begin_inset Formula 
+\[
+E[e^{sz(t)}]=e^{ts^{2}/2}
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\[
+E[e^{-(\frac{\mu-r}{\sigma})z(t)}]=e^{t(\frac{\mu-r}{\sigma})^{2}/2}
+\]
+
+\end_inset
+
+据此可以计算期望：
+\begin_inset Formula 
+\[
+E[Xe^{-\frac{1}{2}(\frac{\mu-r}{\sigma})^{2}t}e^{\frac{1}{2}(\frac{\mu-r}{\sigma})^{2}t}]=E[X]
+\]
+
+\end_inset
+
+根据式(1.55)，the market price of risk 为
+\begin_inset Formula $\frac{\mu-r}{\sigma}=\lambda$
+\end_inset
+
+，于是利用the market price of risk 表示的Radon-Nikodym derivative为：
+\begin_inset Formula 
+\[
+\frac{d\tilde{Q}}{dQ}=exp[-\frac{1}{2}\lambda^{2}t+\lambda z(t)]
+\]
+
+\end_inset
+
+布朗运动
+\begin_inset Formula $\tilde{z}$
+\end_inset
+
+也可改写为
+\begin_inset Formula 
+\[
+\tilde{z}(t)=z(t)-\int_{0}^{t}\lambda(s)ds
+\]
+
+\end_inset
+
+如果the market price of risk随时间变化
+\begin_inset Formula 
+\[
+\lambda(t)=\frac{\mu(r(t),t)-r(t)}{\sigma(r(t),t)}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{d\tilde{Q}}{dQ}=exp[-\frac{1}{2}\int_{0}^{t}\lambda^{2}(s)ds+\int_{0}^{t}\lambda(s)dz(s)]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+在利率衍生品定价中的应用（Vasicek model）：the market price of risk为
+\begin_inset Formula $\lambda(t)=\lambda r(t)$
+\end_inset
+
+，于是Girsanov测度变换为
+\begin_inset Formula 
+\[
+\frac{d\tilde{Q}}{dQ}=exp[-\frac{1}{2}\int_{0}^{t}\lambda^{2}r(s)^{2}ds+\int_{0}^{t}\lambda r(s)d\tilde{z}(s)]
+\]
+
+\end_inset
+
+风险中性测度
+\begin_inset Formula $\tilde{Q}$
+\end_inset
+
+下便于计算期望，而目标测度
+\begin_inset Formula $Q$
+\end_inset
+
+下便于获得一系列参数估计值。
+\end_layout
+
+\begin_layout Section
+the forward measure
+\end_layout
+
+\begin_layout Itemize
+一个有用的numeraire是利用与待定价衍生品到期时间相同的零息债券，因为在到期日有
+\begin_inset Formula $P(T,T)=1$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+记
+\begin_inset Formula $Q^{T}$
+\end_inset
+
+为T-forward risk-adjusted measure(or just T-forward measure)，在此测度下，a forward
+ rate spanning a time interval up to T is a martingale ：
+\begin_inset Formula 
+\[
+E^{T}[F(t;S,T)|\Omega_{u}]=F(u;S,T)\quad,0\leq t\leq S\leq T\tag{1.71}
+\]
+
+\end_inset
+
+特别地，the forward rate spanning the interval [S,T] is the expectation of the
+ future simply compunded spot rate 
+\begin_inset Formula $R(S,T)$
+\end_inset
+
+ at time S for the maturity T：
+\begin_inset Formula 
+\[
+E^{T}[R(S,T)|\Omega_{t}]=F(t;S,T)\tag{1.72}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+证明（待）
+\end_layout
+
+\begin_layout Section
+the choice of numeraire 
+\end_layout
+
+\begin_layout Chapter
+Monte-Carlo Simulation
+\end_layout
+
+\begin_layout Standard
 
 \end_layout
 
