@@ -666,6 +666,14 @@ d\Pi & =\Delta dS-df\\
  or heat equation。
 \end_layout
 
+\begin_layout Itemize
+
+\color red
+一个疑问
+\color inherit
+：似乎欧式期权的边界值S-K或者K-S并不满足BS PDE
+\end_layout
+
 \begin_layout Section
 Risk-neutral pricing
 \end_layout
@@ -1003,6 +1011,333 @@ m_{f}=r+\frac{\sigma_{f}}{\sigma}(m-r)
  probability measures in one stochastic process to an equivalent martingale
  measure in another process according to 
 \begin_inset Formula $Girsanov's\,theorem$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+将
+\begin_inset Formula $m_{f}$
+\end_inset
+
+和
+\begin_inset Formula $\sigma_{f}$
+\end_inset
+
+的表达式带入(1.55)可得
+\begin_inset Formula 
+\[
+\frac{\partial f}{\partial t}+mS\frac{\partial f}{\partial S}+\frac{1}{2}\sigma^{2}S^{2}\frac{\partial^{2}f}{\partial S^{2}}=rf+(m-r)S\frac{\partial f}{\partial S}
+\]
+
+\end_inset
+
+也就是
+\begin_inset Formula 
+\[
+\frac{\partial f}{\partial t}+rS\frac{\partial f}{\partial S}+\frac{1}{2}\sigma^{2}S^{2}\frac{\partial^{2}f}{\partial S^{2}}=rf\tag{1.56}
+\]
+
+\end_inset
+
+这意味着：（1）为避免套利机会的存在，期权价格一定满足BS PDE；（2）动态复制策略是唯一的
+\end_layout
+
+\begin_layout Itemize
+欧式期权价格的具体推导见Appendix E
+\end_layout
+
+\begin_layout Section
+Black-Scholes and Diffusion process implementation
+\end_layout
+
+\begin_layout Itemize
+一个欧式期权的主要构成：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+underlying security price
+\end_layout
+
+\begin_layout Itemize
+strike
+\end_layout
+
+\begin_layout Itemize
+maturity
+\end_layout
+
+\begin_layout Itemize
+volatility
+\end_layout
+
+\begin_layout Itemize
+risk-free rate
+\end_layout
+
+\begin_layout Itemize
+dividend yield
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+一些有关期权的类（class）
+\end_layout
+
+\begin_layout Section
+American options
+\end_layout
+
+\begin_layout Itemize
+With the valuation problem of European options, we know which boundary condition
+s to use and where to apply them.
+ However,with the valuation problem of American options, we do not know
+ a priori where to apply boundary conditions and so have a 
+\begin_inset Formula $free\,boundary\,S_{f}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+lattice methods and finite difference schemes
+\end_layout
+
+\begin_layout Itemize
+美式put满足BS PDE不等式：
+\begin_inset Formula 
+\[
+\frac{\partial P}{\partial t}+\frac{1}{2}\sigma^{2}S^{2}\frac{\partial^{2}P}{\partial S^{2}}+rS\frac{\partial P}{\partial S}-rP\leq0
+\]
+
+\end_inset
+
+当最优策略不是执行期权时，等号成立（简单说明：当最优策略是执行时，将P=X-S带入上左侧式可得
+\begin_inset Formula $-rX$
+\end_inset
+
+，它是小于0的，因此上式在执行期权时取不等号）
+\end_layout
+
+\begin_layout Itemize
+美式call(标的为non-dividend-paying asset)满足BS PDE：
+\begin_inset Formula 
+\[
+\frac{\partial C}{\partial t}+\frac{1}{2}\sigma^{2}S^{2}\frac{\partial^{2}C}{\partial S^{2}}+rS\frac{\partial C}{\partial S}-rC=0
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+the American put problem can be written as a free boundary(
+\begin_inset Formula $S_{f}$
+\end_inset
+
+) problem。对于任意时间点，将资产价格划分为两部分：首先，当
+\begin_inset Formula $0\leq S<S_{f}$
+\end_inset
+
+时，提前执行put；当
+\begin_inset Formula $\infty>S\geq S_{f}$
+\end_inset
+
+时，不提前执行put。于是，在边界
+\begin_inset Formula $S=S_{f}(t)$
+\end_inset
+
+时有
+\begin_inset Formula 
+\[
+P(S_{f}(t),t)=max(X-S_{f}(t),0)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial P}{\partial S}(S_{f}(t),t)=-1
+\]
+
+\end_inset
+
+Arbitrage arguments(套利观点) show that the gradient of 
+\begin_inset Formula $f$
+\end_inset
+
+ should be continuous。
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $C^{American}\geq C^{European}\geq max(S-X,0)$
+\end_inset
+
+，
+\begin_inset Formula $P^{American}\geq P^{European}\geq max(X-S,0)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+For an American call option on dividends-paying stock, 需要满足
+\begin_inset Formula 
+\[
+\frac{\partial C}{\partial t}+\frac{1}{2}\sigma^{2}S^{2}\frac{\partial^{2}C}{\partial S^{2}}+(r-q)S\frac{\partial C}{\partial S}-rC\leq0
+\]
+
+\end_inset
+
+At the optimal exercise boundary 
+\begin_inset Formula $S=S_{f}$
+\end_inset
+
+，有
+\begin_inset Formula 
+\[
+C(S_{f}(t),t)=max(S_{f}(t)-X,0)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial C}{\partial S}(S_{f}(t),t)=1
+\]
+
+\end_inset
+
+Local analysis of the free boundary shows that as 
+\begin_inset Formula $t\rightarrow T$
+\end_inset
+
+，
+\begin_inset Formula $S_{f}(t)\sim\frac{rX}{q}[1+\xi_{0}\sqrt{\frac{1}{2}\sigma^{2}(T-t)}+...]$
+\end_inset
+
+，其中
+\begin_inset Formula $\xi_{0}=0.9034...$
+\end_inset
+
+对所有此类call都成立。
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+关于此类期权的精确数值计算过程参见Roll,Geske,and Whaley
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Fundamental pricing formulas
+\end_layout
+
+\begin_layout Itemize
+any attainable contigent claim with a payoff 
+\begin_inset Formula $H_{T}$
+\end_inset
+
+ at time 
+\begin_inset Formula $T>t$
+\end_inset
+
+ can be priced in a risk-neutral world by assuming the existence of a risk-neutr
+al measure 
+\begin_inset Formula $Q$
+\end_inset
+
+。用
+\begin_inset Formula $\pi_{t}$
+\end_inset
+
+表示t时期衍生品的价格，于是由风险中性下的期望可得
+\begin_inset Formula 
+\[
+\pi_{t}=E[e^{-\int_{t}^{T}r(s)ds}H_{T}|F_{t}]\tag{1.62}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $F_{t}$
+\end_inset
+
+表示信息集（一个σ-域）
+\end_layout
+
+\begin_layout Itemize
+无套利条件与等价鞅测度的存在之间有一个密切关系。
+\end_layout
+
+\begin_layout Itemize
+等价鞅测度的定义。
+\end_layout
+
+\begin_layout Itemize
+一个proposition（Harrison and Pliska(1981)）
+\end_layout
+
+\begin_layout Itemize
+complete market的定义以及与无套利与鞅测度的关系
+\end_layout
+
+\begin_layout Section
+Change of numeraire
+\end_layout
+
+\begin_layout Itemize
+Geman et al(1995) 表明，等价鞅测度不一定会方便计算证券价格，这时候可能需要通过change of numeraire来简化计算
+\end_layout
+
+\begin_layout Section
+Girsanov‘s theorem
+\end_layout
+
+\begin_layout Itemize
+主要用于转换测度
+\end_layout
+
+\begin_layout Itemize
+在测度
+\begin_inset Formula $Q$
+\end_inset
+
+下，考虑一个SDE：
+\begin_inset Formula 
+\[
+dx(t)=\mu(x(t),t)dt+\sigma(x(t),t)dz(t)
+\]
+
+\end_inset
+
+假设一个新的drift rate为
+\begin_inset Formula $\tilde{\mu}(x(t),t)$
+\end_inset
+
+，且
+\begin_inset Formula $\frac{\tilde{\mu}(x(t),t)-\mu(x(t),t)}{\sigma(x)}$
+\end_inset
+
+有界。定义一个新的测度
+\begin_inset Formula $\tilde{Q}$
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{d\tilde{Q}}{dQ}=exp[]
+\]
+
 \end_inset
 
 
