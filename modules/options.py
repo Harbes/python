@@ -327,11 +327,17 @@ class ame_option():
                 V = np.where(h[t] > C, h[t], V * df)
         return df * np.sum(V) / I
 class GenRelatedNormal:
-    def __init__(self,Mu=mu,VarCov=matrix):
+    def __init__(self,mu,mat):
+        if type(mu) is not np.ndarray or type(mat) is not np.ndarray:
+            raise ValueError('请检查并保证输入的数据是数组！')
         self.Mu=mu
-        self.VarCov=matrix
+        self.VarCov=mat
     def byNumpy(self,nums=100000,seed=None):
         np.random.seed(seed=seed)
         return np.random.multivariate_normal(self.Mu,self.VarCov,nums)
-    def byCholesky(self):
+    def byCholesky(self,nums=100000):
         lb=np.linalg.cholesky(self.VarCov)
+        m,_=np.shape(self.VarCov)
+        mu_=np.zeros(m)
+        sigma_=np.eye(m)
+        return self.Mu+np.random.multivariate_normal(mu_,sigma_,nums)@lb.T
