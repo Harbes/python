@@ -1771,5 +1771,17 @@ dz_{n} & =v_{n1}\sqrt{\lambda_{1}}dw_{1}+v_{n2}\sqrt{\lambda_{2}}dw_{2}+...+v_{n
 
 \end_layout
 
+\begin_layout Section
+quasi-random sequences
+\end_layout
+
+\begin_layout Itemize
+注意伪随机(pseudo-random)与拟随机(quasi-random)是有区别的，前者可能存在一定程度的序列相关
+\end_layout
+
+\begin_layout Section
+variance reduction and control variate techniques
+\end_layout
+
 \end_body
 \end_document
