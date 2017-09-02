@@ -461,7 +461,11 @@ dx & =\mu dt+\sigma dz\\
 \begin_inset Formula $\sigma$
 \end_inset
 
-。对上式进行积分可得
+。【利用股票对数差的平均值计算出的是
+\begin_inset Formula $m-\frac{\sigma^{2}}{2}$
+\end_inset
+
+吗？】对上式进行积分可得
 \begin_inset Formula 
 \[
 x_{T}=x_{t}+(m-\frac{\sigma^{2}}{2})\tau+\sigma\sqrt{\tau}\varepsilon_{T}\tag{1.16}
@@ -1525,7 +1529,245 @@ the choice of numeraire
 Monte-Carlo Simulation
 \end_layout
 
-\begin_layout Standard
+\begin_layout Section
+Monte-Carlo
+\end_layout
+
+\begin_layout Itemize
+模拟几何布朗运动路径。SDE
+\begin_inset Formula $dS_{t}=mS_{t}dt+\sigma S_{t}dz_{t}$
+\end_inset
+
+的离散化形式
+\begin_inset Formula 
+\[
+S_{i+1}=S_{i}exp(\mu\Delta t+\sigma\sqrt{\Delta t}\varepsilon_{i+1})\tag{2.1}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $\mu=m-\frac{\sigma^{2}}{2}$
+\end_inset
+
+。然而上式无法直接使用，因为参数
+\begin_inset Formula $m$
+\end_inset
+
+依赖于投资者的偏好；因而选择风险中性世界
+\begin_inset Formula $m=r$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+近似方法：一阶近似和高阶近似(Milstein approximation)
+\end_layout
+
+\begin_layout Section
+generating sample paths and normal deviates
+\end_layout
+
+\begin_layout Itemize
+至少三种方法生成正态随机变量
+\end_layout
+
+\begin_layout Section
+generating correlated normal random variables
+\end_layout
+
+\begin_layout Itemize
+方法一：假定X为多元正态分布，期望
+\begin_inset Formula $\boldsymbol{\mu}$
+\end_inset
+
+，方差-协方差矩阵为
+\begin_inset Formula $\boldsymbol{\Sigma}$
+\end_inset
+
+：
+\begin_inset Formula 
+\[
+\boldsymbol{\mu}=\left[\begin{array}{c}
+\mu_{1}\\
+\mu_{2}
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\boldsymbol{\Sigma}=\left[\begin{array}{cc}
+\sigma_{1}^{2} & \rho\sigma_{1}\sigma_{2}\\
+\rho\sigma_{1}\sigma_{2} & \sigma_{2}^{2}
+\end{array}\right]
+\]
+
+\end_inset
+
+假定两个独立的标准正态分布随机变量
+\begin_inset Formula $N_{1}$
+\end_inset
+
+和
+\begin_inset Formula $N_{2}$
+\end_inset
+
+，尝试将
+\begin_inset Formula $X_{1}$
+\end_inset
+
+和
+\begin_inset Formula $X_{2}$
+\end_inset
+
+写成如下形式：
+\begin_inset Formula 
+\[
+X_{1}=\mu_{1}+\sigma_{1}N_{1}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+X_{2}=\mu_{2}+aN_{1}+bN_{2}
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\begin{align*}
+Var(X_{2}) & =a^{2}+b^{2}=\sigma_{2}^{2}\\
+Cov(X_{1},X_{2}) & =a\sigma_{1}=\rho\sigma_{1}\sigma_{2}
+\end{align*}
+
+\end_inset
+
+由此可解得
+\begin_inset Formula 
+\begin{align*}
+a & =\rho\sigma_{2}\\
+b & =\sqrt{1-\rho^{2}}\sigma_{2}
+\end{align*}
+
+\end_inset
+
+因此
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+X_{1}\\
+X_{2}
+\end{array}\right]=\left[\begin{array}{c}
+\mu_{1}\\
+\mu_{2}
+\end{array}\right]+\left[\begin{array}{cc}
+\sigma_{1} & 0\\
+\rho\sigma_{1} & \sqrt{1-\rho^{2}}\sigma_{2}
+\end{array}\right]\left[\begin{array}{c}
+N_{1}\\
+N_{2}
+\end{array}\right]\tag{2.7}
+\]
+
+\end_inset
+
+用矩阵形式表示就是：
+\begin_inset Formula $\boldsymbol{X}=\boldsymbol{\mu}+\boldsymbol{L}\boldsymbol{N}$
+\end_inset
+
+，其中
+\begin_inset Formula $\boldsymbol{L}$
+\end_inset
+
+是一个下三角矩阵。又
+\begin_inset Formula 
+\[
+\boldsymbol{\Sigma}=E[(\boldsymbol{X}-\boldsymbol{\mu})(\boldsymbol{X}-\boldsymbol{\mu})']=E[(\boldsymbol{L}\boldsymbol{N})(\boldsymbol{L}\boldsymbol{N})']=\boldsymbol{L}\boldsymbol{L}'
+\]
+
+\end_inset
+
+于是(由于
+\begin_inset Formula $\boldsymbol{\Sigma}$
+\end_inset
+
+是对称且半正定的)
+\begin_inset Formula 
+\[
+\boldsymbol{L}=\boldsymbol{\Sigma}^{\frac{1}{2}}
+\]
+
+\end_inset
+
+这是
+\begin_inset Formula $\boldsymbol{\Sigma}$
+\end_inset
+
+的Cholesky分解。同理也适用于其他多元正态分布。
+\end_layout
+
+\begin_layout Itemize
+另一种方法（使用主成分分析）：
+\begin_inset Formula 
+\[
+\boldsymbol{\Sigma}=\boldsymbol{\Gamma}\boldsymbol{\Lambda}\boldsymbol{\Gamma}'
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $\boldsymbol{\Gamma}$
+\end_inset
+
+和
+\begin_inset Formula $\boldsymbol{\Lambda}$
+\end_inset
+
+分别为特征向量矩阵和特征根矩阵：
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{\Gamma} & =\left[\begin{array}{cccc}
+v_{11} & v_{12} & \cdots & v_{1n}\\
+v_{21} & v_{22} & \cdots & v_{2n}\\
+\vdots & \vdots & \cdots & \vdots\\
+v_{n1} & v_{n2} & \cdots & v_{nn}
+\end{array}\right]\\
+\boldsymbol{\Lambda} & =\left[\begin{array}{cccc}
+\lambda_{1} & 0 & 0 & 0\\
+0 & \lambda_{2} & 0 & 0\\
+0 & 0 & \ddots & 0\\
+0 & 0 & 0 & \lambda_{n}
+\end{array}\right]
+\end{align*}
+
+\end_inset
+
+令
+\begin_inset Formula $dw_{1},dw_{2},...,dw_{n}$
+\end_inset
+
+为独立的布朗运动，于是可以生成相关的布朗运动
+\begin_inset Formula $dz_{i}$
+\end_inset
+
+：
+\begin_inset Formula 
+\begin{align*}
+dz_{1} & =v_{11}\sqrt{\lambda_{1}}dw_{1}+v_{12}\sqrt{\lambda_{2}}dw_{2}+...+v_{1n}\sqrt{\lambda_{n}}dw_{n}\\
+dz_{2} & =v_{21}\sqrt{\lambda_{1}}dw_{1}+v_{22}\sqrt{\lambda_{2}}dw_{2}+...+v_{2n}\sqrt{\lambda_{n}}dw_{n}\\
+ & ...\\
+dz_{n} & =v_{n1}\sqrt{\lambda_{1}}dw_{1}+v_{n2}\sqrt{\lambda_{2}}dw_{2}+...+v_{nn}\sqrt{\lambda_{n}}dw_{n}
+\end{align*}
+
+\end_inset
+
 
 \end_layout
 

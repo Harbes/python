@@ -29,7 +29,7 @@ def stoch_barrier(x, m, Smin, Smax):
     for i in range(m):
         if S <= Smin or S >= Smax:
             return -1000
-        S += S * sigma * gauss[i] * sdt + r * dt
+        S += S * (sigma * gauss[i] * sdt + r * dt)
     return S
 
 
@@ -38,7 +38,7 @@ def stoch(x, m):
     S = x
     gauss = np.random.standard_normal(m)
     for i in range(m):
-        S += S * sigma * gauss[i] * sdt + r * dt
+        S += S * (sigma * gauss[i] * sdt + r * dt)
     return S
 
 

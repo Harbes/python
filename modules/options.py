@@ -326,3 +326,12 @@ class ame_option():
                 C = np.polyval(rg, S[t])
                 V = np.where(h[t] > C, h[t], V * df)
         return df * np.sum(V) / I
+class GenRelatedNormal:
+    def __init__(self,Mu=mu,VarCov=matrix):
+        self.Mu=mu
+        self.VarCov=matrix
+    def byNumpy(self,nums=100000,seed=None):
+        np.random.seed(seed=seed)
+        return np.random.multivariate_normal(self.Mu,self.VarCov,nums)
+    def byCholesky(self):
+        lb=np.linalg.cholesky(self.VarCov)
