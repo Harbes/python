@@ -329,6 +329,9 @@ class ame_option():
     # TODO 期权的动态复制策略
     def dynamicReplication(self):
         pass
+    # TODO
+    def MonteCarloAntitheticDeltaGammaControlVariates(self):
+        pass
 class GenRelatedNormal:
     def __init__(self,mu,mat):
         if type(mu) is not np.ndarray or type(mat) is not np.ndarray:

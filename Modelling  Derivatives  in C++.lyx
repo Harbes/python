@@ -1915,6 +1915,47 @@ C_{t_{0}}e^{r(T-t_{0})}=C_{T}-\Sigma_{i=0}^{N-1}\frac{\partial C_{t_{i}}}{\parti
 
 \end_inset
 
+(Clewlow and Strickland)解释为payoff的期望加上hedge等于期权价格按无风险利率的增长值。因此，可以利用上式进行模拟，最终得到期权
+价值（方差更小）。
+\end_layout
+
+\begin_layout Itemize
+同理可以使用gamma hedge control variate：
+\begin_inset Formula 
+\[
+cv_{2}=\Sigma^{N-1}\frac{\partial^{2}C_{t_{I}}}{\partial S^{2}}((\Delta S_{t_{i}})^{2}-E[(\Delta S_{t_{i}})^{2}]e^{r(T-t_{i+1})})\tag{2.29}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $E[(\Delta S_{t_{i}})^{2}]=S_{t_{i}}^{2}(e^{(2r+\sigma^{2})\Delta t_{i}}-2e^{r\Delta t_{i}}+1)$
+\end_inset
+
+，
+\begin_inset Formula $\Delta S_{t_{i}}=S_{t_{i+1}}-S_{t_{i}}$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+令
+\begin_inset Formula $t_{0}=0$
+\end_inset
+
+并假定存在
+\begin_inset Formula $n$
+\end_inset
+
+个control variates。则一般情况下，欧式call满足：
+\begin_inset Formula 
+\[
+C_{0}e^{rT}=C_{T}-\Sigma_{k=1}^{n}\beta_{k}cv_{k}+\eta\tag{2.30}
+\]
+
+\end_inset
+
 
 \end_layout
 
