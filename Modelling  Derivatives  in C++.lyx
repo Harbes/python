@@ -1783,7 +1783,138 @@ quasi-random sequences
 variance reduction and control variate techniques
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
+最简单的variance reduction procedure是
+\begin_inset Formula $antithetic\,variates$
+\end_inset
+
+：简单地说，就是取零期望的随机变量的相反数
+\end_layout
+
+\begin_layout Itemize
+还有一种方法是
+\begin_inset Formula $control\,variates$
+\end_inset
+
+，the principle underlyiing this technique is to “use what you know”
+\end_layout
+
+\begin_layout Section
+Monte-Carlo implementation
+\end_layout
+
+\begin_layout Itemize
+令
+\begin_inset Formula $x(t)=ln(S_{t})$
+\end_inset
+
+，将time to maturity 
+\begin_inset Formula $T$
+\end_inset
+
+ 划分
+\begin_inset Formula $N$
+\end_inset
+
+份，每个时间区间为
+\begin_inset Formula $\Delta t=T/N$
+\end_inset
+
+，记
+\begin_inset Formula $t_{i}=i*\Delta t$
+\end_inset
+
+，于是有：
+\begin_inset Formula 
+\[
+x(t_{i})=x(t_{i-1})+(r-q-\frac{1}{2}\sigma^{2})\Delta t+\sigma\varepsilon_{i}\sqrt{\Delta t}\quad i=1,...,N\tag{2.22}
+\]
+
+\end_inset
+
+然后计算
+\begin_inset Formula $S(t_{i})=exp(x(t_{i}))$
+\end_inset
+
+。一共模拟
+\begin_inset Formula $M$
+\end_inset
+
+条路径，则欧式call期权价格为：
+\begin_inset Formula 
+\[
+\hat{C}=e^{-rT}\frac{1}{M}\Sigma_{j=1}^{M}max(0,S_{j}(T)-X)\tag{2.24}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Hedge control variates
+\end_layout
+
+\begin_layout Itemize
+Clewlow and Carverhill(1994) developed the general approach of using hedges(Gree
+ks) as control variates。因为相对来说，hedged portfolio有更小的standard deviation，使用delta和ga
+mma对冲可以有效降低组合的波动率。
+\end_layout
+
+\begin_layout Itemize
+At time T， the hedge consists of the savings account and the asset，which
+ closely replicates the payoff of the option。可以用下式表达：
+\begin_inset Formula 
+\[
+C_{t_{0}}e^{r(T-t_{0})}-[\Sigma_{i=0}^{N}(\frac{\partial C_{t_{i}}}{\partial S}-\frac{\partial C_{t_{i-1}}}{\partial S})S_{t_{i}}e^{r(T-t_{i})}]=C_{T}+\eta\tag{2.25}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\frac{\partial C_{t_{-1}}}{\partial S}=\frac{\partial C_{t_{N}}}{\partial S}=0$
+\end_inset
+
+，
+\begin_inset Formula $C_{t_{0}}$
+\end_inset
+
+是期权价格，
+\begin_inset Formula $C_{T}$
+\end_inset
+
+是payoff，
+\begin_inset Formula $\eta$
+\end_inset
+
+是hedge error。上式可以改写成
+\begin_inset Formula 
+\[
+C_{t_{0}}e^{r(T-t_{0})}+[\Sigma_{i=0}^{N-1}\frac{\partial C_{t_{i}}}{\partial S}(S_{t_{i+1}}-S_{t_{i}})e^{r(T-t_{i+1})}]=C_{T}+\eta\tag{2.26}
+\]
+
+\end_inset
+
+delta对冲（方括号内的项）被称为delta-based martingale control variate 
+\begin_inset Formula $cv_{1}$
+\end_inset
+
+且可以被表述为
+\begin_inset Formula 
+\[
+cv_{1}=\Sigma_{i=0}^{N-1}\frac{\partial C_{t_{i}}}{\partial S}(S_{t_{i+1}}-E[S_{t_{i}}])e^{r(T-t_{i+1})}
+\]
+
+\end_inset
+
+于是，式(2.26)可以整理为
+\begin_inset Formula 
+\[
+C_{t_{0}}e^{r(T-t_{0})}=C_{T}-\Sigma_{i=0}^{N-1}\frac{\partial C_{t_{i}}}{\partial S}(S_{t_{i+1}}-E[S_{t_{i}}])e^{r(T-t_{i+1})}+\eta\tag{2.28}
+\]
+
+\end_inset
+
 
 \end_layout
 

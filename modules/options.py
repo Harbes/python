@@ -326,6 +326,9 @@ class ame_option():
                 C = np.polyval(rg, S[t])
                 V = np.where(h[t] > C, h[t], V * df)
         return df * np.sum(V) / I
+    # TODO 期权的动态复制策略
+    def dynamicReplication(self):
+        pass
 class GenRelatedNormal:
     def __init__(self,mu,mat):
         if type(mu) is not np.ndarray or type(mat) is not np.ndarray:
