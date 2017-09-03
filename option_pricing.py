@@ -29,7 +29,7 @@ def stoch_barrier(x, m, Smin, Smax):
     for i in range(m):
         if S <= Smin or S >= Smax:
             return -1000
-        S += S * (sigma * gauss[i] * sdt + r * dt)
+        S += S *math.exp(sigma * gauss[i] * sdt + r * dt)
     return S
 
 
@@ -38,7 +38,7 @@ def stoch(x, m):
     S = x
     gauss = np.random.standard_normal(m)
     for i in range(m):
-        S += S * (sigma * gauss[i] * sdt + r * dt)
+        S += S *math.exp(sigma * gauss[i] * sdt + r * dt)
     return S
 
 
@@ -49,7 +49,7 @@ def cal_option(N, S0):
         S = stoch_barrier(S0, M, left, right)
         y = 0
         if S >= 0:
-            y = er * np.maximum(S - K,0)
+            y = er * np.maximum(K-S,0)
         value += y
     return value / N
 @jit
@@ -59,7 +59,7 @@ def cal_option_normal(N, S0):
         S = stoch(S0, M)
         y = 0
         if S >= 0:
-            y = er * np.maximum(S - K,0)
+            y = er * np.maximum(K-S,0)
         value += y
     return value / N
 

@@ -338,6 +338,80 @@ class ame_option():
     # TODO
     def MCAsianOption(self):
         pass
+# TODO
+@jit
+def Euro_option_binomial(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,otype='call'):
+    dt = T / M;
+    sdt = np.sqrt(dt)
+    disc = math.exp(-r * dt)
+    # u=(1+math.sqrt(math.exp(sigma**2*dt)-1))/disc
+    # d=(1-math.sqrt(math.exp(sigma**2*dt)-1))/disc
+    # p=0.5
+    alpha = (math.exp(-r * dt) + math.exp((r + sigma ** 2) * dt)) / 2.0
+    u = alpha + math.sqrt(alpha ** 2 - 1)
+    d = 1.0/ u
+    p = (1.0 / disc - d) / (u - d)
+    S = np.empty(M);
+    S[0] = St
+    um = np.empty(M);
+    um[0] = 1
+    du = np.empty(M);
+    du[0] = 1
+    for m in range(1, M):
+        for n in range(m, 0, -1):
+            S[n] = u * S[n - 1]
+        S[0] = d * S[0]
+        um[m] = u * um[m - 1]
+        du[m] = du[m - 1] * d / u
+    payoff= np.zeros(M)
+    if otype=='call':
+        for n in range(M):
+            payoff[n] = S[n]-K if S[n]>K else 0
+    else:
+        for n in range(M):
+            payoff[n] = K - S[n] if K > S[n] else 0
+    for m in range(M - 1, 0, -1):
+        for n in range(m):
+            payoff[n] = (p * payoff[n + 1] + (1 - p) * payoff[n]) * disc
+    return payoff[0]
+@jit
+def Ame_option_binomial(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,otype='call'):
+    dt = T / M;
+    sdt = math.sqrt(dt)
+    disc = math.exp(-r * dt)
+    # u=(1+math.sqrt(math.exp(sigma**2*dt)-1))/disc
+    # d=(1-math.sqrt(math.exp(sigma**2*dt)-1))/disc
+    # p=0.5
+    alpha = (math.exp(-r * dt) + math.exp((r + sigma ** 2) * dt)) / 2.0
+    u = alpha + math.sqrt(alpha ** 2 - 1)
+    d = 1.0 / u
+    p = (1.0 / disc - d) / (u - d)
+    S = np.empty(M);
+    S[0] = St
+    um = np.empty(M);
+    um[0] = 1
+    du = np.empty(M);
+    du[0] = 1
+    for m in range(1, M):
+        for n in range(m, 0, -1):
+            S[n] = u * S[n - 1]
+        S[0] = d * S[0]
+        um[m] = u * um[m - 1]
+        du[m] = du[m - 1] * d / u
+    payoff= np.zeros(M)
+    if otype=='call':
+        for n in range(M):
+            payoff[n] = S[n]-K if S[n]>K else 0
+    else:
+        for n in range(M):
+            payoff[n] = K - S[n] if K > S[n] else 0
+    for m in range(M - 1, 0, -1):
+        for n in range(m):
+            payoff[n] = (p * payoff[n + 1] + (1 - p) * payoff[n]) * disc
+            gain = K - St * um[m] * du[n]
+            if gain > payoff[n]:
+                payoff[n] = gain
+    return payoff[0]
 class GenRelatedNormal:
     def __init__(self,mu,mat):
         if type(mu) is not np.ndarray or type(mat) is not np.ndarray:
