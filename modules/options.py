@@ -332,6 +332,12 @@ class ame_option():
     # TODO
     def MonteCarloAntitheticDeltaGammaControlVariates(self):
         pass
+    # TODO
+    def MCEuroSpreadOption(self):
+        pass
+    # TODO
+    def MCAsianOption(self):
+        pass
 class GenRelatedNormal:
     def __init__(self,mu,mat):
         if type(mu) is not np.ndarray or type(mat) is not np.ndarray:

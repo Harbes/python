@@ -1959,5 +1959,59 @@ C_{0}e^{rT}=C_{T}-\Sigma_{k=1}^{n}\beta_{k}cv_{k}+\eta\tag{2.30}
 
 \end_layout
 
+\begin_layout Section
+Path-dependent valuation
+\end_layout
+
+\begin_layout Itemize
+suppose we want to price a European-style claim of the underlying process,
+ the payoff：
+\begin_inset Formula 
+\[
+f_{T}=F(\{S_{t},0\leq t\leq T\})
+\]
+
+\end_inset
+
+the risk-neutral pricing formula gives the price of the security at time
+ 0 as a discounted expectation：
+\begin_inset Formula 
+\[
+f_{0}=e^{-rT}E_{0,S}^{Q}[F(\{S_{t},0\leq t\leq T\})]\tag{2.32}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+算法与之前的基本一致，只是计算payoff时需要考虑整个路径
+\end_layout
+
+\begin_layout Itemize
+以Asian option为例（payoff依赖于underlying asset在整个路径上的平均价格），即(以call为例)：
+\begin_inset Formula 
+\[
+f_{T}=max(A_{T}-X,0)
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $A_{T}=\int_{t_{0}}^{T}S_{t}dt/(T-t_{0})$
+\end_inset
+
+【离散情况下：
+\begin_inset Formula $A_{j+1}=(jA_{j}+S_{j+1})/(j+1)$
+\end_inset
+
+】
+\end_layout
+
+\begin_layout Section
+Brownian bridge technique
+\end_layout
+
 \end_body
 \end_document
