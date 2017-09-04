@@ -36,7 +36,7 @@ class distribution:
             ub=np.max(self.arr)
             plt.plot(np.arange(lb,ub+0.001,0.01),scs.norm(np.mean(self.arr),np.std(self.arr)).pdf(np.arange(lb,ub+0.001,0.01)))
         plt.show()
-def normalCalc(d):
+def NormalCdf(d):
     a1=0.319381530
     a2=-0.356563782
     a3=1.781477937
