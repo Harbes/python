@@ -375,7 +375,7 @@ def Euro_option_binomial(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,otype='ca
             payoff[n] = (p * payoff[n + 1] + (1 - p) * payoff[n]) * disc
     return payoff[0]
 @jit
-def Ame_option_binomial(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,otype='call'):
+def option_binomial(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,otype='call',American=True):
     dt = T / M;
     sdt = math.sqrt(dt)
     disc = math.exp(-r * dt)
@@ -405,12 +405,17 @@ def Ame_option_binomial(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,otype='cal
     else:
         for n in range(M):
             payoff[n] = K - S[n] if K > S[n] else 0
-    for m in range(M - 1, 0, -1):
-        for n in range(m):
-            payoff[n] = (p * payoff[n + 1] + (1 - p) * payoff[n]) * disc
-            gain = K - St * um[m] * du[n]
-            if gain > payoff[n]:
-                payoff[n] = gain
+    if American:
+        for m in range(M - 1, 0, -1):
+            for n in range(m):
+                payoff[n] = (p * payoff[n + 1] + (1 - p) * payoff[n]) * disc
+                gain = K - St * um[m] * du[n]
+                if gain > payoff[n]:
+                    payoff[n] = gain
+    else:
+        for m in range(M - 1, 0, -1):
+            for n in range(m):
+                payoff[n] = (p * payoff[n + 1] + (1 - p) * payoff[n]) * disc
     return payoff[0]
 class GenRelatedNormal:
     def __init__(self,mu,mat):
