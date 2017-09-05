@@ -201,3 +201,46 @@ class Portfolio():
             tmpl.append(tmp[symbol] * w[i])
             i += 1
         return Series(tmpl, index=tmp.keys()).sum()
+class MeanVarAnalysi:
+    def __init__(self,historical_data,weights=None,is_pandas=True):
+        if weights is not None and historical_data.shape[1] != len(weights):
+            raise ValueError('权重数目与股票数目不符')
+        self.init_data=historical_data
+        self.w=weights
+        self.pandas=is_pandas
+    def Mean(self):
+        if self.pandas:
+            return np.mean(self.init_data,axis=0).values
+        else:
+            return np.mean(self.init_data,axis=0)
+    def Var(self):
+        return np.cov(self.init_data.T)
+    def preFrontierPortfolios(self):
+        one = np.ones(self.init_data.shape[1])
+        V_inv = np.linalg.pinv(self.Var())
+        e = self.Mean()
+        A = one @ V_inv @ e
+        B = e @ V_inv @ e
+        C = one @ V_inv @ one
+        D = B * C - A * A
+        g = (B * one - A * e) @ V_inv/D
+        h = (C * e - A * one) @ V_inv/D
+        return g,h
+    def FrontierPortfolios(self,Ep,Single=True):
+        '''
+        return the corresponding weights
+        :param Ep:
+        :return:
+        '''
+        g,h=self.preFrontierPortfolios()
+        if Single:
+            return g+h*Ep
+        else:
+            g=np.reshape(g,(len(g),1))
+            h=np.reshape(h,(len(h),1))
+            Ep=np.reshape(Rp,(1,len(Rp)))
+            return g+h@Ep
+
+
+
+
