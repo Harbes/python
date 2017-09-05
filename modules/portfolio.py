@@ -215,7 +215,12 @@ class MeanVarAnalysi:
             return np.mean(self.init_data,axis=0)
     def Var(self):
         return np.cov(self.init_data.T)
-    def preFrontierPortfolios(self):
+    def FrontierPortfolios(self,Ep,Single=True):
+        '''
+        return the corresponding weights
+        :param Ep:
+        :return:
+        '''
         one = np.ones(self.init_data.shape[1])
         V_inv = np.linalg.pinv(self.Var())
         e = self.Mean()
@@ -223,16 +228,8 @@ class MeanVarAnalysi:
         B = e @ V_inv @ e
         C = one @ V_inv @ one
         D = B * C - A * A
-        g = (B * one - A * e) @ V_inv/D
-        h = (C * e - A * one) @ V_inv/D
-        return g,h
-    def FrontierPortfolios(self,Ep,Single=True):
-        '''
-        return the corresponding weights
-        :param Ep:
-        :return:
-        '''
-        g,h=self.preFrontierPortfolios()
+        g = (B * one - A * e) @ V_inv / D
+        h = (C * e - A * one) @ V_inv / D
         if Single:
             return g+h*Ep
         else:
