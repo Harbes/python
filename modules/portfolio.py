@@ -1,11 +1,12 @@
 # from quantpy import Portfolio as Portf
 import pandas as pd
 import numpy as np
-from pylab import legend, xlabel, ylabel, sqrt, \
+from pylab import legend, xlabel, ylabel, \
     cov, sqrt, mean, std, plot, show, figure
 from numpy import array, zeros, matrix, ones, linspace, hstack
 from pandas import Series, DataFrame
-from numpy.linalg import inv
+from numpy.linalg import inv,pinv
+import matplotlib.pyplot as plt
 
 
 class Portfolio():
@@ -201,7 +202,7 @@ class Portfolio():
             tmpl.append(tmp[symbol] * w[i])
             i += 1
         return Series(tmpl, index=tmp.keys()).sum()
-class MeanVarAnalysi:
+class MeanVarAnalysis:
     def __init__(self,historical_data,weights=None,is_pandas=True):
         if weights is not None and historical_data.shape[1] != len(weights):
             raise ValueError('权重数目与股票数目不符')
@@ -213,16 +214,12 @@ class MeanVarAnalysi:
             return np.mean(self.init_data,axis=0).values
         else:
             return np.mean(self.init_data,axis=0)
-    def Var(self):
+    def Cov(self):
         return np.cov(self.init_data.T)
-    def FrontierPortfolios(self,Ep,Single=True):
-        '''
-        return the corresponding weights
-        :param Ep:
-        :return:
-        '''
+    # TODO 暂时添加，便于debug
+    def preFrontierPortfolios(self):
         one = np.ones(self.init_data.shape[1])
-        V_inv = np.linalg.pinv(self.Var())
+        V_inv = pinv(self.Cov())
         e = self.Mean()
         A = one @ V_inv @ e
         B = e @ V_inv @ e
@@ -230,13 +227,45 @@ class MeanVarAnalysi:
         D = B * C - A * A
         g = (B * one - A * e) @ V_inv / D
         h = (C * e - A * one) @ V_inv / D
-        if Single:
+        return g,h
+    def FrontierPortfolios(self,Ep):
+        '''
+        return the corresponding weights
+        :param Ep:
+        :return:
+        '''
+        one = np.ones(self.init_data.shape[1])
+        V_inv = pinv(self.Cov())
+        e = self.Mean()
+        A = one @ V_inv @ e
+        B = e @ V_inv @ e
+        C = one @ V_inv @ one
+        D = B * C - A * A
+        g = (B * one - A * e) @ V_inv / D
+        h = (C * e - A * one) @ V_inv / D
+        if len(Ep)==1:
             return g+h*Ep
         else:
             g=np.reshape(g,(len(g),1))
             h=np.reshape(h,(len(h),1))
-            Ep=np.reshape(Rp,(1,len(Rp)))
+            Ep=np.reshape(Ep,(1,len(Ep)))
             return g+h@Ep
+    def MVP(self):
+        one = np.ones(self.init_data.shape[1])
+        V_inv = np.linalg.pinv(self.Cov())
+        C = one @ V_inv @ one
+        return one@V_inv/C
+    def PlotFrontier(self,Ep_range=None):
+        if Ep_range is None:
+            Ep_range=np.arange(0.1,30.1,0.1)/100
+        port_data=self.init_data@self.FrontierPortfolios(Ep_range)
+        m=np.mean(port_data,axis=0)
+        sigma=np.std(port_data,axis=0)
+        plt.plot(sigma,m)
+        plt.show()
+        return m,sigma
+
+
 
 
 
