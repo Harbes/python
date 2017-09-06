@@ -228,11 +228,12 @@ class MeanVarAnalysis:
         g = (B * one - A * e) @ V_inv / D
         h = (C * e - A * one) @ V_inv / D
         return g,h
-    def FrontierPortfolios(self,Ep):
+    def FrontierPortfolios(self,Ep,onlyEfficient=False):
         '''
-        return the corresponding weights
-        :param Ep:
-        :return:
+
+        :param Ep: Number,iterable
+        :return: Array
+            the weights of frontier portfolio
         '''
         one = np.ones(self.init_data.shape[1])
         V_inv = pinv(self.Cov())
@@ -243,27 +244,33 @@ class MeanVarAnalysis:
         D = B * C - A * A
         g = (B * one - A * e) @ V_inv / D
         h = (C * e - A * one) @ V_inv / D
-        if len(Ep)==1:
-            return g+h*Ep
+        if np.size(Ep) > 1:
+            g = np.reshape(g, (len(g), 1))
+            h = np.reshape(h, (len(h), 1))
+            if onlyEfficient:
+                Ep=Ep[Ep>A/C]
+            Ep = np.reshape(Ep, (1, len(Ep)))
+            return g + h @ Ep
         else:
-            g=np.reshape(g,(len(g),1))
-            h=np.reshape(h,(len(h),1))
-            Ep=np.reshape(Ep,(1,len(Ep)))
-            return g+h@Ep
-    def MVP(self):
+            return g + h * Ep
+    def MiniVarPortfolio(self):
         one = np.ones(self.init_data.shape[1])
         V_inv = np.linalg.pinv(self.Cov())
         C = one @ V_inv @ one
         return one@V_inv/C
-    def PlotFrontier(self,Ep_range=None):
+    def PlotFrontier(self,Ep_range=None,sigma2=False,onlyEfficient=False):
         if Ep_range is None:
             Ep_range=np.arange(0.1,30.1,0.1)/100
-        port_data=self.init_data@self.FrontierPortfolios(Ep_range)
+        port_data=self.init_data@self.FrontierPortfolios(Ep_range,onlyEfficient=onlyEfficient)
         m=np.mean(port_data,axis=0)
-        sigma=np.std(port_data,axis=0)
+        if sigma2:
+            sigma = np.var(port_data, axis=0)
+        else:
+            sigma=np.std(port_data,axis=0)
         plt.plot(sigma,m)
         plt.show()
-        return m,sigma
+        #return m,sigma
+
 
 
 
