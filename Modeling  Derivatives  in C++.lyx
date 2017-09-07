@@ -2304,5 +2304,69 @@ Object-oriented Monte Carlo approach
 Binomial trees
 \end_layout
 
+\begin_layout Section
+use of binomial trees
+\end_layout
+
+\begin_layout Itemize
+一个简单的单期二叉树：在风险中性世界中，有
+\begin_inset Formula 
+\[
+pSu+(1-p)Sd=Se^{r\Delta t}\tag{3.1}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $p=\frac{e^{r\Delta r}-d}{u-d}$
+\end_inset
+
+。对于u和d，常见的设置是
+\begin_inset Formula $u=1/d=e^{\sigma\Delta t}$
+\end_inset
+
+（非必要）
+\end_layout
+
+\begin_layout Itemize
+拓展为多期：假定将到期时间T均等划分为N段（最后的时间点上有N+1个节点 ，整个二叉树共有
+\begin_inset Formula $2^{N}$
+\end_inset
+
+中路径），在节点
+\begin_inset Formula $(i,j)$
+\end_inset
+
+上有
+\begin_inset Formula 
+\[
+S_{i,j}=S_{0}u^{i}d^{i-j}\quad i=0,1,...,N;\quad j=0,1,...,i\tag{3.2}
+\]
+
+\end_inset
+
+到期时间点上的payoff为
+\begin_inset Formula 
+\[
+f_{N,j}=F(S_{0}u^{j}d^{N-j})\tag{3.3}
+\]
+
+\end_inset
+
+可以通过backward induction的方法推导欧式期权价格：
+\begin_inset Formula 
+\[
+f=e^{-rT}\Sigma_{j=1}^{N}p_{N,j}f_{N,j}\tag{3.5}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $p_{N,j}=C_{N}^{j}p^{j}(1-p)^{N-j}$
+\end_inset
+
+
+\end_layout
+
 \end_body
 \end_document

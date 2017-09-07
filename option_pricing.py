@@ -130,12 +130,13 @@ from numba import jit
 import math
 import matplotlib.pyplot as plt
 from modules import euro_option as e_option
-M=1000  # nb of time steps of size dt
+from scipy.special import comb
+M=81  # nb of time steps of size dt
 N=100000 #nb of stochastic realization
 L=100  #nb of sampling point for S
 K=100;sigma=0.2;r=0.1;er=np.exp(-r)
 T=1
-dt=T/M;sdt=np.sqrt(dt)
+dt=T/(M-1);sdt=np.sqrt(dt)
 
 @jit
 def option_binomial(S0):
@@ -143,30 +144,57 @@ def option_binomial(S0):
     u=(1+math.sqrt(math.exp(sigma**2*dt)-1))/disc
     d=(1-math.sqrt(math.exp(sigma**2*dt)-1))/disc
     p=0.5
-    S=np.empty(M);S[0]=S0
-    for m in range(1,M):
+    S=np.empty(M+1);S[0]=S0
+    for m in range(1,M+1):
         for n in range(m,0,-1):
             S[n]=u*S[n-1]
         S[0]=d*S[0]
-    C=np.empty(M)
-    for n in range(M):
+    C=np.empty(M+1)
+    for n in range(M+1):
         C[n]=S[n]-K if S[n]>K else 0
-    for m in range(M-1,0,-1):
+    for m in range(M,0,-1):
         for n in range(m):
             C[n]=(p*C[n+1]+(1-p)*C[n])*disc
     return C[0]
 
+@jit
+def option_binomial_comb(St):#,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,otype='call',American=False):
+    K = 100.0; r = 0.05; T = 1.0; sigma = 0.2; M = 80; otype = 'call'; American = False
+    dt = T / M;
+    sdt = math.sqrt(dt)
+    disc = math.exp(-r * dt)
+    u=(1+math.sqrt(math.exp(sigma**2*dt)-1))/disc
+    d=(1-math.sqrt(math.exp(sigma**2*dt)-1))/disc
+    p=0.5
+    #alpha = (math.exp(-r * dt) + math.exp((r + sigma ** 2) * dt)) / 2.0
+    #u = alpha + math.sqrt(alpha ** 2 - 1)
+    #d = 1.0 / u
+    #p = (1.0 / disc - d) / (u - d)
+    S = np.empty(M+1);
+    for i in range(M+1):
+        S[i]=St*u**(i)*d**(M-i)
+    C = np.zeros(M+1)
+    for n in range(M+1):
+        C[n] = S[n] - K if S[n] > K else 0
+    #C=np.where(S-K>0,S-K,C)
+    for m in range(M , 0, -1):
+        for n in range(m):
+            C[n] = (p * C[n + 1] + (1 - p) * C[n]) * disc
+    return C[0]
+%timeit option_binomial_comb(100.0)
 S0=np.arange(20,130)
 c_binomial=np.empty(S0.size)
-for i in range(S0.size):
-    c_binomial[i]=option_binomial(S0[i])
-exact=e_option(St=S0,r=0.1).value_BSM
+%timeit option_binomial(S0[0])
+%timeit for i in range(S0.size): c_binomial[i]=option_binomial(S0[i])
+opt_bin=np.vectorize(option_binomial)
+%timeit opt_bin(S0=S0)
+%timeit exact=e_option(St=S0,r=0.1).value_BSM()
 plt.plot(S0,c_binomial,label="binomial")
 plt.plot(S0,exact,label='BSM')
 plt.legend()
 plt.show()
 
-%timeit e_option().value_BSM
+%timeit e_option().value_BSM()
 %timeit option_binomial(100)
 exact=e_option(r=0.1).value_BSM
 
