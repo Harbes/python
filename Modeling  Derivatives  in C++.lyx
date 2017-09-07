@@ -2124,7 +2124,184 @@ S(t) & =S(0)exp\{(\mu-\frac{\sigma^{2}}{2})t+(log(\frac{S(T)}{S(0)})-(\mu-\sigma
 \end_layout
 
 \begin_layout Itemize
-生成Brownian bridge
+生成Brownian bridge（算法）
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+给定或生成
+\begin_inset Formula $Z(T)$
+\end_inset
+
+，然后迭代计算子区间中间点上的值：具体如下：
+\begin_inset Formula 
+\[
+Z(T)=\sqrt{T}\varepsilon_{1}\text{（若没有给定）}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+Z(T/2)=Z(T)/2+\sqrt{T}/2\varepsilon_{2}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+Z(T/4)=Z(T/2)/2+\sqrt{2T}\varepsilon_{3}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+Z(3T/4)=[Z(T)+Z(T/2)]/2+\frac{\sqrt{2T}}{4}\varepsilon_{4}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\vdots
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+更一般的情况，给定任意的中间点
+\begin_inset Formula $t_{j}<t_{i}<t_{k}$
+\end_inset
+
+，以及两个已知的端点值
+\begin_inset Formula $Z(t_{j})$
+\end_inset
+
+和
+\begin_inset Formula $Z(t_{k})$
+\end_inset
+
+，则：
+\begin_inset Formula 
+\[
+Z(t_{i})=(1-\gamma)Z(t_{j})+\gamma Z(t_{k})+\varepsilon\sqrt{\gamma(1-\gamma)(k-j)\Delta t}\tag{2.42}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $\gamma=(i-j)/(k-j)$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Section
+Jump-diffusion peocess and constant elasticity of variance diffusion model
+\end_layout
+
+\begin_layout Itemize
+现实当中的许多数据需要引入一个随机的“jump”，Merton(1973)提出一个model：
+\begin_inset Formula 
+\[
+\frac{dS}{S}=(\mu-\lambda\kappa)dt+\sigma dz+dq\tag{2.43}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\mu$
+\end_inset
+
+是资产的期望收益，
+\begin_inset Formula $\lambda$
+\end_inset
+
+是the rate (intensity) at which jumps occur，
+\begin_inset Formula $\kappa$
+\end_inset
+
+是the average jump size measured as a proportional increase in the asset
+ price，
+\begin_inset Formula $\lambda\kappa$
+\end_inset
+
+是the average growth rate from the jumps。
+\end_layout
+
+\begin_layout Itemize
+Jump-diffusion 过程会产生厚尾（fat tails），相较于continuous lognormal diffusion过程来说，这点符合实际的资
+产回报分布动态特征。Merton作了一个重要假设：the jump factor of the asset‘s return represents
+ nonsystematic risk that can be hedged away。Consequently，a Black-Scholes
+ type of portfolio must earn the risk-free rate since the uncertainty arising
+ from geometric Brownian motion can be eliminated。
+\end_layout
+
+\begin_layout Itemize
+如何生成Poisson随机变量
+\end_layout
+
+\begin_layout Itemize
+在Merton最简单的jump-diffusion model中，the logarithm of the size of the proportional
+ jump has a normal distribution with a mean of 
+\begin_inset Formula $-0.5\delta^{2}$
+\end_inset
+
+ and a standard deviation of 
+\begin_inset Formula $\delta$
+\end_inset
+
+。In this case，a closed-form solution for European call option C exists：
+\begin_inset Formula 
+\[
+C=\Sigma_{n=0}^{\infty}\frac{e^{-\bar{\lambda}(\bar{\lambda}t)^{n}}}{n!}C_{n}(S,K,t,\bar{r},\sqrt{\sigma^{2}+\delta^{2}\frac{n}{t}})
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\bar{\lambda}=\lambda(1+\kappa)$
+\end_inset
+
+ and 
+\begin_inset Formula $C_{n}$
+\end_inset
+
+is 
+\begin_inset Formula $n$
+\end_inset
+
+-th Black-Scholes option price with the instantaneous variance rate 
+\begin_inset Formula $\sqrt{\sigma^{2}+\delta^{2}\frac{n}{t}})$
+\end_inset
+
+ and risk-free rate 
+\begin_inset Formula $\bar{r}=r-\lambda\kappa+ln(1+\kappa)(n/t)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Another popular alternative model used in simulation is the constant elasticity
+ of variance (CEV) diffusion model proposed by Cox and Ross(1976)
+\end_layout
+
+\begin_layout Section
+Object-oriented Monte Carlo approach
+\end_layout
+
+\begin_layout Chapter
+Binomial trees
 \end_layout
 
 \end_body

@@ -56,7 +56,7 @@ class euro_option:
     @jit
     def value_CRR(self, M=80):
         '''
-        Cox-Ross-Rubinstein European option valuation
+        Cox-Ross-Rubinstein European option valuation（binomial）
 
         return
         ======
@@ -382,6 +382,36 @@ def option_binomial(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,otype='call',A
             for n in range(m):
                 payoff[n] = (p * payoff[n + 1] + (1 - p) * payoff[n]) * disc
     return payoff[0]
+def option_MC(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,N=100,JumpLambda=False,JumpKappa=False,otype='call',American=False):
+    '''
+
+    :param St:
+    :param K:
+    :param r:
+    :param T:
+    :param sigma:
+    :param M:
+    :param N:
+    :param JumpLambda: Bool,number
+    :param JumpKappa: Bool,number
+    :param otype:
+    :param American:
+    :return:
+    '''
+    dt=T/N
+    e=np.random.standard_normal((M,N))
+    if JumpLambda:
+        jump=np.random.poisson(JumpLambda,(M,N))
+        mu=r-JumpLambda*JumpKappa
+        tmp = mu * dt + sigma * math.sqrt(dt) * e+math.sqrt(dt)*jump
+    else:
+        mu=r
+        tmp = mu * dt + sigma * math.sqrt(dt) * e
+    payoff=np.maximum(St*np.exp(np.cumsum(tmp,axis=1)[:,-1])-K,0)
+    return math.exp(-r*T)*np.mean(payoff)
+
+
+
 class GenRelatedNormal:
     def __init__(self,mu,mat):
         if type(mu) is not np.ndarray or type(mat) is not np.ndarray:
@@ -397,6 +427,7 @@ class GenRelatedNormal:
         mu_=np.zeros(m)
         sigma_=np.eye(m)
         return self.Mu+np.random.multivariate_normal(mu_,sigma_,nums)@lb.T
+# TODO 其他算法
 @jit
 def BrownianBridge(final=None,NumOfsteps=100,T=1):
     delta_t=math.sqrt(T/NumOfsteps)
