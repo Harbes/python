@@ -397,3 +397,20 @@ class GenRelatedNormal:
         mu_=np.zeros(m)
         sigma_=np.eye(m)
         return self.Mu+np.random.multivariate_normal(mu_,sigma_,nums)@lb.T
+@jit
+def BrownianBridge(final=None,NumOfsteps=100,T=1):
+    delta_t=math.sqrt(T/NumOfsteps)
+    e=np.random.standard_normal(NumOfsteps)
+    Z=np.zeros(NumOfsteps);
+    if final is None:
+        Z[-1]=e[-1]*math.sqrt(NumOfsteps)
+    else:
+        Z[-1]=final
+    k = NumOfsteps - 1;
+    j = 0;
+    for i in range(1,NumOfsteps-1):
+        gamma=(i-j)/(k-j) # gamma=1/(k-i+1)
+        Z[i]=(1-gamma)*Z[j]+gamma*Z[k]+e[i]*math.sqrt(gamma*(1-gamma)*(k-j)*delta_t)
+        j=i
+    return Z
+

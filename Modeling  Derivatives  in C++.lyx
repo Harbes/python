@@ -19,9 +19,9 @@
 \language_package default
 \inputencoding utf8-plain
 \fontencoding global
-\font_roman "default" "微软雅黑"
-\font_sans "default" "微软雅黑 Light"
-\font_typewriter "default" "新宋体"
+\font_roman "default" "Songti SC"
+\font_sans "default" "STKaiti"
+\font_typewriter "default" "Songti SC"
 \font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts true
@@ -2011,6 +2011,120 @@ f_{T}=max(A_{T}-X,0)
 
 \begin_layout Section
 Brownian bridge technique
+\end_layout
+
+\begin_layout Itemize
+Intuitively, Brownian bridge is a stochastic interpolation between the initial
+ state and the final state.
+\end_layout
+
+\begin_layout Itemize
+suppose the final condition of the stochastoc factor, say a stock price,
+ is 
+\begin_inset Formula $S(t)=S_{T}$
+\end_inset
+
+ at time T.
+ 假定
+\begin_inset Formula $S(t)$
+\end_inset
+
+服从SDE：
+\begin_inset Formula 
+\[
+dS(t)=\mu S(t)dt+\sigma S(t)dZ(t)\tag{2.36}
+\]
+
+\end_inset
+
+其解为
+\begin_inset Formula 
+\[
+S(t)=S(0)exp((\mu-\frac{\sigma^{2}}{2})t+\sigma Z(t))\tag{2.37}
+\]
+
+\end_inset
+
+我们可以使用式(2.1)进行Monte Carlo模拟，然而，在long-term simulations的情况下，模型会出现问题：因为当时期较长时，the
+ drift dominates the volatility，此时drift 中的小误差会引起未来股价分布较大的误差。
+\end_layout
+
+\begin_layout Itemize
+the final condition at time T leads to a final condition for the Brownian
+ motion at time T，which can be deduced from equation(2.37)：
+\begin_inset Formula 
+\[
+Z(T)=\frac{1}{\sigma}(log(\frac{S(T)}{S(0)})-(\mu-\sigma^{2}/2)T)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+数学上，可以利用Brownian bridge 定义一个终值确定
+\begin_inset Formula $z(T)$
+\end_inset
+
+的Wiener过程，如下：
+\begin_inset Formula 
+\[
+B(t)=z(0)+(z(T)-z(0))\frac{t}{T}+Z^{*}(t)-\frac{t}{T}Z^{*}(T)\tag{2.38}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $z(0)=0$
+\end_inset
+
+且
+\begin_inset Formula $Z^{*}(t)$
+\end_inset
+
+是一个独立于
+\begin_inset Formula $Z(t)$
+\end_inset
+
+的Wiener过程。于是，上式可以写为
+\begin_inset Formula 
+\[
+B(T)=(z(T)-Z^{*}(T))\frac{t}{T}+Z^{*}(t)\tag{2.39}
+\]
+
+\end_inset
+
+将式(2.37)中的
+\begin_inset Formula $Z(t)$
+\end_inset
+
+换成上面的Brownian bridge，其中，终值
+\begin_inset Formula $z(T)=Z(T)$
+\end_inset
+
+得：
+\begin_inset Formula 
+\begin{align*}
+S(t) & =S(0)exp\{(\mu-\frac{\sigma^{2}}{2})t+(log(\frac{S(T)}{S(0)})-(\mu-\sigma^{2}/2)T)\frac{t}{T}+\sigma(Z^{*}(t)-\frac{t}{T}Z^{*}(T))\}\\
+ & =S(0)exp(log(\frac{S(T)}{S(0)})\frac{t}{T}+\sigma(Z^{*}(t)-\frac{t}{T}Z^{*}(T)))\tag{2.40}
+\end{align*}
+
+\end_inset
+
+式(2.40)不再包含之前的drift项
+\begin_inset Formula $\mu$
+\end_inset
+
+，Brownian bridge的drift由initial state 和 final state决定；但是一个新的问题也产生了：需要估计
+\begin_inset Formula $S(T)$
+\end_inset
+
+（分布）
+\end_layout
+
+\begin_layout Itemize
+生成Brownian bridge
 \end_layout
 
 \end_body
