@@ -173,6 +173,7 @@ class ame_option():
         else:
             return np.maximum(K-S,0)
 
+
     @jit
     def value_binomial_0(self, M=50):
         dt = (self.T-self.t) / M
@@ -339,6 +340,41 @@ class ame_option():
     # TODO
     def MCAsianOption(self):
         pass
+def udp_binomial(M,mu,dt,sigma,method='CRR'):
+    if method =='CRR':
+        v=0
+    else:
+        v=mu
+    return math.exp(v*dt+sigma*math.sqrt(dt)),math.exp(v*dt-sigma*math.sqrt(dt)),0.5-(mu-v)/sigma*math.sqrt(dt)/2.0
+
+@jit
+def Ame_option_binomial(St,K,r,sigma,T,M=80,otype='call',method='CRR'):
+    mu = r - sigma * sigma / 2.0
+    dt = T/ M
+    disc = math.exp(-r * dt)
+    u, d, p = udp_binomial(M,mu,dt,sigma, method)
+    S = np.empty(M + 1);
+    S[0] = St
+    um = np.empty(M + 1);
+    um[0] = 1
+    du = np.empty(M + 1);
+    du[0] = 1
+    for m in range(1, M + 1):
+        for n in range(m, 0, -1):
+            S[n] = u * S[n - 1]
+        S[0] = d * S[0]
+        um[m] = u * um[m - 1]
+        du[m] = du[m - 1] * d / u
+    P = np.zeros(M + 1)
+    for n in range(M + 1):
+        P[n] = K - S[n] if K > S[n] else 0
+    for m in range(M, 0, -1):
+        for n in range(m):
+            P[n] = (p * P[n + 1] + (1 - p) * P[n]) * disc
+            gain = K - St * um[m] * du[n]
+            if gain > P[n]:
+                P[n] = gain
+    return P[0]
 # TODO
 @jit
 def option_binomial(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,otype='call',American=False):

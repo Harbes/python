@@ -2901,8 +2901,109 @@ p_{u} & =\frac{1}{2}+\frac{1}{2}\frac{\mu\Delta t}{\Delta x}\tag{3.48}
 Dividend payments
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
+当underlying security pays continuous dividends with a constant dividend
+ yield 
+\begin_inset Formula $q$
+\end_inset
 
+，此时只要把所有的
+\begin_inset Formula $r$
+\end_inset
+
+替换成
+\begin_inset Formula $r-q$
+\end_inset
+
+即可。例如，CRR模型中：
+\begin_inset Formula 
+\[
+p=\frac{e^{(r-q)\Delta t}-d}{u-d}
+\]
+
+\end_inset
+
+而在JR模型中：
+\begin_inset Formula $\mu=r-q-\frac{1}{2}\sigma^{2}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+更复杂的情况
+\end_layout
+
+\begin_layout Section
+American exercise
+\end_layout
+
+\begin_layout Itemize
+假定
+\begin_inset Formula $F()$
+\end_inset
+
+是payoff函数，则：
+\begin_inset Formula 
+\[
+f_{i,j}=max[F(Su^{j}d^{i-j}),e^{-r\Delta t}(pf_{i+1,j+1}+(1-p)f_{i+1,j})]\tag{3.55}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+对于American-style options on foreign currencies（FX options）：
+\begin_inset Formula $r\rightarrow r-r_{f}$
+\end_inset
+
+，其中
+\begin_inset Formula $r_{f}$
+\end_inset
+
+为the foreign risk-free rate。
+\end_layout
+
+\begin_layout Itemize
+对于American-style options on stock indexes：
+\begin_inset Formula $r\rightarrow r-q$
+\end_inset
+
+，其中
+\begin_inset Formula $q$
+\end_inset
+
+为dividend yield on the index。
+\end_layout
+
+\begin_layout Itemize
+对于American-style options on futures：
+\begin_inset Formula $r\rightarrow q(r=q)$
+\end_inset
+
+，其中
+\begin_inset Formula $q$
+\end_inset
+
+为future的增长率，也就是
+\begin_inset Formula $r$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Section
+Binomial tree implementation
+\end_layout
+
+\begin_layout Section
+Computing hedge statistics
+\end_layout
+
+\begin_layout Section
+Binomial model with time-varying volatility
 \end_layout
 
 \end_body
