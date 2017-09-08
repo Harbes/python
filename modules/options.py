@@ -359,17 +359,13 @@ def option_binomial(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,otype='call',A
         um[0] = 1
         du = np.empty(M + 1);
         du[0] = 1
-        for m in range(1, M + 1):
-            for n in range(m, 0, -1):
-                S[n] = u * S[n - 1]
-            S[0] = d * S[0]
+    for m in range(1, M + 1):
+        for n in range(m, 0, -1):
+            S[n] = u * S[n - 1]
+        S[0] = d * S[0]
+        if American:
             um[m] = u * um[m - 1]
             du[m] = du[m - 1] * d / u
-    else:
-        for m in range(1, M + 1):
-            for n in range(m, 0, -1):
-                S[n] = u * S[n - 1]
-            S[0] = d * S[0]
     payoff= np.zeros(M+1)
     if otype=='call':
         for n in range(M+1):
@@ -377,17 +373,13 @@ def option_binomial(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,otype='call',A
     else:
         for n in range(M+1):
             payoff[n] = K - S[n] if K > S[n] else 0
-    if American:
-        for m in range(M , 0, -1):
-            for n in range(m):
-                payoff[n] = (p * payoff[n + 1] + (1 - p) * payoff[n]) * disc
+    for m in range(M, 0, -1):
+        for n in range(m):
+            payoff[n] = (p * payoff[n + 1] + (1 - p) * payoff[n]) * disc
+            if American:
                 gain = K - St * um[m] * du[n]
                 if gain > payoff[n]:
                     payoff[n] = gain
-    else:
-        for m in range(M , 0, -1):
-            for n in range(m):
-                payoff[n] = (p * payoff[n + 1] + (1 - p) * payoff[n]) * disc
     return payoff[0]
 
 @jit

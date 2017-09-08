@@ -158,7 +158,7 @@ def option_binomial(S0):
     return C[0]
 
 @jit
-def option_binomial_comb(St):#,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,otype='call',American=False):
+def option_binomial_comb(St):#,K,r,T,sigma,M,otype='call',American=False):
     K = 100.0; r = 0.05; T = 1.0; sigma = 0.2; M = 80; otype = 'call'; American = False
     dt = T / M;
     sdt = math.sqrt(dt)
@@ -181,7 +181,7 @@ def option_binomial_comb(St):#,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,otype='call'
         for n in range(m):
             C[n] = (p * C[n + 1] + (1 - p) * C[n]) * disc
     return C[0]
-%timeit option_binomial_comb(100.0)
+%timeit option_binomial_comb(100.0)#,100.0,0.05,1.0,0.2,80)
 S0=np.arange(20,130)
 c_binomial=np.empty(S0.size)
 %timeit option_binomial(S0[0])
