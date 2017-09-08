@@ -23,7 +23,7 @@ import math
 norm=scis.norm
 # TODO 尝试利用broadcasting将所有methods向量化；或者丢弃class，全都写成函数的形式，将参数以字典形式储存
 class euro_option:
-    def __init__(self,St=100,K=100,t=0,T=1,r=.05,sigma=.2,otype='call'):
+    def __init__(self,St=100.0,K=100.0,t=0.0,T=1.0,r=.05,sigma=.2,otype='call'):
         # (self,St,K,t,T,r,sigma,otype):#
         self.St = St
         self.K = K
@@ -158,7 +158,7 @@ class euro_option:
 
 #TODO American call 好像不对，需要修改
 class ame_option():
-    def __init__(self,St=100,K=100,t=0,T=1,r=.05,sigma=.2,otype='call'):
+    def __init__(self,St=100.0,K=100.0,t=0.0,T=1.0,r=.05,sigma=.2,otype='call'):
         self.St = St
         self.K = K
         self.t = t
@@ -175,7 +175,7 @@ class ame_option():
 
 
     @jit
-    def value_binomial_0(self, M=50):
+    def value_binomial_0(self, M=80):
         dt = (self.T-self.t) / M
         df = np.exp(-self.r * dt)  # discount per interval
         # binomial parameters
@@ -345,7 +345,7 @@ def udp_binomial(M,mu,dt,sigma,method='CRR'):
         v=0
     else:
         v=mu
-    return math.exp(v*dt+sigma*math.sqrt(dt)),math.exp(v*dt-sigma*math.sqrt(dt)),0.5-(mu-v)/sigma*math.sqrt(dt)/2.0
+    return math.exp(v*dt+sigma*math.sqrt(dt)),math.exp(v*dt-sigma*math.sqrt(dt)),0.5+(mu-v)/sigma*math.sqrt(dt)/2.0
 
 @jit
 def Ame_option_binomial(St,K,r,sigma,T,M=80,otype='call',method='CRR'):
@@ -353,7 +353,8 @@ def Ame_option_binomial(St,K,r,sigma,T,M=80,otype='call',method='CRR'):
     dt = T/ M
     disc = math.exp(-r * dt)
     v = 0 if method=='CRR' else mu
-    u,d,p=math.exp(v*dt+sigma*math.sqrt(dt)),math.exp(v*dt-sigma*math.sqrt(dt)),0.5-(mu-v)/sigma*math.sqrt(dt)/2.0
+    u,d=math.exp(v*dt+sigma*math.sqrt(dt)),math.exp(v*dt-sigma*math.sqrt(dt))
+    p = (1.0/disc- d) / (u - d)
     um=np.power(u,range(M+1))
     du=np.power(d/u,range(M+1))
     S = np.empty(M + 1);S[0]=St*d**M
@@ -363,11 +364,11 @@ def Ame_option_binomial(St,K,r,sigma,T,M=80,otype='call',method='CRR'):
     payoff = np.zeros(M + 1)
     for n in range(M + 1):
         payoff[n] = (S[n]-K)*o_value if (S[n]-K)*o_value >0 else 0
-    for m in range(M, 0, -1):
+    for m in range(M, 1, -1):
         for n in range(m):
-            payoff[n] = (p * payoff[n + 1] + (1 - p) * payoff[n]) * disc
-            payoff[n] = (St * um[m] * du[n]-K)*o_value if (St * um[m] * du[n]-K)*o_value- payoff[n]>0 else payoff[n]
-    return payoff[0]
+            tmp = (p * payoff[n + 1] + (1 - p) * payoff[n]) * disc
+            payoff[n] = (St * um[m-1] * du[n]-K)*o_value if (St * um[m-1] * du[n]-K)*o_value- tmp>0 else tmp
+    return (p*payoff[1]+(1-p)*payoff[0])*disc
 @jit
 def Euro_option_binomial(St,K,r,sigma,T,M=80,otype='call',method='CRR'):
     mu = r - sigma * sigma / 2.0

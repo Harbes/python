@@ -258,3 +258,56 @@ plt.show()
 %timeit e_option().value_BSM
 %timeit option_binomial(100)
 exact=e_option(r=0.1).value_BSM
+
+
+import math
+import numpy as np
+def value_binomial_0(St,K,r,sigma,T,M=80,otype='call'):
+    dt =T  / M
+    df = math.exp(-r * dt)  # discount per interval
+    # binomial parameters
+    u = math.exp(sigma * math.sqrt(dt))
+    d = 1 / u
+    p = (math.exp(r * dt) - d) / (u - d)
+
+    mu = np.arange(M + 1)
+    mu = np.resize(mu, (M + 1, M + 1))
+    md = np.transpose(mu)
+    mu = u ** (mu - md)
+    md = d ** md
+    S = St * mu * md
+
+
+    h=np.maximum(S-K,0) if otype=='call' else np.maximum(K-S,0)
+
+    V = np.maximum(S - K, 0) if otype == 'call' else np.maximum(K - S, 0)
+
+    z = 0
+    for i in range(M - 1, -1, -1):
+        C_temp = (p * V[0:M - z, i + 1] + (1 - p) * V[1:M - z + 1, i + 1]) * df
+        V[0:M - z, i] = np.where(h[0:M - z, i] > C_temp, h[0:M - z, i], C_temp)
+        z += 1
+    return V[0, 0]
+%timeit value_binomial_0(100.0,100.0,0.05,.2,1.0,otype='put')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
