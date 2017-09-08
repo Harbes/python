@@ -352,29 +352,41 @@ def Ame_option_binomial(St,K,r,sigma,T,M=80,otype='call',method='CRR'):
     mu = r - sigma * sigma / 2.0
     dt = T/ M
     disc = math.exp(-r * dt)
-    u, d, p = udp_binomial(M,mu,dt,sigma, method)
-    S = np.empty(M + 1);
-    S[0] = St
-    um = np.empty(M + 1);
-    um[0] = 1
-    du = np.empty(M + 1);
-    du[0] = 1
-    for m in range(1, M + 1):
-        for n in range(m, 0, -1):
-            S[n] = u * S[n - 1]
-        S[0] = d * S[0]
-        um[m] = u * um[m - 1]
-        du[m] = du[m - 1] * d / u
-    P = np.zeros(M + 1)
+    v = 0 if method=='CRR' else mu
+    u,d,p=math.exp(v*dt+sigma*math.sqrt(dt)),math.exp(v*dt-sigma*math.sqrt(dt)),0.5-(mu-v)/sigma*math.sqrt(dt)/2.0
+    um=np.power(u,range(M+1))
+    du=np.power(d/u,range(M+1))
+    S = np.empty(M + 1);S[0]=St*d**M
+    for i in range(1,M+1):
+        S[i]=S[i-1]*u/d
+    o_value=1 if otype is 'call' else -1
+    payoff = np.zeros(M + 1)
     for n in range(M + 1):
-        P[n] = K - S[n] if K > S[n] else 0
+        payoff[n] = (S[n]-K)*o_value if (S[n]-K)*o_value >0 else 0
     for m in range(M, 0, -1):
         for n in range(m):
-            P[n] = (p * P[n + 1] + (1 - p) * P[n]) * disc
-            gain = K - St * um[m] * du[n]
-            if gain > P[n]:
-                P[n] = gain
-    return P[0]
+            payoff[n] = (p * payoff[n + 1] + (1 - p) * payoff[n]) * disc
+            payoff[n] = (St * um[m] * du[n]-K)*o_value if (St * um[m] * du[n]-K)*o_value- payoff[n]>0 else payoff[n]
+    return payoff[0]
+@jit
+def Euro_option_binomial(St,K,r,sigma,T,M=80,otype='call',method='CRR'):
+    mu = r - sigma * sigma / 2.0
+    dt = T/ M
+    disc = math.exp(-r * dt)
+    v = 0 if method=='CRR' else mu
+    u,d,p=math.exp(v*dt+sigma*math.sqrt(dt)),math.exp(v*dt-sigma*math.sqrt(dt)),0.5-(mu-v)/sigma*math.sqrt(dt)/2.0
+    S = np.empty(M + 1);
+    S[0] = St * d ** M
+    for i in range(1, M + 1):
+        S[i] = S[i - 1] * u / d
+    o_value = 1 if otype is 'call' else -1
+    payoff = np.zeros(M + 1)
+    for n in range(M + 1):
+        payoff[n] = (S[n] - K) * o_value if (S[n] - K) * o_value > 0 else 0
+    for m in range(M, 0, -1):
+        for n in range(m):
+            payoff[n] = (p * payoff[n + 1] + (1 - p) * payoff[n]) * disc
+    return payoff[0]
 # TODO
 @jit
 def option_binomial(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,otype='call',American=False):
@@ -419,17 +431,13 @@ def option_binomial(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,otype='call',A
     return payoff[0]
 
 @jit
-def option_binomial_comb(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,otype='call',American=False):
+def option_binomial_comb(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=80,otype='call',American=False):
     dt = T / M;
     sdt = math.sqrt(dt)
     disc = math.exp(-r * dt)
-    # u=(1+math.sqrt(math.exp(sigma**2*dt)-1))/disc
-    # d=(1-math.sqrt(math.exp(sigma**2*dt)-1))/disc
-    # p=0.5
-    alpha = (math.exp(-r * dt) + math.exp((r + sigma ** 2) * dt)) / 2.0
-    u = alpha + math.sqrt(alpha ** 2 - 1)
-    d = 1.0 / u
-    p = (1.0 / disc - d) / (u - d)
+    u=(1+math.sqrt(math.exp(sigma**2*dt)-1))/disc
+    d=(1-math.sqrt(math.exp(sigma**2*dt)-1))/disc
+    p=0.5
     S = np.empty(M+1);
     for i in range(M+1):
         S[i]=St*u**(i)*d**(M-i)
