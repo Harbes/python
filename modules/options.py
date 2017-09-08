@@ -360,14 +360,14 @@ def Ame_option_binomial(St,K,r,sigma,T,M=80,otype='call',method='CRR'):
     S = np.empty(M + 1);S[0]=St*d**M
     for i in range(1,M+1):
         S[i]=S[i-1]*u/d
-    o_value=1 if otype is 'call' else -1
+    o_value=1.0 if otype is 'call' else -1.0
     payoff = np.zeros(M + 1)
     for n in range(M + 1):
-        payoff[n] = (S[n]-K)*o_value if (S[n]-K)*o_value >0 else 0
+        payoff[n] = (S[n]-K)*o_value if (S[n]-K)*o_value >0 else 0.0
     for m in range(M, 1, -1):
         for n in range(m):
             tmp = (p * payoff[n + 1] + (1 - p) * payoff[n]) * disc
-            payoff[n] = (St * um[m-1] * du[n]-K)*o_value if (St * um[m-1] * du[n]-K)*o_value- tmp>0 else tmp
+            payoff[n] = (St *um[m-1] * du[m-1-n]-K)*o_value if (St * um[m-1] * du[m-1-n]-K)*o_value- tmp>0 else tmp
     return (p*payoff[1]+(1-p)*payoff[0])*disc
 @jit
 def Euro_option_binomial(St,K,r,sigma,T,M=80,otype='call',method='CRR'):
