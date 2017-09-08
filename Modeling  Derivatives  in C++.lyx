@@ -19,9 +19,9 @@
 \language_package default
 \inputencoding utf8-plain
 \fontencoding global
-\font_roman "default" "Songti SC"
-\font_sans "default" "STKaiti"
-\font_typewriter "default" "Songti SC"
+\font_roman "default" "微软雅黑 Light"
+\font_sans "default" "楷体"
+\font_typewriter "default" "宋体"
 \font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts true
@@ -2363,6 +2363,393 @@ f=e^{-rT}\Sigma_{j=1}^{N}p_{N,j}f_{N,j}\tag{3.5}
 
 其中，
 \begin_inset Formula $p_{N,j}=C_{N}^{j}p^{j}(1-p)^{N-j}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+离散时间的多期二叉树模型收敛到连续时间的Black-Scholes-Merton模型，即当
+\begin_inset Formula $N\rightarrow\infty,\Delta t\rightarrow0$
+\end_inset
+
+，有
+\begin_inset Formula 
+\[
+f\rightarrow e^{-rT}\int_{0}^{\infty}F(S_{T})p^{Q}(S_{T},T|S,t)dS_{T}\tag{3.7}
+\]
+
+\end_inset
+
+这要求the distribution of the terminal stock price in the binomial model converge
+ to the lognormal distribution as 
+\begin_inset Formula $\Delta t\rightarrow0$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+Proposition：the distribution of the terminal stock price in the binomial
+ model with parameters 
+\begin_inset Formula $(u,d,p,r)$
+\end_inset
+
+ converges to the Black-Scholes lognormal distribution with parameters 
+\begin_inset Formula $(\sigma,r)$
+\end_inset
+
+ as 
+\begin_inset Formula $\Delta t\rightarrow0$
+\end_inset
+
+ if and only if：
+\begin_inset Formula 
+\[
+pln(\frac{u}{d})+lnd=\mu\Delta t+o(\Delta t)\tag{3.8}
+\]
+
+\end_inset
+
+and
+\begin_inset Formula 
+\[
+p(1-p)[ln(\frac{u}{d})]^{2}=\sigma^{2}\Delta t+o(\Delta t)\tag{3.9}
+\]
+
+\end_inset
+
+Proof：In the Black-Scholes model, the terminal stock price is a random variable：
+\begin_inset Formula 
+\[
+S_{T}=S*e^{\mu T+\sigma\sqrt{T}\varepsilon_{T}}
+\]
+
+\end_inset
+
+the continuously compounded return over the time period 
+\begin_inset Formula $T$
+\end_inset
+
+ is a normal random variable：
+\begin_inset Formula 
+\[
+\eta=ln(\frac{S_{T}}{S})=\mu T+\sigma\sqrt{T}\varepsilon_{T}\tag{3.10}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\mu=m-\frac{\sigma^{2}}{2}$
+\end_inset
+
+。在二叉树模型中，将时间区间划分为N份，股票总的return（log-return）为
+\begin_inset Formula $\eta=\Sigma_{i=1}^{N}\eta_{i}$
+\end_inset
+
+，其中
+\begin_inset Formula $\eta_{i}$
+\end_inset
+
+是在第i个小区间上的return，它是
+\begin_inset Formula $i.i.d$
+\end_inset
+
+的随机变量：以概率
+\begin_inset Formula $p$
+\end_inset
+
+取值ln
+\begin_inset Formula $u$
+\end_inset
+
+，以概率
+\begin_inset Formula $(1-p)$
+\end_inset
+
+取值ln
+\begin_inset Formula $d$
+\end_inset
+
+，其均值和方差分别为：
+\begin_inset Formula 
+\[
+m=plnu+(1-p)lnd
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+s^{2} & =p(lnu)^{2}+(1-p)(lnd)^{2}-(plnu+(1-p)lnd)^{2}\\
+ & =p(1-p)[ln(\frac{u}{d})]
+\end{align*}
+
+\end_inset
+
+由中心极限定理可得，若二叉树模型最终收敛到BS模型当且仅当：
+\begin_inset Formula 
+\[
+\Sigma_{i=1}^{N}\eta_{i}\rightarrow\mu T+\sigma\sqrt{T}\varepsilon_{T}\quad(N\rightarrow\infty\text{或}\Delta t\rightarrow0)
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\[
+mN\rightarrow\mu T=\mu\Delta tN
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+s^{2}N\rightarrow\sigma^{2}T=\sigma^{2}\Delta tN
+\]
+
+\end_inset
+
+即
+\begin_inset Formula 
+\[
+m=pln(\frac{u}{d})+lnd=\mu\Delta t+o(\Delta t)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+s^{2}=p(1-p)[ln(\frac{u}{d})]^{2}=\sigma^{2}\Delta t+o(\Delta t)
+\]
+
+\end_inset
+
+得证。
+\end_layout
+
+\begin_layout Itemize
+更一般的证明：首先，根据二叉树模型：
+\begin_inset Formula 
+\[
+C_{binomial}=R^{-n}\{\Sigma_{j=0}^{n}C_{n}^{j}p^{j}(1-p)^{n-j}*max[Su^{j}d^{n-j},0]\}\tag{3.13}
+\]
+
+\end_inset
+
+令a表示当期权最终处于in-the-money状态时，二叉树中至少经历的上升的次数，即a是使得
+\begin_inset Formula $Su^{a}d^{n-a}>X$
+\end_inset
+
+成立的最小非负整数，于是
+\begin_inset Formula 
+\[
+a>\frac{log(\frac{X}{Sd^{n}})}{log(\frac{u}{d})}
+\]
+
+\end_inset
+
+此时，对于所有
+\begin_inset Formula $j\geq a$
+\end_inset
+
+，
+\begin_inset Formula $max[Su^{j}d^{n-j}-X,0]=Su^{j}d^{n-j}-X$
+\end_inset
+
+，其他为0，因此
+\begin_inset Formula 
+\[
+C_{binomial}=R^{-n}\{\Sigma_{j=a}^{n}C_{n}^{j}p^{j}(1-p)^{n-j}*Su^{j}d^{n-j}\}\tag{3.15}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+C_{binomial}=S[\Sigma_{j=a}^{n}C_{n}^{j}p^{j}(1-p)^{n-j}(\frac{u^{j}d^{n-j}}{R^{n}})]-XR^{-n}[\Sigma_{j=a}^{n}C_{n}^{j}p^{j}(1-p)^{n-j}]\tag{3.16}
+\]
+
+\end_inset
+
+令
+\begin_inset Formula $p'\equiv(u/R)p$
+\end_inset
+
+，且
+\begin_inset Formula $1-p'\equiv(d/R)(1-p)$
+\end_inset
+
+，于是
+\begin_inset Formula $p^{j}(1-p)^{n-j}(\frac{u^{j}d^{n-j}}{R^{n}})=p'^{j}(1-p')^{n-j}$
+\end_inset
+
+。因此，式(3.16)可以写成
+\begin_inset Formula 
+\begin{align*}
+C_{binomial} & =S[\Sigma_{j=a}^{n}C_{n}^{j}p'^{j}(1-p')^{n-j}]-XR^{-n}[\Sigma_{j=a}^{n}C_{n}^{j}p^{j}(1-p)^{n-j}]\\
+ & S\Phi[a;n,p']-XR^{-n}\Phi[a;n,p]\tag{3.19}
+\end{align*}
+
+\end_inset
+
+下面就需要证明：
+\begin_inset Formula $\Phi[a;n,p']\rightarrow N(d),\Phi[a;n,p]\rightarrow N(d-\sigma\sqrt{T})$
+\end_inset
+
+【证明会利用到式(3.8-9)，暂略】
+\end_layout
+
+\begin_layout Itemize
+为加速二叉树模型收敛到BS模型，可以通过让单期二叉树的均值和方差与对数正态的均值、方差相匹配，具体：首先，
+\begin_inset Formula 
+\[
+S_{t+\Delta t}=S_{t}exp(\mu\Delta t+\sigma\sqrt{\Delta t})
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\mu=r-\sigma^{2}/2$
+\end_inset
+
+，于是，其期望和方差为：
+\begin_inset Formula 
+\[
+E_{t,S}^{Q}[S_{t+\Delta t}]=e^{r\Delta t}S_{t}\tag{3.27}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+Var_{t,S}^{Q}[S_{t+\Delta t}]=e^{2r\Delta t}(e^{\sigma^{2}\Delta t}-1)S_{t}^{2}\tag{3.28}
+\]
+
+\end_inset
+
+其中，Q表示风险中性测度。又单期二叉树模型的均值和二阶原点矩为：
+\begin_inset Formula 
+\[
+E_{t,S}^{binomial}[S_{t+\Delta t}]=[pu+(1-p)d]S_{t}\tag{3.29}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+E_{t,S}^{binomial}[S_{t+\Delta t}^{2}]=[pu^{2}+(1-p)d^{2}]S_{t}^{2}\tag{3.30}
+\]
+
+\end_inset
+
+于是，令
+\begin_inset Formula 
+\[
+pu+(1-p)d=e^{r\Delta t}\tag{3.31}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+pu^{2}+(1-p)d^{2}=e^{(2r+\sigma^{2})\Delta t}3.32
+\]
+
+\end_inset
+
+这是只有两个等式的三元方程组。对其进行简单的整理，有：
+\begin_inset Formula 
+\[
+p=\frac{e^{r\Delta t}-d}{u-d}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+e^{r\Delta t}(u+d)-du=e^{(2r+\sigma^{2})\Delta t}\tag{3.33}
+\]
+
+\end_inset
+
+为了解出p，u以及d，需要额外的方程，于是就有三种常见的方法：（1）Cox-Ross-Rubinstein；（2）Jarrow-Rudd；（3）a
+ general approach。
+\end_layout
+
+\begin_layout Section
+Cox-Ross-Rubinstein binomial tree
+\end_layout
+
+\begin_layout Itemize
+CRR假定一个关系式
+\begin_inset Formula $du=1$
+\end_inset
+
+，于是，式(3.33)可以改写为
+\begin_inset Formula $d^{2}-2Ad+1=0$
+\end_inset
+
+，
+\begin_inset Formula $A=(e^{-r\Delta t}+e^{(r+\sigma^{2})\Delta t})/2$
+\end_inset
+
+，于是，可以解得：
+\begin_inset Formula 
+\begin{align*}
+u & =A+\sqrt{A^{2}-1}\tag{3.34}\\
+d & =A-\sqrt{A^{2}-1}\tag{3.35}
+\end{align*}
+
+\end_inset
+
+对其进行线性化处理(省略
+\begin_inset Formula $\Delta t$
+\end_inset
+
+的高阶项)，可以得到：
+\begin_inset Formula 
+\begin{align*}
+u & =1+\sigma\sqrt{\Delta t}+\frac{1}{2}\sigma^{2}\Delta t\\
+d & =1-\sigma\sqrt{\Delta t}+\frac{1}{2}\sigma^{2}\Delta t\\
+p & =\frac{1}{2}+\frac{1}{2}\frac{\mu}{\sigma}\sqrt{\Delta t}
+\end{align*}
+
+\end_inset
+
+实际上，更常用的形式是
+\begin_inset Formula 
+\begin{align*}
+u & =e^{\sigma\sqrt{\Delta t}}\\
+d & =e^{-\sigma\sqrt{\Delta t}}\\
+p & =\frac{e^{r\Delta t}-d}{u-d}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Jarrow-Rubb binomial tree
+\end_layout
+
+\begin_layout Itemize
+JR将p值固定为0.5，于是，式(3.31-2)变为
+\begin_inset Formula 
+\begin{align*}
+u+d & =2e^{r\Delta t}\tag{3.36}\\
+u^{2}+d^{2} & =2e^{(2r+\sigma^{2})}
+\end{align*}
+
 \end_inset
 
 
