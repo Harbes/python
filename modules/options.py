@@ -355,8 +355,8 @@ def Ame_option_binomial(St,K,r,sigma,T,M=80,otype='call',method='CRR'):
     v = 0 if method=='CRR' else mu
     u,d=math.exp(v*dt+sigma*math.sqrt(dt)),math.exp(v*dt-sigma*math.sqrt(dt))
     p = (1.0/disc- d) / (u - d)
-    um=np.power(u,range(M+1))
-    du=np.power(d/u,range(M+1))
+    um=u**np.arange(M+1)
+    du=(d/u)**np.arange(M+1)
     S = np.empty(M + 1);S[0]=St*d**M
     for i in range(1,M+1):
         S[i]=S[i-1]*u/d
