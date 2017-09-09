@@ -311,7 +311,7 @@ plt.show()
 import numpy as np
 import math
 from numba import jit
-from modules import Ame_option_binomial as a_bin_fun
+from modules import Ame_option_binomial as a_bin_fun,euro_option as e_opt_class
 import matplotlib.pyplot as plt
 
 @jit
@@ -347,12 +347,42 @@ def Ame_option_ExDiff(St,K,r,sigma,T,M,N,otype='call'):
             f[n] = (S[n]-K)*o_value if (S[n]-K)*o_value- tmp>0 else tmp
         payoff[1:-1]=f[1:-1]
     return (pu* payoff[M + 1] +pm*payoff[M]+ pd* payoff[M-1])*disc
+@jit
+def Euro_option_ExDiff(St, K, r, sigma, T, M, N, otype='call'):
+    '''
 
-a_bin_vecfun=np.vectorize(a_bin_fun)
-a_tri_vecfun=np.vectorize(Ame_option_ExDiff)
+    :param St:
+    :param K:
+    :param r:
+    :param sigma:
+    :param T:
+    :param M: 50
+    :param N: 100
+    :param otype:
+    :return:
+    '''
+    mu = r - sigma * sigma / 2.0
+    dt = T / N
+    disc = math.exp(-r * dt)
+    dx = sigma * math.sqrt(1.5 * dt)
+    pu = sigma * sigma * dt / (2.0 * dx * dx) + mu * dt / (2.0 * dx)
+    pd = sigma * sigma * dt / (2.0 * dx * dx) - mu * dt / (2.0 * dx)
+    pm = 1.0 - pu - pd
+    S = St * np.exp(np.arange(-M, M + 1) * dx)
+    o_value = 1.0 if otype is 'call' else -1.0
+    payoff = np.where((S - K) * o_value > 0, (S - K) * o_value, 0)
+    f = np.empty(2 * M + 1)
+    f[0] = K * 0.5 * (1 - o_value)
+    f[-1] = (S[-1] - K) * 0.5 * (1 + o_value)
+    for m in range(N, 1, -1):
+        for n in range(1, 2 * M):
+            f[n]= (pu * payoff[n + 1] + pm * payoff[n] + pd * payoff[n - 1]) * disc
+        payoff[1:-1] = f[1:-1]
+    return (pu * payoff[M + 1] + pm * payoff[M] + pd * payoff[M - 1]) * disc
+e_opt_vecfun=np.vectorize(Euro_option_ExDiff)
 S=np.arange(10,130)
-p_bin=a_bin_vecfun(S,100.0,.05,.2,1.0,80,otype='call')
-%timeit p_tri=a_tri_vecfun(S,100.0,.05,.2,1.0,50,100,otype='call')
+p_bin=e_opt_class(St=S,otype='put').value_BSM()
+p_tri=e_opt_vecfun(S,100.0,.05,.2,1.0,50,100,otype='put')
 plt.plot(S,p_bin,label='Bin')
 plt.plot(S,p_tri,label='ExDiff')
 plt.legend()
