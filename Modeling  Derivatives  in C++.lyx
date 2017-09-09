@@ -3006,5 +3006,278 @@ Computing hedge statistics
 Binomial model with time-varying volatility
 \end_layout
 
+\begin_layout Itemize
+固定
+\begin_inset Formula $\Delta x$
+\end_inset
+
+，于是：
+\begin_inset Formula 
+\begin{align*}
+p_{i}\Delta x-(1-p_{i})\Delta x & =\mu_{i}\Delta t_{i}\\
+p_{i}\Delta x^{2}+(1-p)\Delta x^{2} & =\sigma_{i}^{2}\Delta t_{i}+\mu_{i}^{2}\Delta t_{i}^{2}\tag{3.63}
+\end{align*}
+
+\end_inset
+
+解得
+\begin_inset Formula 
+\begin{align*}
+\Delta t_{i} & =\frac{1}{2\mu_{i}^{2}}(-\sigma_{i}^{2}+/-\sqrt{\sigma_{i}^{4}+4\sigma_{i}^{2}\Delta x^{2}})\\
+p_{i} & =\frac{1}{2}\frac{\mu_{i}\Delta t_{i}}{2\Delta x}
+\end{align*}
+
+\end_inset
+
+令
+\begin_inset Formula 
+\[
+\Delta x=\sqrt{\bar{\sigma}^{2}\bar{\Delta t}+\bar{\mu}^{2}\bar{\Delta t}^{2}}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\begin{align*}
+\bar{\sigma} & =\frac{1}{N}\Sigma_{i=1}^{N}\sigma_{i}\\
+\bar{\mu} & =\frac{1}{N}\Sigma_{i=1}^{N}\mu_{i}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Two-variable binomial process
+\end_layout
+
+\begin_layout Section
+Valuation of convertible bonds
+\end_layout
+
+\begin_layout Chapter
+Trinomial trees
+\end_layout
+
+\begin_layout Section
+Use of trinomial trees
+\end_layout
+
+\begin_layout Itemize
+在CRR三叉树中
+\begin_inset Formula 
+\[
+S_{i,j}=S_{0,0}u^{j}\quad j=-i,-i+1,...,0,...,i\tag{4.1}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+在JR三叉树中
+\begin_inset Formula 
+\[
+S_{i,j}=S_{0,0}u^{j}e^{i\mu\Delta t}\quad j=-i,-i+1,...,0,...,i\tag{4.2}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $u=e^{\lambda\sigma\sqrt{\Delta t}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Jarrow-Rubb trinomial tree
+\end_layout
+
+\begin_layout Itemize
+在Monte-Carlo计算过程中，我们采用下式进行股票路径的模拟：
+\begin_inset Formula 
+\[
+S_{i+1}=S_{i}e^{\mu\Delta t+\sigma\sqrt{\Delta t}\varepsilon_{i+1}}
+\]
+
+\end_inset
+
+我们希望利用三叉树去逼近最终的(对数)正态分布。于是，我们需要匹配两个分布的均值和方差。
+\end_layout
+
+\begin_layout Itemize
+首先，JR三叉树的结构：
+\begin_inset Formula 
+\[
+S_{i+1}=\begin{cases}
+S_{i}U=S_{i}e^{\mu\Delta t+\lambda\sigma\sqrt{\Delta t}}\\
+S_{i}M=S_{i}e^{\mu\Delta t} & \tag{4.3}\\
+S_{i}D=S_{i}e^{\mu\Delta t-\lambda\sigma\sqrt{\Delta t}}
+\end{cases}
+\]
+
+\end_inset
+
+相应的概率分别为
+\begin_inset Formula $p_{u},p_{m},p_{d}$
+\end_inset
+
+，显然满足
+\begin_inset Formula $p_{u}+p_{m}+p_{d}=1$
+\end_inset
+
+。（注意：The necessary and sufficient condition for the tree to recombine is
+ : 
+\begin_inset Formula $UD=M^{2}$
+\end_inset
+
+）。记
+\begin_inset Formula $U=ue^{\mu\Delta t},D=de^{\mu\Delta t},k=e^{\sigma^{2}\Delta t/2}$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+均值方差匹配。首先，均值匹配要求：
+\begin_inset Formula 
+\[
+E_{t,S}^{trinomial}[S_{t+\Delta t}]=E_{t,S}^{Q}[S_{t+\Delta t}]=Se^{r\Delta t}
+\]
+
+\end_inset
+
+即
+\begin_inset Formula 
+\[
+p_{u}u+p_{m}+p_{d}d=k\tag{4.4}
+\]
+
+\end_inset
+
+二阶矩匹配（等价于方差匹配）要求：
+\begin_inset Formula 
+\[
+E_{t,S}^{trinomial}[S_{t+\Delta t}^{2}]=E_{t,S}^{Q}[S_{t+\Delta t}^{2}]=S^{2}e^{(2r+\sigma^{2})\Delta t}
+\]
+
+\end_inset
+
+即
+\begin_inset Formula 
+\[
+p_{u}u^{2}+p_{m}+p_{d}d^{2}=k^{5}\tag{4.5}
+\]
+
+\end_inset
+
+可以解得
+\begin_inset Formula 
+\begin{align*}
+p_{u} & =\frac{k^{4}-(d+1)k+d}{(u-d)(u-1)}\tag{4.6}\\
+p_{d} & =\frac{k^{4}-(u+1)k+u}{(u-d)(1-d)}\tag{4.7}\\
+p_{m} & =1-p_{u}-p_{d}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula $u=e^{\lambda\sigma\sqrt{\Delta t}},d=e^{-\lambda\sigma\sqrt{\Delta t}},k=e^{\sigma^{2}\Delta t/2}$
+\end_inset
+
+【注意，只要
+\begin_inset Formula $\lambda$
+\end_inset
+
+的选取使得所有概率取值为正，则结果都会收敛，只是收敛速度不同】
+\end_layout
+
+\begin_layout Section
+Cox-Ross-Rubinstein trinomial tree
+\end_layout
+
+\begin_layout Itemize
+类似的，CRR三叉树的结构为
+\begin_inset Formula 
+\[
+S_{i+1}=\begin{cases}
+S_{i}U=S_{i}e^{\lambda\sigma\sqrt{\Delta t}}\\
+S_{i}M=S_{i} & \tag{}\\
+S_{i}D=S_{i}e^{-\lambda\sigma\sqrt{\Delta t}}
+\end{cases}
+\]
+
+\end_inset
+
+即CRR三叉树令M=1。同样利用前两阶矩匹配可以得到：
+\begin_inset Formula 
+\begin{align*}
+p_{u} & =\frac{1}{2\lambda^{2}}+\frac{1}{2}(\frac{\mu}{\lambda\sigma})\sqrt{\Delta t}\tag{4.8}\\
+p_{d} & =\frac{1}{2\lambda^{2}}-\frac{1}{2}(\frac{\mu}{\lambda\sigma})\sqrt{\Delta t}\tag{4.9}\\
+p_{m} & =1-\frac{1}{\lambda^{2}}\tag{4.10}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Optimal choice of 
+\begin_inset Formula $\lambda$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Kamrad and Ritchken(1991) 建议取
+\begin_inset Formula $\lambda=\sqrt{3/2}$
+\end_inset
+
+可以使得收敛速度最快。
+\end_layout
+
+\begin_layout Itemize
+当
+\begin_inset Formula $\lambda=\sqrt{3/2}$
+\end_inset
+
+时，CRR参数设定为：
+\begin_inset Formula 
+\begin{align*}
+p_{u} & =\frac{1}{3}+(\frac{\mu}{\sigma})\sqrt{\frac{\Delta t}{6}}\\
+p_{d} & =\frac{1}{3}-(\frac{\mu}{\sigma})\sqrt{\frac{\Delta t}{6}}\\
+p_{m} & =\frac{1}{3}\\
+U & =e^{\sigma\sqrt{3\Delta t/2}}\\
+M & =1\\
+D & =e^{-\sigma\sqrt{3\Delta t/2}}
+\end{align*}
+
+\end_inset
+
+【注意】对于CRR三叉树而言，当
+\begin_inset Formula $\lambda=1$
+\end_inset
+
+时就变成了二叉树；
+\begin_inset Formula $\lambda<1$
+\end_inset
+
+时，
+\begin_inset Formula $p_{m}<0$
+\end_inset
+
+不可取。
+\end_layout
+
+\begin_layout Section
+Trinomial tree implementations
+\end_layout
+
 \end_body
 \end_document
