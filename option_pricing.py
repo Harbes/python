@@ -315,30 +315,34 @@ from modules import Ame_option_binomial as a_bin_fun
 import matplotlib.pyplot as plt
 
 @jit
-def Ame_option_ExDiff(St,K,r,sigma,T,M,N,otype='call'):
+def Ame_option_ExDiff(St,K,r,sigma,T,M=50,N=1000,otype='call'):
     mu = r - sigma * sigma / 2.0
     dt = T/ N
-    dlnS=sigma*math.sqrt(1.5*dt)
+    disc = math.exp(-r * dt)
+    dx=sigma*math.sqrt(1.5*dt)
     pu=sigma*sigma*dt/(2.0*dx*dx)+mu*dt/(2.0*dx)
     pd=sigma*sigma*dt/(2.0*dx*dx)-mu*dt/(2.0*dx)
     pm=1.0-pu-pd
     S = St*np.exp(np.arange(-M ,M+ 1)*dx)
     o_value=1.0 if otype is 'call' else -1.0
     payoff = np.where((S-K)*o_value >0,(S-K)*o_value,0)
-    for m in range(N, 0, -1):
-        for n in range(1,2*m-1):
-            tmp = pu* payoff[n + 2] +pm*payoff[n+1]+ pd* payoff[n]
-            payoff[n] = (S[n]-K)*o_value if (S[n]-K)*o_value- tmp>0 else tmp
-
-    return (pu* payoff[2] +pm*payoff[1]+ pd* payoff[0]) * disc
+    f=np.empty(2*M+1)
+    f[0] = K * 0.5 * (1 - o_value)
+    f[-1] = (S[-1] - K) * 0.5 * (1 + o_value)
+    for m in range(N, 1, -1):
+        for n in range(1,2*M):
+            tmp = (pu* payoff[n + 1] +pm*payoff[n]+ pd* payoff[n-1])*disc
+            f[n] = (S[n]-K)*o_value if (S[n]-K)*o_value- tmp>0 else tmp
+        payoff[1:-1]=f[1:-1]
+    return (pu* payoff[M + 1] +pm*payoff[M]+ pd* payoff[M-1])*disc
 
 a_bin_vecfun=np.vectorize(a_bin_fun)
-a_tri_vecfun=np.vectorize(Ame_option_trinomial)
+a_tri_vecfun=np.vectorize(Ame_option_ExDiff)
 S=np.arange(10,130)
-p_bin=a_bin_vecfun(S,100.0,.05,.2,1.0,80,otype='put')
-p_tri=a_tri_vecfun(S,100.0,.05,.2,1.0,30,otype='put',method='CRR')
+p_bin=a_bin_vecfun(S,100.0,.05,.2,1.0,80,otype='call')
+p_tri=a_tri_vecfun(S,100.0,.05,.2,1.0,60,1000,otype='call')
 plt.plot(S,p_bin,label='Bin')
-plt.plot(S,p_tri,label='Tri')
+plt.plot(S,p_tri,label='ExDiff')
 plt.legend()
 plt.show()
 
