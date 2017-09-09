@@ -3135,7 +3135,7 @@ S_{i}D=S_{i}e^{\mu\Delta t-\lambda\sigma\sqrt{\Delta t}}
 \begin_inset Formula $UD=M^{2}$
 \end_inset
 
-）。记
+。简单地说就是保证节点重合，使得节点数线性增长）。记
 \begin_inset Formula $U=ue^{\mu\Delta t},D=de^{\mu\Delta t},k=e^{\sigma^{2}\Delta t/2}$
 \end_inset
 
@@ -3277,6 +3277,150 @@ D & =e^{-\sigma\sqrt{3\Delta t/2}}
 
 \begin_layout Section
 Trinomial tree implementations
+\end_layout
+
+\begin_layout Section
+Approximating diffusion process with trinomial tree
+\end_layout
+
+\begin_layout Section
+Implied trees（待看）
+\end_layout
+
+\begin_layout Chapter
+Finite-difference methods
+\end_layout
+
+\begin_layout Section
+Explicit difference methods
+\end_layout
+
+\begin_layout Itemize
+考虑BS PDE：
+\begin_inset Formula 
+\[
+\frac{\partial f}{\partial t}+(r-q)S\frac{\partial f}{\partial S}+\frac{1}{2}\sigma^{2}S^{2}\frac{\partial^{2}f}{\partial S^{2}}=rf\tag{5.1}
+\]
+
+\end_inset
+
+满足边界条件：
+\begin_inset Formula $f(S_{T},T)=(S_{T}-X)^{+}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+令
+\begin_inset Formula $x=ln(S)$
+\end_inset
+
+，于是BS PDE可以改写成：
+\begin_inset Formula 
+\[
+\frac{\partial f}{\partial t}+\mu\frac{\partial f}{\partial x}+\frac{1}{2}\sigma^{2}\frac{\partial^{2}f}{\partial x^{2}}=rf
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\mu=r-q$
+\end_inset
+
+。为去除右边的
+\begin_inset Formula $rf$
+\end_inset
+
+项，引入
+\begin_inset Formula $u(x,t)\equiv e^{r(T-t)}f(e^{x},t)$
+\end_inset
+
+，可以看出来
+\begin_inset Formula $u(x,t)$
+\end_inset
+
+是相应的远期价格，于是BS PDE进一步可改写成：
+\begin_inset Formula 
+\[
+\frac{1}{2}\sigma^{2}\frac{\partial^{2}u}{\partial x^{2}}+\mu\frac{\partial u}{\partial x}=-\frac{\partial u}{\partial t}\tag{5.2}
+\]
+
+\end_inset
+
+将该式进行离散化处理，记
+\begin_inset Formula $u_{i,j}=u(x_{j},t_{i})$
+\end_inset
+
+，其中
+\begin_inset Formula $t_{i}=i\Delta t$
+\end_inset
+
+，
+\begin_inset Formula $x_{j}=j\Delta x$
+\end_inset
+
+。于是式(5.2)离散化的形式为：
+\begin_inset Formula 
+\[
+\frac{1}{2}\sigma^{2}(\frac{u_{i+1,j+1}-2u_{i+1,j}+u_{i+1,j-1}}{\Delta x^{2}})+\mu(\frac{u_{i+1,j+1}-u_{i+1,j-1}}{2\Delta x})=-(\frac{u_{i+1,j}-u_{i,j}}{\Delta t})\tag{5.3}
+\]
+
+\end_inset
+
+整理后可得：
+\begin_inset Formula 
+\[
+u_{i,j}=\tilde{p}_{u}u_{i+1,j+1}+\tilde{p}_{m}u_{i+1,j}+\tilde{p}_{d}u_{i+1,j-1}\tag{5.4}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\begin{align*}
+\tilde{p}_{u} & =\frac{\sigma^{2}\Delta t}{2\Delta x^{2}}+\frac{\mu\Delta t}{2\Delta x}\\
+\tilde{p}_{m} & =1-\frac{\sigma^{2}\Delta t}{\Delta x^{2}}\tag{5.5}\\
+\tilde{p}_{d} & =\frac{\sigma^{2}\Delta t}{2\Delta x^{2}}-\frac{\mu\Delta t}{2\Delta x}
+\end{align*}
+
+\end_inset
+
+显然
+\begin_inset Formula $\tilde{p}_{u}+\tilde{p}_{m}+\tilde{p}_{d}=1$
+\end_inset
+
+。记
+\begin_inset Formula $\alpha=\frac{\Delta t}{\Delta x^{2}}$
+\end_inset
+
+，
+\begin_inset Formula $\beta=\frac{\mu\Delta t}{\Delta x}$
+\end_inset
+
+，于是(5.5)可以重写为：
+\begin_inset Formula 
+\begin{align*}
+\tilde{p}_{u} & =\frac{1}{2}(\sigma^{2}\alpha+\beta)\\
+\tilde{p}_{m} & =1-\sigma^{2}\alpha\\
+\tilde{p}_{d} & =\frac{1}{2}(\sigma^{2}\alpha-\beta)
+\end{align*}
+
+\end_inset
+
+将
+\begin_inset Formula $f_{i,j}=e^{-r(T-t_{i})}u_{i,j}$
+\end_inset
+
+带入(5.4)可得：
+\begin_inset Formula 
+\[
+f_{i,j}=e^{-r\Delta t}(\tilde{p}_{u}f_{i+1,j+1}+\tilde{p}_{m}f_{i+1,j}+\tilde{p}_{d}f_{i+1,j-1})\tag{5.6}
+\]
+
+\end_inset
+
+
 \end_layout
 
 \end_body

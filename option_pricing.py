@@ -269,7 +269,7 @@ import matplotlib.pyplot as plt
 @jit
 def Ame_option_trinomial(St,K,r,sigma,T,M,otype='call',method='CRR'):
     mu = r - sigma * sigma / 2.0
-    lam=math.sqrt(1.5)
+    lam=math.sqrt(3.0)
     dt = T/ M
     disc = math.exp(-r * dt)
     v = 0 if method=='CRR' else mu
@@ -298,8 +298,8 @@ def Ame_option_trinomial(St,K,r,sigma,T,M,otype='call',method='CRR'):
 a_bin_vecfun=np.vectorize(a_bin_fun)
 a_tri_vecfun=np.vectorize(Ame_option_trinomial)
 S=np.arange(10,130)
-p_bin=a_bin_vecfun(S,100.0,.05,.2,1.0,otype='put')
-%timeit p_tri=a_tri_vecfun(S,100.0,.05,.2,1.0,30,otype='put',method='JR')
+p_bin=a_bin_vecfun(S,100.0,.05,.2,1.0,80,otype='put')
+p_tri=a_tri_vecfun(S,100.0,.05,.2,1.0,30,otype='put',method='CRR')
 plt.plot(S,p_bin,label='Bin')
 plt.plot(S,p_tri,label='Tri')
 plt.legend()
@@ -308,6 +308,50 @@ plt.show()
 
 
 
+import numpy as np
+import math
+from numba import jit
+from modules import Ame_option_binomial as a_bin_fun
+import matplotlib.pyplot as plt
+
+@jit
+def Ame_option_ExDiff(St,K,r,sigma,T,M,otype='call'):
+    mu = r - sigma * sigma / 2.0
+    lam=math.sqrt(3.0)
+    dt = T/ M
+    disc = math.exp(-r * dt)
+    v = 0 if method=='CRR' else mu
+    k1 = math.exp((r - v) * dt)
+    k2 = math.exp((2*(r-v)+sigma*sigma)*dt)
+    u,m=math.exp(lam*sigma*math.sqrt(dt)),math.exp(v*dt)
+    d=1.0/u
+    pu=(k2-(d+1)*k1+d)/(u-d)/(u-1.0)
+    pd=(k2-(u+1)*k1+u)/(u-d)/(1.0-d)
+    pm=1.0-pu-pd
+    um=(u*m)**np.arange(M+1)
+    dm=(1/u)**np.arange(2*M+1)
+    S = np.empty(2*M + 1);S[0]=St*(d*m)**M
+    for i in range(1,2*M+1):
+        S[i]=S[i-1]*u
+    o_value=1.0 if otype is 'call' else -1.0
+    payoff = np.zeros(2*M + 1)
+    for n in range(2*M + 1):
+        payoff[n] = (S[n]-K)*o_value if (S[n]-K)*o_value >0 else 0.0
+    for m in range(M, 1, -1):
+        for n in range(2*m-1):
+            tmp = (pu* payoff[n + 2] +pm*payoff[n+1]+ pd* payoff[n]) * disc
+            payoff[n] = (St *um[m-1] * dm[2*(m-1)-n]-K)*o_value if (St * um[m-1] * dm[2*(m-1)-n]-K)*o_value- tmp>0 else tmp
+    return (pu* payoff[2] +pm*payoff[1]+ pd* payoff[0]) * disc
+
+a_bin_vecfun=np.vectorize(a_bin_fun)
+a_tri_vecfun=np.vectorize(Ame_option_trinomial)
+S=np.arange(10,130)
+p_bin=a_bin_vecfun(S,100.0,.05,.2,1.0,80,otype='put')
+p_tri=a_tri_vecfun(S,100.0,.05,.2,1.0,30,otype='put',method='CRR')
+plt.plot(S,p_bin,label='Bin')
+plt.plot(S,p_tri,label='Tri')
+plt.legend()
+plt.show()
 
 
 
