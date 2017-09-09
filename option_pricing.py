@@ -260,37 +260,50 @@ plt.show()
 exact=e_option(r=0.1).value_BSM
 
 
-import math
 import numpy as np
-def value_binomial_0(St,K,r,sigma,T,M=80,otype='call'):
-    dt =T  / M
-    df = math.exp(-r * dt)  # discount per interval
-    # binomial parameters
-    u = math.exp(sigma * math.sqrt(dt))
-    d = 1 / u
-    p = (math.exp(r * dt) - d) / (u - d)
+import math
+from numba import jit
+from modules import Ame_option_binomial as a_bin_fun
+import matplotlib.pyplot as plt
 
-    mu = np.arange(M + 1)
-    mu = np.resize(mu, (M + 1, M + 1))
-    md = np.transpose(mu)
-    mu = u ** (mu - md)
-    md = d ** md
-    S = St * mu * md
+@jit
+def Ame_option_trinomial(St,K,r,sigma,T,M,otype='call',method='CRR'):
+    mu = r - sigma * sigma / 2.0
+    lam=math.sqrt(1.5)
+    dt = T/ M
+    disc = math.exp(-r * dt)
+    v = 0 if method=='CRR' else mu
+    k1 = math.exp((r - v) * dt)
+    k2 = math.exp((2*(r-v)+sigma*sigma)*dt)
+    u,m=math.exp(lam*sigma*math.sqrt(dt)),math.exp(v*dt)
+    d=1.0/u
+    pu=(k2-(d+1)*k1+d)/(u-d)/(u-1.0)
+    pd=(k2-(u+1)*k1+u)/(u-d)/(1.0-d)
+    pm=1.0-pu-pd
+    um=(u*m)**np.arange(M+1)
+    dm=(1/u)**np.arange(2*M+1)
+    S = np.empty(2*M + 1);S[0]=St*(d*m)**M
+    for i in range(1,2*M+1):
+        S[i]=S[i-1]*u
+    o_value=1.0 if otype is 'call' else -1.0
+    payoff = np.zeros(2*M + 1)
+    for n in range(2*M + 1):
+        payoff[n] = (S[n]-K)*o_value if (S[n]-K)*o_value >0 else 0.0
+    for m in range(M, 1, -1):
+        for n in range(2*m-1):
+            tmp = (pu* payoff[n + 2] +pm*payoff[n+1]+ pd* payoff[n]) * disc
+            payoff[n] = (St *um[m-1] * dm[2*(m-1)-n]-K)*o_value if (St * um[m-1] * dm[2*(m-1)-n]-K)*o_value- tmp>0 else tmp
+    return (pu* payoff[2] +pm*payoff[1]+ pd* payoff[0]) * disc
 
-
-    h=np.maximum(S-K,0) if otype=='call' else np.maximum(K-S,0)
-
-    V = np.maximum(S - K, 0) if otype == 'call' else np.maximum(K - S, 0)
-
-    z = 0
-    for i in range(M - 1, -1, -1):
-        C_temp = (p * V[0:M - z, i + 1] + (1 - p) * V[1:M - z + 1, i + 1]) * df
-        V[0:M - z, i] = np.where(h[0:M - z, i] > C_temp, h[0:M - z, i], C_temp)
-        z += 1
-    return V[0, 0]
-%timeit value_binomial_0(100.0,100.0,0.05,.2,1.0,otype='put')
-
-
+a_bin_vecfun=np.vectorize(a_bin_fun)
+a_tri_vecfun=np.vectorize(Ame_option_trinomial)
+S=np.arange(10,130)
+p_bin=a_bin_vecfun(S,100.0,.05,.2,1.0,otype='put')
+%timeit p_tri=a_tri_vecfun(S,100.0,.05,.2,1.0,30,otype='put',method='JR')
+plt.plot(S,p_bin,label='Bin')
+plt.plot(S,p_tri,label='Tri')
+plt.legend()
+plt.show()
 
 
 

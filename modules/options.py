@@ -348,7 +348,7 @@ def udp_binomial(M,mu,dt,sigma,method='CRR'):
     return math.exp(v*dt+sigma*math.sqrt(dt)),math.exp(v*dt-sigma*math.sqrt(dt)),0.5+(mu-v)/sigma*math.sqrt(dt)/2.0
 
 @jit
-def Ame_option_binomial(St,K,r,sigma,T,M=80,otype='call',method='CRR'):
+def Ame_option_binomial(St,K,r,sigma,T,M,otype='call',method='CRR'):
     mu = r - sigma * sigma / 2.0
     dt = T/ M
     disc = math.exp(-r * dt)
@@ -369,6 +369,34 @@ def Ame_option_binomial(St,K,r,sigma,T,M=80,otype='call',method='CRR'):
             tmp = (p * payoff[n + 1] + (1 - p) * payoff[n]) * disc
             payoff[n] = (St *um[m-1] * du[m-1-n]-K)*o_value if (St * um[m-1] * du[m-1-n]-K)*o_value- tmp>0 else tmp
     return (p*payoff[1]+(1-p)*payoff[0])*disc
+@jit
+def Ame_option_trinomial(St,K,r,sigma,T,M,otype='call',method='CRR'):
+    mu = r - sigma * sigma / 2.0
+    lam=math.sqrt(1.5)
+    dt = T/ M
+    disc = math.exp(-r * dt)
+    v = 0 if method=='CRR' else mu
+    k1 = math.exp((r - v) * dt)
+    k2 = math.exp((2*(r-v)+sigma*sigma)*dt)
+    u,m=math.exp(lam*sigma*math.sqrt(dt)),math.exp(v*dt)
+    d=1.0/u
+    pu=(k2-(d+1)*k1+d)/(u-d)/(u-1.0)
+    pd=(k2-(u+1)*k1+u)/(u-d)/(1.0-d)
+    pm=1.0-pu-pd
+    um=(u*m)**np.arange(M+1)
+    dm=(1/u)**np.arange(2*M+1)
+    S = np.empty(2*M + 1);S[0]=St*(d*m)**M
+    for i in range(1,2*M+1):
+        S[i]=S[i-1]*u
+    o_value=1.0 if otype is 'call' else -1.0
+    payoff = np.zeros(2*M + 1)
+    for n in range(2*M + 1):
+        payoff[n] = (S[n]-K)*o_value if (S[n]-K)*o_value >0 else 0.0
+    for m in range(M, 1, -1):
+        for n in range(2*m-1):
+            tmp = (pu* payoff[n + 2] +pm*payoff[n+1]+ pd* payoff[n]) * disc
+            payoff[n] = (St *um[m-1] * dm[2*(m-1)-n]-K)*o_value if (St * um[m-1] * dm[2*(m-1)-n]-K)*o_value- tmp>0 else tmp
+    return (pu* payoff[2] +pm*payoff[1]+ pd* payoff[0]) * disc
 @jit
 def Euro_option_binomial(St,K,r,sigma,T,M=80,otype='call',method='CRR'):
     mu = r - sigma * sigma / 2.0
