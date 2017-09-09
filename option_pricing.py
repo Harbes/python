@@ -315,32 +315,21 @@ from modules import Ame_option_binomial as a_bin_fun
 import matplotlib.pyplot as plt
 
 @jit
-def Ame_option_ExDiff(St,K,r,sigma,T,M,otype='call'):
+def Ame_option_ExDiff(St,K,r,sigma,T,M,N,otype='call'):
     mu = r - sigma * sigma / 2.0
-    lam=math.sqrt(3.0)
-    dt = T/ M
-    disc = math.exp(-r * dt)
-    v = 0 if method=='CRR' else mu
-    k1 = math.exp((r - v) * dt)
-    k2 = math.exp((2*(r-v)+sigma*sigma)*dt)
-    u,m=math.exp(lam*sigma*math.sqrt(dt)),math.exp(v*dt)
-    d=1.0/u
-    pu=(k2-(d+1)*k1+d)/(u-d)/(u-1.0)
-    pd=(k2-(u+1)*k1+u)/(u-d)/(1.0-d)
+    dt = T/ N
+    dlnS=sigma*math.sqrt(1.5*dt)
+    pu=sigma*sigma*dt/(2.0*dx*dx)+mu*dt/(2.0*dx)
+    pd=sigma*sigma*dt/(2.0*dx*dx)-mu*dt/(2.0*dx)
     pm=1.0-pu-pd
-    um=(u*m)**np.arange(M+1)
-    dm=(1/u)**np.arange(2*M+1)
-    S = np.empty(2*M + 1);S[0]=St*(d*m)**M
-    for i in range(1,2*M+1):
-        S[i]=S[i-1]*u
+    S = St*np.exp(np.arange(-M ,M+ 1)*dx)
     o_value=1.0 if otype is 'call' else -1.0
-    payoff = np.zeros(2*M + 1)
-    for n in range(2*M + 1):
-        payoff[n] = (S[n]-K)*o_value if (S[n]-K)*o_value >0 else 0.0
-    for m in range(M, 1, -1):
-        for n in range(2*m-1):
-            tmp = (pu* payoff[n + 2] +pm*payoff[n+1]+ pd* payoff[n]) * disc
-            payoff[n] = (St *um[m-1] * dm[2*(m-1)-n]-K)*o_value if (St * um[m-1] * dm[2*(m-1)-n]-K)*o_value- tmp>0 else tmp
+    payoff = np.where((S-K)*o_value >0,(S-K)*o_value,0)
+    for m in range(N, 0, -1):
+        for n in range(1,2*m-1):
+            tmp = pu* payoff[n + 2] +pm*payoff[n+1]+ pd* payoff[n]
+            payoff[n] = (S[n]-K)*o_value if (S[n]-K)*o_value- tmp>0 else tmp
+
     return (pu* payoff[2] +pm*payoff[1]+ pd* payoff[0]) * disc
 
 a_bin_vecfun=np.vectorize(a_bin_fun)
