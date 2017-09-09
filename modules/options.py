@@ -397,27 +397,41 @@ def Ame_option_trinomial(St,K,r,sigma,T,M,otype='call',method='CRR'):
             tmp = (pu* payoff[n + 2] +pm*payoff[n+1]+ pd* payoff[n]) * disc
             payoff[n] = (St *um[m-1] * dm[2*(m-1)-n]-K)*o_value if (St * um[m-1] * dm[2*(m-1)-n]-K)*o_value- tmp>0 else tmp
     return (pu* payoff[2] +pm*payoff[1]+ pd* payoff[0]) * disc
+
+
 @jit
-def Ame_option_ExDiff(St,K,r,sigma,T,M=50,N=1000,otype='call'):
+def Ame_option_ExDiff(St, K, r, sigma, T, M, N, otype='call'):
+    '''
+
+    :param St:
+    :param K:
+    :param r:
+    :param sigma:
+    :param T:
+    :param M: 50
+    :param N: 100
+    :param otype:
+    :return:
+    '''
     mu = r - sigma * sigma / 2.0
-    dt = T/ N
+    dt = T / N
     disc = math.exp(-r * dt)
-    dx=sigma*math.sqrt(1.5*dt)
-    pu=sigma*sigma*dt/(2.0*dx*dx)+mu*dt/(2.0*dx)
-    pd=sigma*sigma*dt/(2.0*dx*dx)-mu*dt/(2.0*dx)
-    pm=1.0-pu-pd
-    S = St*np.exp(np.arange(-M ,M+ 1)*dx)
-    o_value=1.0 if otype is 'call' else -1.0
-    payoff = np.where((S-K)*o_value >0,(S-K)*o_value,0)
-    f=np.empty(2*M+1)
+    dx = sigma * math.sqrt(1.5 * dt)
+    pu = sigma * sigma * dt / (2.0 * dx * dx) + mu * dt / (2.0 * dx)
+    pd = sigma * sigma * dt / (2.0 * dx * dx) - mu * dt / (2.0 * dx)
+    pm = 1.0 - pu - pd
+    S = St * np.exp(np.arange(-M, M + 1) * dx)
+    o_value = 1.0 if otype is 'call' else -1.0
+    payoff = np.where((S - K) * o_value > 0, (S - K) * o_value, 0)
+    f = np.empty(2 * M + 1)
     f[0] = K * 0.5 * (1 - o_value)
     f[-1] = (S[-1] - K) * 0.5 * (1 + o_value)
     for m in range(N, 1, -1):
-        for n in range(1,2*M):
-            tmp = (pu* payoff[n + 1] +pm*payoff[n]+ pd* payoff[n-1])*disc
-            f[n] = (S[n]-K)*o_value if (S[n]-K)*o_value- tmp>0 else tmp
-        payoff[1:-1]=f[1:-1]
-    return (pu* payoff[M + 1] +pm*payoff[M]+ pd* payoff[M-1])*disc
+        for n in range(1, 2 * M):
+            tmp = (pu * payoff[n + 1] + pm * payoff[n] + pd * payoff[n - 1]) * disc
+            f[n] = (S[n] - K) * o_value if (S[n] - K) * o_value - tmp > 0 else tmp
+        payoff[1:-1] = f[1:-1]
+    return (pu * payoff[M + 1] + pm * payoff[M] + pd * payoff[M - 1]) * disc
 @jit
 def Euro_option_binomial(St,K,r,sigma,T,M=80,otype='call',method='CRR'):
     mu = r - sigma * sigma / 2.0

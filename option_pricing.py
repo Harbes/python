@@ -315,7 +315,19 @@ from modules import Ame_option_binomial as a_bin_fun
 import matplotlib.pyplot as plt
 
 @jit
-def Ame_option_ExDiff(St,K,r,sigma,T,M=50,N=1000,otype='call'):
+def Ame_option_ExDiff(St,K,r,sigma,T,M,N,otype='call'):
+    '''
+
+    :param St:
+    :param K:
+    :param r:
+    :param sigma:
+    :param T:
+    :param M: 50
+    :param N: 100
+    :param otype:
+    :return:
+    '''
     mu = r - sigma * sigma / 2.0
     dt = T/ N
     disc = math.exp(-r * dt)
@@ -340,7 +352,7 @@ a_bin_vecfun=np.vectorize(a_bin_fun)
 a_tri_vecfun=np.vectorize(Ame_option_ExDiff)
 S=np.arange(10,130)
 p_bin=a_bin_vecfun(S,100.0,.05,.2,1.0,80,otype='call')
-p_tri=a_tri_vecfun(S,100.0,.05,.2,1.0,60,1000,otype='call')
+%timeit p_tri=a_tri_vecfun(S,100.0,.05,.2,1.0,50,100,otype='call')
 plt.plot(S,p_bin,label='Bin')
 plt.plot(S,p_tri,label='ExDiff')
 plt.legend()
