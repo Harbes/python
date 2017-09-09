@@ -348,7 +348,7 @@ def Ame_option_ExDiff(St,K,r,sigma,T,M,N,otype='call'):
         payoff[1:-1]=f[1:-1]
     return (pu* payoff[M + 1] +pm*payoff[M]+ pd* payoff[M-1])*disc
 @jit
-def Euro_option_ExDiff(St, K, r, sigma, T, M, N, otype='call'):
+def Euro_option_ImDiff(St, K, r, sigma, T, M, N, otype='call'):
     '''
 
     :param St:

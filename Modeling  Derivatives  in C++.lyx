@@ -3423,5 +3423,73 @@ f_{i,j}=e^{-r\Delta t}(\tilde{p}_{u}f_{i+1,j+1}+\tilde{p}_{m}f_{i+1,j}+\tilde{p}
 
 \end_layout
 
+\begin_layout Itemize
+【注意】一个疑问：
+\color red
+式(5.4)是由BS PDE得出的，理应只适合欧式期权，为什么美式期权也适合
+\color inherit
+？
+\end_layout
+
+\begin_layout Section
+Explicit finite-difference implementation
+\end_layout
+
+\begin_layout Section
+Implicit difference method
+\end_layout
+
+\begin_layout Itemize
+将(5.3)右侧括号中的式子替换为：
+\begin_inset Formula 
+\[
+\frac{u_{i,j}-u_{i-1,j}}{\Delta t}
+\]
+
+\end_inset
+
+于是，整理后可以得到：
+\begin_inset Formula 
+\[
+u_{i+1,j}=\tilde{p}_{u}u_{i,j+1}+\tilde{p}_{m}u_{i,j}+\tilde{p}_{d}u_{i,j-1}\tag{5.7}
+\]
+
+\end_inset
+
+其中三个概率与(5.5)一致。进一步可以得到
+\begin_inset Formula 
+\[
+f_{i+1,j}=e^{r\Delta t}(\tilde{p}_{u}f_{i,j+1}+\tilde{p}_{m}f_{i,j}+\tilde{p}_{d}f_{i,j-1})\tag{5.8}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+LU decompostion method
+\end_layout
+
+\begin_layout Section
+Implicit difference method implementation
+\end_layout
+
+\begin_layout Section
+Object-oriented finite-difference implementation
+\end_layout
+
+\begin_layout Section
+Iterative methods
+\end_layout
+
+\begin_layout Section
+Crank-Nicolson Scheme
+\end_layout
+
+\begin_layout Section
+Alternating direction implicit method
+\end_layout
+
 \end_body
 \end_document
