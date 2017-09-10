@@ -3491,5 +3491,53 @@ Crank-Nicolson Scheme
 Alternating direction implicit method
 \end_layout
 
+\begin_layout Chapter
+Exotic options
+\end_layout
+
+\begin_layout Section
+Barrier options
+\end_layout
+
+\begin_layout Itemize
+Because of the probability of the option disappearing at one of the fixed
+ dates for a knock-out barrier or the probability of an option not appearing
+ on one of the fixed dates for a knock-barrier，barrier option are cheaper
+ than standard options。
+\end_layout
+
+\begin_layout Itemize
+Barrier options have a hedging problem：At the barrier, delta is discontinuous
+ and gamma tends to infinity。
+\end_layout
+
+\begin_layout Itemize
+We can actually price a down-and-out call analytically：
+\begin_inset Formula 
+\[
+\frac{\partial f}{\partial t}+rS\frac{\partial f}{\partial S}+\frac{1}{2}\sigma^{2}S^{2}\frac{\partial^{2}f}{\partial S^{2}}=rf
+\]
+
+\end_inset
+
+其payoff condition：
+\begin_inset Formula 
+\[
+f(S_{T},T)=max(S_{T}-X,0)
+\]
+
+\end_inset
+
+以及boundary condition：
+\begin_inset Formula 
+\[
+f(B,t^{*})=0\quad t^{*}\in[0,T]
+\]
+
+\end_inset
+
+
+\end_layout
+
 \end_body
 \end_document
