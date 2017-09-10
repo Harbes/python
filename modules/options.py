@@ -433,6 +433,48 @@ def Ame_option_ExDiff(St, K, r, sigma, T, M, N, otype='call'):
         payoff[1:-1] = f[1:-1]
     return (pu * payoff[M + 1] + pm * payoff[M] + pd * payoff[M - 1]) * disc
 @jit
+def Ame_option_ImDiff_DoNotUse(St, K, r,q, sigma, T, M, N, otype='call'):
+    '''
+    错的，不要用
+    :param St:
+    :param K:
+    :param r:
+    :param q:
+    :param sigma:
+    :param T:
+    :param M:
+    :param N:
+    :param otype:
+    :return:
+    '''
+    dt = T / N
+    dS=St/M
+    S = dS * np.arange(1,2*M+1)
+    o_value = 1.0 if otype is 'call' else -1.0
+    payoff = np.where((S - K) * o_value > 0, (S - K) * o_value, 0)
+    f=np.copy(payoff)
+    A=np.zeros((2*M,2*M))
+    for i in range(2*M):
+        alpha=0.5*sigma*sigma*S[i]*S[i]*dt/dS/dS
+        betha=0.5*(r-q)*S[i]*dt/dS
+        Lph=-alpha+betha
+        Dph=1+r*dt+2*alpha
+        Uph=-alpha-betha
+        if i==0:
+            A[i,i]=Dph+2*Lph
+            A[i,i+1]=Uph-Lph
+        elif i<2*M-1:
+            A[i,i-1]=Lph
+            A[i,i]=Dph
+            A[i,i+1]=Uph
+        else:
+            A[i,i-1]=Lph-Uph
+            A[i,i]=Dph+2*Uph
+    A_inv=np.linalg.pinv(A)
+    for m in range(N):
+        f=A_inv@f
+        f=np.where(payoff>f,payoff,f)
+@jit
 def Euro_option_binomial(St,K,r,sigma,T,M=80,otype='call',method='CRR'):
     mu = r - sigma * sigma / 2.0
     dt = T/ M
@@ -483,6 +525,50 @@ def Euro_option_ExDiff(St, K, r, sigma, T, M, N, otype='call'):
             f[n]= (pu * payoff[n + 1] + pm * payoff[n] + pd * payoff[n - 1]) * disc
         payoff[1:-1] = f[1:-1]
     return (pu * payoff[M + 1] + pm * payoff[M] + pd * payoff[M - 1]) * disc
+@jit
+def Euro_option_ImDiff(St, K, r,q, sigma, T, M, N, otype='call'):
+    '''
+
+    :param St:
+    :param K:
+    :param r:
+    :param q:
+    :param sigma:
+    :param T:
+    :param M: 15
+    :param N: 30
+    :param otype:
+    :return:
+    '''
+    dt = T / N
+    dS=St/M
+    S = dS * np.arange(1,2*M+1)
+    o_value = 1.0 if otype is 'call' else -1.0
+    payoff = np.where((S - K) * o_value > 0, (S - K) * o_value, 0)
+    A=np.zeros((2*M,2*M))
+    for i in range(2*M):
+        alpha=0.5*sigma*sigma*S[i]*S[i]*dt/dS/dS
+        betha=0.5*(r-q)*S[i]*dt/dS
+        Lph=-alpha+betha
+        Dph=1+r*dt+2*alpha
+        Uph=-alpha-betha
+        #A[i,i-1]=Lph-(i==2*M-1)*Uph
+        #A[i,i]=Dph+2*Lph*(i==0)+2*Uph*(i==2*M-1)
+        #A[i,i+1]=Uph-Lph*(i==0)
+        if i==0:
+            A[i,i]=Dph+2*Lph
+            A[i,i+1]=Uph-Lph
+        elif i<2*M-1:
+            A[i,i-1]=Lph
+            A[i,i]=Dph
+            A[i,i+1]=Uph
+        else:
+            A[i,i-1]=Lph-Uph
+            A[i,i]=Dph+2*Uph
+    A_inv=np.linalg.pinv(A)
+    for m in range(N):
+        payoff=A_inv@payoff
+    return payoff[M-1]
 # TODO
 @jit
 def option_binomial(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,otype='call',American=False):
