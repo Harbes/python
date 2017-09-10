@@ -433,17 +433,17 @@ def Ame_option_ExDiff(St, K, r, sigma, T, M, N, otype='call'):
         payoff[1:-1] = f[1:-1]
     return (pu * payoff[M + 1] + pm * payoff[M] + pd * payoff[M - 1]) * disc
 @jit
-def Ame_option_ImDiff_DoNotUse(St, K, r,q, sigma, T, M, N, otype='call'):
+def Ame_option_ImDiff(St, K, r,q, sigma, T, M, N, otype='call'):
     '''
-    错的，不要用
+
     :param St:
     :param K:
     :param r:
     :param q:
     :param sigma:
     :param T:
-    :param M:
-    :param N:
+    :param M:  20
+    :param N:  30
     :param otype:
     :return:
     '''
@@ -471,9 +471,11 @@ def Ame_option_ImDiff_DoNotUse(St, K, r,q, sigma, T, M, N, otype='call'):
             A[i,i-1]=Lph-Uph
             A[i,i]=Dph+2*Uph
     A_inv=np.linalg.pinv(A)
-    for m in range(N):
+    for m in range(N-1):
         f=A_inv@f
         f=np.where(payoff>f,payoff,f)
+    f = A_inv @ f
+    return f[M-1]
 @jit
 def Euro_option_binomial(St,K,r,sigma,T,M=80,otype='call',method='CRR'):
     mu = r - sigma * sigma / 2.0

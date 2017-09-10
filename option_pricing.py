@@ -373,10 +373,11 @@ def Ame_option_ImDiff(St, K, r,q, sigma, T, M, N, otype='call'):
             A[i,i-1]=Lph-Uph
             A[i,i]=Dph+2*Uph
     A_inv=np.linalg.pinv(A)
-    for m in range(N):
+    for m in range(N-1):
         f=A_inv@f
         f=np.where(payoff>f,payoff,f)
-    return payoff[M-1]
+    f = A_inv @ f
+    return f[M-1]
 e_opt_vecfun=np.vectorize(Ame_option_ImDiff)
 a_opt_vecfun=np.vectorize(a_bin_fun)
 S=np.arange(10,130)
