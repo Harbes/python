@@ -19,9 +19,9 @@
 \language_package default
 \inputencoding utf8-plain
 \fontencoding global
-\font_roman "default" "微软雅黑 Light"
-\font_sans "default" "楷体"
-\font_typewriter "default" "宋体"
+\font_roman "default" "STFangsong"
+\font_sans "default" "STHeiti"
+\font_typewriter "default" "Xingkai SC"
 \font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts true
@@ -3536,6 +3536,109 @@ f(B,t^{*})=0\quad t^{*}\in[0,T]
 
 \end_inset
 
+
+\end_layout
+
+\begin_layout Chapter
+Stochastic volatility
+\end_layout
+
+\begin_layout Section
+Implied volatility
+\end_layout
+
+\begin_layout Itemize
+BS模型假设volatility是constant。然而这是不合实际的：(1)波动率随时间变化；(2)(相同underlying asset)不同执行价、不同到
+期日对应的期权的隐含波动率也是不同的；(股票价格并不是对数正态的)
+\end_layout
+
+\begin_layout Itemize
+放松BS对于波动率的假设：波动率是随机的，following its own diffusion process with drift and
+ diffusion parameters。
+\end_layout
+
+\begin_layout Itemize
+假定
+\begin_inset Formula $C_{market}$
+\end_inset
+
+是是一个call的market quote，而BS定价公式给出的价格为
+\begin_inset Formula $C_{BS}(\sigma)$
+\end_inset
+
+，其中
+\begin_inset Formula $\sigma$
+\end_inset
+
+是历史波动率，其估计方法是：
+\begin_inset Formula 
+\begin{align*}
+u_{i} & =ln(\frac{S_{i}}{S_{i-1}})\quad i=1,2,...,N\\
+\hat{\sigma}^{2}\Delta t & =\frac{1}{N-1}\Sigma_{i=1}^{N}(u_{i}-\bar{u})^{2}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula $\bar{u}$
+\end_inset
+
+是
+\begin_inset Formula $u_{i}$
+\end_inset
+
+的均值，
+\begin_inset Formula $\Delta t$
+\end_inset
+
+是观测到样本的时间长度。而implied volatility是使得BS定价结果与市场价格一致的波动率，即：
+\begin_inset Formula 
+\[
+C_{BS}(\sigma^{implied})=C_{market}\tag{7.3}
+\]
+
+\end_inset
+
+虽然我们无法得到上式的解析解，但是可以利用Newton-Raphson方法得到数值解：首先，猜测或估计一个初始值
+\begin_inset Formula $\sigma_{0}$
+\end_inset
+
+，然后利用Newton-Raphson方程进行迭代
+\begin_inset Formula 
+\[
+\sigma_{i+1}=\sigma_{i}-\frac{C_{BS}(\sigma_{i})-C_{market}}{\kappa_{BS}(\sigma_{i})}\tag{7.4}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\kappa_{BS}$
+\end_inset
+
+是期权的vega。迭代直到满足精度条件：
+\begin_inset Formula 
+\[
+|C_{market}-C(\sigma_{i+1})|<\varepsilon\tag{7.5}
+\]
+
+\end_inset
+
+不过对于American option和exotic option等没有解析解的期权而言，可以使用bisection method。
+\end_layout
+
+\begin_layout Section
+Volatility skews and smiles
+\end_layout
+
+\begin_layout Section
+Empirical explanation
+\end_layout
+
+\begin_layout Section
+Implied volatility surfaces
+\end_layout
+
+\begin_layout Standard
 
 \end_layout
 
