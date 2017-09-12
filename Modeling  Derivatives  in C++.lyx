@@ -3771,5 +3771,312 @@ n-期EWMA定义如下：
 
 \end_layout
 
+\begin_layout Section
+GARCH models
+\end_layout
+
+\begin_layout Itemize
+经验显示，用方差计算的风险数据存在自相关情况。——》OLS回归所得残差存在异方差(heteroskedasticity)的问题
+\end_layout
+
+\begin_layout Itemize
+ARCH model(Engle,1982)，GARCH model(Bollerslev,1986)
+\end_layout
+
+\begin_layout Itemize
+GARCH模型可以捕获the volatility clustering，这一点MA和EWMA都做不到。
+\end_layout
+
+\begin_layout Itemize
+ARCH模型：assume today's conditional variance is a weighted average of past
+ 
+\begin_inset Formula $p$
+\end_inset
+
+ squared unexpected returns where the errors are calculated from the regression
+ equation
+\begin_inset Formula 
+\[
+y_{t}=\beta'x_{t}+\varepsilon_{t}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\[
+\varepsilon_{t}|I_{t}\sim N(0,\sigma_{t}^{2})
+\]
+
+\end_inset
+
+
+\begin_inset Formula $I_{t}$
+\end_inset
+
+是t时间点的信息集，条件方差需满足：
+\begin_inset Formula 
+\[
+\sigma_{t}^{2}=\alpha_{0}+\Sigma_{i=1}^{p}\alpha_{i}\sigma_{t-i}^{2}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\alpha_{0}>0,\alpha_{1},...,\alpha_{p}\geq0$
+\end_inset
+
+。实际当中很少用ARCH模型，因为有更好的选择GARCH，而且当
+\begin_inset Formula $\alpha_{i}$
+\end_inset
+
+是一个指数递减型的无穷序列时，ARCH模型就相当于一个GARCH(1,1)
+\end_layout
+
+\begin_layout Itemize
+GARCH模型：对于股票收益率，常见的使用
+\begin_inset Formula $r_{t}=\mu+\varepsilon_{t}$
+\end_inset
+
+或者
+\begin_inset Formula $r_{t}=\mu+\beta r_{t-1}+\varepsilon_{t}$
+\end_inset
+
+，其条件方差可以设定为一个GARCH(1,1)
+\begin_inset Formula 
+\[
+\sigma_{t}^{2}=\omega+\alpha\varepsilon_{t-1}^{2}+\beta\sigma_{t-1}^{2}\tag{8.7}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\omega>0,\alpha>0,\beta\geq0$
+\end_inset
+
+。
+\begin_inset Formula $\alpha$
+\end_inset
+
+ measures the degree of volatility reactivity to unexpected news。注意，the
+ long-term steady-date variance in the GARCH(1,1) model ：
+\begin_inset Formula 
+\[
+\sigma^{2}=\frac{\omega}{1-\alpha-\beta}\tag{8.8}
+\]
+
+\end_inset
+
+前提是
+\begin_inset Formula $1-\alpha-\beta>0$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+GARCH(p,q)模型：
+\begin_inset Formula 
+\[
+\sigma_{t}^{2}=\omega+\Sigma_{i=1}^{q}\alpha_{i}\varepsilon_{t-i}^{2}+\Sigma_{j=1}^{p}\beta_{j}\sigma_{t-j}^{2}\tag{8.9}
+\]
+
+\end_inset
+
+要求
+\begin_inset Formula $|1-\beta(L)|=0$
+\end_inset
+
+的根全部落雨单位圆之外，同时满足
+\begin_inset Formula $1-\Sigma_{i=1}^{q}\alpha_{i}-\Sigma_{j=1}^{p}\beta_{j}>0$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Asymmetric GARCH
+\end_layout
+
+\begin_layout Itemize
+前面介绍的GARCH模型有个特点：波动率对市场新息的反映是对称的。然而，实际中许多研究者都发现“negative surprises seem
+ to increase volatility more than positive surprises”，于是就需要asymmetric model去描述实际
+数据。
+\end_layout
+
+\begin_layout Itemize
+Engle和Ng(1993)提出了A-GARCH模型：
+\begin_inset Formula 
+\[
+\sigma_{t}^{2}=\omega+\alpha(\varepsilon_{t-1}-\lambda)^{2}+\beta\sigma_{t-1}^{2}\tag{8.13}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\omega>0,$
+\end_inset
+
+且
+\begin_inset Formula $\alpha,\beta,\lambda\geq0$
+\end_inset
+
+。这里
+\begin_inset Formula $\lambda$
+\end_inset
+
+是一个leverage系数，与股票收益率是一个数量级的。
+\end_layout
+
+\begin_layout Itemize
+另一个常见的模型是Nelson(1991)提出的exponential GARCH模型(E-GARCH模型)。E-GARCH模型能捕获到the
+ dynamics of the leverage effect observed in financial markets。E-GARCH模型的条件方差设定为
+：
+\begin_inset Formula 
+\[
+ln(\sigma_{t}^{2})=\omega+g(z_{t-1})+\beta ln(\sigma_{t-1}^{2})\tag{8.14}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+g(z_{t})=\lambda z_{t}+\delta(|z_{t}|-\sqrt{2/\pi})\tag{8.15}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $z_{t}$
+\end_inset
+
+是一个标准正态随机变量（注意到
+\begin_inset Formula $E[|z_{t}|]=\sqrt{2/\pi}$
+\end_inset
+
+）。其中，
+\begin_inset Formula $\lambda z_{t}$
+\end_inset
+
+主要表示sign effect，
+\begin_inset Formula $\delta(|z_{t}|-\sqrt{2/\pi})$
+\end_inset
+
+主要表示magnitude effect，当
+\begin_inset Formula $\delta>0,\lambda<0$
+\end_inset
+
+，negative shocks to returns will cause larger unconditional variance response
+ than positive shocks。
+\end_layout
+
+\begin_layout Itemize
+Bollerslev和Mikkelsen(1996)提出将E-GARCH重写为：
+\begin_inset Formula 
+\[
+ln(\sigma_{t}^{2})=\omega+\frac{1-\alpha(L)}{1-\beta(L)}g(z_{t-1})\tag{8.16}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+许多波动率模型都假定误差项服从正态分布，然而，由于条件波动率随时间变化，即使假定正态分布的GARCH所得到的股票收益率分布是厚尾的（因而导致尖峰leptokur
+tic）。然而，显示数据显示这种厚尾以及偏度比正太假设下的GARCH模型数据的厚尾现象更严重。因此，有必要假定不同的分布类型以捕获这种尖峰厚尾特征（尤其是对于高
+频数据而言）
+\end_layout
+
+\begin_layout Itemize
+一种是假定
+\begin_inset Formula $z_{t}$
+\end_inset
+
+是一个skewed Student 
+\begin_inset Formula $t$
+\end_inset
+
+ 分布，此时
+\begin_inset Formula 
+\[
+E[|z_{t}|]=\frac{4\xi^{2}\Gamma(\frac{1+v}{2})\sqrt{v-2}}{\xi+\frac{1}{\xi}\sqrt{\pi}(v-1)\Gamma(\frac{v}{2})}\tag{8.17}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\Gamma()$
+\end_inset
+
+是gamma函数，
+\begin_inset Formula $\xi=1$
+\end_inset
+
+ for the symmetric Student。
+\end_layout
+
+\begin_layout Itemize
+Nelson(1991)提出了一个generalized error distribution，标准化后均值为0，方差为1，密度函数为：
+\begin_inset Formula 
+\[
+f(v_{t})=\frac{v*exp(-\frac{1}{2}|\frac{v_{t}}{\lambda}|^{v})}{\lambda2^{\frac{v+1}{v}}\Gamma(\frac{1}{v})}\tag{8.18}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\lambda=[\frac{2^{-\frac{2}{v}}\Gamma(\frac{1}{v})}{\Gamma(3/v)}]^{1/2}$
+\end_inset
+
+为常数，
+\begin_inset Formula $v$
+\end_inset
+
+是一个正参数，可以影响the thickness of the tails：当
+\begin_inset Formula $v<2$
+\end_inset
+
+时，比正态厚尾；
+\begin_inset Formula $v>2$
+\end_inset
+
+时则相反；
+\begin_inset Formula $v=2$
+\end_inset
+
+时正态分布。此时，有：
+\begin_inset Formula 
+\[
+E[|z_{t}|]=\frac{\lambda*2^{1/v}\Gamma(2/v)}{\Gamma(1/v)}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+GARCH models for high-frequency data
+\end_layout
+
+\begin_layout Itemize
+Drost and Nijman(1993)，Muller et al.(1997)研究并比较了不同频率数据所估计的GARCH模型，结果：用低频数据估计的GARC
+H模型可以更好的预测高频波动率，而用高频数据估计的GARCH不能很好地估计低频波动率。
+\end_layout
+
+\begin_layout Itemize
+其他（待学）
+\end_layout
+
+\begin_layout Section
+Estimation problems
+\end_layout
+
+\begin_layout Section
+GARCH option pricing model
+\end_layout
+
 \end_body
 \end_document

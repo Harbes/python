@@ -335,6 +335,7 @@ def Ame_option_ExDiff(St,K,r,sigma,T,M,N,otype='call'):
     pu=sigma*sigma*dt/(2.0*dx*dx)+mu*dt/(2.0*dx)
     pd=sigma*sigma*dt/(2.0*dx*dx)-mu*dt/(2.0*dx)
     pm=1.0-pu-pd
+    p=pu,pm,pd
     S = St*np.exp(np.arange(-M ,M+ 1)*dx)
     o_value=1.0 if otype is 'call' else -1.0
     payoff = np.where((S-K)*o_value >0,(S-K)*o_value,0)
@@ -342,50 +343,18 @@ def Ame_option_ExDiff(St,K,r,sigma,T,M,N,otype='call'):
     f[0] = K * 0.5 * (1 - o_value)
     f[-1] = (S[-1] - K) * 0.5 * (1 + o_value)
     for m in range(N, 1, -1):
-        for n in range(1,2*M):
-            tmp = (pu* payoff[n + 1] +pm*payoff[n]+ pd* payoff[n-1])*disc
-            f[n] = (S[n]-K)*o_value if (S[n]-K)*o_value- tmp>0 else tmp
-        payoff[1:-1]=f[1:-1]
+        tmp=np.convolve(p,payoff,'valid')*disc
+        payoff[1:-1]=np.where((S[1:-1]-K)*o_value-tmp>0,(S[1:-1]-K)*o_value,tmp)
     return (pu* payoff[M + 1] +pm*payoff[M]+ pd* payoff[M-1])*disc
-@jit
-def Ame_option_ImDiff(St, K, r,q, sigma, T, M, N, otype='call'):
-    dt = T / N
-    dS=St/M
-    S = dS * np.arange(1,2*M+1)
-    o_value = 1.0 if otype is 'call' else -1.0
-    payoff = np.where((S - K) * o_value > 0, (S - K) * o_value, 0)
-    f=np.copy(payoff)
-    A=np.zeros((2*M,2*M))
-    for i in range(2*M):
-        alpha=0.5*sigma*sigma*S[i]*S[i]*dt/dS/dS
-        betha=0.5*(r-q)*S[i]*dt/dS
-        Lph=-alpha+betha
-        Dph=1+r*dt+2*alpha
-        Uph=-alpha-betha
-        if i==0:
-            A[i,i]=Dph+2*Lph
-            A[i,i+1]=Uph-Lph
-        elif i<2*M-1:
-            A[i,i-1]=Lph
-            A[i,i]=Dph
-            A[i,i+1]=Uph
-        else:
-            A[i,i-1]=Lph-Uph
-            A[i,i]=Dph+2*Uph
-    A_inv=np.linalg.pinv(A)
-    for m in range(N-1):
-        f=A_inv@f
-        f=np.where(payoff>f,payoff,f)
-    f = A_inv @ f
-    return f[M-1]
-e_opt_vecfun=np.vectorize(Ame_option_ImDiff)
-a_opt_vecfun=np.vectorize(a_bin_fun)
+
+a_opt_diff=np.vectorize(Ame_option_ExDiff)
+a_opt_bin=np.vectorize(a_bin_fun)
 S=np.arange(10,130)
-p_bin=e_opt_class(St=S,otype='put').value_BSM()
-p_bin=a_opt_vecfun(S,100.0,.05,.2,1.0,50,otype='put')
-p_tri=e_opt_vecfun(S,100.0,.05,0.0,.2,1.0,30,100,otype='put')
+
+p_bin=a_opt_bin(S,100.0,.05,.2,1.0,50,otype='put')
+p_diff=a_opt_diff(S,100.0,.05,.2,1.0,10,30,otype='put')
 plt.plot(S,p_bin,label='Bin')
-plt.plot(S,p_tri,label='ExDiff')
+plt.plot(S,p_diff,label='ExDiff')
 plt.legend()
 plt.show()
 
@@ -397,7 +366,7 @@ A[i, i] = Dph + 2 * Lph * (i == 0) + 2 * Uph * (i == 2 * M - 1)
 A[i, i + 1] = Uph - Lph * (i == 0)
 
 
-
+np.convolve(a,v,'valid')
 
 
 
