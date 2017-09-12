@@ -3630,15 +3630,144 @@ C_{BS}(\sigma^{implied})=C_{market}\tag{7.3}
 Volatility skews and smiles
 \end_layout
 
+\begin_layout Itemize
+实际当中，对于同一个underlying asset，不同maturity、strike对应的期权的波动率是不同的，这就是
+\begin_inset Formula $term\,structure\,of\,volatility$
+\end_inset
+
+以及
+\begin_inset Formula $volatility\,smile$
+\end_inset
+
+或者
+\begin_inset Formula $smirk$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+the skew effect：lower strikes have higher implied volatility than higher
+ strikes。原因在于liquidity差导致更高的premium。（那是不是说明流动性高的option波动率相对较低，或者整个smile相对平缓？）
+\end_layout
+
+\begin_layout Itemize
+since 1987， the “smile” has changed to a “sneer” shape in many markets，particula
+rly for stock indexes（例如Dumas，Fleming，and Whaley(1998)）
+\end_layout
+
+\begin_layout Itemize
+option implied volatilities are observed to decrease monotonically as the
+ option goes deeper out-of-money(call) or in-the-money(put)【也就是说，股价较低时，波动率较小？】
+\end_layout
+
+\begin_layout Itemize
+In general ，the smirk in equity market is very highly skewed with OTM puts
+ priced at significantly higher volatilities than OTM calls。Rubinstein(1997)给出了几
+个解释：（1）leverage effect：股价下跌，debt-quity债务权益比上升，导致波动率上升；（2）correlation effect：在市场有
+下行压力时，股价之间的相关性上升，于是市场指数的的波动率上升；（3）investor wealth effect：当市场下跌时，投资者财富下降，风险厌恶水平上升
+，于是任何news都会导致投资者更激烈的反应，于是市场波动率上升；（4）risk effect：波动率上升，风险溢价也上升，导致市场下跌。 用市场供求进行总结：
+strong demand for OTM puts，and strong supply of OTM calls。
+\end_layout
+
+\begin_layout Itemize
+货币市场的情况稍显不同：strong demand for OTM calls and puts on both sides of the market
+ 。因此在货币市场，期权隐含波动率呈现的是一种更加对称的“smile”，而不是“smirk”
+\end_layout
+
 \begin_layout Section
 Empirical explanation
+\end_layout
+
+\begin_layout Itemize
+Carol Alexander：如果股票收益率的分布是正态的但波动率是随机的；或者收益率是厚尾的但波动率是固定的，或者收益率是厚尾的且波动率是随机的，那么，股票
+价格有较大变化的概率提高了，于是期权从OTM状态转为ITM状态的概率变大了，则期权的价格也比BS公式给出的价格要大。
+\end_layout
+
+\begin_layout Itemize
+in many equity markets ，there is a clear negative correltion between ATM
+ volatility and the underlying asset，but the strength of the correlation
+ depends on the time period and current regime。Derman(1999)试图用market regimes解释th
+e skew in volatility。
 \end_layout
 
 \begin_layout Section
 Implied volatility surfaces
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
+volatility across time and strikes
+\end_layout
+
+\begin_layout Chapter
+statistical models
+\end_layout
+
+\begin_layout Section
+Overview
+\end_layout
+
+\begin_layout Section
+Moving average models
+\end_layout
+
+\begin_layout Itemize
+假定asset return是iid的。there are no time-varying assumptions so that moving
+ averages provide only an estimate of the unconditional volatility
+\end_layout
+
+\begin_layout Section
+Exponential moving average models 
+\end_layout
+
+\begin_layout Itemize
+another model commonly used to estimate and forecast unconditional variance
+ is the EWMA model since if used correctly EWMAs can generate more accurate
+ estimates of short-term volatility or correlation than equally weighted
+ moving averages。
+\end_layout
+
+\begin_layout Itemize
+与MA不同的是，一个冲击在EWMA估计中会逐渐消失；而MA只有脱离窗口期才会消失。
+\end_layout
+
+\begin_layout Itemize
+n-期EWMA定义如下：
+\begin_inset Formula 
+\[
+\Sigma_{i=1}^{n}\lambda^{i-1}y_{t-i}/\Sigma_{i=1}^{n}\lambda^{i-1}\tag{8.3}
+\]
+
+\end_inset
+
+当
+\begin_inset Formula $\lambda\rightarrow\infty$
+\end_inset
+
+，上式可以简单的写为
+\begin_inset Formula 
+\[
+(1-\lambda)\Sigma_{i=1}^{n}\lambda^{i-1}y_{t-i}
+\]
+
+\end_inset
+
+于是波动率估计如下
+\begin_inset Formula 
+\[
+\hat{\sigma}_{t}^{2}=(1-\lambda)\Sigma_{i=1}^{n}\lambda^{i-1}r_{t-i}^{2}\tag{8.4}
+\]
+
+\end_inset
+
+或者可以写成迭代的形式：
+\begin_inset Formula 
+\[
+\hat{\sigma}_{t}^{2}=\lambda\hat{\sigma}_{t-1}+(1-\lambda)r_{t}^{2}
+\]
+
+\end_inset
+
 
 \end_layout
 
