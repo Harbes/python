@@ -20,6 +20,8 @@ import scipy.stats as scis
 from scipy.special import comb
 from numba import jit
 import math
+from math import log,sqrt,exp
+from scipy.optimize import fsolve
 norm=scis.norm
 # TODO 尝试利用broadcasting将所有methods向量化；或者丢弃class，全都写成函数的形式，将参数以字典形式储存
 class euro_option:
@@ -476,6 +478,19 @@ def Ame_option_ImDiff(St, K, r,q, sigma, T, M, N, otype='call'):
         f=np.where(payoff>f,payoff,f)
     f = A_inv @ f
     return f[M-1]
+
+def Euro_option_BSM(St,K,r,sigma,T,otype='call'):
+    d1=(np.log(St / K) + (r + sigma *sigma / 2) * T) / (sigma*np.sqrt(T))
+    d2 = d1 - sigma * np.sqrt(T)
+    if otype == 'call':
+        return St * norm(0, 1).cdf(d1) - np.exp(-r * T) * K * norm(0, 1).cdf(d2)
+    else:
+        return np.exp(-r * T) * K * norm(0, 1).cdf(-d2) - St * norm(0, 1).cdf(-d1)
+def vega_euro(St,K,r,sigma,T,otype='call'):
+    d1 = (np.log(St / K) + (r + sigma *sigma / 2) * T) / (sigma * np.sqrt(T))
+    return St * norm(0, 1).pdf(d1) * np.sqrt(T)
+
+
 @jit
 def Euro_option_binomial(St,K,r,sigma,T,M=80,otype='call',method='CRR'):
     mu = r - sigma * sigma / 2.0
@@ -496,7 +511,7 @@ def Euro_option_binomial(St,K,r,sigma,T,M=80,otype='call',method='CRR'):
             payoff[n] = (p * payoff[n + 1] + (1 - p) * payoff[n]) * disc
     return payoff[0]
 @jit
-def Ame_option_trinomial(St,K,r,sigma,T,M,otype='call',method='CRR'):
+def Euro_option_trinomial(St,K,r,sigma,T,M,otype='call',method='CRR'):
     mu = r - sigma * sigma / 2.0
     lam=math.sqrt(1.5)
     dt = T/ M
@@ -735,4 +750,19 @@ def BrownianBridge(final=None,NumOfsteps=100,T=1):
         Z[i]=(1-gamma)*Z[j]+gamma*Z[k]+e[i]*math.sqrt(gamma*(1-gamma)*(k-j)*delta_t)
         j=i
     return Z
+def imp_vol(Ct,St,K,r,T,sigma_est,otype):
+    def diff(sigma):
+        return Euro_option_BSM(St,K,r,sigma,T,otype)-Ct
+    return fsolve(diff,sigma_est)[0]
+def imp_vol_euro(Ct,St,K,r,T,sigma_0,otype,vol=0.000001):
+    iter_max_num=10
+    sigma=sigma_0
+    dC = Euro_option_BSM(St, K, r, sigma, T, otype) - Ct
+    for i in range(iter_max_num):
+        sigma=sigma-dC/vega_euro(St,K,r,sigma,T,otype)
+        dC = Euro_option_BSM(St, K, r, sigma, T, otype) - Ct
+        if np.percentile(abs(dC),10)<vol:
+            break
+    return sigma
+datetime.datetime.utcfrom
 

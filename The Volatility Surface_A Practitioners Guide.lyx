@@ -19,9 +19,9 @@
 \language_package default
 \inputencoding utf8-plain
 \fontencoding global
-\font_roman "default" "Noto Sans Mono CJK SC"
-\font_sans "default" "Noto Sans CJK SC"
-\font_typewriter "default" "Noto Sans Mono CJK SC"
+\font_roman "default" "微软雅黑 Light"
+\font_sans "default" "新宋体"
+\font_typewriter "default" "楷体"
 \font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts true
@@ -160,8 +160,478 @@ Stochastic volatility and local volatility
 Stochastic volatility
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
+stochastic volatility(SV) models are useful because they explain in self-consist
+ent way why option with different strikes and expirations have different
+ Black-Scholes implied volatilitties。
+\end_layout
 
+\begin_layout Section
+Derivation of the valuation equation
+\end_layout
+
+\begin_layout Itemize
+Wilmott(2000)：假定股票价格以及其方差
+\begin_inset Formula $v$
+\end_inset
+
+满足：
+\begin_inset Formula 
+\[
+dS_{t}=\mu_{t}S_{t}dt+\sqrt{v_{t}}S_{t}dZ_{t1}\tag{1.1}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+dv_{t}=\alpha(S_{t},v_{t},t)dt+\eta\beta(S_{t},v_{t},t)\sqrt{v_{t}}dZ_{t2}\tag{1.2}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $dZ_{t1}dZ_{t2}=\rho dt$
+\end_inset
+
+，且
+\begin_inset Formula $\mu_{t}$
+\end_inset
+
+是(deterministic) instantaneous drift of stock price returns，
+\begin_inset Formula $\eta$
+\end_inset
+
+是the volatility of volatility，
+\begin_inset Formula $\rho$
+\end_inset
+
+是the correlation between random stock price returns and changes in 
+\begin_inset Formula $v_{t}$
+\end_inset
+
+，
+\begin_inset Formula $dZ_{t1}$
+\end_inset
+
+和
+\begin_inset Formula $dZ_{t2}$
+\end_inset
+
+是两个Wiener过程。
+\end_layout
+
+\begin_layout Itemize
+当
+\begin_inset Formula $\eta\rightarrow0$
+\end_inset
+
+是股票遵循的随机过程就退化到了BS formula。
+\end_layout
+
+\begin_layout Itemize
+在BS情境中，随机性的唯一来源是股票价格；然而在随机波动率模型中，除了价格之外，随机性还来源于波动率的变化。因此在构建无风险组合
+\begin_inset Formula $\Pi$
+\end_inset
+
+时，需要对冲这两种风险。令期权价格为
+\begin_inset Formula $V(S,v,t)$
+\end_inset
+
+，而
+\begin_inset Formula $V_{1}$
+\end_inset
+
+表示仅依赖于波动率的资产的价值：
+\begin_inset Formula 
+\[
+\Pi=V-\Delta S-\Delta_{1}V_{1}
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\begin{align*}
+d\Pi & =[\frac{\partial V}{\partial t}+\frac{1}{2}vS^{2}\frac{\partial^{2}V}{\partial S^{2}}+\rho\eta v\beta S\frac{\partial^{2}V}{\partial v\partial S}+\frac{1}{2}\eta^{2}v\beta^{2}\frac{\partial^{2}V}{\partial v^{2}}]dt\\
+ & \quad-\Delta_{1}[\frac{\partial V_{1}}{\partial t}+\frac{1}{2}vS^{2}\frac{\partial^{2}V_{1}}{\partial S^{2}}+\rho\eta v\beta S\frac{\partial^{2}V_{1}}{\partial v\partial S}+\frac{1}{2}\eta^{2}v\beta^{2}\frac{\partial^{2}V_{1}}{\partial v^{2}}]dt\\
+ & \quad+[\frac{\partial V}{\partial S}-\Delta_{1}\frac{\partial V_{1}}{\partial S}-\Delta]dS+[\frac{\partial V}{\partial v}-\Delta_{1}\frac{\partial V_{1}}{\partial v}]dv
+\end{align*}
+
+\end_inset
+
+to make the portfolio instantaneously risk-free, we must choose：
+\begin_inset Formula 
+\[
+\frac{\partial V}{\partial S}-\Delta_{1}\frac{\partial V_{1}}{\partial S}-\Delta=0
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial V}{\partial v}-\Delta_{1}\frac{\partial V_{1}}{\partial v}=0
+\]
+
+\end_inset
+
+此时，有：
+\begin_inset Formula 
+\begin{align*}
+d\Pi & =[\frac{\partial V}{\partial t}+\frac{1}{2}vS^{2}\frac{\partial^{2}V}{\partial S^{2}}+\rho\eta v\beta S\frac{\partial^{2}V}{\partial v\partial S}+\frac{1}{2}\eta^{2}v\beta^{2}\frac{\partial^{2}V}{\partial v^{2}}]dt\\
+ & \quad-\Delta_{1}[\frac{\partial V_{1}}{\partial t}+\frac{1}{2}vS^{2}\frac{\partial^{2}V_{1}}{\partial S^{2}}+\rho\eta v\beta S\frac{\partial^{2}V_{1}}{\partial v\partial S}+\frac{1}{2}\eta^{2}v\beta^{2}\frac{\partial^{2}V_{1}}{\partial v^{2}}]dt\\
+ & =r\Pi dt\\
+ & =r(V-\Delta S-\Delta_{1}V_{1})dt
+\end{align*}
+
+\end_inset
+
+将
+\begin_inset Formula $V$
+\end_inset
+
+和
+\begin_inset Formula $V_{1}$
+\end_inset
+
+整理放置不同侧：
+\begin_inset Formula 
+\begin{align*}
+ & \frac{\frac{\partial V}{\partial t}+\frac{1}{2}vS^{2}\frac{\partial^{2}V}{\partial S^{2}}+\rho\eta v\beta S\frac{\partial^{2}V}{\partial v\partial S}+\frac{1}{2}\eta^{2}v\beta^{2}\frac{\partial^{2}V}{\partial v^{2}}+rS\frac{\partial V}{\partial S}-rV}{\frac{\partial V}{\partial v}}\\
+= & \frac{\frac{\partial V_{1}}{\partial t}+\frac{1}{2}vS^{2}\frac{\partial^{2}V_{1}}{\partial S^{2}}+\rho\eta v\beta S\frac{\partial^{2}V_{1}}{\partial v\partial S}+\frac{1}{2}\eta^{2}v\beta^{2}\frac{\partial^{2}V_{1}}{\partial v^{2}}+rS\frac{\partial V_{1}}{\partial S}-rV_{1}}{\frac{\partial V_{1}}{\partial v}}
+\end{align*}
+
+\end_inset
+
+两边形式完全一致左侧是一个关于
+\begin_inset Formula $V$
+\end_inset
+
+的函数，右侧是一个关于
+\begin_inset Formula $V_{1}$
+\end_inset
+
+的函数，唯一的可能性是：两边都等于某个关于独立变量
+\begin_inset Formula $S,v,t$
+\end_inset
+
+的函数。因此：
+\begin_inset Formula 
+\[
+\frac{\partial V}{\partial t}+\frac{1}{2}vS^{2}\frac{\partial^{2}V}{\partial S^{2}}+\rho\eta v\beta S\frac{\partial^{2}V}{\partial v\partial S}+\frac{1}{2}\eta^{2}v\beta^{2}\frac{\partial^{2}V}{\partial v^{2}}+rS\frac{\partial V}{\partial S}-rV=-(\alpha-\phi\beta\sqrt{v})\frac{\partial V}{\partial v}\tag{1.3}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $\alpha$
+\end_inset
+
+和
+\begin_inset Formula $\beta$
+\end_inset
+
+是式(1.2)中的drift和volatility。
+\end_layout
+
+\begin_layout Section
+the market price of volatility risk
+\end_layout
+
+\begin_layout Itemize
+在式(1.3)中，
+\begin_inset Formula $\phi(S,v,t)$
+\end_inset
+
+是the market price of volatility risk。原因（源于Wilmott‘s argument）【说明似乎有问题？？？】：考虑一个de
+lta对冲(未经vega对冲)后的期权组合：
+\begin_inset Formula 
+\[
+\Pi_{1}=V-\Delta S
+\]
+
+\end_inset
+
+再次利用Ito‘s lemma：
+\begin_inset Formula 
+\[
+d\Pi_{1}=[\frac{\partial V}{\partial t}+\frac{1}{2}vS^{2}\frac{\partial^{2}V}{\partial S^{2}}+\rho\eta v\beta S\frac{\partial^{2}V}{\partial v\partial S}+\frac{1}{2}\eta^{2}v\beta^{2}\frac{\partial^{2}V}{\partial v^{2}}]dt+(\frac{\partial V}{\partial S}-\Delta)dS+(\frac{\partial V}{\partial v})dv
+\]
+
+\end_inset
+
+由于是delta中性的，因此
+\begin_inset Formula $\Delta=\frac{\partial V}{\partial S}$
+\end_inset
+
+，于是
+\begin_inset Formula 
+\begin{align*}
+d\Pi_{1}-r\Pi_{1}dt & =[\frac{\partial V}{\partial t}+\frac{1}{2}vS^{2}\frac{\partial^{2}V}{\partial S^{2}}+\rho\eta v\beta S\frac{\partial^{2}V}{\partial v\partial S}+\frac{1}{2}\eta^{2}v\beta^{2}\frac{\partial^{2}V}{\partial v^{2}}+rS\frac{\partial V}{\partial S}-rV]dt+\frac{\partial V}{\partial v}dt\\
+ & =\beta\sqrt{v}\frac{\partial V}{\partial v}[\phi(S,v,t)dt+\eta dZ_{t2}]
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+定义risk-neutral drift为
+\begin_inset Formula 
+\[
+\alpha'=\alpha-\beta\sqrt{v}\phi
+\]
+
+\end_inset
+
+所以
+\begin_inset Formula $v$
+\end_inset
+
+对应的risk-neutral SDE为
+\begin_inset Formula 
+\[
+dv=\alpha'dt+\beta\sqrt{v}dZ_{2t}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+在后面的分析中，一般都假定在risk-neutral测度下
+\end_layout
+
+\begin_layout Section
+Local volatility
+\end_layout
+
+\begin_layout Subsection
+History
+\end_layout
+
+\begin_layout Itemize
+由于随机波动率模型的计算复杂性(computational complexity)，以及对于vanilla option参数估计的困难性(difficulty)
+，practitioner需要一个更简单的方法去pricing exotic option consistently with the volatility
+ skew。
+\end_layout
+
+\begin_layout Itemize
+Dupire(1994)和Derman and Kani(1994)发现，在风险中性测度下，there was a unique diffusion
+ process consistent with these distributions（there is a unique risk neutral
+ diffusion process which generates these distributions）。The corresponding
+ unique state-dependent diffusion coefficient 
+\begin_inset Formula $\sigma_{L}(S,t)$
+\end_inset
+
+, consistent with current European option prices, is known as the 
+\begin_inset Formula $local\,volatility\,function$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+the local volatility is indeed an average over instantaneous volatilities，formal
+izing the intuition of those practitioners who first introduced the concept。
+\end_layout
+
+\begin_layout Subsection
+A brief review of Dupire's work
+\end_layout
+
+\begin_layout Itemize
+未折现的期权价格可以标示为：
+\begin_inset Formula 
+\[
+C(S_{0},K,T)=\int_{K}^{\infty}\varphi(S_{T},T;S_{0})(S_{T}-K)dS_{T}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\varphi$
+\end_inset
+
+是risk-neutral density function of the final spot
+\begin_inset Formula $S_{T}$
+\end_inset
+
+。于是对上式关于K求二阶导可得：
+\begin_inset Formula 
+\[
+\varphi(K,T;S_{0})=\frac{\partial^{2}C}{\partial K^{2}}
+\]
+
+\end_inset
+
+因此，the Arrow-Debreu prices for each expiration may be recovered by twice
+ differentiating the undiscounted option price with respect to K。（？：this
+ process is familiar to any option trader as the construction of an (infinite
+ size) infinitesimally tight butterfly around the strike whose maximum payoff
+ is one。）
+\end_layout
+
+\begin_layout Itemize
+Given the set all European option prices, we may determine the functional
+ form of the diffusion parameter(local volatility) of the unique risk neutral
+ diffusion process which generates these prices。注意到the local volatility一定是一个关于股票
+当前价格
+\begin_inset Formula $S_{0}$
+\end_inset
+
+的函数，于是，可以将这个过程写成：
+\begin_inset Formula 
+\[
+dS/S=\mu_{t}dt+\sigma(S_{t},t;S_{0})dZ
+\]
+
+\end_inset
+
+再利用Ito’s lemma以及风险中性，我们可以给出关于股票价格某函数的PDE。特别的，the pseudo-probability densities
+ 
+\begin_inset Formula $\varphi(K,T;S_{0})=\frac{\partial^{2}C}{\partial K^{2}}$
+\end_inset
+
+必须满足the Fokker-Planck方程，于是有：
+\begin_inset Formula 
+\[
+\frac{\partial C}{\partial T}=\frac{\sigma^{2}K^{2}}{2}\frac{\partial^{2}C}{\partial K^{2}}+(r_{t}-D_{t})(C-K\frac{\partial C}{\partial K})\tag{1.4}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $r_{t}$
+\end_inset
+
+是无风险利率，
+\begin_inset Formula $D_{t}$
+\end_inset
+
+是dividend yield。
+\end_layout
+
+\begin_layout Subsection
+Derivation of the Dupire equation
+\end_layout
+
+\begin_layout Itemize
+假定股票价格过程的risk-neutral drift为
+\begin_inset Formula $\mu(=r_{t}-D_{t})$
+\end_inset
+
+，local volatility为
+\begin_inset Formula $\sigma(S,t)$
+\end_inset
+
+，于是：
+\begin_inset Formula 
+\[
+dS/S=\mu_{t}dt+\sigma(S_{t},t)dZ
+\]
+
+\end_inset
+
+于是欧式期权未折现的risk-neutral value 
+\begin_inset Formula $C(S_{0},K,T)$
+\end_inset
+
+为
+\begin_inset Formula 
+\[
+C(S_{0},K,T)=\int_{K}^{\infty}\varphi(S_{T},T;S_{0})(S_{T}-K)dS_{T}\tag{1.5}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $\varphi$
+\end_inset
+
+满足Fokker-Planck方程：
+\begin_inset Formula 
+\[
+\frac{1}{2}\frac{\partial^{2}(\sigma^{2}S_{T}^{2}\varphi)}{\partial S_{T}^{2}}-\frac{\partial(\mu S_{T}\varphi)}{\partial S_{T}}=\frac{\partial\varphi}{\partial T}
+\]
+
+\end_inset
+
+对(1.5)关于K分别求一阶导和二阶导数：
+\begin_inset Formula 
+\[
+\frac{\partial C}{\partial K}=-\int_{K}^{\infty}\varphi(S_{T},T;S_{0})dS_{T}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial^{2}C}{\partial K^{2}}=\varphi(K,T;S_{0})
+\]
+
+\end_inset
+
+对(1.5)关于T求一阶导：
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial C}{\partial T} & =\int_{K}^{\infty}\frac{\partial\varphi(S_{T},T;S_{0})}{\partial T}(S_{T}-K)dS_{T}\\
+ & =\int_{K}^{\infty}[\frac{1}{2}\frac{\partial^{2}(\sigma^{2}S_{T}^{2}\varphi)}{\partial S_{T}^{2}}-\frac{\partial(\mu S_{T}\varphi)}{\partial S_{T}}](S_{T}-K)dS_{T}
+\end{align*}
+
+\end_inset
+
+经过积分可得
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial C}{\partial T} & =\frac{\sigma^{2}K^{2}\varphi}{2}+\int_{K}^{\infty}\mu S_{T}\varphi dS_{T}\\
+ & =\frac{\sigma^{2}K^{2}}{2}\frac{\partial^{2}C}{\partial K^{2}}+\mu_{T}(-K\frac{\partial C}{\partial K})
+\end{align*}
+
+\end_inset
+
+这就是when underlying stock has risk-neutral drift 
+\begin_inset Formula $\mu$
+\end_inset
+
+ 的Dupire方程。
+\end_layout
+
+\begin_layout Itemize
+如果用远期价格
+\begin_inset Formula $F_{T}=S_{0}exp(\int_{0}^{T}\mu_{t}dt)$
+\end_inset
+
+来表达期权价格，则we can get the same expression minus the drift term：
+\begin_inset Formula 
+\[
+\frac{\partial C}{\partial T}=\frac{1}{2}\sigma^{2}K^{2}\frac{\partial^{2}C}{\partial K^{2}}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $C=C(F_{T},K,T)$
+\end_inset
+
+。于是，可以得到：
+\begin_inset Formula 
+\[
+\sigma^{2}(K,T,S_{0})=\frac{\frac{\partial C}{\partial T}}{\frac{1}{2}K^{2}\frac{\partial^{2}C}{\partial K^{2}}}\tag{1.6}
+\]
+
+\end_inset
+
+此方称右侧可以通过欧式期权定价公式获得。我们可以将式(1.6)作为local volatility函数的定义，无论波动率服从怎样的过程。
+\end_layout
+
+\begin_layout Subsection
+Local volatility interms of implied volatility
 \end_layout
 
 \end_body
