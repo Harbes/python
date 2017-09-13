@@ -1,6 +1,8 @@
 
 import numpy as np
 import scipy.stats as scs
+import statsmodels as stats
+from statsmodels.graphics.gofplots import qqplot
 import matplotlib.pyplot as plt
 import math
 class distribution:
@@ -36,6 +38,12 @@ class distribution:
             ub=np.max(self.arr)
             plt.plot(np.arange(lb,ub+0.001,0.01),scs.norm(np.mean(self.arr),np.std(self.arr)).pdf(np.arange(lb,ub+0.001,0.01)))
         plt.show()
+    def qq_plot(self):
+        #normlized
+        tmp=(self.arr-np.mean(self.arr))/np.std(self.arr)
+        qqplot(tmp)
+
+
 def NormalCdf(d):
     a1=0.319381530
     a2=-0.356563782
