@@ -764,5 +764,4 @@ def imp_vol_euro(Ct,St,K,r,T,sigma_0,otype,vol=0.000001):
         if np.percentile(abs(dC),10)<vol:
             break
     return sigma
-datetime.datetime.utcfrom
 

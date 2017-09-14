@@ -445,7 +445,7 @@ A brief review of Dupire's work
 \end_layout
 
 \begin_layout Itemize
-未折现的期权价格可以标示为：
+未折现的期权价格为：
 \begin_inset Formula 
 \[
 C(S_{0},K,T)=\int_{K}^{\infty}\varphi(S_{T},T;S_{0})(S_{T}-K)dS_{T}
@@ -453,7 +453,7 @@ C(S_{0},K,T)=\int_{K}^{\infty}\varphi(S_{T},T;S_{0})(S_{T}-K)dS_{T}
 
 \end_inset
 
-其中
+其中，
 \begin_inset Formula $\varphi$
 \end_inset
 
@@ -497,10 +497,26 @@ dS/S=\mu_{t}dt+\sigma(S_{t},t;S_{0})dZ
 \begin_inset Formula $\varphi(K,T;S_{0})=\frac{\partial^{2}C}{\partial K^{2}}$
 \end_inset
 
-必须满足the Fokker-Planck方程，于是有：
+必须满足the Fokker-Planck方程：
 \begin_inset Formula 
 \[
-\frac{\partial C}{\partial T}=\frac{\sigma^{2}K^{2}}{2}\frac{\partial^{2}C}{\partial K^{2}}+(r_{t}-D_{t})(C-K\frac{\partial C}{\partial K})\tag{1.4}
+\frac{\partial f}{\partial t}=-\frac{\partial}{\partial t}[\mu Sf]+\frac{1}{2}\frac{\partial^{2}}{\partial S^{2}}[\sigma^{2}S^{2}f]
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $f=f(S_{t},t)$
+\end_inset
+
+表示underlying asset price 
+\begin_inset Formula $S_{t}$
+\end_inset
+
+在时间t的概率密度函数。于是有：
+\begin_inset Formula 
+\[
+\frac{\partial C}{\partial T}=\frac{\sigma^{2}K^{2}}{2}\frac{\partial^{2}C}{\partial K^{2}}+(r_{T}-D_{T})(C-K\frac{\partial C}{\partial K})\tag{1.4}
 \]
 
 \end_inset
@@ -537,26 +553,30 @@ dS/S=\mu_{t}dt+\sigma(S_{t},t)dZ
 
 \end_inset
 
-于是欧式期权未折现的risk-neutral value 
+于是欧式期权的risk-neutral value 
 \begin_inset Formula $C(S_{0},K,T)$
 \end_inset
 
-为
+【注意，此处是折现后的价值】为
 \begin_inset Formula 
 \[
-C(S_{0},K,T)=\int_{K}^{\infty}\varphi(S_{T},T;S_{0})(S_{T}-K)dS_{T}\tag{1.5}
+C(S_{0},K,T)=P(t,T)\int_{K}^{\infty}\varphi(S_{T},T;S_{0})(S_{T}-K)dS_{T}\tag{1.5}
 \]
 
 \end_inset
 
 其中，
+\begin_inset Formula $P(t,T)=e^{\int_{t}^{T}r_{s}ds}$
+\end_inset
+
+为折现因子，
 \begin_inset Formula $\varphi$
 \end_inset
 
 满足Fokker-Planck方程：
 \begin_inset Formula 
 \[
-\frac{1}{2}\frac{\partial^{2}(\sigma^{2}S_{T}^{2}\varphi)}{\partial S_{T}^{2}}-\frac{\partial(\mu S_{T}\varphi)}{\partial S_{T}}=\frac{\partial\varphi}{\partial T}
+\frac{1}{2}\frac{\partial^{2}(\sigma^{2}S_{T}^{2}\varphi)}{\partial S_{T}^{2}}-\frac{\partial(\mu_{T}S_{T}\varphi)}{\partial S_{T}}=\frac{\partial\varphi}{\partial T}
 \]
 
 \end_inset
@@ -564,7 +584,7 @@ C(S_{0},K,T)=\int_{K}^{\infty}\varphi(S_{T},T;S_{0})(S_{T}-K)dS_{T}\tag{1.5}
 对(1.5)关于K分别求一阶导和二阶导数：
 \begin_inset Formula 
 \[
-\frac{\partial C}{\partial K}=-\int_{K}^{\infty}\varphi(S_{T},T;S_{0})dS_{T}
+\frac{\partial C}{\partial K}=-P\int_{K}^{\infty}\varphi(S_{T},T;S_{0})dS_{T}
 \]
 
 \end_inset
@@ -572,7 +592,7 @@ C(S_{0},K,T)=\int_{K}^{\infty}\varphi(S_{T},T;S_{0})(S_{T}-K)dS_{T}\tag{1.5}
 
 \begin_inset Formula 
 \[
-\frac{\partial^{2}C}{\partial K^{2}}=\varphi(K,T;S_{0})
+\frac{\partial^{2}C}{\partial K^{2}}=P\varphi(K,T;S_{0})
 \]
 
 \end_inset
@@ -580,17 +600,118 @@ C(S_{0},K,T)=\int_{K}^{\infty}\varphi(S_{T},T;S_{0})(S_{T}-K)dS_{T}\tag{1.5}
 对(1.5)关于T求一阶导：
 \begin_inset Formula 
 \begin{align*}
-\frac{\partial C}{\partial T} & =\int_{K}^{\infty}\frac{\partial\varphi(S_{T},T;S_{0})}{\partial T}(S_{T}-K)dS_{T}\\
- & =\int_{K}^{\infty}[\frac{1}{2}\frac{\partial^{2}(\sigma^{2}S_{T}^{2}\varphi)}{\partial S_{T}^{2}}-\frac{\partial(\mu S_{T}\varphi)}{\partial S_{T}}](S_{T}-K)dS_{T}
+\frac{\partial C}{\partial T} & =-r_{T}C+P\int_{K}^{\infty}\frac{\partial\varphi(S_{T},T;S_{0})}{\partial T}(S_{T}-K)dS_{T}\\
+ & =-r_{T}C+P\int_{K}^{\infty}[\frac{1}{2}\frac{\partial^{2}(\sigma^{2}S_{T}^{2}\varphi)}{\partial S_{T}^{2}}-\frac{\partial(\mu S_{T}\varphi)}{\partial S_{T}}](S_{T}-K)dS_{T}
 \end{align*}
 
 \end_inset
 
-经过积分可得
+于是
+\begin_inset Formula 
+\[
+\frac{\partial C}{\partial T}+r_{T}C=P[-I_{1}+\frac{1}{2}I_{2}]
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+I_{1}=\mu_{T}\int_{K}^{\infty}(S_{T}-K)\frac{\partial}{\partial S_{T}}[S_{T}\varphi]dS_{T}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+I_{2}=\int_{K}^{\infty}(S_{T}-K)\frac{\partial^{2}}{\partial S^{2}}[\sigma^{2}S_{T}^{2}\varphi]dS_{T}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+两个有用的identity。第一个：由
+\begin_inset Formula $\frac{\partial C}{\partial K}$
+\end_inset
+
+可得：
+\begin_inset Formula 
+\[
+\int_{K}^{\infty}\varphi(S_{T},T;S_{0})dS_{T}=-\frac{1}{P}\frac{\partial C}{\partial K}
+\]
+
+\end_inset
+
+代入(1.5)可得：
+\begin_inset Formula 
+\[
+\int_{K}^{\infty}S_{T}\varphi(S_{T},T;S_{0})dS_{T}=\frac{C}{P}-\frac{K}{P}\frac{\partial C}{\partial K}
+\]
+
+\end_inset
+
+第二个：由
+\begin_inset Formula $\frac{\partial^{2}C}{\partial K^{2}}$
+\end_inset
+
+可得
+\begin_inset Formula 
+\[
+\varphi=\frac{\partial^{2}C}{\partial K^{2}}/P
+\]
+
+\end_inset
+
+于是，可以计算
+\begin_inset Formula $I_{1}$
+\end_inset
+
+和
+\begin_inset Formula $I_{2}$
+\end_inset
+
+：首先，利用分部积分求
+\begin_inset Formula $I_{1}$
+\end_inset
+
+
 \begin_inset Formula 
 \begin{align*}
-\frac{\partial C}{\partial T} & =\frac{\sigma^{2}K^{2}\varphi}{2}+\int_{K}^{\infty}\mu S_{T}\varphi dS_{T}\\
- & =\frac{\sigma^{2}K^{2}}{2}\frac{\partial^{2}C}{\partial K^{2}}+\mu_{T}(-K\frac{\partial C}{\partial K})
+I_{1} & =[\mu_{T}(S_{T}-K)S_{T}\varphi]|_{S_{T}=K}^{S_{T}=\infty}-\mu_{T}\int_{K}^{\infty}S_{T}\varphi dS_{T}\\
+ & =[0-0]-\mu_{T}\int_{K}^{\infty}S_{T}\varphi dS_{T}\\
+ & =-\mu_{T}[\frac{C}{P}-\frac{K}{P}\frac{\partial C}{\partial K}]\tag{1.5.2}
+\end{align*}
+
+\end_inset
+
+其中，假定
+\begin_inset Formula $\underset{S\rightarrow\infty}{lim}(S-K)S\varphi=0$
+\end_inset
+
+。然后，计算第二个积分，同样利用分部积分：
+\begin_inset Formula 
+\begin{align*}
+I_{2} & =[(S_{T}-K)\frac{\partial}{\partial S}(\sigma^{2}S^{2}\varphi)]|_{S_{T}=K}^{S_{T}=\infty}-\int_{K}^{\infty}\frac{\partial}{\partial S}(\sigma^{2}S^{2}\varphi)dS\\
+ & =[0-0]-[\sigma^{2}S^{2}\varphi]|_{S=K}^{S=\infty}\\
+ & =\sigma^{2}K^{2}\varphi\\
+ & =\frac{\sigma^{2}K^{2}}{P}\frac{\partial^{2}C}{\partial K^{2}}\tag{1.5.2}
+\end{align*}
+
+\end_inset
+
+其中，假定
+\begin_inset Formula $\underset{S\rightarrow\infty}{lim}S\frac{\partial}{\partial S}(\sigma^{2}S^{2}\varphi)=0$
+\end_inset
+
+。综上
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial C}{\partial T} & =P[-I_{1}+\frac{1}{2}I_{2}]-r_{T}C\\
+ & =\mu_{T}C-\mu_{T}K\frac{\partial C}{\partial K}+\frac{1}{2}\sigma^{2}K^{2}\frac{\partial^{2}C}{\partial K^{2}}-r_{T}C
 \end{align*}
 
 \end_inset
@@ -599,7 +720,15 @@ C(S_{0},K,T)=\int_{K}^{\infty}\varphi(S_{T},T;S_{0})(S_{T}-K)dS_{T}\tag{1.5}
 \begin_inset Formula $\mu$
 \end_inset
 
- 的Dupire方程。
+ 的Dupire方程。至此，我们可以得到the Dupire local variance in its general form：
+\begin_inset Formula 
+\[
+\sigma^{2}=\frac{\frac{\partial C}{\partial T}+D_{T}C+(r_{T}-D_{T})K\frac{\partial C}{\partial K}}{\frac{1}{2}K^{2}\frac{\partial^{2}C}{\partial K^{2}}}
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Itemize
@@ -607,7 +736,15 @@ C(S_{0},K,T)=\int_{K}^{\infty}\varphi(S_{T},T;S_{0})(S_{T}-K)dS_{T}\tag{1.5}
 \begin_inset Formula $F_{T}=S_{0}exp(\int_{0}^{T}\mu_{t}dt)$
 \end_inset
 
-来表达期权价格，则we can get the same expression minus the drift term：
+来表达期权价格，此时
+\begin_inset Formula $dF/F=\sigma dZ$
+\end_inset
+
+，此时就相当于上式中
+\begin_inset Formula $r_{T}=D_{T}=0$
+\end_inset
+
+，则we can get the same expression minus the drift term：
 \begin_inset Formula 
 \[
 \frac{\partial C}{\partial T}=\frac{1}{2}\sigma^{2}K^{2}\frac{\partial^{2}C}{\partial K^{2}}
