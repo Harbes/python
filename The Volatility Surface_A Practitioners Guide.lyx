@@ -711,7 +711,8 @@ I_{2} & =[(S_{T}-K)\frac{\partial}{\partial S}(\sigma^{2}S^{2}\varphi)]|_{S_{T}=
 \begin_inset Formula 
 \begin{align*}
 \frac{\partial C}{\partial T} & =P[-I_{1}+\frac{1}{2}I_{2}]-r_{T}C\\
- & =\mu_{T}C-\mu_{T}K\frac{\partial C}{\partial K}+\frac{1}{2}\sigma^{2}K^{2}\frac{\partial^{2}C}{\partial K^{2}}-r_{T}C
+ & =\mu_{T}C-\mu_{T}K\frac{\partial C}{\partial K}+\frac{1}{2}\sigma^{2}K^{2}\frac{\partial^{2}C}{\partial K^{2}}-r_{T}C\\
+ & =-\mu_{T}K\frac{\partial C}{\partial K}-q_{T}C+\frac{1}{2}\sigma^{2}K^{2}\frac{\partial^{2}C}{\partial K^{2}}
 \end{align*}
 
 \end_inset
@@ -769,6 +770,522 @@ I_{2} & =[(S_{T}-K)\frac{\partial}{\partial S}(\sigma^{2}S^{2}\varphi)]|_{S_{T}=
 
 \begin_layout Subsection
 Local volatility interms of implied volatility
+\end_layout
+
+\begin_layout Itemize
+to express local volatility in terms of implied volatility, we need three
+ derivatives 
+\begin_inset Formula $\frac{\partial C}{\partial T}$
+\end_inset
+
+,
+\begin_inset Formula $\frac{\partial C}{\partial K}$
+\end_inset
+
+ and 
+\begin_inset Formula $\frac{\partial^{2}C}{\partial K^{2}}$
+\end_inset
+
+ that appear in Equation (1.4), but expressed in terms of implied volatility.
+ 【其中C表示未折现的期权价格】
+\end_layout
+
+\begin_layout Itemize
+首先，定义
+\begin_inset Formula 
+\[
+y=ln\frac{K}{F_{T}}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $F_{T}=S_{0}exp(\int_{0}^{T}\mu_{t}dt)$
+\end_inset
+
+。令
+\begin_inset Formula $\omega=\Sigma T$
+\end_inset
+
+为'total' Black-Scholes implied variance，其中
+\begin_inset Formula $\Sigma=\Sigma(K,T)$
+\end_inset
+
+。于是，BS call的价格就可以写成
+\begin_inset Formula 
+\begin{align*}
+C_{BS}(S_{0},K,\Sigma,T) & =C_{BS}(S_{0},F_{T}e^{y},\omega,T)\\
+ & =F_{T}[N(d_{1})-e^{y}N(d_{2})]
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\begin{align*}
+d_{1} & =\frac{ln(\frac{S_{0}}{K})+\int_{0}^{T}\mu_{t}dt+\frac{\omega}{2}}{\sqrt{\omega}}=-y/\sqrt{\omega}+\frac{\sqrt{\omega}}{2}\\
+d_{2} & =d_{1}-\sqrt{\omega}=-y/\sqrt{\omega}-\frac{\sqrt{\omega}}{2}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+其次
+\begin_inset Formula 
+\[
+\frac{\partial C}{\partial y}=\frac{\partial C}{\partial K}\frac{\partial K}{\partial y}=\frac{\partial C}{\partial K}K
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial^{2}C}{\partial y^{2}} & =\frac{\partial}{\partial y}(\frac{\partial C}{\partial K})K+\frac{\partial C}{\partial K}\frac{\partial K}{\partial y}\\
+ & =\frac{\partial^{2}C}{\partial K^{2}}K^{2}+\frac{\partial C}{\partial y}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial C}{\partial T} & =C'_{4}+\frac{\partial C}{\partial K}\frac{\partial K}{\partial T}\\
+ & =C'_{4}+\frac{\partial C}{\partial K}K\mu_{T}\\
+ & =C'_{4}+\frac{\partial C}{\partial y}\mu_{T}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula $C'_{4}$
+\end_inset
+
+表示
+\begin_inset Formula $C$
+\end_inset
+
+对于第四个位置参数导数；根据y的定义，
+\begin_inset Formula $K=S_{0}exp(\int_{0}^{T}\mu_{t}dt+y)$
+\end_inset
+
+，因此，
+\begin_inset Formula $\frac{\partial K}{\partial T}=K\mu_{T}$
+\end_inset
+
+。由式(1.4)可知，
+\begin_inset Formula $C'_{4}=\frac{\sigma^{2}K^{2}}{2}\frac{\partial^{2}C}{\partial K^{2}}+\mu_{T}(C-K\frac{\partial C}{\partial K})$
+\end_inset
+
+，将上式代入可得
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial C}{\partial T}-\frac{\partial C}{\partial y}\mu_{T} & =\frac{\sigma^{2}K^{2}}{2}\frac{\partial^{2}C}{\partial K^{2}}+\mu_{T}(C-K\frac{\partial C}{\partial K})\\
+ & =\frac{\sigma^{2}}{2}(\frac{\partial^{2}C}{\partial y^{2}}-\frac{\partial C}{\partial y})+\mu_{T}(C-\frac{\partial C}{\partial y})
+\end{align*}
+
+\end_inset
+
+因此
+\begin_inset Formula 
+\[
+\frac{\partial C}{\partial T}=\frac{\sigma^{2}}{2}(\frac{\partial^{2}C}{\partial y^{2}}-\frac{\partial C}{\partial y})+\mu_{T}C
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+记正态分布的累计分布函数和概率密度函数分别为
+\begin_inset Formula $N(x)$
+\end_inset
+
+和
+\begin_inset Formula $n(x)$
+\end_inset
+
+，于是
+\begin_inset Formula 
+\begin{align*}
+n(d_{1}) & =\frac{1}{\sqrt{2\pi}}e^{-\frac{1}{2}(d_{2}+\sqrt{\omega})^{2}}\\
+ & =n(d_{2})e^{-d_{2}\sqrt{\omega}-\frac{\omega}{2}}\\
+ & =n(d_{2})e^{y}
+\end{align*}
+
+\end_inset
+
+于是
+\begin_inset Formula $C_{BS}(S_{0},F_{T}e^{y},\omega,T)$
+\end_inset
+
+关于
+\begin_inset Formula $\omega$
+\end_inset
+
+和
+\begin_inset Formula $y$
+\end_inset
+
+的一阶和二阶偏导数分别为
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial C_{BS}}{\partial\omega} & =F_{T}[n(d_{1})d_{1\omega}-e^{y}n(d_{2})d_{2\omega}]\\
+ & =F_{T}[n(d_{2})e^{y}(d_{2\omega}+\frac{1}{2}\omega^{-\frac{1}{2}})-e^{y}n(d_{2})d_{2\omega}]\\
+ & =\frac{1}{2}F_{T}e^{y}[n(d_{2})\omega^{-\frac{1}{2}}]
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial^{2}C_{BS}}{\partial\omega^{2}} & =\frac{1}{2}F_{T}e^{y}[-n(d_{2})d_{2}d_{2\omega}\omega^{-1/2}-\frac{1}{2}n(d_{2})\omega^{-\frac{3}{2}}]\\
+ & =\frac{1}{2}F_{T}e^{y}n(d_{2})\omega^{-\frac{1}{2}}[-d_{2}d_{2\omega}-\frac{1}{2}\omega^{-1}]\\
+ & =\frac{\partial C_{BS}}{\partial\omega}[(y\omega^{-\frac{1}{2}}+\frac{1}{2}\omega^{\frac{1}{2}})(\frac{1}{2}y\omega^{-\frac{3}{2}}-\frac{1}{4}\omega^{-\frac{1}{2}})-\frac{1}{2}\omega^{-1}]\\
+ & =\frac{\partial C_{BS}}{\partial\omega}[-\frac{1}{8}-\frac{1}{2\omega}+\frac{y^{2}}{2\omega^{2}}]
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial^{2}C_{BS}}{\partial\omega\partial y} & =\frac{1}{2}F_{T}\omega^{-\frac{1}{2}}\frac{\partial}{\partial y}[e^{y}n(d_{2})]\\
+ & =\frac{1}{2}F_{T}\omega^{-\frac{1}{2}}[e^{y}n(d_{2})-e^{y}n(d_{2})d_{2}d_{2y}]\\
+ & =\frac{\partial C_{BS}}{\partial\omega}[1-d_{2}d_{2\omega}]\\
+ & =\frac{\partial C_{BS}}{\partial\omega}[\frac{1}{2}-\frac{y}{\omega}]
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial C_{BS}}{\partial y} & =F_{T}[n(d_{1})d_{1y}-e^{y}N(d_{2})-e^{y}n(d_{2})d_{2y}]\\
+ & =F_{T}e^{y}[n(d_{2})d_{1y}-N(d_{2})-n(d_{2})d_{2y}]\\
+ & =-F_{T}e^{y}N(d_{2})
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial^{2}C_{BS}}{\partial y^{2}} & =-F_{T}[e^{y}N(d_{2})+e^{y}n(d_{2})d_{2y}]\\
+ & =-F_{T}e^{y}N(d_{2})+F_{T}e^{y}n(d_{2})\omega^{-\frac{1}{2}}\\
+ & =\frac{\partial C_{BS}}{\partial y}+2\frac{\partial C_{BS}}{\partial\omega}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+令期权市场价格等于隐含波动率对应的BS价格：
+\begin_inset Formula 
+\[
+C(S_{0},K,T)=C_{BS}(S_{0},y,\omega(y),T)
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial C}{\partial y} & =\frac{\partial C_{BS}}{\partial y}+\frac{\partial C_{BS}}{\partial\omega}\frac{\partial\omega}{\partial y}\\
+ & \equiv a(\omega,y)+b(\omega,y)c(y)
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial^{2}C}{\partial y^{2}} & =\frac{\partial a}{\partial y}+\frac{\partial a}{\partial\omega}\frac{\partial\omega}{\partial y}+b(\omega,y)\frac{\partial c}{\partial y}+[\frac{\partial b}{\partial y}+\frac{\partial b}{\partial\omega}\frac{\partial\omega}{\partial y}]c(y)\\
+ & =\frac{\partial^{2}C_{BS}}{\partial y^{2}}+\frac{\partial^{2}C_{BS}}{\partial y\partial\omega}\frac{\partial\omega}{\partial y}+\frac{\partial C_{BS}}{\partial\omega}\frac{\partial^{2}\omega}{\partial y^{2}}+[\frac{\partial^{2}C_{BS}}{\partial\omega\partial y}+\frac{\partial^{2}C_{BS}}{\partial\omega^{2}}\frac{\partial\omega}{\partial y}]\frac{\partial\omega}{\partial y}\\
+ & =\frac{\partial^{2}C_{BS}}{\partial y^{2}}+2\frac{\partial^{2}C_{BS}}{\partial y\partial\omega}\frac{\partial\omega}{\partial y}+\frac{\partial C_{BS}}{\partial\omega}\frac{\partial^{2}\omega}{\partial y^{2}}+\frac{\partial^{2}C_{BS}}{\partial\omega^{2}}(\frac{\partial\omega}{\partial y})^{2}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial C}{\partial T} & =\frac{\partial C_{BS}}{\partial T}+\frac{\partial C_{BS}}{\partial\omega}\frac{\partial\omega}{\partial T}\\
+ & =\mu_{T}C+\frac{\partial C_{BS}}{\partial\omega}\frac{\partial\omega}{\partial T}
+\end{align*}
+
+\end_inset
+
+由前文可知
+\begin_inset Formula $\frac{\partial C}{\partial T}=\frac{v_{L}}{2}(\frac{\partial^{2}C}{\partial y^{2}}-\frac{\partial C}{\partial y})+\mu_{T}C$
+\end_inset
+
+，于是
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial C_{BS}}{\partial\omega}\frac{\partial\omega}{\partial T} & =\frac{v_{L}}{2}[\frac{\partial^{2}C_{BS}}{\partial y^{2}}+2\frac{\partial^{2}C_{BS}}{\partial y\partial\omega}\frac{\partial\omega}{\partial y}+\frac{\partial C_{BS}}{\partial\omega}\frac{\partial^{2}\omega}{\partial y^{2}}+\frac{\partial^{2}C_{BS}}{\partial\omega^{2}}(\frac{\partial\omega}{\partial y})^{2}-\frac{\partial C_{BS}}{\partial y}-\frac{\partial C_{BS}}{\partial\omega}\frac{\partial\omega}{\partial y}]\\
+ & =\frac{v_{L}}{2}\{\frac{\partial C_{BS}}{\partial y}+2\frac{\partial C_{BS}}{\partial\omega}+2\frac{\partial C_{BS}}{\partial\omega}(\frac{1}{2}-\frac{y}{\omega})\frac{\partial\omega}{\partial y}+\frac{\partial C_{BS}}{\partial\omega}\frac{\partial^{2}\omega}{\partial y^{2}}+\frac{\partial C_{BS}}{\partial\omega}[-\frac{1}{8}-\frac{1}{2\omega}+\frac{y^{2}}{2\omega^{2}}](\frac{\partial\omega}{\partial y})^{2}-\frac{\partial C_{BS}}{\partial y}-\frac{\partial C_{BS}}{\partial\omega}\frac{\partial\omega}{\partial y}\}\\
+ & =\frac{v_{L}}{2}\frac{\partial C_{BS}}{\partial\omega}\{2+2(\frac{1}{2}-\frac{y}{\omega})\frac{\partial\omega}{\partial y}+\frac{\partial^{2}\omega}{\partial y^{2}}+[-\frac{1}{8}-\frac{1}{2\omega}+\frac{y^{2}}{2\omega^{2}}](\frac{\partial\omega}{\partial y})^{2}-\frac{\partial\omega}{\partial y}\}
+\end{align*}
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\[
+\frac{\partial\omega}{\partial T}=v_{L}[1-\frac{y}{\omega}\frac{\partial\omega}{\partial T}+\frac{1}{2}\frac{\partial^{2}\omega}{\partial y^{2}}+\frac{1}{4}(-\frac{1}{4}-\frac{1}{\omega}+\frac{y^{2}}{\omega})(\frac{\partial\omega}{\partial y})^{2}]
+\]
+
+\end_inset
+
+可以解得
+\begin_inset Formula 
+\[
+v_{L}=\frac{\frac{\partial\omega}{\partial T}}{[1-\frac{y}{\omega}\frac{\partial\omega}{\partial T}+\frac{1}{2}\frac{\partial^{2}\omega}{\partial y^{2}}+\frac{1}{4}(-\frac{1}{4}-\frac{1}{\omega}+\frac{y^{2}}{\omega})(\frac{\partial\omega}{\partial y})^{2}]}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+【另一种推导方法】
+\end_layout
+
+\begin_layout Subsection
+Special case：No skew
+\end_layout
+
+\begin_layout Itemize
+当skew 
+\begin_inset Formula $\frac{\partial\omega}{\partial y}$
+\end_inset
+
+为0时，有
+\begin_inset Formula 
+\[
+v_{L}=\frac{\partial\omega}{\partial T}
+\]
+
+\end_inset
+
+此时local variance退化成了the forward BS implied variance，此时
+\begin_inset Formula 
+\[
+\omega(T)=\int_{0}^{T}v_{L}(t)dt
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Local variance as a conditional expectation of instantaneous variance
+\end_layout
+
+\begin_layout Itemize
+一些预备知识：
+\begin_inset Formula 
+\[
+\frac{\partial}{\partial S}(S-K)^{+}=1_{(S>K)}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial}{\partial K}(S-K)^{+}=-1_{(S>K)}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial C}{\partial K}=-P(t,T)E[1_{(S>K)}]
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial}{\partial S}1_{(S>K)}=\delta(S-K)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial}{\partial K}1_{(S>K)}=-\delta(S-K)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial^{2}C}{\partial K^{2}}=P(t,T)E[\delta(S-K)]
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\delta(x)$
+\end_inset
+
+表示the Dirac delta function（在除了零以外的点函数值都等于零，而其在整个定义域上的积分等于1）。
+\end_layout
+
+\begin_layout Itemize
+定义函数
+\begin_inset Formula $f(S_{T},T)$
+\end_inset
+
+：
+\begin_inset Formula 
+\[
+f(S_{T},T)=P(t,T)(S_{T}-K)^{+}
+\]
+
+\end_inset
+
+由Ito's lemma，
+\begin_inset Formula $f$
+\end_inset
+
+满足下列过程：
+\begin_inset Formula 
+\[
+df=[\frac{\partial f}{\partial T}+\mu_{T}S_{T}\frac{\partial f}{\partial S_{T}}+\frac{1}{2}\sigma_{T}^{2}S_{T}^{2}\frac{\partial^{2}f}{\partial S_{T}^{2}}]dT+[\sigma_{T}S_{T}\frac{\partial f}{\partial S_{T}}]dW_{T}
+\]
+
+\end_inset
+
+又
+\begin_inset Formula $f$
+\end_inset
+
+的一些偏导数：
+\begin_inset Formula 
+\[
+\frac{\partial f}{\partial T}=-r_{T}P(t,T)(S_{T}-K)^{+}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial f}{\partial S_{T}}=P(t,T)1_{(S_{T}>K)}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial^{2}f}{\partial S_{T}^{2}}=P(t,T)\delta(S_{T}-K)
+\]
+
+\end_inset
+
+将上式代入
+\begin_inset Formula $f$
+\end_inset
+
+的过程中：
+\begin_inset Formula 
+\[
+df=P[-r_{T}(S_{T}-K)^{+}+\mu_{T}S_{T}1_{(S_{T}>K)}+\frac{1}{2}\sigma_{T}^{2}S_{T}^{2}\delta(S_{T}-K)]dT+P[\sigma_{T}S_{T}1_{(S_{T}>K)}]dW_{T}
+\]
+
+\end_inset
+
+上式中
+\begin_inset Formula 
+\begin{align*}
+-r_{T}(S_{T}-K)^{+}+\mu_{T}S_{T}1_{(S_{T}>K)} & =-r_{T}(S_{T}-K)1_{(S_{T}-K)}+\mu_{T}S_{T}1_{(S_{T}>K)}\\
+ & =r_{T}K1_{(S_{T}-K)}-q_{T}S_{T}1_{(S_{T}>K)}
+\end{align*}
+
+\end_inset
+
+因此
+\begin_inset Formula 
+\[
+dC=E[df]=PE[r_{T}K1_{(S_{T}-K)}-q_{T}S_{T}1_{(S_{T}>K)}+\frac{1}{2}\sigma_{T}^{2}S_{T}^{2}\delta(S_{T}-K)]dT
+\]
+
+\end_inset
+
+由
+\begin_inset Formula $C=P\int_{K}^{\infty}(S_{T}-K)\varphi(S_{T})dS_{T}=PE[(S_{T}-K)^{+}]$
+\end_inset
+
+得
+\begin_inset Formula 
+\[
+PE[S_{T}1_{(S_{T}>K)}]=C+KPE[1_{(S_{T}>K)}]
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\begin{align*}
+\frac{dC}{dT} & =KPr_{T}E[1_{(S_{T}-K)}]-q_{T}(C+KPE[1_{(S_{T}>K)}])+\frac{1}{2}PE[\sigma_{T}^{2}S_{T}^{2}\delta(S_{T}-K)]\\
+ & =-K\mu_{T}\frac{\partial C}{\partial K}-q_{T}C+\frac{1}{2}PE[\sigma_{T}^{2}S_{T}^{2}\delta(S_{T}-K)]
+\end{align*}
+
+\end_inset
+
+对于
+\begin_inset Formula $\frac{1}{2}PE[\sigma_{T}^{2}S_{T}^{2}\delta(S_{T}-K)]$
+\end_inset
+
+，有
+\begin_inset Formula 
+\begin{align*}
+\frac{1}{2}PE[\sigma_{T}^{2}S_{T}^{2}\delta(S_{T}-K)] & =\frac{1}{2}PE[\sigma_{T}^{2}S_{T}^{2}|S_{T}=K]*E[\delta(S_{T}-K)]\\
+ & =\frac{1}{2}PE[\sigma_{T}^{2}|S_{T}=K]*K^{2}*E[\delta(S_{T}-K)]\\
+ & =\frac{1}{2}E[\sigma_{T}^{2}|S_{T}=K]*K^{2}*\frac{\partial^{2}C}{\partial K^{2}}
+\end{align*}
+
+\end_inset
+
+因此
+\begin_inset Formula 
+\[
+\frac{\partial C}{\partial T}=-K\mu_{T}\frac{\partial C}{\partial K}-q_{T}C+\frac{1}{2}E[\sigma_{T}^{2}|S_{T}=K]*K^{2}*\frac{\partial^{2}C}{\partial K^{2}}
+\]
+
+\end_inset
+
+特别的，当
+\begin_inset Formula $r_{T}=q_{T}=0$
+\end_inset
+
+时，有
+\begin_inset Formula 
+\[
+E[\sigma_{T}^{2}|S_{T}=K]=\frac{\frac{\partial C}{\partial T}}{\frac{1}{2}K^{2}\frac{\partial^{2}C}{\partial K^{2}}}
+\]
+
+\end_inset
+
+与前文结论一致。
 \end_layout
 
 \end_body
