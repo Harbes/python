@@ -3728,7 +3728,7 @@ another model commonly used to estimate and forecast unconditional variance
 \end_layout
 
 \begin_layout Itemize
-与MA不同的是，一个冲击在EWMA估计中会逐渐消失；而MA只有脱离窗口期才会消失。
+与MA不同的是，一个冲击在EWMA估计中会逐渐消失；而MA只有脱离窗口期才会消失，并且在窗口期内，冲击的影响是一样的。
 \end_layout
 
 \begin_layout Itemize
