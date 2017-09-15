@@ -1273,7 +1273,7 @@ PE[S_{T}1_{(S_{T}>K)}]=C+KPE[1_{(S_{T}>K)}]
 
 \end_inset
 
-特别的，当
+（对比前文，形式上是一致的）特别的，当
 \begin_inset Formula $r_{T}=q_{T}=0$
 \end_inset
 
@@ -1286,6 +1286,217 @@ E[\sigma_{T}^{2}|S_{T}=K]=\frac{\frac{\partial C}{\partial T}}{\frac{1}{2}K^{2}\
 \end_inset
 
 与前文结论一致。
+\end_layout
+
+\begin_layout Chapter
+the Heston Model
+\end_layout
+
+\begin_layout Section
+the process
+\end_layout
+
+\begin_layout Itemize
+Heston(1993)将第一章中的(1.2)的
+\begin_inset Formula $\alpha,\beta$
+\end_inset
+
+分别设定为
+\begin_inset Formula $\alpha=-\lambda(v_{t}-\bar{v}),\beta=1$
+\end_inset
+
+，于是：
+\begin_inset Formula 
+\[
+dS_{t}=\mu_{t}S_{t}dt+\sqrt{v_{t}}S_{t}dZ_{t1}\tag{2.1}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+dv_{t}=-\lambda(v_{t}-\bar{v})dt+\eta\sqrt{v_{t}}dZ_{t2}\tag{2.2}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $dZ_{t1}dZ_{t2}=\rho dt$
+\end_inset
+
+，
+\begin_inset Formula $\lambda$
+\end_inset
+
+表示
+\begin_inset Formula $v_{t}$
+\end_inset
+
+回复到其长期均值
+\begin_inset Formula $\bar{v}$
+\end_inset
+
+的速度。
+\end_layout
+
+\begin_layout Itemize
+上面将瞬时方差设定为一种平方根过程(square root process或CIR process——Cox,Ingersoll, and Ross(1985)
+)。将
+\begin_inset Formula $\alpha,\beta$
+\end_inset
+
+代入(1.3)可得：
+\begin_inset Formula 
+\[
+\frac{\partial V}{\partial t}+\frac{1}{2}vS^{2}\frac{\partial^{2}V}{\partial S^{2}}+\rho\eta vS\frac{\partial^{2}V}{\partial v\partial S}+\frac{1}{2}\eta^{2}v\frac{\partial^{2}V}{\partial v^{2}}+rS\frac{\partial V}{\partial S}-rV=\lambda(v-\bar{v})\frac{\partial V}{\partial v}\tag{2.3}
+\]
+
+\end_inset
+
+其中，我们假定：the Heston process generates the risk-neutral measure so the market
+ price of volatility risk 
+\begin_inset Formula $\phi$
+\end_inset
+
+in the general valuation equation(1.3) is set to 0 in equation (2.3)。
+\end_layout
+
+\begin_layout Section
+the Heston solution for European options
+\end_layout
+
+\begin_layout Itemize
+before solving equation(2.3) with the appropriate boundary conditions，我们需要定义一些变量：
+\begin_inset Formula $\tau=T-t$
+\end_inset
+
+，
+\begin_inset Formula $F_{t,T}$
+\end_inset
+
+表示the time 
+\begin_inset Formula $T$
+\end_inset
+
+ forward price of the stock index，
+\begin_inset Formula $x$
+\end_inset
+
+定义为
+\begin_inset Formula $x\equiv ln\frac{F_{t,T}}{K}$
+\end_inset
+
+，
+\begin_inset Formula $C=C(x,v,\tau)$
+\end_inset
+
+表示期权的未来价值(而不是折现后的当前价值)。此时，式(2.3)可以写成：
+\begin_inset Formula 
+\[
+-\frac{\partial C}{\partial\tau}+\frac{1}{2}vC_{11}-\frac{1}{2}vC_{1}+\frac{1}{2}\eta^{2}vC_{22}+\rho\eta vC_{12}-\lambda(v-\bar{v})C_{2}=0\tag{2.4}
+\]
+
+\end_inset
+
+根据Duffie,Pan, and Singleton(2000)，上式的解有以下形式：
+\begin_inset Formula 
+\[
+C(x,v,\tau)=K[e^{x}P_{1}(x,v,\tau)-P_{0}(x,v,\tau)]\tag{2.5}
+\]
+
+\end_inset
+
+与BS公式一样，括号中的第一项表示the pseudo-expectation of the final index level given that
+ the option is in-the-money，第二项表示the pseudo-probability of exercise。将式(2.5)代入(2.4)
+中可得：
+\begin_inset Formula 
+\[
+-\frac{\partial P_{j}}{\partial\tau}+\frac{1}{2}v\frac{\partial^{2}P_{j}}{\partial x^{2}}-(\frac{1}{2}-j)v\frac{\partial P_{j}}{\partial x}+\frac{1}{2}\eta^{2}v\frac{\partial^{2}P_{j}}{\partial v^{2}}+\rho\eta v\frac{\partial^{2}P_{j}}{\partial x\partial v}+(a-b_{j}v)\frac{\partial P_{j}}{\partial v}=0\quad j=0,1\tag{2.6}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $a=\lambda\bar{v},b_{j}=\lambda-j\rho\eta$
+\end_inset
+
+，其terminal condition
+\begin_inset Formula 
+\[
+\underset{\tau\rightarrow0}{lim}P_{j}(x,v,\tau)=\begin{cases}
+1 & if\:x>0\\
+0 & if\:x\leq0
+\end{cases}\equiv\theta(x)\tag{2.7}
+\]
+
+\end_inset
+
+在解(2.6)时，会用到Fourier transform：
+\begin_inset Formula 
+\[
+\tilde{P}(u,v,\tau)=\int_{-\infty}^{\infty}e^{-iux}P(x,v,\tau)dx
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\[
+\tilde{P}(u,v,0)=\int_{-\infty}^{\infty}e^{-iux}\theta(x)dx=\frac{1}{iu}
+\]
+
+\end_inset
+
+相应的inverse transform为
+\begin_inset Formula 
+\[
+P(x,v,\tau)=\int_{-\infty}^{\infty}\frac{1}{2\pi}e^{iux}\tilde{P}(u,v,\tau)\tag{2.8}
+\]
+
+\end_inset
+
+将上述方程代入(2.6)中可得：
+\begin_inset Formula 
+\[
+-\frac{\partial\tilde{P}_{j}}{\partial\tau}+\frac{1}{2}u^{2}v\tilde{P}_{j}-(\frac{1}{2}-j)iuv\tilde{P}_{j}+\frac{1}{2}\eta^{2}v\frac{\partial^{2}\tilde{P}_{j}}{\partial v^{2}}+\rho\eta iuv\frac{\partial\tilde{P}_{j}}{\partial v}+(a-b_{j}v)\frac{\partial\tilde{P}_{j}}{\partial v}=0\tag{2.9}
+\]
+
+\end_inset
+
+定义
+\begin_inset Formula 
+\[
+\alpha=-\frac{u^{2}}{2}-\frac{iu}{2}+iju
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\beta=\lambda-\rho\eta j-\rho\eta iu
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\gamma=\frac{\eta^{2}}{2}
+\]
+
+\end_inset
+
+于是(2.9)可写成：
+\begin_inset Formula 
+\[
+v(\alpha\tilde{P}_{j}-\beta\frac{\partial\tilde{P}_{j}}{\partial v}+\gamma\frac{\partial^{2}\tilde{P}_{j}}{\partial v^{2}})+a\frac{\partial\tilde{P}_{j}}{\partial v}-\frac{\partial\tilde{P}_{j}}{\partial\tau}=0\tag{2.10}
+\]
+
+\end_inset
+
+
 \end_layout
 
 \end_body
