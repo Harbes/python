@@ -96,11 +96,11 @@
 \begin_body
 
 \begin_layout Title
-computational methods for option pricing(笔记由Harbes整理)
+The Volatility Surface: A Practitioners' Guide(笔记由Harbes整理)
 \end_layout
 
 \begin_layout Author
-Yves Achdou, Olivier Pironneau
+Jim Gatheral, Nassim Nicholas Taleb
 \end_layout
 
 \begin_layout Standard
@@ -1322,7 +1322,7 @@ dv_{t}=-\lambda(v_{t}-\bar{v})dt+\eta\sqrt{v_{t}}dZ_{t2}\tag{2.2}
 \end_inset
 
 其中，
-\begin_inset Formula $dZ_{t1}dZ_{t2}=\rho dt$
+\begin_inset Formula $E(dZ_{t1}dZ_{t2})=\rho dt$
 \end_inset
 
 ，
@@ -1493,6 +1493,387 @@ P(x,v,\tau)=\int_{-\infty}^{\infty}\frac{1}{2\pi}e^{iux}\tilde{P}(u,v,\tau)\tag{
 \[
 v(\alpha\tilde{P}_{j}-\beta\frac{\partial\tilde{P}_{j}}{\partial v}+\gamma\frac{\partial^{2}\tilde{P}_{j}}{\partial v^{2}})+a\frac{\partial\tilde{P}_{j}}{\partial v}-\frac{\partial\tilde{P}_{j}}{\partial\tau}=0\tag{2.10}
 \]
+
+\end_inset
+
+猜测
+\begin_inset Formula 
+\begin{align*}
+\tilde{P}_{j}(u,v,\tau) & =exp[C(u,\tau)\bar{v}+D(u,\tau)v]\tilde{P}_{j}(u,v,0)\\
+ & =\frac{exp[C(u,\tau)\bar{v}+D(u,\tau)v]}{iu}
+\end{align*}
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\[
+\frac{\partial\tilde{P}_{j}}{\partial\tau}=[\bar{v}\frac{\partial C}{\partial\tau}+v\frac{\partial D}{\partial\tau}]\tilde{P}_{j}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial\tilde{P}_{j}}{\partial v}=D\tilde{P}_{j}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial^{2}\tilde{P}_{j}}{\partial v^{2}}=D^{2}\tilde{P}_{j}
+\]
+
+\end_inset
+
+此时，当
+\begin_inset Formula 
+\[
+\frac{\partial C}{\partial\tau}=\lambda D
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial D}{\partial\tau} & =\alpha-\beta D+\gamma D^{2}\\
+ & =\gamma(D-r_{-})(D-r_{+})\tag{2.11}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+r_{\pm}=\frac{\beta\pm\sqrt{\beta^{2}-4\alpha\gamma}}{2\gamma}=\frac{\beta\pm d}{\eta^{2}}
+\]
+
+\end_inset
+
+时，(2.10)成立。结合边界条件
+\begin_inset Formula $C(u,0)=0,D(u,0)=0$
+\end_inset
+
+，对(2.11)积分可得
+\begin_inset Formula 
+\[
+D(u,\tau)=r_{-}*\frac{1-e^{-\tau d}}{1-ge^{-\tau d}}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+C(u,\tau)=\lambda[r_{-}*\tau-\frac{2}{\eta^{2}}log(\frac{1-ge^{-\tau d}}{1-g})]\tag{2.12}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $g=\frac{r_{-}}{r_{+}}$
+\end_inset
+
+。利用(2.8)，可以得到the final form of the pseudo-probabilities 
+\begin_inset Formula $P_{j}$
+\end_inset
+
+in the form of an integral of a real-valued function：
+\begin_inset Formula 
+\[
+P_{j}(x,v,\tau)=\frac{1}{2}+\frac{1}{\pi}\int_{0}^{\infty}Real\{\frac{exp[C_{j}(u,\tau)\bar{v}+D_{j}(u,\tau)v+iux]}{iu}\}du
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+A digression: the complex logarithm in the integration(2.13)
+\end_layout
+
+\begin_layout Section
+derivation of the Heston characteristic function
+\end_layout
+
+\begin_layout Section
+Appendix：Simplified derivation of the Heston model 
+\end_layout
+
+\begin_layout Itemize
+by Fabrice Douglas Rough
+\end_layout
+
+\begin_layout Subsection
+Heston dynamics
+\end_layout
+
+\begin_layout Itemize
+首先，the Heston dynamics为
+\begin_inset Formula 
+\begin{align*}
+dS_{t}/S_{t} & =rdt+\sqrt{v_{t}}dZ_{t1}\\
+dv_{t} & =\kappa(\bar{v}-v_{t})dt+\sigma\sqrt{v_{t}}dZ_{t2}\\
+E[dZ_{t1}dZ_{t2}] & =\rho dt\tag{A.1}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+the Heston PDE
+\end_layout
+
+\begin_layout Itemize
+Form a portfolio consisting of one option 
+\begin_inset Formula $V=V(S,v,t)$
+\end_inset
+
+, 
+\begin_inset Formula $\Delta$
+\end_inset
+
+units of the stock 
+\begin_inset Formula $S$
+\end_inset
+
+, and 
+\begin_inset Formula $\phi$
+\end_inset
+
+units of another option 
+\begin_inset Formula $U=U(S,v,t)$
+\end_inset
+
+ that is used to hedge the volatility。then the portfolio value：
+\begin_inset Formula 
+\[
+\Pi=V+\Delta S+\phi U
+\]
+
+\end_inset
+
+假定组合是self-financing，于是：
+\begin_inset Formula 
+\[
+d\Pi=dV+\Delta dS+\phi dU
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Portfolio dynamics。对
+\begin_inset Formula $dV$
+\end_inset
+
+应用Ito's lemma，于是：
+\begin_inset Formula 
+\[
+dV=\frac{\partial V}{\partial t}dt+\frac{\partial V}{\partial S}dS+\frac{\partial V}{\partial v}dv+\frac{1}{2}vS^{2}\frac{\partial^{2}V}{\partial S^{2}}dt+\frac{1}{2}\sigma^{2}v\frac{\partial^{2}V}{\partial v^{2}}dt+\sigma v\rho S\frac{\partial^{2}V}{\partial v\partial S}dt
+\]
+
+\end_inset
+
+同样对
+\begin_inset Formula $dU$
+\end_inset
+
+应用Ito's lemma会有相思的结果。因此
+\begin_inset Formula 
+\begin{align*}
+d\Pi & =dV+\Delta dS+\phi dU\\
+ & =\{\frac{\partial V}{\partial t}+\frac{1}{2}vS^{2}\frac{\partial^{2}V}{\partial S^{2}}+\frac{1}{2}\sigma^{2}v\frac{\partial^{2}V}{\partial v^{2}}+\sigma v\rho S\frac{\partial^{2}V}{\partial v\partial S}\}dt+\\
+ & \phi\{\frac{\partial U}{\partial t}+\frac{1}{2}vS^{2}\frac{\partial^{2}U}{\partial S^{2}}+\frac{1}{2}\sigma^{2}v\frac{\partial^{2}U}{\partial v^{2}}+\sigma v\rho S\frac{\partial^{2}U}{\partial v\partial S}\}dt+\\
+ & \{\frac{\partial V}{\partial S}+\phi\frac{\partial U}{\partial S}+\Delta\}dS+\{\frac{\partial V}{\partial v}+\phi\frac{\partial U}{\partial v}\}dv\tag{A.2}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+the riskless portfolio。令式(A.2)中的
+\begin_inset Formula $dS$
+\end_inset
+
+和
+\begin_inset Formula $dv$
+\end_inset
+
+项为0，则
+\begin_inset Formula 
+\[
+\phi=-\frac{\frac{\partial V}{\partial v}}{\frac{\partial U}{\partial v}}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\Delta=-\phi\frac{\partial U}{\partial S}-\frac{\partial V}{\partial S}\tag{A.3}
+\]
+
+\end_inset
+
+此时，组合是一个无风险资产，于是收益率为无风险收益，即
+\begin_inset Formula $d\Pi=r\Pi dt$
+\end_inset
+
+，因此
+\begin_inset Formula 
+\begin{align*}
+d\Pi & =\{\frac{\partial V}{\partial t}+\frac{1}{2}vS^{2}\frac{\partial^{2}V}{\partial S^{2}}+\frac{1}{2}\sigma^{2}v\frac{\partial^{2}V}{\partial v^{2}}+\sigma v\rho S\frac{\partial^{2}V}{\partial v\partial S}\}dt+\\
+ & \phi\{\frac{\partial U}{\partial t}+\frac{1}{2}vS^{2}\frac{\partial^{2}U}{\partial S^{2}}+\frac{1}{2}\sigma^{2}v\frac{\partial^{2}U}{\partial v^{2}}+\sigma v\rho S\frac{\partial^{2}U}{\partial v\partial S}\}dt\\
+ & \equiv(A+\phi B)dt\\
+ & =r\Pi dt
+\end{align*}
+
+\end_inset
+
+即
+\begin_inset Formula 
+\[
+A+\phi B=r(V+\Delta S+\phi U)
+\]
+
+\end_inset
+
+将(A.3)式代入可得：
+\begin_inset Formula 
+\[
+\frac{A-rV+rS\frac{\partial V}{\partial S}}{\frac{\partial V}{\partial v}}=\frac{B-rU+rS\frac{\partial U}{\partial S}}{\frac{\partial U}{\partial v}}\tag{A.4}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+the PDE in terms of the price。上式左侧是仅关于V的一个函数，右侧是一个仅关于U的函数，因此两边都可以写成一个关于
+\begin_inset Formula $S,v,t$
+\end_inset
+
+的函数
+\begin_inset Formula $f(S,v,t)$
+\end_inset
+
+。根据Heston，将此函数设定为：
+\begin_inset Formula 
+\[
+f(S,v,t)=-\kappa(\bar{v}-v)+\lambda(S,v,t)
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\lambda(S,v,t)$
+\end_inset
+
+是波动率风险的价格。因此，将(A.4)左侧替换为
+\begin_inset Formula $f(S,v,t)$
+\end_inset
+
+可得：
+\begin_inset Formula 
+\[
+\frac{\partial U}{\partial t}+\frac{1}{2}vS^{2}\frac{\partial^{2}U}{\partial S^{2}}+\frac{1}{2}\sigma^{2}v\frac{\partial^{2}U}{\partial v^{2}}+\sigma v\rho S\frac{\partial^{2}U}{\partial v\partial S}-rU+rS\frac{\partial U}{\partial S}=[-\kappa(\bar{v}-v)+\lambda(S,v,t)]\frac{\partial U}{\partial v}\tag{A.5}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+teh PDE in terms of the log price。令
+\begin_inset Formula $x=lnS$
+\end_inset
+
+，用
+\begin_inset Formula $x,v,t$
+\end_inset
+
+表示的PDE更加简洁。首先需要用到下面一些导数关系式：
+\begin_inset Formula 
+\[
+\frac{\partial U}{\partial S}=\frac{\partial U}{\partial x}\frac{\partial x}{\partial S}=\frac{\partial U}{\partial x}/S
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial^{2}U}{\partial v\partial S}=\frac{\partial}{\partial x}(\frac{\partial U}{\partial v})\frac{\partial x}{\partial S}=\frac{\partial^{2}U}{\partial v\partial x}/S
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial^{2}U}{\partial S^{2}} & =\frac{\partial}{\partial S}(\frac{\partial U}{\partial x}/S)\\
+ & =\frac{\partial^{2}U}{\partial x\partial S}/S+\frac{\partial U}{\partial x}(-\frac{1}{S^{2}})\\
+ & =\frac{\partial^{2}U}{\partial x^{2}}/S^{2}-\frac{\partial U}{\partial x}/S^{2}
+\end{align*}
+
+\end_inset
+
+将上式代入(A.5)可得：
+\begin_inset Formula 
+\[
+\frac{\partial U}{\partial t}+\frac{1}{2}v(\frac{\partial^{2}U}{\partial x^{2}}-\frac{\partial U}{\partial x})+\frac{1}{2}\sigma^{2}v\frac{\partial^{2}U}{\partial v^{2}}+\sigma v\rho\frac{\partial^{2}U}{\partial v\partial x}-rU+r\frac{\partial U}{\partial x}=[-\kappa(\bar{v}-v)+\lambda(S,v,t)]\frac{\partial U}{\partial v}
+\]
+
+\end_inset
+
+或者
+\begin_inset Formula 
+\[
+\frac{\partial U}{\partial t}+\frac{1}{2}v\frac{\partial^{2}U}{\partial x^{2}}+\frac{1}{2}\sigma^{2}v\frac{\partial^{2}U}{\partial v^{2}}+\sigma v\rho\frac{\partial^{2}U}{\partial v\partial x}-rU+(r-\frac{1}{2}v)\frac{\partial U}{\partial x}+[\kappa(\bar{v}-v)-\lambda(S,v,t)]\frac{\partial U}{\partial v}=0
+\]
+
+\end_inset
+
+在Heston model中，假定波动率风险的价格与波动率是线性关系的：
+\begin_inset Formula $\lambda(S,v,t)=\lambda v$
+\end_inset
+
+，则上式还可以写为：
+\begin_inset Formula 
+\[
+\frac{\partial U}{\partial t}+\frac{1}{2}v\frac{\partial^{2}U}{\partial x^{2}}+\frac{1}{2}\sigma^{2}v\frac{\partial^{2}U}{\partial v^{2}}+\sigma v\rho\frac{\partial^{2}U}{\partial v\partial x}-rU+(r-\frac{1}{2}v)\frac{\partial U}{\partial x}+[\kappa(\bar{v}-v)-\lambda v]\frac{\partial U}{\partial v}=0\tag{A.6}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+the Call price
+\end_layout
+
+\begin_layout Itemize
+call的价值为：
+\begin_inset Formula 
+\begin{align*}
+C_{T}(K) & =e^{-r\tau}E[(S_{T}-K)^{+}]\\
+ & =e^{x_{t}}P_{1}(x,v,\tau)-e^{-r\tau}KP_{2}(x,v,\tau)\tag{A.7}
+\end{align*}
 
 \end_inset
 
