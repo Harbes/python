@@ -192,7 +192,7 @@ dv_{t}=\alpha(S_{t},v_{t},t)dt+\eta\beta(S_{t},v_{t},t)\sqrt{v_{t}}dZ_{t2}\tag{1
 \end_inset
 
 其中，
-\begin_inset Formula $dZ_{t1}dZ_{t2}=\rho dt$
+\begin_inset Formula $E[dZ_{t1}dZ_{t2}]=\rho dt$
 \end_inset
 
 ，且
@@ -417,7 +417,20 @@ History
 \begin_layout Itemize
 由于随机波动率模型的计算复杂性(computational complexity)，以及对于vanilla option参数估计的困难性(difficulty)
 ，practitioner需要一个更简单的方法去pricing exotic option consistently with the volatility
- skew。
+ skew
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+volatility skew简单的来说就是“smirk”；或者“...implied volatilities increase with decreasing
+ strike—that is, out-of-money puts trade at higher implied volatilities
+ than out-of-money calls.
+ This feature is often referred to as a 'negative' skew”
+\end_layout
+
+\end_inset
+
+。
 \end_layout
 
 \begin_layout Itemize
@@ -1499,8 +1512,8 @@ v(\alpha\tilde{P}_{j}-\beta\frac{\partial\tilde{P}_{j}}{\partial v}+\gamma\frac{
 猜测
 \begin_inset Formula 
 \begin{align*}
-\tilde{P}_{j}(u,v,\tau) & =exp[C(u,\tau)\bar{v}+D(u,\tau)v]\tilde{P}_{j}(u,v,0)\\
- & =\frac{exp[C(u,\tau)\bar{v}+D(u,\tau)v]}{iu}
+\tilde{P}_{j}(u,v,\tau) & =exp[C_{j}(u,\tau)\bar{v}+D_{j}(u,\tau)v]\tilde{P}_{j}(u,v,0)\\
+ & =\frac{exp[C_{j}(u,\tau)\bar{v}+D_{j}(u,\tau)v]}{iu}
 \end{align*}
 
 \end_inset
@@ -1508,7 +1521,7 @@ v(\alpha\tilde{P}_{j}-\beta\frac{\partial\tilde{P}_{j}}{\partial v}+\gamma\frac{
 于是
 \begin_inset Formula 
 \[
-\frac{\partial\tilde{P}_{j}}{\partial\tau}=[\bar{v}\frac{\partial C}{\partial\tau}+v\frac{\partial D}{\partial\tau}]\tilde{P}_{j}
+\frac{\partial\tilde{P}_{j}}{\partial\tau}=[\bar{v}\frac{\partial C_{j}}{\partial\tau}+v\frac{\partial D_{j}}{\partial\tau}]\tilde{P}_{j}
 \]
 
 \end_inset
@@ -1516,7 +1529,7 @@ v(\alpha\tilde{P}_{j}-\beta\frac{\partial\tilde{P}_{j}}{\partial v}+\gamma\frac{
 
 \begin_inset Formula 
 \[
-\frac{\partial\tilde{P}_{j}}{\partial v}=D\tilde{P}_{j}
+\frac{\partial\tilde{P}_{j}}{\partial v}=D_{j}\tilde{P}_{j}
 \]
 
 \end_inset
@@ -1524,7 +1537,7 @@ v(\alpha\tilde{P}_{j}-\beta\frac{\partial\tilde{P}_{j}}{\partial v}+\gamma\frac{
 
 \begin_inset Formula 
 \[
-\frac{\partial^{2}\tilde{P}_{j}}{\partial v^{2}}=D^{2}\tilde{P}_{j}
+\frac{\partial^{2}\tilde{P}_{j}}{\partial v^{2}}=D_{j}^{2}\tilde{P}_{j}
 \]
 
 \end_inset
@@ -1532,7 +1545,7 @@ v(\alpha\tilde{P}_{j}-\beta\frac{\partial\tilde{P}_{j}}{\partial v}+\gamma\frac{
 此时，当
 \begin_inset Formula 
 \[
-\frac{\partial C}{\partial\tau}=\lambda D
+\frac{\partial C_{j}}{\partial\tau}=\lambda D_{j}
 \]
 
 \end_inset
@@ -1540,8 +1553,8 @@ v(\alpha\tilde{P}_{j}-\beta\frac{\partial\tilde{P}_{j}}{\partial v}+\gamma\frac{
 
 \begin_inset Formula 
 \begin{align*}
-\frac{\partial D}{\partial\tau} & =\alpha-\beta D+\gamma D^{2}\\
- & =\gamma(D-r_{-})(D-r_{+})\tag{2.11}
+\frac{\partial D_{j}}{\partial\tau} & =\alpha-\beta D_{j}+\gamma D_{j}^{2}\\
+ & =\gamma(D_{j}-r_{-})(D_{j}-r_{+})\tag{2.11}
 \end{align*}
 
 \end_inset
@@ -1561,7 +1574,7 @@ r_{\pm}=\frac{\beta\pm\sqrt{\beta^{2}-4\alpha\gamma}}{2\gamma}=\frac{\beta\pm d}
 ，对(2.11)积分可得
 \begin_inset Formula 
 \[
-D(u,\tau)=r_{-}*\frac{1-e^{-\tau d}}{1-ge^{-\tau d}}
+D_{j}(u,\tau)=r_{-}*\frac{1-e^{-\tau d}}{1-ge^{-\tau d}}
 \]
 
 \end_inset
@@ -1569,7 +1582,7 @@ D(u,\tau)=r_{-}*\frac{1-e^{-\tau d}}{1-ge^{-\tau d}}
 
 \begin_inset Formula 
 \[
-C(u,\tau)=\lambda[r_{-}*\tau-\frac{2}{\eta^{2}}log(\frac{1-ge^{-\tau d}}{1-g})]\tag{2.12}
+C_{j}(u,\tau)=\lambda[r_{-}*\tau-\frac{2}{\eta^{2}}log(\frac{1-ge^{-\tau d}}{1-g})]\tag{2.12}
 \]
 
 \end_inset
@@ -1599,6 +1612,10 @@ A digression: the complex logarithm in the integration(2.13)
 
 \begin_layout Section
 derivation of the Heston characteristic function
+\end_layout
+
+\begin_layout Section
+Simulation of the Heston process
 \end_layout
 
 \begin_layout Section
@@ -1877,7 +1894,267 @@ C_{T}(K) & =e^{-r\tau}E[(S_{T}-K)^{+}]\\
 
 \end_inset
 
+与BS公式一样，
+\begin_inset Formula $P_{2}(x,v,\tau)$
+\end_inset
 
+表示the probability of the call expiring in-the-money
+\end_layout
+
+\begin_layout Itemize
+the PDE for 
+\begin_inset Formula $P_{1}$
+\end_inset
+
+and 
+\begin_inset Formula $P_{2}$
+\end_inset
+
+。根据(A.6)，有：
+\begin_inset Formula 
+\[
+-\frac{\partial C}{\partial\tau}+\frac{1}{2}v\frac{\partial^{2}C}{\partial x^{2}}+\frac{1}{2}\sigma^{2}v\frac{\partial^{2}C}{\partial v^{2}}+\sigma v\rho\frac{\partial^{2}C}{\partial v\partial x}-rC+(r-\frac{1}{2}v)\frac{\partial C}{\partial x}+[\kappa(\bar{v}-v)-\lambda v]\frac{\partial C}{\partial v}=0\tag{A.8}
+\]
+
+\end_inset
+
+由(A.7)知：
+\begin_inset Formula 
+\[
+\frac{\partial C}{\partial\tau}=e^{x}\frac{\partial P_{1}}{\partial\tau}+re^{-r\tau}KP_{2}-e^{-r\tau}K\frac{\partial P_{2}}{\partial\tau}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial C}{\partial x}=e^{x}P_{1}+e^{x}\frac{\partial P_{1}}{\partial x}-e^{-r\tau}K\frac{\partial P_{2}}{\partial x}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial^{2}C}{\partial x^{2}}=e^{x}P_{1}+2e^{x}\frac{\partial P_{1}}{\partial x}+e^{x}\frac{\partial^{2}P_{1}}{\partial x^{2}}-e^{-r\tau}K\frac{\partial^{2}P_{2}}{\partial x^{2}}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial^{2}C}{\partial v\partial x}=e^{x}\frac{\partial P_{1}}{\partial v}+e^{x}\frac{\partial^{2}P_{1}}{\partial x\partial v}-e^{-r\tau}K\frac{\partial^{2}P_{2}}{\partial x\partial v}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial C}{\partial v}=e^{x}\frac{\partial P_{1}}{\partial v}-e^{-r\tau}K\frac{\partial P_{2}}{\partial v}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial^{2}C}{\partial v^{2}}=e^{x}\frac{\partial^{2}P_{1}}{\partial v^{2}}-e^{-r\tau}K\frac{\partial^{2}P_{2}}{\partial v^{2}}
+\]
+
+\end_inset
+
+将它们代入(A.8)，令
+\begin_inset Formula $K=0,S=1$
+\end_inset
+
+可以得到关于
+\begin_inset Formula $P_{1}$
+\end_inset
+
+的PDE，令
+\begin_inset Formula $K=-1,S=0$
+\end_inset
+
+可以得到关于
+\begin_inset Formula $P_{2}$
+\end_inset
+
+的PDE：
+\begin_inset Formula 
+\[
+-\frac{\partial P_{j}}{\partial\tau}+\rho\sigma v\frac{\partial^{2}P_{j}}{\partial x\partial v}+\frac{1}{2}v\frac{\partial^{2}P_{j}}{\partial x^{2}}+\frac{1}{2}v\sigma^{2}\frac{\partial^{2}P_{j}}{\partial v^{2}}+(r+u_{j}v)\frac{\partial P_{j}}{\partial x}+(a-b_{j}v)\frac{\partial P_{j}}{\partial v}=0\tag{A.9}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $j=1,2$
+\end_inset
+
+，
+\begin_inset Formula $u_{1}=\frac{1}{2}$
+\end_inset
+
+，
+\begin_inset Formula $u_{2}=-\frac{1}{2}$
+\end_inset
+
+，
+\begin_inset Formula $a=\kappa\bar{v}$
+\end_inset
+
+，
+\begin_inset Formula $b_{1}=\kappa+\lambda-\rho\sigma$
+\end_inset
+
+，
+\begin_inset Formula $b_{2}=\kappa+\lambda$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+Obtaining the characteristic functions。 Heston假定了一个关于
+\begin_inset Formula $x=lnS_{T}$
+\end_inset
+
+的特征函数，如下：
+\begin_inset Formula 
+\[
+f_{j}(\phi;x,v)=exp(C_{j}(\tau,\phi)+D_{j}(\tau,\phi)v_{0}+i\phi x)\tag{A.10}
+\]
+
+\end_inset
+
+该特征方程满足(A.9)【this is a consequence of the Feynman-Kac theorem】。于是有：
+\begin_inset Formula 
+\[
+-\frac{\partial f_{j}}{\partial\tau}+\rho\sigma v\frac{\partial^{2}f_{j}}{\partial x\partial v}+\frac{1}{2}v\frac{\partial^{2}f_{j}}{\partial x^{2}}+\frac{1}{2}v\sigma^{2}\frac{\partial^{2}f_{j}}{\partial v^{2}}+(r+u_{j}v)\frac{\partial f_{j}}{\partial x}+(a-b_{j}v)\frac{\partial f_{j}}{\partial v}=0\tag{A.11}
+\]
+
+\end_inset
+
+通过计算关于
+\begin_inset Formula $f_{j}$
+\end_inset
+
+的各阶导数，并代入上式，可以得到两个differential equation：
+\begin_inset Formula 
+\[
+\frac{\partial D_{j}}{\partial\tau}=\rho\sigma i\phi D_{j}-\frac{1}{2}\phi^{2}+\frac{1}{2}\sigma^{2}D_{j}^{2}+u_{j}i\phi-b_{j}D_{j}\tag{A.12}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial C_{j}}{\partial\tau}=ri\phi+aD_{j}
+\]
+
+\end_inset
+
+其中，Heston设定了初始条件：
+\begin_inset Formula $D_{j}(0,\phi)=0,C_{j}(0,\phi)=0$
+\end_inset
+
+。可以看到(A.12)是一个Riccati equation in 
+\begin_inset Formula $D_{j}$
+\end_inset
+
+，而另一个就是常微分方程(ODE)。
+\end_layout
+
+\begin_layout Itemize
+solving the Heston Riccati equation。由(A.12)，the Heston Riccati equation可以简写成如下形式：
+\begin_inset Formula 
+\[
+\frac{\partial D_{j}}{\partial\tau}=P_{j}-Q_{j}D_{j}+RD_{j}^{2}\tag{A.13}
+\]
+
+\end_inset
+
+相应的二阶ODE是
+\begin_inset Formula 
+\[
+\omega''+Q_{j}\omega'+P_{j}R=0\tag{A.14}
+\]
+
+\end_inset
+
+因而，(A.13)的解可以写成：
+\begin_inset Formula 
+\[
+D_{j}=-\frac{1}{R}(\frac{K\alpha e^{\alpha\tau}+\beta e^{\beta\tau}}{K\alpha e^{\alpha\tau}+e^{\beta\tau}})\tag{A.15}
+\]
+
+\end_inset
+
+利用初始条件
+\begin_inset Formula $D_{j}(0,\phi)=0$
+\end_inset
+
+可以得到：
+\begin_inset Formula 
+\[
+D_{j}=\frac{b_{j}-\rho\sigma i\phi+d_{j}}{\sigma^{2}}(\frac{1-e^{d_{j}\tau}}{1-g_{j}e^{d_{j}\tau}})\tag{A.16}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\[
+d_{j}=\sqrt{(\rho\sigma i\phi-b_{j})^{2}-\sigma^{2}(2u_{j}i\phi-\phi^{2})}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+g_{j}=\frac{b_{j}-\rho\sigma i\phi+d_{j}}{b_{j}-\rho\sigma i\phi-d_{j}}
+\]
+
+\end_inset
+
+于是，通过积分可得
+\begin_inset Formula 
+\[
+C_{j}=\int_{0}^{\tau}ri\phi dy+a(\frac{Q_{j}+d_{j}}{2R})\int_{0}^{\tau}(\frac{1-e^{d_{j}y}}{1-g_{j}e^{d_{j}y}})dy+K_{1}\tag{A.17}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $K_{1}$
+\end_inset
+
+为常数。再利用初始条件
+\begin_inset Formula $C_{j}(0,\phi)=0$
+\end_inset
+
+，并且将
+\begin_inset Formula $d_{j},Q_{j},g_{j}$
+\end_inset
+
+代入可得：
+\begin_inset Formula 
+\[
+C_{j}=ri\phi\tau+\frac{a}{\sigma^{2}}[(b_{j}-\rho\sigma i\phi+d_{j})\tau-2ln(\frac{1-g_{j}e^{d_{j}\tau}}{1-g_{j}})]\tag{A.18}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $a=\kappa\bar{v}$
+\end_inset
+
+。
 \end_layout
 
 \end_body
