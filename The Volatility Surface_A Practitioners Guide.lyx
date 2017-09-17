@@ -542,7 +542,7 @@ dS/S=\mu_{t}dt+\sigma(S_{t},t;S_{0})dZ
 \begin_inset Formula $D_{t}$
 \end_inset
 
-是dividend yield。
+是dividend yield。这就是Dupire equation。
 \end_layout
 
 \begin_layout Subsection
@@ -737,7 +737,7 @@ I_{2} & =[(S_{T}-K)\frac{\partial}{\partial S}(\sigma^{2}S^{2}\varphi)]|_{S_{T}=
  的Dupire方程。至此，我们可以得到the Dupire local variance in its general form：
 \begin_inset Formula 
 \[
-\sigma^{2}=\frac{\frac{\partial C}{\partial T}+D_{T}C+(r_{T}-D_{T})K\frac{\partial C}{\partial K}}{\frac{1}{2}K^{2}\frac{\partial^{2}C}{\partial K^{2}}}
+\sigma(K,T)^{2}=\frac{\frac{\partial C}{\partial T}+D_{T}C+(r_{T}-D_{T})K\frac{\partial C}{\partial K}}{\frac{1}{2}K^{2}\frac{\partial^{2}C}{\partial K^{2}}}
 \]
 
 \end_inset
@@ -773,12 +773,18 @@ I_{2} & =[(S_{T}-K)\frac{\partial}{\partial S}(\sigma^{2}S^{2}\varphi)]|_{S_{T}=
 。于是，可以得到：
 \begin_inset Formula 
 \[
-\sigma^{2}(K,T,S_{0})=\frac{\frac{\partial C}{\partial T}}{\frac{1}{2}K^{2}\frac{\partial^{2}C}{\partial K^{2}}}\tag{1.6}
+\sigma^{2}(K,T)=\frac{\frac{\partial C}{\partial T}}{\frac{1}{2}K^{2}\frac{\partial^{2}C}{\partial K^{2}}}\tag{1.6}
 \]
 
 \end_inset
 
 此方称右侧可以通过欧式期权定价公式获得。我们可以将式(1.6)作为local volatility函数的定义，无论波动率服从怎样的过程。
+\end_layout
+
+\begin_layout Itemize
+注意：现实中，只能通过数值方法计算local volatility，但是，问题是计算local volatility时，必须要计算一阶和二阶导数，而通过数值方法
+计算的导数往往会误差较大（尤其对于二阶而言），所以，现实中计算local volatility的方法一般不同上式。【一种可行的方法见姜礼尚的《期权定价的数学模型
+和方法》最后一章节】
 \end_layout
 
 \begin_layout Subsection

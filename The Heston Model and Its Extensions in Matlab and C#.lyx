@@ -19,9 +19,9 @@
 \language_package default
 \inputencoding utf8-plain
 \fontencoding global
-\font_roman "default" "Noto Sans Mono CJK SC"
-\font_sans "default" "Noto Sans CJK SC"
-\font_typewriter "default" "Noto Sans Mono CJK SC"
+\font_roman "default" "Songti SC"
+\font_sans "default" "STFangsong"
+\font_typewriter "default" "STHeiti"
 \font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts true
@@ -96,11 +96,11 @@
 \begin_body
 
 \begin_layout Title
-computational methods for option pricing(笔记由Harbes整理)
+the Heston model and its extensions in matlab and C#(笔记由Harbes整理)
 \end_layout
 
 \begin_layout Author
-Yves Achdou, Olivier Pironneau
+Y
 \end_layout
 
 \begin_layout Standard
@@ -160,8 +160,473 @@ The Heston Model for European Options
 Model Dynamics
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
+the Heston model assumes that the underlying stock price, 
+\begin_inset Formula $S_{t}$
+\end_inset
 
+, follows a Black-Scholes type stochastic process, but with a stochastic
+ variance 
+\begin_inset Formula $v_{t}$
+\end_inset
+
+ that follows a Cox, Ingersoll, and Ross(1985) process，即：
+\begin_inset Formula 
+\begin{align*}
+dS_{t}/S_{t} & =\mu dt+\sqrt{v_{t}}dW_{t1}\\
+dv_{t} & =\kappa(\theta-v_{t})dt+\sigma\sqrt{v_{t}}dW_{t2}\tag{1.1}
+\end{align*}
+
+\end_inset
+
+其中，
+\begin_inset Formula $E(dW_{t1}dW_{t2})=\rho dt$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+（第二章）可以看到
+\begin_inset Formula $\mu,\kappa,\theta,\sigma,v_{0},\rho$
+\end_inset
+
+等参数会affect teh distribution of the terminal stock price in a manner that
+ is intuitive。同时注意到，Heston模型中，并没有直接对波动率
+\begin_inset Formula $\sqrt{v_{t}}$
+\end_inset
+
+进行建模，而是对方差
+\begin_inset Formula $v_{t}$
+\end_inset
+
+进行建模。
+\end_layout
+
+\begin_layout Itemize
+The process for the variance arises from the Ornstein-Uhlenbeck rpocess
+ for the volatility 
+\begin_inset Formula $h_{t}=\sqrt{v_{t}}$
+\end_inset
+
+ given by :
+\begin_inset Formula 
+\[
+dh_{t}=-\beta h_{t}dt+\delta dW_{t2}\tag{1.2}
+\]
+
+\end_inset
+
+于是，利用Ito's lemma，
+\begin_inset Formula $v_{t}=h_{t}^{2}$
+\end_inset
+
+follows the process :
+\begin_inset Formula 
+\[
+dv_{t}=(\delta^{2}-2\beta v_{t})dt+2\delta\sqrt{v_{t}}dW_{t2}\tag{1.3}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+for pricing purpose，需要在风险中性测度下
+\begin_inset Formula $Q$
+\end_inset
+
+的
+\begin_inset Formula $(S_{t},v_{t})$
+\end_inset
+
+的过程，这需要利用Girsanov‘s theorem对(1.1)进行修改：
+\begin_inset Formula 
+\[
+dS_{t}/S_{t}=rdt+\sqrt{v_{t}}d\tilde{W}_{t1}\tag{1.4}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+dv_{t}=[\kappa(\theta-v_{t})-\lambda(S_{t},v_{t},t)]dt+\sigma\sqrt{v_{t}}d\tilde{W}_{t2}\tag{1.6}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\[
+\tilde{W}_{t1}=W_{t1}+\frac{\mu-r}{\sqrt{v_{t}}}t
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\tilde{W}_{t2}=W_{t2}+\frac{\lambda(S_{t},v_{t},t)}{\sigma\sqrt{v_{t}}}t\tag{1.7}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $\lambda(S_{t},v_{t},t)$
+\end_inset
+
+被称为“the volatility risk premium”。
+\end_layout
+
+\begin_layout Itemize
+如果用对数价格表示(1.4)的话，就是：
+\begin_inset Formula 
+\[
+dlnS_{t}=(r-\frac{v_{t}}{2})dt+\sqrt{v_{t}}d\tilde{W}_{t1}\tag{1.5}
+\]
+
+\end_inset
+
+另一方面，As explained in Heston(1993), Breeden(1979) consumption model yields
+ a premium proportional to the variance, so that 
+\begin_inset Formula $\lambda(S,v,t)=\lambda v_{t}$
+\end_inset
+
+，因此：
+\begin_inset Formula 
+\[
+dv_{t}=\kappa^{*}(\theta^{*}-v_{t})dt+\sigma\sqrt{v_{t}}d\tilde{W}_{t2}\tag{1.8}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $\kappa^{*}=\kappa+\lambda,\theta^{*}=\kappa\theta/(\kappa+\lambda)$
+\end_inset
+
+。注意，此时仍然有
+\begin_inset Formula $E(d\tilde{W}_{t2}d\tilde{W}_{t2})=\rho dt$
+\end_inset
+
+成立。
+\end_layout
+
+\begin_layout Itemize
+当
+\begin_inset Formula $\lambda=0$
+\end_inset
+
+时，
+\begin_inset Formula $\kappa^{*}=\kappa,\theta^{*}=\theta$
+\end_inset
+
+，此时，真实测度(physical measure)和风险中性测度(risk-neutral measure)是一样的。
+\end_layout
+
+\begin_layout Itemize
+后文中，我们研究的都是风险中性测度下的，因此，在不至于引起混乱的前提下，我们省略掉所有的*号。
+\end_layout
+
+\begin_layout Subsection
+Properties of the variance process
+\end_layout
+
+\begin_layout Itemize
+基于一个已实现的
+\begin_inset Formula $v_{s}$
+\end_inset
+
+，随机变量
+\begin_inset Formula $c_{t}v_{t}$
+\end_inset
+
+(t>s)服从一个非中心化的卡方分布，其自由度为
+\begin_inset Formula $\frac{4\kappa\theta}{\sigma^{2}}$
+\end_inset
+
+、非中心化参数为
+\begin_inset Formula $2c_{t}v_{s}e^{-\kappa(t-s)}$
+\end_inset
+
+，而
+\begin_inset Formula $c_{t}=\frac{2\kappa}{\sigma^{2}(1-e^{-\kappa(t-s)})}$
+\end_inset
+
+。进一步地，我们可以知道，基于
+\begin_inset Formula $v_{s}$
+\end_inset
+
+，
+\begin_inset Formula $v_{t}$
+\end_inset
+
+的条件均值和条件方差分别为：
+\begin_inset Formula 
+\[
+m=E[v_{t}|v_{s}]=\theta+(v_{t}-\theta)e^{-\kappa(t-s)}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+S^{2}=Var[v_{t}|v_{s}]=\frac{v_{s}\sigma^{2}e^{-\kappa(t-s)}}{\kappa}(1-e^{-\kappa(t-s)})+\frac{\theta\sigma^{2}}{2\kappa}(1-e^{-\kappa(t-s)})^{2}\tag{1.11}
+\]
+
+\end_inset
+
+显然，此处的参数
+\begin_inset Formula $\kappa$
+\end_inset
+
+控制着均值回复的速度：当
+\begin_inset Formula $\kappa\rightarrow\infty,m=\theta,S^{2}=0$
+\end_inset
+
+。注意，需要保证
+\begin_inset Formula $2\kappa\theta>\sigma^{2}$
+\end_inset
+
+成立，这样才能保证方差过程不会到达0，即
+\begin_inset Formula $v_{t}>0$
+\end_inset
+
+。【Feller consition】
+\end_layout
+
+\begin_layout Section
+the European call price
+\end_layout
+
+\begin_layout Itemize
+欧式call的价格为：
+\begin_inset Formula 
+\begin{align*}
+C(K) & =e^{-r\tau}E^{Q}[(S_{T}-K)^{+}]\\
+ & =e^{-r\tau}E^{Q}[(S_{T}-K)*1_{(S_{T}>K)}]\\
+ & =e^{-r\tau}E^{Q}[S_{T}*1_{(S_{T}>K)}]-Ke^{-r\tau}E^{Q}[1_{(S_{T}>K)}]\\
+ & =S_{t}P_{1}-Ke^{-r\tau}P_{2}\tag{1.12}
+\end{align*}
+
+\end_inset
+
+最后一行被称为“Black-Scholes-like” call price formula 。the quantities 
+\begin_inset Formula $P_{1}$
+\end_inset
+
+and 
+\begin_inset Formula $P_{2}$
+\end_inset
+
+each represent the probability of the call expiring in-the-money，conditional
+ on the value 
+\begin_inset Formula $S_{t}=e^{x_{t}}$
+\end_inset
+
+of the stock and on the value 
+\begin_inset Formula $v_{t}$
+\end_inset
+
+ of the volatility at time t：
+\begin_inset Formula 
+\[
+P_{j}=Pr(lnS_{T}>K)\quad j=1,2
+\]
+
+\end_inset
+
+注意，两个概率都表示call处于in-the-money下的概率，但是，它们是在不同测度下的描述：
+\begin_inset Formula $P_{2}$
+\end_inset
+
+是在风险中性测度下的概率：
+\begin_inset Formula 
+\[
+E^{Q}[1_{(S_{T}>K)}]=Q(S_{T}>K)=P_{2}
+\]
+
+\end_inset
+
+而计算
+\begin_inset Formula $E^{Q}[S_{T}*1_{(S_{T}>K)}]$
+\end_inset
+
+需要转换测度，利用Radon-Nikodym推导式：
+\begin_inset Formula 
+\[
+\frac{dQ}{dQ^{S}}=\frac{B_{T}/B_{t}}{S_{T}/S_{t}}=\frac{E^{Q}[e^{x_{T}}]}{e^{x_{T}}}\tag{1.14}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\[
+B_{t}=exp(\int_{0}^{t}r_{u}du)=e^{rt}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+E^{Q}[e^{x_{T}}]=S_{t}e^{r(T-t)}
+\]
+
+\end_inset
+
+因此：
+\begin_inset Formula 
+\begin{align*}
+e^{-r\tau}E^{Q}[S_{T}*1_{(S_{T}>K)}] & =S_{t}E^{Q}[\frac{S_{T}/S_{t}}{B_{T}/B_{t}}1_{(S_{T}>K)}]\\
+ & =S_{t}E^{Q^{S}}[\frac{S_{T}/S_{t}}{B_{T}/B_{t}}1_{(S_{T}>K)}\frac{dQ}{dQ^{S}}]\\
+ & =S_{t}E^{Q^{S}}[1_{(S_{T}>K)}]\\
+ & =S_{t}P_{1}\tag{1.15}
+\end{align*}
+
+\end_inset
+
+这也就意味着欧式call价格方程(1.12)可以写成：
+\begin_inset Formula 
+\[
+C(K)=S_{t}Q^{S}(S_{T}>K)-Ke^{-r\tau}Q(S_{T}>K)\tag{1.16}
+\]
+
+\end_inset
+
+主要，测度
+\begin_inset Formula $Q$
+\end_inset
+
+利用一个bond 
+\begin_inset Formula $B_{t}$
+\end_inset
+
+作为numeraire，而测度
+\begin_inset Formula $Q^{S}$
+\end_inset
+
+则利用股票
+\begin_inset Formula $S_{t}$
+\end_inset
+
+作为numeraire。【一个更一般的setup参见Bakshi and Madan(2000)】。后文会说道，当
+\begin_inset Formula $S_{T}$
+\end_inset
+
+服从一个对数正态分布时，有
+\begin_inset Formula $Q^{S}(S_{T}>K)=N(d_{1}),Q(S_{T}>K)=N(d_{2})$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+the characteristic function approach to pricing options, pioneered by Heston(199
+3), applies to the Black-Scholes model also。
+\end_layout
+
+\begin_layout Section
+the Heston PDE
+\end_layout
+
+\begin_layout Itemize
+见《the volatility surface...》笔记
+\end_layout
+
+\begin_layout Section
+obtaining the Heston characteristic functions
+\end_layout
+
+\begin_layout Itemize
+当特征方程
+\begin_inset Formula $f_{j}(\phi;x,v)$
+\end_inset
+
+已知时，两个不同测度下的in-the-money概率就可以利用Gil-Pelaez(1951) inversion theorem获得：
+\begin_inset Formula 
+\[
+P_{j}=Pr(S_{T}>K)=\frac{1}{2}+\frac{1}{\pi}\int_{0}^{\infty}Re[\frac{e^{-i\phi lnK}f_{j}(\phi;x,v)}{i\phi}]d\phi\tag{1.41}
+\]
+
+\end_inset
+
+【A discussion of how the theorem relates to option pricing in stochastic
+ volatility models appears in Jondeau et al.(2007)】
+\end_layout
+
+\begin_layout Itemize
+在到期日，概率手terminal condition约束：
+\begin_inset Formula 
+\[
+P_{j}=1_{x_{T}>lnK}\tag{1.42}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Heston(1993)假定(或者说建议)the characteristic functions for the logarithm of the
+ terminal stock price 
+\begin_inset Formula $x_{T}=lnS_{T}$
+\end_inset
+
+ are of the log linear form：
+\begin_inset Formula 
+\[
+f_{j}(\phi;x_{t},v_{t})=exp(C_{j}(\tau,\phi)+D_{j}(\tau,\phi)v_{t}+i\phi x_{t})\tag{1.43}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $i=\sqrt{-1}$
+\end_inset
+
+为虚部单位。根据Feynman-Kac theorem
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+if a function 
+\begin_inset Formula $f(\mathbf{x}_{t},t)$
+\end_inset
+
+ of Heston bivariate system of SDEs 
+\begin_inset Formula $\mathbf{x}_{t}=(x_{t},v_{t})=(lnS_{t},v_{t})$
+\end_inset
+
+satisfies teh PDE 
+\begin_inset Formula $\frac{\partial f}{\partial t}-rf+Af=0$
+\end_inset
+
+, where 
+\begin_inset Formula $A$
+\end_inset
+
+ is the Heston generator, then the solutin to 
+\begin_inset Formula $f(\mathbf{x}_{t},t)$
+\end_inset
+
+ is the conditional expectation 
+\begin_inset Formula $f(\mathbf{x}_{t},t)=E[f(\mathbf{x}_{T},T)|F_{t}]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+，特征方程
+\begin_inset Formula $f_{j}$
+\end_inset
+
+满足PDE(1.40)。
 \end_layout
 
 \end_body
