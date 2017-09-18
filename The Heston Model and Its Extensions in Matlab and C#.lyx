@@ -626,7 +626,346 @@ satisfies teh PDE
 \begin_inset Formula $f_{j}$
 \end_inset
 
-满足PDE(1.40)。
+满足PDE(1.40)。因此，特征方程满足：
+\begin_inset Formula 
+\[
+-\frac{\partial f_{j}}{\partial\tau}+\rho\sigma v\frac{\partial^{2}f_{j}}{\partial v\partial x}+\frac{1}{2}v\frac{\partial^{2}f_{j}}{\partial x^{2}}+\frac{1}{2}\sigma^{2}v\frac{\partial^{2}f_{j}}{\partial v^{2}}+(r+u_{j}v)\frac{\partial f_{j}}{\partial x}+(a-b_{j}v)\frac{\partial f_{j}}{\partial v}=0\tag{1.44}
+\]
+
+\end_inset
+
+依据(1,43)，很容易得到特征函数的几个导数：
+\begin_inset Formula 
+\[
+\frac{\partial f_{j}}{\partial\tau}=(\frac{\partial C_{j}}{\partial\tau}+\frac{\partial D_{j}}{\partial\tau}v)f_{j}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial f_{j}}{\partial x}=i\phi f_{j}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial f_{j}}{\partial v}=D_{j}f_{j}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial^{2}f_{j}}{\partial x^{2}}=-\phi^{2}f_{j}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial^{2}f_{j}}{\partial v^{2}}=D_{j}^{2}f_{j}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial^{2}f_{j}}{\partial v\partial x}=i\phi D_{j}f_{j}
+\]
+
+\end_inset
+
+将它们代入(1.44)可得：
+\begin_inset Formula 
+\[
+-(\frac{\partial C_{j}}{\partial\tau}+v\frac{\partial D_{j}}{\partial\tau})+\rho\sigma vi\phi D_{j}-\frac{1}{2}v\phi^{2}+\frac{1}{2}v\sigma^{2}D_{j}^{2}+(r+u_{j}v)i\phi+(a-b_{j}v)D_{j}=0\tag{1.45}
+\]
+
+\end_inset
+
+或者，等价的：
+\begin_inset Formula 
+\[
+v(-\frac{\partial D_{j}}{\partial\tau}+\rho\sigma i\phi D_{j}-\frac{1}{2}\phi^{2}+\frac{1}{2}\sigma^{2}D_{j}^{2}+u_{j}i\phi-b_{j}D_{j})-\frac{\partial C_{j}}{\partial\tau}+ri\phi+aD_{j}=0\tag{1.46}
+\]
+
+\end_inset
+
+这产生了两个差分方程：
+\begin_inset Formula 
+\[
+\frac{\partial D_{j}}{\partial\tau}=\rho\sigma i\phi D_{j}-\frac{1}{2}\phi^{2}+\frac{1}{2}\sigma^{2}D_{j}^{2}+u_{j}i\phi-b_{j}D_{j}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial C_{j}}{\partial\tau}=ri\phi+aD_{j}\tag{1.47}
+\]
+
+\end_inset
+
+其中，第一个方程是一个关于
+\begin_inset Formula $D_{j}$
+\end_inset
+
+的Riccati equation，第二个则是ODE。解这两个方程需要两个初始条件：
+\begin_inset Formula 
+\[
+C_{j}(0,\phi)=0
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+D_{j}(0,\phi)=0
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Solving the Heston Riccati equation
+\end_layout
+
+\begin_layout Subsection
+the Riccati equation in a general setting
+\end_layout
+
+\begin_layout Itemize
+the Riccati equation for 
+\begin_inset Formula $y(t)$
+\end_inset
+
+ with coefficients 
+\begin_inset Formula $P(t),Q(t),$
+\end_inset
+
+ and 
+\begin_inset Formula $R(t)$
+\end_inset
+
+ is defined as：
+\begin_inset Formula 
+\[
+\frac{dy(t)}{dt}=P(t)+Q(t)y(t)+R(t)y(t)^{2}\tag{1.49}
+\]
+
+\end_inset
+
+求解上述方程可以通过考虑一个如下的二阶ODE的解
+\begin_inset Formula $\omega$
+\end_inset
+
+：
+\begin_inset Formula 
+\[
+\omega''-[\frac{P'}{P}+Q]\omega'+PR\omega=0\tag{1.50}
+\]
+
+\end_inset
+
+然后(1.49)的解可以写成：
+\begin_inset Formula 
+\[
+y(t)=-\frac{\omega'(t)}{\omega(t)}\frac{1}{R(t)}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+二阶ODE(1.50)的解为：
+\begin_inset Formula 
+\[
+\omega(t)=Me^{\alpha t}+Ne^{\beta t}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $\alpha,\beta$
+\end_inset
+
+为辅助方程
+\begin_inset Formula $r^{2}-[\frac{P'}{P}+Q]r+PR=0$
+\end_inset
+
+的两个解，M、N为两个常数。于是，(1.49)的解可以写成：
+\begin_inset Formula 
+\[
+y(t)=-\frac{M\alpha e^{\alpha t}+N\beta e^{\beta t}}{Me^{\alpha t}+Ne^{\beta t}}\frac{1}{R(t)}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Solution of the Heston Riccati equation
+\end_layout
+
+\begin_layout Itemize
+由(1.47)的第一个方程，the Heston Riccati equation可以写为：
+\begin_inset Formula 
+\[
+\frac{\partial D_{j}}{\partial\tau}=P_{j}-Q_{j}D_{j}+RD_{j}^{2}\tag{1.51}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $P_{j}=u_{j}i\phi-\frac{1}{2}\phi^{2}$
+\end_inset
+
+，
+\begin_inset Formula $Q_{j}=b_{j}-\rho\sigma i\phi$
+\end_inset
+
+，
+\begin_inset Formula $R=\frac{1}{2}\sigma^{2}$
+\end_inset
+
+。于是，可以得到the Heston Riccati equation的解为：
+\begin_inset Formula 
+\[
+D_{j}=-\frac{1}{R}\frac{\omega'}{\omega}=-\frac{1}{R}(\frac{K\alpha e^{\alpha t}+\beta e^{\beta t}}{Ke^{\alpha t}+e^{\beta t}})\tag{1.55}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\[
+\alpha_{j}=\frac{-Q_{j}+\sqrt{Q_{j}^{2}-4P_{j}R}}{2}=\frac{-Q_{j}+d_{j}}{2}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\beta_{j}=\frac{-Q_{j}-\sqrt{Q_{j}^{2}-4P_{j}R}}{2}=\frac{-Q_{j}-d_{j}}{2}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+d_{j}=\alpha_{j}-\beta_{j}=\sqrt{Q_{j}^{2}-4P_{j}R}=\sqrt{(\rho\sigma i\phi-b_{j})^{2}-\sigma^{2}(2u_{j}i\phi-\phi^{2})}\tag{1.54}
+\]
+
+\end_inset
+
+再根据初始条件
+\begin_inset Formula $D_{j}(0,\phi)=0$
+\end_inset
+
+，
+\begin_inset Formula $K\alpha+\beta=0$
+\end_inset
+
+，于是：
+\begin_inset Formula 
+\begin{align*}
+D_{j} & =-\frac{\beta}{R}(\frac{-e^{\alpha\tau}+e^{\beta\tau}}{-g_{j}e^{\alpha\tau}+e^{\beta\tau}})=-\frac{\beta}{R}(\frac{1-e^{d_{j}\tau}}{1-g_{j}e^{d_{j}\tau}})\\
+ & =\frac{Q_{j}+d_{j}}{2R}(\frac{1-e^{d_{j}\tau}}{1-g_{j}e^{d_{j}\tau}})\tag{1.56}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\[
+g_{j}=-K=\frac{\beta}{\alpha}=\frac{b_{j}-\rho\sigma i\phi+d_{j}}{b_{j}-\rho\sigma i\phi-d_{j}}=\frac{Q_{j}+d_{j}}{Q_{j}-d_{j}}\tag{1.57}
+\]
+
+\end_inset
+
+因此：
+\begin_inset Formula 
+\[
+D_{j}(\tau,\phi)=\frac{b_{j}-\rho\sigma i\phi+d_{j}}{\sigma^{2}}(\frac{1-e^{d_{j}\tau}}{1-g_{j}e^{d_{j}\tau}})
+\]
+
+\end_inset
+
+进一步，关于
+\begin_inset Formula $C_{j}$
+\end_inset
+
+的解，在(1.47)中代入
+\begin_inset Formula $D_{j}$
+\end_inset
+
+并积分，可得：
+\begin_inset Formula 
+\[
+C_{j}=\int_{0}^{\tau}ri\phi dy+a(\frac{Q_{j}+d_{j}}{\sigma^{2}})\int_{0}^{\tau}(\frac{1-e^{d_{j}y}}{1-g_{j}e^{d_{j}y}})dy+K_{1}\tag{1.59}
+\]
+
+\end_inset
+
+令
+\begin_inset Formula $x=exp(d_{j}y)$
+\end_inset
+
+并替换，可得：
+\begin_inset Formula 
+\[
+C_{j}=ri\phi\tau+\frac{a}{d_{j}}(\frac{Q_{j}+d_{j}}{\sigma^{2}})\int_{1}^{exp(d_{j}\tau)}(\frac{1-x}{1-g_{j}x})\frac{1}{x}dx+K_{1}\tag{1.60}
+\]
+
+\end_inset
+
+其中：
+\begin_inset Formula 
+\begin{align*}
+\int_{1}^{exp(d_{j}\tau)}(\frac{1-x}{1-g_{j}x})\frac{1}{x}dx & =\int_{1}^{exp(d_{j}\tau)}[\frac{1}{x}-\frac{1-g_{j}}{1-g_{j}x}]dx\\
+ & =[lnx+\frac{1-g_{j}}{g_{j}}ln(1-g_{j}x)]_{x=1}^{x=exp(d_{j}\tau)}\\
+ & =d_{j}\tau+\frac{1-g_{j}}{g_{j}}ln(\frac{1-g_{j}e^{d_{j}\tau}}{1-g_{j}})\tag{1.61}
+\end{align*}
+
+\end_inset
+
+因此，再结合初始条件
+\begin_inset Formula $C_{j}(0,\phi)=0$
+\end_inset
+
+可得：
+\begin_inset Formula 
+\[
+C_{j}(\tau,\phi)=ri\phi\tau+\frac{a}{\sigma^{2}}[(b_{j}-\rho\sigma i\phi+d_{j})\tau-2ln(\frac{1-g_{j}e^{d_{j}\tau}}{1-g_{j}})]\tag{1.62}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $a=\kappa\theta$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+HestonProb.m和HestonPrice.m【待转化为python code】
 \end_layout
 
 \end_body
