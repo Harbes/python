@@ -965,7 +965,103 @@ C_{j}(\tau,\phi)=ri\phi\tau+\frac{a}{\sigma^{2}}[(b_{j}-\rho\sigma i\phi+d_{j})\
 \end_layout
 
 \begin_layout Itemize
-HestonProb.m和HestonPrice.m【待转化为python code】
+相应code的实现【待转化为python code】
+\end_layout
+
+\begin_layout Section
+dividend yield and the put value
+\end_layout
+
+\begin_layout Itemize
+假定continuous dividend yield 
+\begin_inset Formula $q$
+\end_inset
+
+，于是：
+\begin_inset Formula 
+\[
+dS_{t}/S_{t}=(r-q)dt+\sqrt{v_{t}}d\tilde{W}_{t1}\tag{1.64}
+\]
+
+\end_inset
+
+此时，(1.62)就变成了：
+\begin_inset Formula 
+\[
+C_{j}(\tau,\phi)=(r-q)i\phi\tau+\frac{a}{\sigma^{2}}[(b_{j}-\rho\sigma i\phi+d_{j})\tau-2ln(\frac{1-g_{j}e^{d_{j}\tau}}{1-g_{j}})]\tag{1.65}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+European put的价格。根据 Whaley(2006)，利用put-call parity可以得到：
+\begin_inset Formula 
+\[
+P=C+Ke^{-rT}-S_{t}e^{-qT}\tag{1.67}
+\]
+
+\end_inset
+
+当然，put的计算，也可以通过之前的方法获得，只是此时我们要求：
+\begin_inset Formula 
+\[
+P_{j}^{c}=Pr(S_{T}<K)=\frac{1}{2}-\frac{1}{\pi}\int_{0}^{\infty}Re[\frac{e^{-i\phi lnK}f_{j}(\phi;x,v)}{i\phi}]d\phi\tag{1.69}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+consolidating the integrals
+\end_layout
+
+\begin_layout Itemize
+之前，要计算option的价格，就需要计算
+\begin_inset Formula $P_{1}$
+\end_inset
+
+和
+\begin_inset Formula $P_{2}$
+\end_inset
+
+的值，二者都涉及到了积分，我们希望可以通过合成一种积分来加速数值计算速度。
+\end_layout
+
+\begin_layout Itemize
+HestonProbConsol.m和HestonPriceConsol.m
+\end_layout
+
+\begin_layout Section
+Black-Scholes as a special case 
+\end_layout
+
+\begin_layout Itemize
+推导
+\end_layout
+
+\begin_layout Itemize
+HestonZeroSigma.m
+\end_layout
+
+\begin_layout Section
+Summary of the call price
+\end_layout
+
+\begin_layout Section
+conclusion
+\end_layout
+
+\begin_layout Chapter
+Integration issues，parameter effects，and variance modeling
+\end_layout
+
+\begin_layout Standard
+
 \end_layout
 
 \end_body
