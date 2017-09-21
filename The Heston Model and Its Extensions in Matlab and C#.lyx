@@ -1093,6 +1093,250 @@ examine the effects of the Heston parameters on implied volatilities extracted
 Remarks on the characteristic functions
 \end_layout
 
+\begin_layout Itemize
+由第一章内容可知，两种测度下的in-the-money概率
+\begin_inset Formula $P_{1}$
+\end_inset
+
+和
+\begin_inset Formula $P_{2}$
+\end_inset
+
+可以用下式表示：
+\begin_inset Formula 
+\[
+P_{j}=Pr(S_{T}>K)=\frac{1}{2}+\frac{1}{\pi}\int_{0}^{\infty}Re[\frac{e^{-i\phi lnK}f_{j}(\phi;x,v)}{i\phi}]d\phi\tag{2.1}
+\]
+
+\end_inset
+
+它将两个特征函数
+\begin_inset Formula $f_{1}$
+\end_inset
+
+和
+\begin_inset Formula $f_{2}$
+\end_inset
+
+与Heston模型联系在了一起。事实上，可以只用一个特征函数
+\begin_inset Formula $f(\phi)=f(\phi;x,v)$
+\end_inset
+
+表示两个概率:
+\begin_inset Formula 
+\[
+P_{1}=\frac{1}{2}+\frac{1}{\pi}\int_{0}^{\infty}Re[\frac{e^{-i\phi lnK}f(\phi-i)}{i\phi f(-i)}]d\phi\tag{2.2}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+P_{2}=\frac{1}{2}+\frac{1}{\pi}\int_{0}^{\infty}Re[\frac{e^{-i\phi lnK}f(\phi)}{i\phi}]d\phi\tag{2.3}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $f_{2}(\phi)=f(\phi),f_{1}(\phi)=\frac{f(\phi-i)}{f(-i)}$
+\end_inset
+
+。下面就来说明(2.2-3)与(2.1)是等价的
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+详细说明可见Bakshi and Madan (2000)
+\end_layout
+
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+首先，call price：
+\begin_inset Formula 
+\[
+C(K)=S_{t}P_{1}-e^{-r\tau}KP_{2}
+\]
+
+\end_inset
+
+记the probability density function for 
+\begin_inset Formula $lnS_{T}$
+\end_inset
+
+为
+\begin_inset Formula $q(x)$
+\end_inset
+
+，于是：
+\begin_inset Formula 
+\[
+P_{2}=Q(x_{T}>lnK)=\int_{lnK}^{\infty}q(x)dx
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $x_{T}=lnS_{T}$
+\end_inset
+
+。另一方面，用特征函数
+\begin_inset Formula $f(\phi)$
+\end_inset
+
+表示的累计分布函数
+\begin_inset Formula $Q(x_{T}<x)$
+\end_inset
+
+为：
+\begin_inset Formula 
+\[
+Q(x_{T}<x)=\frac{1}{2}-\frac{1}{2\pi}\int_{-\infty}^{\infty}\frac{e^{-i\phi x}f(\phi)}{i\phi}d\phi=1-P_{2}\tag{2.4}
+\]
+
+\end_inset
+
+对
+\begin_inset Formula $P_{2}$
+\end_inset
+
+的两个表达式关于
+\begin_inset Formula $x=lnK$
+\end_inset
+
+求导，可得：
+\begin_inset Formula 
+\[
+q(x)=\frac{1}{2\pi}\int_{-\infty}^{\infty}e^{-i\phi x}f(\phi)d\phi
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+it is well-known that the real part of the characteristic function 
+\begin_inset Formula $f(\phi)$
+\end_inset
+
+ is even, and the imaginary part is odd。这意味着，当在整个real line上积分时，
+\begin_inset Formula $e^{-i\phi x}f(\phi)$
+\end_inset
+
+的虚部会消除(
+\begin_inset Formula $q(x)$
+\end_inset
+
+是一个实函数)，而实部积分的结果可以看成是
+\begin_inset Formula $(0,\infty)$
+\end_inset
+
+上积分的两倍，于是：
+\begin_inset Formula 
+\begin{align*}
+q(x) & =\frac{1}{2\pi}\int_{-\infty}^{\infty}e^{-i\phi x}f(\phi)d\phi\\
+ & =\frac{1}{\pi}\int_{0}^{\infty}Re[e^{-i\phi x}f(\phi)]d\phi\tag{2.5}
+\end{align*}
+
+\end_inset
+
+从而有：
+\begin_inset Formula 
+\[
+Q(x_{T}<x)=\frac{1}{2}-\frac{1}{\pi}\int_{0}^{\infty}Re[\frac{e^{-i\phi x}f(\phi)}{i\phi}]d\phi\tag{2.6}
+\]
+
+\end_inset
+
+所以：
+\begin_inset Formula 
+\[
+P_{2}=Q(x_{T}>lnK)=\frac{1}{2}+\frac{1}{\pi}\int_{0}^{\infty}Re[\frac{e^{-i\phi lnK}f(\phi)}{i\phi}]d\phi\tag{2.7}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+而对于
+\begin_inset Formula $P_{1}$
+\end_inset
+
+，根据
+\begin_inset Formula $E^{Q}[x_{T}]=E^{Q^{S}}[x_{T}\frac{dQ}{d\tilde{Q}}]$
+\end_inset
+
+，于是：
+\begin_inset Formula 
+\[
+q(x)=q^{S}(x)\frac{dQ}{d\tilde{Q}}=q^{S}(x)\frac{E^{Q}[e^{x_{T}}]}{e^{x}}\tag{2.8}
+\]
+
+\end_inset
+
+于是，
+\begin_inset Formula $q^{S}(x)$
+\end_inset
+
+的特征函数为：
+\begin_inset Formula 
+\[
+E^{Q^{S}}[e^{i\phi x_{T}}]=\int_{-\infty}^{\infty}e^{i\phi x}q^{S}(x)dx=\frac{1}{E^{Q}[e^{x_{T}}]}\int_{-\infty}^{\infty}e^{i\phi x}e^{x}q(x)dx\tag{2.9}
+\]
+
+\end_inset
+
+注意到，
+\begin_inset Formula $x_{T}$
+\end_inset
+
+的特征函数为
+\begin_inset Formula $f(\phi)=E^{Q}[e^{i\phi x_{T}}]$
+\end_inset
+
+，于是：
+\begin_inset Formula 
+\[
+E^{Q}[e^{x_{T}}]=f(-i)=S_{t}e^{r\tau}
+\]
+
+\end_inset
+
+此时，(2.9)可以写成：
+\begin_inset Formula 
+\begin{align*}
+E^{Q^{S}}[e^{i\phi x_{T}}] & =\frac{1}{E^{Q}[e^{x_{T}}]}E^{Q}[e^{i(\phi-i)x_{T}}]\\
+ & =\frac{f(\phi-i)}{f(-i)}\tag{2.10}
+\end{align*}
+
+\end_inset
+
+于是，利用此时的特征函数，在应用the inversion theorem，可以得到：
+\begin_inset Formula 
+\[
+P_{1}=Q^{S}(x_{T}>lnK)=\frac{1}{2}+\frac{1}{\pi}\int_{0}^{\infty}Re[\frac{e^{-i\phi lnK}f(\phi-i)}{i\phi f(-i)}]d\phi\tag{2.11}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+其他细节以及code看原教程 
+\end_layout
+
+\begin_layout Section
+Problems with the integrand
+\end_layout
+
 \begin_layout Chapter
 Appendix
 \end_layout
