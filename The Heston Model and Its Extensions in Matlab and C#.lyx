@@ -100,7 +100,7 @@ the Heston model and its extensions in matlab and C#(笔记由Harbes整理)
 \end_layout
 
 \begin_layout Author
-Y
+Fabrice Douglas Rouah
 \end_layout
 
 \begin_layout Standard
@@ -191,7 +191,7 @@ dv_{t} & =\kappa(\theta-v_{t})dt+\sigma\sqrt{v_{t}}dW_{t2}\tag{1.1}
 \begin_inset Formula $\mu,\kappa,\theta,\sigma,v_{0},\rho$
 \end_inset
 
-等参数会affect teh distribution of the terminal stock price in a manner that
+等参数会affect the distribution of the terminal stock price in a manner that
  is intuitive。同时注意到，Heston模型中，并没有直接对波动率
 \begin_inset Formula $\sqrt{v_{t}}$
 \end_inset
@@ -204,7 +204,7 @@ dv_{t} & =\kappa(\theta-v_{t})dt+\sigma\sqrt{v_{t}}dW_{t2}\tag{1.1}
 \end_layout
 
 \begin_layout Itemize
-The process for the variance arises from the Ornstein-Uhlenbeck rpocess
+The process for the variance arises from the Ornstein-Uhlenbeck process
  for the volatility 
 \begin_inset Formula $h_{t}=\sqrt{v_{t}}$
 \end_inset
@@ -454,7 +454,11 @@ E^{Q}[1_{(S_{T}>K)}]=Q(S_{T}>K)=P_{2}
 \begin_inset Formula $E^{Q}[S_{T}*1_{(S_{T}>K)}]$
 \end_inset
 
-需要转换测度，利用Radon-Nikodym推导式：
+需要转换测度，利用Radon-Nikodym推导式【
+\color red
+？
+\color inherit
+】：
 \begin_inset Formula 
 \[
 \frac{dQ}{dQ^{S}}=\frac{B_{T}/B_{t}}{S_{T}/S_{t}}=\frac{E^{Q}[e^{x_{T}}]}{e^{x_{T}}}\tag{1.14}
@@ -466,6 +470,14 @@ E^{Q}[1_{(S_{T}>K)}]=Q(S_{T}>K)=P_{2}
 \begin_inset Formula 
 \[
 B_{t}=exp(\int_{0}^{t}r_{u}du)=e^{rt}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+B_{T}/B_{t}=e^{r\tau}
 \]
 
 \end_inset
@@ -559,7 +571,7 @@ P_{j}=Pr(S_{T}>K)=\frac{1}{2}+\frac{1}{\pi}\int_{0}^{\infty}Re[\frac{e^{-i\phi l
 \end_layout
 
 \begin_layout Itemize
-在到期日，概率手terminal condition约束：
+在到期日，概率受terminal condition约束：
 \begin_inset Formula 
 \[
 P_{j}=1_{x_{T}>lnK}\tag{1.42}
@@ -1060,8 +1072,380 @@ conclusion
 Integration issues，parameter effects，and variance modeling
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
+following Bakshi and Madan(20000), we show that the Heston call price can
+ be expressed in terms of a single characteristic function.
+\end_layout
 
+\begin_layout Itemize
+the integrand for the call price can sometimes show high oscillation, can
+ dampen very slowly alongthe integration axis， leading inaccuracies in numerical
+ integratino—》the 'little trap' formulation of Albrecher et al.(2007) provides
+ an easy fix to many of these problem.
+\end_layout
+
+\begin_layout Itemize
+examine the effects of the Heston parameters on implied volatilities extracted
+ from option prices generated with the Heston model.
+\end_layout
+
+\begin_layout Section
+Remarks on the characteristic functions
+\end_layout
+
+\begin_layout Chapter
+Appendix
+\end_layout
+
+\begin_layout Section
+Ito's lemma
+\end_layout
+
+\begin_layout Itemize
+Assume 
+\begin_inset Formula $X_{t}$
+\end_inset
+
+ is a Itô drift-diffusion process that satisfies the stochastic differential
+ equation：
+\begin_inset Formula 
+\[
+dX_{t}=\mu_{t}dt+\sigma_{t}dB_{t}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $B_{t}$
+\end_inset
+
+ is a Wiener process.
+ If 
+\begin_inset Formula $f(t,x)$
+\end_inset
+
+ is a twice-differentiable scalar funciton, its expansion in a Taylor series
+ is：
+\begin_inset Formula 
+\[
+df=\frac{\partial f}{\partial t}dt+\frac{\partial f}{\partial x}dx+\frac{1}{2}\frac{\partial^{2}f}{\partial x^{2}}dx^{2}+...
+\]
+
+\end_inset
+
+Substituting 
+\begin_inset Formula $X_{t}$
+\end_inset
+
+for 
+\begin_inset Formula $x$
+\end_inset
+
+ and therefore 
+\begin_inset Formula $μ_{t} dt+σ_{t} dB_{t}$
+\end_inset
+
+ for 
+\begin_inset Formula $dx$
+\end_inset
+
+ gives:
+\begin_inset Formula 
+\[
+df=\frac{\partial f}{\partial t}dt+\frac{\partial f}{\partial X_{t}}(\mu_{t}dt+\sigma_{t}dB_{t})+\frac{1}{2}\frac{\partial^{2}f}{\partial X_{t}^{2}}(\mu_{t}^{2}dt^{2}+2\mu_{t}\sigma_{t}dtdB_{t}+\sigma_{t}^{2}dB_{t}^{2})+...
+\]
+
+\end_inset
+
+In the limit 
+\begin_inset Formula $dt→0$
+\end_inset
+
+, the terms 
+\begin_inset Formula $dt^{2}$
+\end_inset
+
+ and 
+\begin_inset Formula $dtdB_{t}$
+\end_inset
+
+ tend to zero faster than 
+\begin_inset Formula $dB^{2}$
+\end_inset
+
+, which is 
+\begin_inset Formula $O(dt)$
+\end_inset
+
+.
+ Setting the 
+\begin_inset Formula $dt^{2}$
+\end_inset
+
+ and 
+\begin_inset Formula $dtdB_{t}$
+\end_inset
+
+ terms to zero, substituting 
+\begin_inset Formula $dt$
+\end_inset
+
+ for
+\begin_inset Formula $dB^{2}$
+\end_inset
+
+ and collecting the 
+\begin_inset Formula $dt$
+\end_inset
+
+ and 
+\begin_inset Formula $dB$
+\end_inset
+
+ terms, we obtain:
+\begin_inset Formula 
+\[
+df=(\frac{\partial f}{\partial t}+\mu_{t}\frac{\partial f}{\partial X_{t}}+\frac{\sigma_{t}^{2}}{2}\frac{\partial^{2}f}{\partial X_{t}^{2}})dt+\sigma_{t}\frac{\partial f}{\partial X_{t}}dB_{t}
+\]
+
+\end_inset
+
+as required.
+ 
+\end_layout
+
+\begin_layout Itemize
+In higher dimensions, if 
+\begin_inset Formula $\mathbf{X}_{t}=(X_{t}^{1},X_{t}^{2},\ldots,X_{t}^{n})^{T}$
+\end_inset
+
+is a vector of Itô processes such that:
+\begin_inset Formula 
+\[
+d\mathbf{X}_{t}=\mathbf{\mu_{t}}dt+\mathbf{G_{t}}d\mathbf{B_{t}}
+\]
+
+\end_inset
+
+for a vector 
+\begin_inset Formula $\boldsymbol{\mu}_{t}$
+\end_inset
+
+ and matrix 
+\begin_inset Formula $\mathbf{G}_{t}$
+\end_inset
+
+, Itô's lemma then states that:
+\begin_inset Formula 
+\begin{align*}
+df(t,x) & =\frac{\partial f}{\partial t}dt+(\nabla_{X}f)^{T}d\mathbf{X_{t}}+\frac{1}{2}(d\mathbf{X_{t}})^{T}(H_{X}f)d\mathbf{X_{t}}\\
+ & =\{\frac{\partial f}{\partial t}+(\nabla_{X}f)^{T}\mathbf{\mu_{t}}+\frac{1}{2}Tr[\mathbf{G}_{t}^{T}(H_{X}f)\mathbf{G}_{t}]\}dt+(\nabla_{X}f)^{T}\mathbf{G}_{\mathbf{t}}d\mathbf{B}_{t}
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $\nabla_{X}f$
+\end_inset
+
+ is the gradient of 
+\begin_inset Formula $f$
+\end_inset
+
+ w.r.t 
+\begin_inset Formula $X_{t}$
+\end_inset
+
+, 
+\begin_inset Formula $H_{X}f$
+\end_inset
+
+ is the Hessian matrix of 
+\begin_inset Formula $f$
+\end_inset
+
+ w.r.t.
+ 
+\begin_inset Formula $X_{t}$
+\end_inset
+
+, and 
+\begin_inset Formula $Tr$
+\end_inset
+
+ is the trace operator.
+\end_layout
+
+\begin_layout Section
+Girsanov‘s theorem
+\end_layout
+
+\begin_layout Itemize
+主要用于转换测度
+\end_layout
+
+\begin_layout Itemize
+在测度
+\begin_inset Formula $Q$
+\end_inset
+
+下，考虑一个SDE：
+\begin_inset Formula 
+\[
+dx(t)=\mu(x(t),t)dt+\sigma(x(t),t)dz(t)
+\]
+
+\end_inset
+
+假设一个新的drift rate为
+\begin_inset Formula $\tilde{\mu}(x(t),t)$
+\end_inset
+
+，且
+\begin_inset Formula $\frac{\tilde{\mu}(x(t),t)-\mu(x(t),t)}{\sigma(x)}$
+\end_inset
+
+有界。定义一个新的测度
+\begin_inset Formula $\tilde{Q}$
+\end_inset
+
+，它满足(Radon-Nikodym derivative)：
+\begin_inset Formula 
+\[
+\frac{d\tilde{Q}}{dQ}=exp[-\frac{1}{2}\int_{0}^{t}(\frac{\tilde{\mu}(x,s)-\mu(x,s)}{\sigma(x,s)})^{2}ds+\int_{0}^{t}\frac{\tilde{\mu}(x,s)-\mu(x,s)}{\sigma(x,s)}dz(s)]
+\]
+
+\end_inset
+
+此时，我们说
+\begin_inset Formula $\tilde{Q}$
+\end_inset
+
+等价于
+\begin_inset Formula $Q$
+\end_inset
+
+，同时：
+\begin_inset Formula 
+\[
+d\tilde{z}(t)=-[\frac{\tilde{\mu}(x,t)-\mu(x,t)}{\sigma(x,t)}]dt+dz(t)
+\]
+
+\end_inset
+
+在
+\begin_inset Formula $\tilde{Q}$
+\end_inset
+
+下是布朗运动，且有
+\begin_inset Formula 
+\[
+dx(t)=\tilde{\mu}(x(t),t)dt+\sigma(x(t),t)d\tilde{z}(t)
+\]
+
+\end_inset
+
+正如上面所示，利用Radon-Nikodym derivative，可以改变SDE的drift系数。
+\end_layout
+
+\begin_layout Itemize
+Girsanov‘s theorem的应用——从真实世界转向风险中性世界，利用该定理，有
+\begin_inset Formula 
+\[
+\tilde{E}(X)=E[X\frac{d\tilde{Q}}{dQ}]=E[Xexp(-\frac{1}{2}(\frac{r-\mu}{\sigma})^{2}t+(\frac{r-\mu}{\sigma})z(t))]
+\]
+
+\end_inset
+
+由于期望中包含几何布朗运动，因此利用矩母函数(moment-generating function)：
+\begin_inset Formula 
+\[
+E[e^{sz(t)}]=e^{ts^{2}/2}
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\[
+E[e^{-(\frac{\mu-r}{\sigma})z(t)}]=e^{t(\frac{\mu-r}{\sigma})^{2}/2}
+\]
+
+\end_inset
+
+据此可以计算期望：
+\begin_inset Formula 
+\[
+E[Xe^{-\frac{1}{2}(\frac{\mu-r}{\sigma})^{2}t}e^{\frac{1}{2}(\frac{\mu-r}{\sigma})^{2}t}]=E[X]
+\]
+
+\end_inset
+
+the market price of risk 为
+\begin_inset Formula $\frac{\mu-r}{\sigma}=\lambda$
+\end_inset
+
+，于是利用the market price of risk 表示的Radon-Nikodym derivative为：
+\begin_inset Formula 
+\[
+\frac{d\tilde{Q}}{dQ}=exp[-\frac{1}{2}\lambda^{2}t+\lambda z(t)]
+\]
+
+\end_inset
+
+布朗运动
+\begin_inset Formula $\tilde{z}$
+\end_inset
+
+也可改写为
+\begin_inset Formula 
+\[
+\tilde{z}(t)=z(t)-\int_{0}^{t}\lambda(s)ds
+\]
+
+\end_inset
+
+如果the market price of risk随时间变化
+\begin_inset Formula 
+\[
+\lambda(t)=\frac{\mu(r(t),t)-r(t)}{\sigma(r(t),t)}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{d\tilde{Q}}{dQ}=exp[-\frac{1}{2}\int_{0}^{t}\lambda^{2}(s)ds+\int_{0}^{t}\lambda(s)dz(s)]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+在利率衍生品定价中的应用（Vasicek model）：the market price of risk为
+\begin_inset Formula $\lambda(t)=\lambda r(t)$
+\end_inset
+
+，于是Girsanov测度变换为
+\begin_inset Formula 
+\[
+\frac{d\tilde{Q}}{dQ}=exp[-\frac{1}{2}\int_{0}^{t}\lambda^{2}r(s)^{2}ds+\int_{0}^{t}\lambda r(s)d\tilde{z}(s)]
+\]
+
+\end_inset
+
+风险中性测度
+\begin_inset Formula $\tilde{Q}$
+\end_inset
+
+下便于计算期望，而目标测度
+\begin_inset Formula $Q$
+\end_inset
+
+下便于获得一系列参数估计值。
 \end_layout
 
 \end_body
