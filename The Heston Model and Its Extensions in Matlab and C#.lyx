@@ -1072,23 +1072,6 @@ conclusion
 Integration issues，parameter effects，and variance modeling
 \end_layout
 
-\begin_layout Itemize
-following Bakshi and Madan(20000), we show that the Heston call price can
- be expressed in terms of a single characteristic function.
-\end_layout
-
-\begin_layout Itemize
-the integrand for the call price can sometimes show high oscillation, can
- dampen very slowly alongthe integration axis， leading inaccuracies in numerical
- integratino—》the 'little trap' formulation of Albrecher et al.(2007) provides
- an easy fix to many of these problem.
-\end_layout
-
-\begin_layout Itemize
-examine the effects of the Heston parameters on implied volatilities extracted
- from option prices generated with the Heston model.
-\end_layout
-
 \begin_layout Section
 Remarks on the characteristic functions
 \end_layout
@@ -1337,6 +1320,119 @@ P_{1}=Q^{S}(x_{T}>lnK)=\frac{1}{2}+\frac{1}{\pi}\int_{0}^{\infty}Re[\frac{e^{-i\
 Problems with the integrand
 \end_layout
 
+\begin_layout Itemize
+从第一章可知，计算
+\begin_inset Formula $P_{j}$
+\end_inset
+
+时需要积分，而被积函数为：
+\begin_inset Formula 
+\[
+F_{j}(\phi)=Re[\frac{e^{-i\phi lnK}f_{j}(\phi;x,v)}{i\phi}]\tag{2.13}
+\]
+
+\end_inset
+
+然而，此处的被积函数在数值计算过程中存在一些较为严重的问题。
+\end_layout
+
+\begin_layout Itemize
+问题一：被积函数在
+\begin_inset Formula $\phi=0$
+\end_inset
+
+处没有定义。然而，积分区间是
+\begin_inset Formula $[0,\infty)$
+\end_inset
+
+，这意味着，在数值积分过程中，需要选取一个与0非常接近的点作为起始点，但是如果在起点处，被积函数较为陡峭的话，那么，起点的选择对于积分结果影响较大。
+\end_layout
+
+\begin_layout Itemize
+问题二：被积函数可能在积分区间上不连续。一个例子。—》Albrecher et al.(2007)对于被积函数的修正
+\end_layout
+
+\begin_layout Itemize
+问题三：被积函数振荡非常严重。一个例子。(high oscillation of the integrand is usually associated
+ with short-maturity options)。
+\end_layout
+
+\begin_layout Section
+the little trap
+\end_layout
+
+\begin_layout Itemize
+Albrecher et al.(2007)发现the Heston characteristic function其实有两种不同的形式，第一种就是Heston的
+版本，而第二个具有更好的积分性质，并且两种是等价的。
+\end_layout
+
+\begin_layout Itemize
+推导：首先对
+\begin_inset Formula $D_{j}$
+\end_inset
+
+的解的分子分母同乘以
+\begin_inset Formula $e^{-d_{j}\tau}$
+\end_inset
+
+，于是：
+\begin_inset Formula 
+\begin{align*}
+D_{j} & =\frac{b_{j}-\rho\sigma i\phi+d_{j}}{\sigma^{2}}(\frac{1-e^{-d_{j}\tau}}{g_{j}-e^{-d_{j}\tau}})\\
+ & =\frac{b_{j}-\rho\sigma i\phi+d_{j}}{g_{j}\sigma^{2}}(\frac{1-e^{-d_{j}\tau}}{1-c_{j}e^{-d_{j}\tau}})\tag{2.14}
+\end{align*}
+
+\end_inset
+
+其中，
+\begin_inset Formula 
+\[
+c_{j}=\frac{1}{g_{j}}=\frac{b_{j}-\rho\sigma i\phi-d_{j}}{b_{j}-\rho\sigma i\phi+d_{j}}\tag{2.15}
+\]
+
+\end_inset
+
+而
+\begin_inset Formula $C_{j}$
+\end_inset
+
+中的对数部分可以写成：
+\begin_inset Formula 
+\begin{align*}
+ln(\frac{1-g_{j}e^{d_{j}\tau}}{1-g_{j}}) & =ln[e^{d_{j}\tau}(\frac{e^{-d_{j}\tau}-g_{j}}{1-g_{j}})]\\
+ & =d_{j}\tau+ln(\frac{1-c_{j}e^{-d_{j}\tau}}{1-c_{j}})\tag{2.16}
+\end{align*}
+
+\end_inset
+
+于是，
+\begin_inset Formula $C_{j}$
+\end_inset
+
+可以等价地写成：
+\begin_inset Formula 
+\[
+C_{j}(\tau,\phi)=ri\phi\tau+\frac{a}{\sigma^{2}}[(b_{j}-\rho\sigma i\phi-d_{j})\tau-2ln(\frac{1-c_{j}e^{-d_{j}\tau}}{1-c_{j}})\tag{2.17}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+code与图例
+\end_layout
+
+\begin_layout Itemize
+另外，原始Heston方程不连续的问题也可以通过Kahl and Jackel(2005)的rotation algorithm来解决。【也可见Zhu(2010
+)的书】
+\end_layout
+
+\begin_layout Section
+effect of the Heston parameters
+\end_layout
+
 \begin_layout Chapter
 Appendix
 \end_layout
@@ -1521,7 +1617,7 @@ where
 \end_layout
 
 \begin_layout Section
-Girsanov‘s theorem
+Girsanov's theorem
 \end_layout
 
 \begin_layout Itemize
