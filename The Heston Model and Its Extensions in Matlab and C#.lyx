@@ -702,7 +702,11 @@ satisfies teh PDE
 
 \end_inset
 
-或者，等价的：
+其中，
+\begin_inset Formula $u_{1}=\frac{1}{2},u_{2}=-\frac{1}{2},a=\kappa\theta,b_{1}=\kappa+\lambda-\rho\sigma,b_{2}=\kappa+\lambda$
+\end_inset
+
+。或者，等价的：
 \begin_inset Formula 
 \[
 v(-\frac{\partial D_{j}}{\partial\tau}+\rho\sigma i\phi D_{j}-\frac{1}{2}\phi^{2}+\frac{1}{2}\sigma^{2}D_{j}^{2}+u_{j}i\phi-b_{j}D_{j})-\frac{\partial C_{j}}{\partial\tau}+ri\phi+aD_{j}=0\tag{1.46}
