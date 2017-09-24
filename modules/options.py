@@ -22,6 +22,7 @@ from numba import jit
 import math
 from math import log,sqrt,exp
 from scipy.optimize import fsolve
+import matplotlib.pyplot as plt
 norm=scis.norm
 # TODO 尝试利用broadcasting将所有methods向量化；或者丢弃class，全都写成函数的形式，将参数以字典形式储存
 class euro_option:
@@ -345,7 +346,7 @@ class ame_option:
 
 #HestonPrice('put',5.0,.05,0.0,-.8,.5,.5,100.0,100.0,.03,.02,.05,1,0.00001,50,0.001)
 class HestonOptions:
-    def __init__(self,St=100.0,K=100.0,t=0.0,T=1.0,r=.05,q=.02,otype='call',kappa=5.0,theta=.05,lam=0.0,rho=-.8,sigma=.5,v0=.05):
+    def __init__(self,St=100.0,K=100.0,tau=1.0,r=.05,q=.02,otype='call',kappa=5.0,theta=.05,lam=0.0,rho=-.8,sigma=.5,v0=.05):
         '''         
             % Heston (1993) price of a European option.
             % Uses the original formulation by Heston
@@ -372,7 +373,7 @@ class HestonOptions:
         '''
         self.St=St
         self.K=K
-        self.tau=T-t
+        self.tau=tau
         self.r=r
         self.q=q
         self.otype=otype
@@ -383,7 +384,7 @@ class HestonOptions:
         self.sigma=sigma
         self.v0=v0
 
-    #@jit
+    @jit
     def HestonIntegrand_Trap(self,phi):
         '''
         phi = integration variable
@@ -399,7 +400,7 @@ class HestonOptions:
         C = (self.r - self.q) * 1.0j * phi * self.tau + a / self.sigma / self.sigma * ((b - self.rho * self.sigma * 1.0j * phi - d) * self.tau - 2 * np.log(G))
         f = np.exp(C + D * self.v0 + 1.0j * phi * log(self.St))
         return (np.exp(-1.0j * phi * log(self.K)) * f / 1.0j / phi).real
-    #@jit
+    @jit
     def HestonIntegrand_Orig(self,phi):
         a = self.kappa * self.theta
         u = np.array([0.5, -.5])
@@ -408,10 +409,10 @@ class HestonOptions:
         g = (b - self.rho * self.sigma * 1.0j * phi + d) / (b - self.rho * self.sigma * 1.0j * phi - d)
         G = (1 - g * np.exp(d * self.tau)) / (1 - g)
         C = (self.r - self.q) * 1.0j * phi * self.tau + a / self.sigma / self.sigma * ((b - self.rho * self.sigma * 1.0j * phi + d) * self.tau - 2 * np.log(G))
-        D = (b - self.rho * self.sigma * 1.0j * phi + d) / self.sigma / self.sigma * (1 - np.exp(-d * self.tau)) / (1 - g * np.exp(-d * self.tau))
+        D = (b - self.rho * self.sigma * 1.0j * phi + d) / self.sigma / self.sigma * (1 - np.exp(d * self.tau)) / (1 - g * np.exp(d * self.tau))
         f = np.exp(C + D * self.v0 + 1.0j * phi * log(self.St))
         return (np.exp(-1.0j * phi * log(self.K)) * f / 1.0j / phi).real
-    #@jit
+    @jit
     def HestonPrice(self,Lphi=0.0001,Uphi=50,dphi=0.1,Trap=1):
         '''
             % Heston (1993) price of a European option.
@@ -455,7 +456,7 @@ class HestonOptions:
         else:
             return self.K * np.exp(-self.r * self.tau) * (1.0 - P2) - self.St * np.exp(-self.q * self.tau) * (1.0 - P1)
 
-    #@jit
+    @jit
     def HestonInteConsol_Trap(self,phi):
         '''
         phi = integration variable
@@ -475,7 +476,7 @@ class HestonOptions:
         C = (self.r - self.q) * 1.0j * phi * self.tau + a / self.sigma / self.sigma * ((b - self.rho * self.sigma * 1.0j * phi - d) * self.tau - 2 * np.log(G))
         f = np.exp(C + D * self.v0 + 1.0j * phi * log(self.St))
         return (np.exp(-1.0j * phi * log(self.K)) / 1.0j / phi*(self.St*exp(-self.q*self.tau)*f[0]-self.K*exp(-self.r*self.tau)*f[1])).real
-    #@jit
+    @jit
     def HestonInteConsol_Orig(self,phi):
         a = self.kappa * self.theta
         u = np.array([0.5, -.5])
@@ -487,7 +488,7 @@ class HestonOptions:
         D = (b - self.rho * self.sigma * 1.0j * phi + d) / self.sigma / self.sigma * (1 - np.exp(d * self.tau)) / (1 - g * np.exp(d * self.tau))
         f = np.exp(C + D * self.v0 + 1.0j * phi * log(self.St))
         return (np.exp(-1.0j * phi * log(self.K)) / 1.0j / phi*(self.St*exp(-self.q*self.tau)*f[0]-self.K*exp(-self.r*self.tau)*f[1])).real
-   #@jit
+    @jit
     def HestonPriceConsol(self,Lphi=0.0001,Uphi=50,dphi=0.1,Trap=1):
         '''
             % Heston (1993) price of a European option.
@@ -526,6 +527,46 @@ class HestonOptions:
             return self.St * np.exp(-self.q * self.tau) *0.5 - self.K * np.exp(-self.r * self.tau) * 0.5 + I/math.pi
         else:
             return self.K * np.exp(-self.r * self.tau) *0.5 - self.St * np.exp(-self.q * self.tau) *0.5+I/math.pi
+
+    def ExampleIntegrandDiscontinuity():
+        phi=np.arange(0.00001,10.01,0.05)
+        n=len(phi)
+        A=np.empty((n,2))
+        for i in range(n):
+            A[i,0]=HestonOptions(K=75.0,St=100.0,r=0.0,q=0.0,kappa=10.0,theta=.05,v0=.05,rho=-0.9,lam=0.0,sigma=0.75,tau=3.0).HestonIntegrand_Orig(phi[i])[0]
+            A[i,1]=HestonOptions(K=75.0,St=100.0,r=0.0,q=0.0,kappa=10.0,theta=.05,v0=.05,rho=-0.9,lam=0.0,sigma=0.09,tau=1.0).HestonIntegrand_Orig(phi[i])[0]
+        plt.plot(phi,A[:,0],label='sigma=0.75,tau=3.0')
+        plt.plot(phi,A[:,1],label='sigma=0.09,tau=1.0')
+        plt.legend()
+        plt.show()
+    def ExampleIntegrandOscillation():
+        phi = np.arange(0.00001, 100.01, 0.5)
+        n = len(phi)
+        A = np.empty((n, 2))
+        for i in range(n):
+            A[i, 0] = \
+            HestonOptions(K=10.0, St=7.0, r=0.0, q=0.0, kappa=10.0, theta=.01, v0=.01, rho=-0.9, lam=0.0, sigma=0.175,
+                          tau=1.0/52.0).HestonIntegrand_Orig(phi[i])[0]
+            A[i, 1] = \
+            HestonOptions(K=10.0, St=10.0, r=0.0, q=0.0, kappa=10.0, theta=.07, v0=.07, rho=-0.9, lam=0.0, sigma=0.09,
+                          tau=1.0).HestonIntegrand_Orig(phi[i])[0]
+        plt.plot(phi, A[:, 0], label='sigma=0.175,tau=1/52,v0=0.01,theta=0.01,St=7')
+        plt.plot(phi, A[:, 1], label='sigma=0.09,tau=1.0,v0=0.07,theta=0.07,St=10')
+        plt.legend()
+        plt.show()
+    def ExampleAlbrecher_vs_Heston(Pnum=1):
+        HOpt=HestonOptions(St=100.0,K=100.0,tau=5.0,r=0.035,q=0.0,kappa=1.5768,sigma=0.5751,rho=-0.5711,theta=0.0398,v0=0.0175,lam=0.0)
+        phi=np.arange(0.0001,10.01,0.1)
+        n=len(phi)
+        A=np.empty((n,2))
+        for i in range(n):
+            A[i,0]=HOpt.HestonIntegrand_Orig(phi[i])[Pnum-1]
+            A[i,1]=HOpt.HestonIntegrand_Trap(phi[i])[Pnum-1]
+        plt.plot(phi,A[:,0],label='Heston Integrand')
+        plt.plot(phi,A[:,1],label='Albrecher Integrand')
+        plt.legend()
+        plt.show()
+
 
 def udp_binomial(M,mu,dt,sigma,method='CRR'):
     if method =='CRR':
