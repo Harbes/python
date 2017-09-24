@@ -484,7 +484,7 @@ class HestonOptions:
         g = (b - self.rho * self.sigma * 1.0j * phi + d) / (b - self.rho * self.sigma * 1.0j * phi - d)
         G = (1 - g * np.exp(d * self.tau)) / (1 - g)
         C = (self.r - self.q) * 1.0j * phi * self.tau + a / self.sigma / self.sigma * ((b - self.rho * self.sigma * 1.0j * phi + d) * self.tau - 2 * np.log(G))
-        D = (b - self.rho * self.sigma * 1.0j * phi + d) / self.sigma / self.sigma * (1 - np.exp(-d * self.tau)) / (1 - g * np.exp(-d * self.tau))
+        D = (b - self.rho * self.sigma * 1.0j * phi + d) / self.sigma / self.sigma * (1 - np.exp(d * self.tau)) / (1 - g * np.exp(d * self.tau))
         f = np.exp(C + D * self.v0 + 1.0j * phi * log(self.St))
         return (np.exp(-1.0j * phi * log(self.K)) / 1.0j / phi*(self.St*exp(-self.q*self.tau)*f[0]-self.K*exp(-self.r*self.tau)*f[1])).real
    #@jit
@@ -937,7 +937,7 @@ def HestonInte(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0,Trap):
     else:
         G=(1-g*np.exp(d*tau))/(1-g)
         C=(r-q)*1.0j*phi*tau+a/sigma/sigma*((b-rho*sigma*1.0j*phi+d)*tau-2*np.log(G))
-        D=(b-rho*sigma*1.0j*phi+d)/sigma/sigma*(1-np.exp(-d*tau))/(1-g*np.exp(-d*tau))
+        D=(b-rho*sigma*1.0j*phi+d)/sigma/sigma*(1-np.exp(d*tau))/(1-g*np.exp(d*tau))
     f=np.exp(C+D*v0+1.0j*phi*x)
     return (np.exp(-1.0j*phi*np.log(K))*f/1.0j/phi).real
 
