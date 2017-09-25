@@ -1437,6 +1437,44 @@ code与图例
 effect of the Heston parameters
 \end_layout
 
+\begin_layout Subsection
+Heston terminal spot price 
+\end_layout
+
+\begin_layout Itemize
+under the Heston model，the distribution of the log stock price at maturity
+ 
+\begin_inset Formula $lnS_{T}$
+\end_inset
+
+ is able to exhibit skewness and excess kurtosis，depending on the parameter
+ settings。
+\end_layout
+
+\begin_layout Subsection
+Effect of correlation and volatility of variance 
+\end_layout
+
+\begin_layout Itemize
+参数
+\begin_inset Formula $\rho$
+\end_inset
+
+ 控制者
+\begin_inset Formula $lnS_{T}$
+\end_inset
+
+密度函数的偏度（skewness）。当
+\begin_inset Formula $\rho>0$
+\end_inset
+
+，相应的概率密度函数正偏；若
+\begin_inset Formula $\rho<0$
+\end_inset
+
+，相应的概率密度负偏。
+\end_layout
+
 \begin_layout Chapter
 Appendix
 \end_layout
