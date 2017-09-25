@@ -1488,7 +1488,15 @@ Effect of correlation and volatility of variance
 \begin_inset Formula $\sigma$
 \end_inset
 
-越大，方差过程越分散，回报的分布就会更加“尖峰厚尾”【？？？】
+越大，方差过程越分散，
+\begin_inset Formula $S_{T}$
+\end_inset
+
+的范围越广，
+\begin_inset Formula $S_{T}$
+\end_inset
+
+出现在两端的概率上升，回报的分布就会更加“尖峰厚尾”。
 \end_layout
 
 \begin_layout Itemize
@@ -1501,6 +1509,77 @@ Effect of correlation and volatility of variance
 
 \begin_layout Subsection
 Comparison with Black-Scholes prices
+\end_layout
+
+\begin_layout Itemize
+当
+\begin_inset Formula $\rho>0$
+\end_inset
+
+时，
+\begin_inset Formula $lnS_{T}$
+\end_inset
+
+是正偏态的，因此更多的概率(权重)集中于右尾，此时，对于一个deep OTM calls而言，执行价
+\begin_inset Formula $K$
+\end_inset
+
+在现价的右侧，
+\begin_inset Formula $Pr^{Heston}(S_{T}>K)>Pr^{BS}(S_{T}>K)$
+\end_inset
+
+，因此，Heston模型给出的价格也应该高于BS模型给出的价格；而对于deep ITM calls，执行价在现价的左侧，于是
+\begin_inset Formula $Pr^{Heston}(S_{T}>K)>Pr^{BS}(S_{T}>K)$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\sigma$
+\end_inset
+
+主要是影响峰度(kurtosis)：
+\begin_inset Formula $\sigma$
+\end_inset
+
+越大，kurtosis越大。因为方差波动率越大，
+\begin_inset Formula $S_{T}$
+\end_inset
+
+的范围越广，于是，
+\begin_inset Formula $S_{T}$
+\end_inset
+
+出现在两端的概率上升，因此，在ITM和OTM时，一般Heston模型给出的价格更高，而在ATM时，BS模型价格更高。
+\end_layout
+
+\begin_layout Itemize
+注意，在进行比较时，需要让BS的volatility匹配Heston模型的价格，一般是将
+\begin_inset Formula $ln(S_{T}/S_{0})$
+\end_inset
+
+的标准差作为BS的volatility
+\begin_inset Formula $\sigma_{BS}$
+\end_inset
+
+，这可以通过特征方程导数来得到：
+\begin_inset Formula 
+\[
+E[x_{T}^{n}]=i^{-n}[\frac{d^{n}f_{2}(\phi)}{d\phi^{n}}]_{\phi=0}\tag{2.18}
+\]
+
+\end_inset
+
+【最终计算结果似乎还要考虑
+\begin_inset Formula $\rho$
+\end_inset
+
+，具体？？？】
+\end_layout
+
+\begin_layout Subsection
+Heston implied volatility
 \end_layout
 
 \begin_layout Chapter

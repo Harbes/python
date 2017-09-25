@@ -611,7 +611,7 @@ class HestonOptions:
         plt.plot(phi,A[:,1],label='Albrecher Integrand')
         plt.legend()
         plt.show()
-    def ExampleEffectOfCorrelation(export=False):
+    def ExampleEffect_of_Correlation_on_Terminal_Price_Density(export=False):
         dphi=0.05
         phi=np.arange(0.00001,100.01,dphi)
         x=np.arange(4.3,4.9,0.005)
@@ -633,7 +633,7 @@ class HestonOptions:
         plt.show()
         if export:
             return x,f1,f2,f3
-    def ExampleEffectOfVolatilityOfVariance(export=False):
+    def ExampleEffect_of_Vol_of_Variance_on_Terminal_Price_Density(export=False):
         dphi=0.05
         phi=np.arange(0.00001,100.01,dphi)
         x=np.arange(4.3,4.9,0.005)
@@ -655,7 +655,18 @@ class HestonOptions:
         plt.show()
         if export:
             return x,f1,f2,f3
-    def ExampleComparisonWithBSM():
+    def ExampleEffect_of_Correlation_on_Heston_and_BlackScholes_Prices():
+        '''
+        一个值得深入思考的现象：
+import numpy as np
+from modules import HestonOptions as Hoptions
+import matplotlib.pyplot as plt
+x,f1,f2,f3=Hoptions.ExampleEffectOfCorrelation(True)
+
+plt.plot(x,np.cumsum(f3-f2).cumsum(),label='survive diff : positive-normal')
+plt.legend()
+plt.show()
+        '''
         S=np.arange(70,141,0.05)
         H_paras={'kappa':2.0,'theta':0.01,'v0':0.01,'sigma':0.1,'r':0.0,'q':0.0,'tau':0.5}
         volneg=0.071037274323352*sqrt(2)
@@ -671,7 +682,20 @@ class HestonOptions:
         plt.plot(S,Hcallneg-BScallneg,label='rho=-0.5')
         plt.legend()
         plt.show()
-
+    def ExampleEffect_of_Sigma_on_Heston_and_BlackScholes_Prices():
+        S = np.arange(70, 141, 0.05)
+        H_paras = {'kappa': 2.0, 'theta': 0.01, 'v0': 0.01, 'rho':0, 'r': 0.0, 'q': 0.0, 'tau': 0.5}
+        volzero = 0.070712338973920 * sqrt(2)
+        BScall = euro_option(S, r=0.0, sigma=volzero, T=0.5).value_BSM()
+        Hcallhigh = np.empty_like(S)
+        Hcalllow= np.empty_like(S)
+        for i in range(len(S)):
+            Hcallhigh[i] = HestonOptions(St=S[i], sigma=0.2, **H_paras).HestonPriceConsol(Uphi=90.001, dphi=0.1)
+            Hcalllow[i] = HestonOptions(St=S[i], sigma=0.1, **H_paras).HestonPriceConsol(Uphi=90.001, dphi=0.1)
+        plt.plot(S, Hcallhigh - BScall, label='sigma=0.2')
+        plt.plot(S, Hcalllow - BScall, label='sigma=0.1')
+        plt.legend()
+        plt.show()
 
 
 def udp_binomial(M,mu,dt,sigma,method='CRR'):
