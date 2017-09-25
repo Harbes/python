@@ -1460,19 +1460,47 @@ Effect of correlation and volatility of variance
 \begin_inset Formula $\rho$
 \end_inset
 
- 控制者
+ 控制着
 \begin_inset Formula $lnS_{T}$
 \end_inset
 
-密度函数的偏度（skewness）。当
+密度函数的偏度（skewness）：当
 \begin_inset Formula $\rho>0$
 \end_inset
 
-，相应的概率密度函数正偏；若
+，相应的概率密度函数正偏态；若
 \begin_inset Formula $\rho<0$
 \end_inset
 
-，相应的概率密度负偏。
+，相应的概率密度负偏态。
+\end_layout
+
+\begin_layout Itemize
+参数
+\begin_inset Formula $\sigma$
+\end_inset
+
+控制着
+\begin_inset Formula $lnS_{T}$
+\end_inset
+
+分布的峰度（kurtosis）：
+\begin_inset Formula $\sigma$
+\end_inset
+
+越大，方差过程越分散，回报的分布就会更加“尖峰厚尾”【？？？】
+\end_layout
+
+\begin_layout Itemize
+通过特征方程，利用(2.5)可以得到
+\begin_inset Formula $lnS_{T}$
+\end_inset
+
+的概率密度函数。
+\end_layout
+
+\begin_layout Subsection
+Comparison with Black-Scholes prices
 \end_layout
 
 \begin_layout Chapter

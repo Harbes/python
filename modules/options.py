@@ -20,7 +20,7 @@ import scipy.stats as scis
 from scipy.special import comb
 from numba import jit
 import math
-from math import log,sqrt,exp
+from math import log,sqrt,exp,pi
 from scipy.optimize import fsolve
 import matplotlib.pyplot as plt
 norm=scis.norm
@@ -384,14 +384,13 @@ class HestonOptions:
         self.sigma=sigma
         self.v0=v0
 
-    @jit
-    def HestonIntegrand_Trap(self,phi):
+    def HestonIntegrand_Trap(self,phi,Pnum=0):
         '''
         phi = integration variable
         '''
         a = self.kappa * self.theta
-        u = np.array([0.5, -.5])
-        b = np.array([self.kappa + self.lam - self.rho * self.sigma, self.kappa + self.lam])
+        u = np.array([0.5, -.5])[Pnum]
+        b = np.array([self.kappa + self.lam - self.rho * self.sigma, self.kappa + self.lam])[Pnum]
         d = np.sqrt((self.rho * self.sigma * 1.0j * phi - b) ** 2 - self.sigma * self.sigma * (2 * u * 1.0j * phi - phi * phi))
         g = (b - self.rho * self.sigma * 1.0j * phi + d) / (b - self.rho * self.sigma * 1.0j * phi - d)
         c = 1.0 / g
@@ -400,11 +399,10 @@ class HestonOptions:
         C = (self.r - self.q) * 1.0j * phi * self.tau + a / self.sigma / self.sigma * ((b - self.rho * self.sigma * 1.0j * phi - d) * self.tau - 2 * np.log(G))
         f = np.exp(C + D * self.v0 + 1.0j * phi * log(self.St))
         return (np.exp(-1.0j * phi * log(self.K)) * f / 1.0j / phi).real
-    @jit
-    def HestonIntegrand_Orig(self,phi):
+    def HestonIntegrand_Orig(self,phi,Pnum=0):
         a = self.kappa * self.theta
-        u = np.array([0.5, -.5])
-        b = np.array([self.kappa + self.lam - self.rho * self.sigma, self.kappa + self.lam])
+        u = np.array([0.5, -.5])[Pnum]
+        b = np.array([self.kappa + self.lam - self.rho * self.sigma, self.kappa + self.lam])[Pnum]
         d = np.sqrt((self.rho * self.sigma * 1.0j * phi - b) ** 2 - self.sigma * self.sigma * (2 * u * 1.0j * phi - phi * phi))
         g = (b - self.rho * self.sigma * 1.0j * phi + d) / (b - self.rho * self.sigma * 1.0j * phi - d)
         G = (1 - g * np.exp(d * self.tau)) / (1 - g)
@@ -412,8 +410,22 @@ class HestonOptions:
         D = (b - self.rho * self.sigma * 1.0j * phi + d) / self.sigma / self.sigma * (1 - np.exp(d * self.tau)) / (1 - g * np.exp(d * self.tau))
         f = np.exp(C + D * self.v0 + 1.0j * phi * log(self.St))
         return (np.exp(-1.0j * phi * log(self.K)) * f / 1.0j / phi).real
+    def HestonCharacteristicFunction(self, phi):
+        a = self.kappa * self.theta
+        u = -0.5
+        b = self.kappa + self.lam
+        d = np.sqrt(
+            (self.rho * self.sigma * 1.0j * phi - b) ** 2 - self.sigma * self.sigma * (2 * u * 1.0j * phi - phi * phi))
+        g = (b - self.rho * self.sigma * 1.0j * phi + d) / (b - self.rho * self.sigma * 1.0j * phi - d)
+        G = (1 - g * np.exp(d * self.tau)) / (1 - g)
+        C = (self.r - self.q) * 1.0j * phi * self.tau + a / self.sigma / self.sigma * (
+        (b - self.rho * self.sigma * 1.0j * phi + d) * self.tau - 2 * np.log(G))
+        D = (b - self.rho * self.sigma * 1.0j * phi + d) / self.sigma / self.sigma * (1 - np.exp(d * self.tau)) / (
+        1 - g * np.exp(d * self.tau))
+        return np.exp(C + D * self.v0 + 1.0j * phi * log(self.St))
+
     @jit
-    def HestonPrice(self,Lphi=0.0001,Uphi=50,dphi=0.1,Trap=1):
+    def HestonPrice(self,Lphi=0.0001,Uphi=50.0,dphi=0.1,Trap=1):
         '''
             % Heston (1993) price of a European option.
             % Uses the original formulation by Heston
@@ -445,8 +457,8 @@ class HestonOptions:
             Heston_Inte=self.HestonIntegrand_Trap
         else:
             Heston_Inte=self.HestonIntegrand_Orig
-        for i in range(N):
-            int1[i], int2[i] = Heston_Inte(phi[i])
+        int1 = Heston_Inte(phi, Pnum=0)
+        int2 = Heston_Inte(phi, Pnum=1)
         I1 = np.trapz(int1) * dphi
         I2 = np.trapz(int2) * dphi
         P1 = 0.5 + 1.0 / np.pi * I1
@@ -455,8 +467,22 @@ class HestonOptions:
             return self.St * np.exp(-self.q * self.tau) * P1 - self.K * np.exp(-self.r * self.tau) * P2
         else:
             return self.K * np.exp(-self.r * self.tau) * (1.0 - P2) - self.St * np.exp(-self.q * self.tau) * (1.0 - P1)
+    def HestonPriceTrapezoidal(self,Lphi=0.00001,Uphi=50.0,dphi=0.1):
+        phi=np.arange(Lphi,Uphi,dphi)
+        n=len(phi)
+        h=(phi[n-1]-phi[0])/n
+        weights=np.ones(n);weights[0]=0.5;weights[n-1]=0.5
+        int1=h*weights*self.HestonIntegrand_Trap(phi,Pnum=0)
+        int2=h*weights*self.HestonIntegrand_Trap(phi,Pnum=1)
+        I1=np.sum(int1)
+        I2=np.sum(int2)
+        P1=0.5+1.0/pi*I1
+        P2=0.5+1.0/pi*I2
+        if self.otype == 'call':
+            return self.St * np.exp(-self.q * self.tau) * P1 - self.K * np.exp(-self.r * self.tau) * P2
+        else:
+            return self.K * np.exp(-self.r * self.tau) * (1.0 - P2) - self.St * np.exp(-self.q * self.tau) * (1.0 - P1)
 
-    @jit
     def HestonInteConsol_Trap(self,phi):
         '''
         phi = integration variable
@@ -466,30 +492,51 @@ class HestonOptions:
 
         '''
         a = self.kappa * self.theta
-        u = np.array([0.5, -.5])
-        b = np.array([self.kappa + self.lam - self.rho * self.sigma, self.kappa + self.lam])
+        u = 0.5
+        b = self.kappa + self.lam - self.rho * self.sigma
         d = np.sqrt((self.rho * self.sigma * 1.0j * phi - b) ** 2 - self.sigma * self.sigma * (2 * u * 1.0j * phi - phi * phi))
         g = (b - self.rho * self.sigma * 1.0j * phi + d) / (b - self.rho * self.sigma * 1.0j * phi - d)
         c = 1.0 / g
         D = (b - self.rho * self.sigma * 1.0j * phi - d) / self.sigma / self.sigma * (1 - np.exp(-d * self.tau)) / (1 - c * np.exp(-d * self.tau))
         G = (1 - c * np.exp(-d * self.tau)) / (1 - c)
         C = (self.r - self.q) * 1.0j * phi * self.tau + a / self.sigma / self.sigma * ((b - self.rho * self.sigma * 1.0j * phi - d) * self.tau - 2 * np.log(G))
-        f = np.exp(C + D * self.v0 + 1.0j * phi * log(self.St))
-        return (np.exp(-1.0j * phi * log(self.K)) / 1.0j / phi*(self.St*exp(-self.q*self.tau)*f[0]-self.K*exp(-self.r*self.tau)*f[1])).real
-    @jit
+        f1 = np.exp(C + D * self.v0 + 1.0j * phi * log(self.St))
+        u =  -.5
+        b =  self.kappa + self.lam
+        d = np.sqrt(
+            (self.rho * self.sigma * 1.0j * phi - b) ** 2 - self.sigma * self.sigma * (2 * u * 1.0j * phi - phi * phi))
+        g = (b - self.rho * self.sigma * 1.0j * phi + d) / (b - self.rho * self.sigma * 1.0j * phi - d)
+        c = 1.0 / g
+        D = (b - self.rho * self.sigma * 1.0j * phi - d) / self.sigma / self.sigma * (1 - np.exp(-d * self.tau)) / (
+        1 - c * np.exp(-d * self.tau))
+        G = (1 - c * np.exp(-d * self.tau)) / (1 - c)
+        C = (self.r - self.q) * 1.0j * phi * self.tau + a / self.sigma / self.sigma * (
+        (b - self.rho * self.sigma * 1.0j * phi - d) * self.tau - 2 * np.log(G))
+        f2 = np.exp(C + D * self.v0 + 1.0j * phi * log(self.St))
+        return (np.exp(-1.0j * phi * log(self.K)) / 1.0j / phi*(self.St*exp(-self.q*self.tau)*f1-self.K*exp(-self.r*self.tau)*f2)).real
     def HestonInteConsol_Orig(self,phi):
         a = self.kappa * self.theta
-        u = np.array([0.5, -.5])
-        b = np.array([self.kappa + self.lam - self.rho * self.sigma, self.kappa + self.lam])
+        u = 0.5
+        b = self.kappa + self.lam - self.rho * self.sigma, self.kappa + self.lam
         d = np.sqrt((self.rho * self.sigma * 1.0j * phi - b) ** 2 - self.sigma * self.sigma * (2 * u * 1.0j * phi - phi * phi))
         g = (b - self.rho * self.sigma * 1.0j * phi + d) / (b - self.rho * self.sigma * 1.0j * phi - d)
         G = (1 - g * np.exp(d * self.tau)) / (1 - g)
         C = (self.r - self.q) * 1.0j * phi * self.tau + a / self.sigma / self.sigma * ((b - self.rho * self.sigma * 1.0j * phi + d) * self.tau - 2 * np.log(G))
         D = (b - self.rho * self.sigma * 1.0j * phi + d) / self.sigma / self.sigma * (1 - np.exp(d * self.tau)) / (1 - g * np.exp(d * self.tau))
-        f = np.exp(C + D * self.v0 + 1.0j * phi * log(self.St))
-        return (np.exp(-1.0j * phi * log(self.K)) / 1.0j / phi*(self.St*exp(-self.q*self.tau)*f[0]-self.K*exp(-self.r*self.tau)*f[1])).real
-    @jit
-    def HestonPriceConsol(self,Lphi=0.0001,Uphi=50,dphi=0.1,Trap=1):
+        f1 = np.exp(C + D * self.v0 + 1.0j * phi * log(self.St))
+        u = -0.5
+        b =self.kappa + self.lam
+        d = np.sqrt(
+            (self.rho * self.sigma * 1.0j * phi - b) ** 2 - self.sigma * self.sigma * (2 * u * 1.0j * phi - phi * phi))
+        g = (b - self.rho * self.sigma * 1.0j * phi + d) / (b - self.rho * self.sigma * 1.0j * phi - d)
+        G = (1 - g * np.exp(d * self.tau)) / (1 - g)
+        C = (self.r - self.q) * 1.0j * phi * self.tau + a / self.sigma / self.sigma * (
+        (b - self.rho * self.sigma * 1.0j * phi + d) * self.tau - 2 * np.log(G))
+        D = (b - self.rho * self.sigma * 1.0j * phi + d) / self.sigma / self.sigma * (1 - np.exp(d * self.tau)) / (
+        1 - g * np.exp(d * self.tau))
+        f2 = np.exp(C + D * self.v0 + 1.0j * phi * log(self.St))
+        return (np.exp(-1.0j * phi * log(self.K)) / 1.0j / phi*(self.St*exp(-self.q*self.tau)*f1-self.K*exp(-self.r*self.tau)*f2)).real
+    def HestonPriceConsol(self,Lphi=0.0001,Uphi=50.0,dphi=0.1,Trap=1):
         '''
             % Heston (1993) price of a European option.
             % Uses the original formulation by Heston
@@ -514,20 +561,18 @@ class HestonOptions:
             % 此处主要是用基于梯形法则的数值积分
              '''
         phi = np.arange(Lphi, Uphi + .001, dphi)
-        N = len(phi)
-        inte = np.empty(N)
+        n = len(phi)
+        inte = np.empty(n)
         if Trap==1:
             Heston_Inte=self.HestonInteConsol_Trap
         else:
             Heston_Inte=self.HestonInteConsol_Orig
-        for i in range(N):
-            inte[i] = Heston_Inte(phi[i])
+        inte = Heston_Inte(phi)
         I = np.trapz(inte) * dphi
         if self.otype == 'call':
             return self.St * np.exp(-self.q * self.tau) *0.5 - self.K * np.exp(-self.r * self.tau) * 0.5 + I/math.pi
         else:
             return self.K * np.exp(-self.r * self.tau) *0.5 - self.St * np.exp(-self.q * self.tau) *0.5+I/math.pi
-
     def ExampleIntegrandDiscontinuity():
         phi=np.arange(0.00001,10.01,0.05)
         n=len(phi)
@@ -554,18 +599,79 @@ class HestonOptions:
         plt.plot(phi, A[:, 1], label='sigma=0.09,tau=1.0,v0=0.07,theta=0.07,St=10')
         plt.legend()
         plt.show()
-    def ExampleAlbrecher_vs_Heston(Pnum=1):
+    def ExampleAlbrecher_vs_Heston(Pnum=0):
         HOpt=HestonOptions(St=100.0,K=100.0,tau=5.0,r=0.035,q=0.0,kappa=1.5768,sigma=0.5751,rho=-0.5711,theta=0.0398,v0=0.0175,lam=0.0)
         phi=np.arange(0.0001,10.01,0.1)
         n=len(phi)
         A=np.empty((n,2))
         for i in range(n):
-            A[i,0]=HOpt.HestonIntegrand_Orig(phi[i])[Pnum-1]
-            A[i,1]=HOpt.HestonIntegrand_Trap(phi[i])[Pnum-1]
+            A[i,0]=HOpt.HestonIntegrand_Orig(phi[i])[Pnum]
+            A[i,1]=HOpt.HestonIntegrand_Trap(phi[i])[Pnum]
         plt.plot(phi,A[:,0],label='Heston Integrand')
         plt.plot(phi,A[:,1],label='Albrecher Integrand')
         plt.legend()
         plt.show()
+    def ExampleEffectOfCorrelation(export=False):
+        dphi=0.05
+        phi=np.arange(0.00001,100.01,dphi)
+        x=np.arange(4.3,4.9,0.005)
+        paras={'St':100.0,'K':100.0,'tau':0.5,'r':0.0,'q':0.0,'kappa':2.0,'theta':0.01,'sigma':0.1,'v0':0.01}
+        f1=np.empty(len(x))
+        f2=np.empty(len(x))
+        f3=np.empty(len(x))
+        for i in range(len(x)):
+            intneg=(np.exp(-1.0j*phi*x[i])*HestonOptions(rho=-0.8,**paras).HestonCharacteristicFunction(phi)).real
+            intzero=(np.exp(-1.0j*phi*x[i])*HestonOptions(rho=0.0,**paras).HestonCharacteristicFunction(phi)).real
+            intpos=(np.exp(-1.0j*phi*x[i])*HestonOptions(rho=0.8,**paras).HestonCharacteristicFunction(phi)).real
+            f1[i]=np.trapz(intneg)/math.pi*dphi
+            f2[i]=np.trapz(intzero)/math.pi*dphi
+            f3[i]=np.trapz(intpos)/math.pi*dphi
+        plt.plot(x,f1,label='rho=-0.8')
+        plt.plot(x,f2,label='rho=0')
+        plt.plot(x,f3,label='rho=0.8')
+        plt.legend()
+        plt.show()
+        if export:
+            return x,f1,f2,f3
+    def ExampleEffectOfVolatilityOfVariance(export=False):
+        dphi=0.05
+        phi=np.arange(0.00001,100.01,dphi)
+        x=np.arange(4.3,4.9,0.005)
+        paras={'St':100.0,'K':100.0,'tau':0.5,'r':0.0,'q':0.0,'kappa':2.0,'theta':0.01,'v0':0.01,'rho':0.0}
+        f1=np.empty(len(x))
+        f2=np.empty(len(x))
+        f3=np.empty(len(x))
+        for i in range(len(x)):
+            intzero=(np.exp(-1.0j*phi*x[i])*HestonOptions(sigma=0.00001,**paras).HestonCharacteristicFunction(phi)).real
+            intlow=(np.exp(-1.0j*phi*x[i])*HestonOptions(sigma=0.2,**paras).HestonCharacteristicFunction(phi)).real
+            inthigh=(np.exp(-1.0j*phi*x[i])*HestonOptions(sigma=0.4,**paras).HestonCharacteristicFunction(phi)).real
+            f1[i]=np.trapz(intzero)/math.pi*dphi
+            f2[i]=np.trapz(intlow)/math.pi*dphi
+            f3[i]=np.trapz(inthigh)/math.pi*dphi
+        plt.plot(x,f1,label='sigma=0')
+        plt.plot(x,f2,label='sigma=0.2')
+        plt.plot(x,f3,label='sigma=0.4')
+        plt.legend()
+        plt.show()
+        if export:
+            return x,f1,f2,f3
+    def ExampleComparisonWithBSM():
+        S=np.arange(70,141,0.05)
+        H_paras={'kappa':2.0,'theta':0.01,'v0':0.01,'sigma':0.1,'r':0.0,'q':0.0,'tau':0.5}
+        volneg=0.071037274323352*sqrt(2)
+        volpos=0.070386797400082*sqrt(2)
+        BScallpos=euro_option(S,r=0.0,sigma=volpos,T=0.5).value_BSM()
+        BScallneg=euro_option(S,r=0.0,sigma=volneg,T=0.5).value_BSM()
+        Hcallpos=np.empty_like(S)
+        Hcallneg=np.empty_like(S)
+        for i in range(len(S)):
+            Hcallpos[i]=HestonOptions(St=S[i],rho=0.5,**H_paras).HestonPriceConsol(Uphi=75.001,dphi=0.1)
+            Hcallneg[i]=HestonOptions(St=S[i],rho=-0.5,**H_paras).HestonPriceConsol(Uphi=75.001,dphi=0.1)
+        plt.plot(S,Hcallpos-BScallpos,label='rho=+0.5')
+        plt.plot(S,Hcallneg-BScallneg,label='rho=-0.5')
+        plt.legend()
+        plt.show()
+
 
 
 def udp_binomial(M,mu,dt,sigma,method='CRR'):
