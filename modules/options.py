@@ -424,7 +424,6 @@ class HestonOptions:
         D = (b - self.rho * self.sigma * 1.0j * phi + d) / self.sigma / self.sigma * (1 - np.exp(d * self.tau)) / (
         1 - g * np.exp(d * self.tau))
         return np.exp(C + D * self.v0 + 1.0j * phi * log(self.St))
-
     @jit
     def HestonPrice(self,Lphi=0.0001,Uphi=50.0,dphi=0.1,Trap=1):
         '''
@@ -574,6 +573,7 @@ class HestonOptions:
             return self.St * np.exp(-self.q * self.tau) *0.5 - self.K * np.exp(-self.r * self.tau) * 0.5 + I/pi
         else:
             return self.K * np.exp(-self.r * self.tau) *0.5 - self.St * np.exp(-self.q * self.tau) *0.5+I/pi
+
     def ExampleIntegrandDiscontinuity():
         phi=np.arange(0.00001,10.01,0.05)
         n=len(phi)
@@ -955,7 +955,6 @@ def HestonInteConsol_Orig(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0):
     D = (b - rho * sigma * 1.0j * phi + d) / sigma / sigma * (1 - np.exp(d * tau)) / (1 - g * np.exp(d * tau))
     f2 = np.exp(C + D * v0 + 1.0j * phi * log(S))
     return (np.exp(-1.0j*phi*log(K))/1.0j/phi*(S*exp(-q*tau)*f1-K*exp(-r*tau)*f2)).real
-
 def HestonPriceConsol(kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,Trap,Lphi,Uphi,dphi,PutCall='call'):
     phi=np.arange(Lphi,Uphi,dphi)
     N=len(phi)
@@ -1335,9 +1334,6 @@ def option_MC(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,N=100,JumpLambda=Fal
         tmp = mu * dt + sigma * math.sqrt(dt) * e
     payoff=np.maximum(St*np.exp(np.cumsum(tmp,axis=1)[:,-1])-K,0)
     return math.exp(-r*T)*np.mean(payoff)
-
-
-
 
 class GenRelatedNormal:
     def __init__(self,mu,mat):

@@ -19,9 +19,9 @@
 \language_package default
 \inputencoding utf8-plain
 \fontencoding global
-\font_roman "default" "Songti SC"
-\font_sans "default" "STFangsong"
-\font_typewriter "default" "STHeiti"
+\font_roman "default" "微软雅黑 Light"
+\font_sans "default" "黑体"
+\font_typewriter "default" "黑体"
 \font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts true
@@ -1907,6 +1907,135 @@ code：HestonLVAnalytic.m
 
 \begin_layout Subsection
 local volatility with finite difference
+\end_layout
+
+\begin_layout Subsection
+Approximate local volatility
+\end_layout
+
+\begin_layout Itemize
+Gatheral(2006)利用
+\begin_inset Formula $x_{t}=ln(S_{t}/K),\mu=0$
+\end_inset
+
+推导了一个approximate local volatility。具体：
+\begin_inset Formula 
+\[
+dx_{t}=-\frac{v_{t}}{2}dt+\sqrt{v_{t}}dB_{t}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+dv_{t}=\kappa(\theta-v_{t})dt+\sigma\sqrt{v_{t}}(\rho dB_{t}+\sqrt{1-\rho^{2}}dZ_{t})\tag{2.38}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $E[dB_{t}dZ_{t}]=0$
+\end_inset
+
+
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+之所以如此设置，是利用Choleksy分解创建两个相关的布朗运动过程
+\end_layout
+
+\end_inset
+
+。进一步假定
+\begin_inset Formula $\rho\approx\pm1$
+\end_inset
+
+，上述过程就可以写成：
+\begin_inset Formula 
+\[
+dv_{t}=\kappa(\theta-v_{t})dt+\rho\sigma(dx_{t}+\frac{1}{2}v_{t}dt)\tag{2.39}
+\]
+
+\end_inset
+
+Gatheral还定义了
+\begin_inset Formula $u_{t}=E[v_{t}|x_{T}]$
+\end_inset
+
+, which denote the expected value of the time-t instantaneous variance condition
+al on the value of log-moneyness at time-T，而且还假设了：
+\begin_inset Formula 
+\[
+E[x_{t}|x_{T}]=\frac{x_{T}}{\hat{w}_{T}}\hat{w}_{t}
+\]
+
+\end_inset
+
+于是：
+\begin_inset Formula 
+\begin{align*}
+du_{t} & =E[dv_{t}|x_{T}]\\
+ & =\kappa(\theta-E[v_{t}|x_{T}])dt+\rho\sigma(E[dx_{t}|x_{T}]dt+\frac{1}{2}E[v_{t}|x_{T}]dt)\\
+ & =\kappa(\theta-u_{t}dt+\rho\sigma(\frac{x_{T}}{\hat{w}_{T}}\hat{v}_{t}dt+\frac{1}{2}u_{t}dt)
+\end{align*}
+
+\end_inset
+
+整理得：
+\begin_inset Formula 
+\[
+du_{t}=\kappa'(\theta'-u_{t})dt+\rho\sigma\frac{x_{T}}{\hat{w}_{T}}\hat{v}_{t}dt\tag{2.40}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $\kappa'=\kappa-\rho\sigma/2,\theta'=\theta\kappa/\kappa'$
+\end_inset
+
+。显然，上式是一个一阶差分方程，形式为：
+\begin_inset Formula $\frac{du_{t}}{dt}+P_{t}u_{t}=Q_{t}$
+\end_inset
+
+，其解具有以下形式：
+\begin_inset Formula 
+\[
+u_{T}exp(\int_{0}^{T}P_{t}dt)=\int_{0}^{T}Q_{t}exp(\int_{0}^{s}P_{s}ds)dt+C_{1}
+\]
+
+\end_inset
+
+于是，带入参数，并整理可得：
+\begin_inset Formula 
+\[
+u_{T}=\rho\sigma\frac{x_{T}}{\hat{w}_{T}}\int_{0}^{T}\hat{v}_{t}e^{-\kappa'(T-t)}dt+\theta'(1-e^{-\kappa'T})+C_{1}e^{-\kappa'T}\tag{2.41}
+\]
+
+\end_inset
+
+又初始条件为
+\begin_inset Formula $u_{0}=E[v_{0}|x_{T}]$
+\end_inset
+
+，于是，取
+\begin_inset Formula $T=0$
+\end_inset
+
+可得
+\begin_inset Formula $u_{0}=C_{1}=v_{0}$
+\end_inset
+
+，因此：
+\begin_inset Formula 
+\[
+u_{T}=\hat{v}_{T}^{'}+\rho\sigma\frac{x_{T}}{\hat{w}_{T}}\int_{0}^{T}\hat{v}_{t}e^{-\kappa'(T-t)}dt
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Chapter
