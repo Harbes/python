@@ -2029,13 +2029,340 @@ u_{T}=\rho\sigma\frac{x_{T}}{\hat{w}_{T}}\int_{0}^{T}\hat{v}_{t}e^{-\kappa'(T-t)
 
 ，因此：
 \begin_inset Formula 
+\begin{align*}
+u_{T} & =\hat{v}_{T}^{'}+\rho\sigma\frac{x_{T}}{\hat{w}_{T}}\int_{0}^{T}\hat{v}_{t}e^{-\kappa'(T-t)}dt\tag{2.42}\\
+ & =\hat{v}_{T}^{'}+\rho\sigma\frac{x_{T}}{\hat{w}_{T}}e^{\kappa'T}[\frac{v_{0}-\theta}{\kappa'-\kappa}(e^{(\kappa'-\kappa)T}-1)+\frac{\theta}{\kappa'}(e^{\kappa'T}-1)]\tag{2.44}
+\end{align*}
+
+\end_inset
+
+其中，
+\begin_inset Formula $\hat{v}_{T}^{'}=(v_{0}-\theta')e^{-\kappa'T}+\theta'$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Subsection
+Numerical illustration of local volatility
+\end_layout
+
+\begin_layout Subsection
+implied volatility
+\end_layout
+
+\begin_layout Section
+Moment explosions
+\end_layout
+
+\begin_layout Itemize
+Anderson and Piterbarg(2007)推导了：在一定条件下，the moments of the terminal stock
+ price explode。【待】
+\end_layout
+
+\begin_layout Section
+Bounds on implied volatility slope
+\end_layout
+
+\begin_layout Itemize
+【待】one problem that arises in modeling the implied volatility surface is
+ that extrapolation of the surface beyond observable strikes is often arbitrary（
+外推无法观测的点时）。
+\end_layout
+
+\begin_layout Section
+Conclusion
+\end_layout
+
+\begin_layout Chapter
+Derivations using the Fourier Transform
+\end_layout
+
+\begin_layout Itemize
+the Heston model laid the foundation for the popularity of Fourier transform
+ in mathematical finance。原因在于：多数情况下，the terminal price density has no analytic
+ structure，另一方面，许多模型都会需要特征方程。
+\end_layout
+
+\begin_layout Itemize
+As explained by Wu(2008)，the literature approaches Fourier transforms in
+ option pricing in two broad ways：the first approach considers the option
+ prices to analogous to cumulative distribution functions；the second approach
+ considers option prices to be analogous to probability density functions。
+\end_layout
+
+\begin_layout Section
+the Fourier transform
+\end_layout
+
+\begin_layout Itemize
+对于一个函数
+\begin_inset Formula $f$
+\end_inset
+
+，它的Fourier transform为：
+\begin_inset Formula 
 \[
-u_{T}=\hat{v}_{T}^{'}+\rho\sigma\frac{x_{T}}{\hat{w}_{T}}\int_{0}^{T}\hat{v}_{t}e^{-\kappa'(T-t)}dt
+\hat{f}(u)=\int_{-\infty}^{\infty}e^{iux}f(x)dx\tag{3.1}
+\]
+
+\end_inset
+
+相应的，如果，我们已知
+\begin_inset Formula $\hat{f}$
+\end_inset
+
+函数，可以通过inverse Fourier transform来得到
+\begin_inset Formula $f$
+\end_inset
+
+：
+\begin_inset Formula 
+\[
+f(x)=\frac{1}{2\pi}\int_{-\infty}^{\infty}e^{-iux}\hat{f}(u)du\tag{3.2}
 \]
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Itemize
+导数的Fourier transform。由(3.1)可知：
+\begin_inset Formula 
+\[
+\hat{f'(u)}=\int_{-\infty}^{\infty}e^{iux}f'(x)dx\tag{3.3}
+\]
+
+\end_inset
+
+注意
+\begin_inset Formula $\widehat{f'(u)}$
+\end_inset
+
+与
+\begin_inset Formula $\hat{f}'(u)$
+\end_inset
+
+不是同一个对象。对上式利用分布积分可得：
+\begin_inset Formula 
+\begin{align*}
+\widehat{f'(u)} & =e^{iux}f(x)|_{x=-\infty}^{x=\infty}-iu\int_{-\infty}^{\infty}e^{iux}f(x)dx\\
+ & =-iu\hat{f}(u)
+\end{align*}
+
+\end_inset
+
+此处一个前提是
+\begin_inset Formula $f(\infty)=f(-\infty)=0$
+\end_inset
+
+，显然一般的密度函数满足这一点。同理，客们可以得到
+\begin_inset Formula $\widehat{f^{n}(u)}=(-iu)^{n}\hat{f}(u)$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+Fourier tranform的导数。
+\begin_inset Formula 
+\begin{align*}
+\frac{d\hat{f}(u)}{du} & =\int_{-\infty}^{\infty}\frac{d}{du}(e^{iux}f(x))dx\\
+ & =\int_{-\infty}^{\infty}ixe^{iux}f(x)dx\\
+ & =i\hat{g}(u)
+\end{align*}
+
+\end_inset
+
+其中，
+\begin_inset Formula $g(x)=xf(x)$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+实际上，如果
+\begin_inset Formula $f$
+\end_inset
+
+是一个随机变量的密度函数时，那么根据(3.1)，密度函数的Fourier transform就是随机变量的特征函数：
+\begin_inset Formula 
+\[
+\hat{f}(u)=E[e^{iux}]
+\]
+
+\end_inset
+
+利用Euler's identity 
+\begin_inset Formula $e^{ix}=cosx+isinx$
+\end_inset
+
+，特征函数可以写成：
+\begin_inset Formula 
+\[
+\varphi(u)=E[e^{iux}]=E[cos(ux)]+iE[sin(ux)]\tag{3.6}
+\]
+
+\end_inset
+
+显然：
+\begin_inset Formula 
+\begin{align*}
+\varphi(-u) & =E[cos(ux)]-iE[sin(ux)]\\
+ & =\overline{\varphi(u)}\tag{3.7}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Recovery if probabilities with Gil-Pelaez Fourier inversion
+\end_layout
+
+\begin_layout Itemize
+前两章中我们提到，ITM概率为：
+\begin_inset Formula 
+\[
+Pr(S_{T}>K)=\frac{1}{2}+\frac{1}{\pi}\int_{0}^{\infty}Re[\frac{e^{iulnK}\varphi(u)}{iu}]du\tag{3.8}
+\]
+
+\end_inset
+
+这个结果可由the inversion theorem of Fourier transforms[Gil-Pelaez(1951)]推导得出：首先定义符号函数
+：
+\begin_inset Formula 
+\[
+sgn(\alpha)=\begin{cases}
+\frac{\alpha}{|\alpha|} & ,\alpha\neq0\\
+0 & ,\alpha=0
+\end{cases}\tag{3.9}
+\]
+
+\end_inset
+
+事实上，the signfunction has the integral representation：
+\begin_inset Formula 
+\[
+sgn(\alpha)=\frac{1}{\pi}\int_{-\infty}^{\infty}\frac{sin\alpha x}{x}dx=\frac{1}{\pi}\int_{-\infty}^{\infty}\frac{e^{i\alpha x}}{ix}dx\tag{3.10}
+\]
+
+\end_inset
+
+第二个等式成立的原因在于：
+\begin_inset Formula 
+\[
+\int_{-\infty}^{\infty}\frac{e^{i\alpha x}}{ix}dx=\int_{-\infty}^{\infty}[\frac{1}{i}\frac{cos(\alpha x)}{x}+\frac{sin(\alpha x)}{x}]dx
+\]
+
+\end_inset
+
+由于
+\begin_inset Formula $\frac{cos(\alpha x)}{x}$
+\end_inset
+
+是一个奇函数，因此：
+\begin_inset Formula 
+\[
+\int_{-\infty}^{\infty}\frac{e^{i\alpha x}}{ix}dx=\int_{-\infty}^{\infty}[\frac{sin(\alpha x)}{x}]dx
+\]
+
+\end_inset
+
+令
+\begin_inset Formula $f(x),F(x)$
+\end_inset
+
+分别为
+\begin_inset Formula $lnS_{T}$
+\end_inset
+
+的概率密度和累计分布函数，于是：
+\begin_inset Formula 
+\begin{align*}
+\int_{-\infty}^{\infty}sgn(x-y)f(x)dx & =\int_{y}^{\infty}sgn(x-y)f(x)dx-\int_{-\infty}^{y}sgn(y-x)f(x)dx\\
+ & =[1-F(y)]-F(y)=1-2F(y)\tag{3.11}
+\end{align*}
+
+\end_inset
+
+利用inverse FT，有：
+\begin_inset Formula 
+\[
+f(x)=\frac{1}{2\pi}\int_{-\infty}^{\infty}e^{-iux}\varphi(u)du\tag{3.12}
+\]
+
+\end_inset
+
+于是：
+\begin_inset Formula 
+\begin{align*}
+Pr(S_{T}>K) & =\int_{lnK}^{\infty}f(x)dx\\
+ & =\frac{1}{2\pi}\int_{lnK}^{\infty}(\int_{-\infty}^{\infty}e^{-iux}\varphi(u)du)dx\\
+ & =\frac{1}{2\pi}\int_{-\infty}^{\infty}\varphi(u)(\int_{lnK}^{\infty}e^{-iux}dx)du\tag{3.13}\\
+ & =\frac{1}{2\pi}\int_{-\infty}^{\infty}\varphi(u)\frac{e^{-iulnK}}{iu}du-\frac{1}{2\pi}\underset{R\rightarrow\infty}{lim}\int_{-\infty}^{\infty}\varphi(u)\frac{e^{-iuR}}{iu}du\tag{3.14}
+\end{align*}
+
+\end_inset
+
+又：
+\begin_inset Formula 
+\begin{align*}
+\frac{1}{2\pi}\underset{R\rightarrow\infty}{lim}\int_{-\infty}^{\infty}\varphi(u)\frac{e^{-iuR}}{iu}du & =\frac{1}{2\pi}\underset{R\rightarrow\infty}{lim}\int_{-\infty}^{\infty}(\int_{-\infty}^{\infty}e^{iux}f(x)dx)\frac{e^{-iuR}}{iu}du\\
+ & =\frac{1}{2\pi}\underset{R\rightarrow\infty}{lim}\int_{-\infty}^{\infty}f(x)(\int_{-\infty}^{\infty}\frac{e^{iu(x-R)}}{iu}du)dx\\
+ & =\frac{1}{2\pi}\underset{R\rightarrow\infty}{lim}\int_{-\infty}^{\infty}\pi sgn(x-R)f(x)dx\\
+ & =\frac{1}{2}\underset{R\rightarrow\infty}{lim}(1-2F(R))=-\frac{1}{2}\tag{3.15}
+\end{align*}
+
+\end_inset
+
+因此：
+\begin_inset Formula 
+\[
+Pr(S_{T}>K)=\frac{1}{2}+\frac{1}{2\pi}\int_{-\infty}^{\infty}\varphi(u)\frac{e^{-iulnK}}{iu}du\tag{3.17}
+\]
+
+\end_inset
+
+又：
+\begin_inset Formula 
+\begin{align*}
+\varphi(u)\frac{e^{-iulnK}}{iu} & =\{E[cos(ux)]+iE[sin(ux)]\}\frac{cos(ulnK)-isin(ulnK)}{iu}\\
+ & =\frac{E[cos(ux)]cos(ulnK)+E[sin(ux)]sin(ulnK)+iE[sin(ux)]cos(ulnK)-isin(ulnK)E[cos(ux)]}{iu}\\
+ & =-i\frac{E[cos(ux)]cos(ulnK)+E[sin(ux)]sin(ulnK)}{u}+\frac{E[sin(ux)]cos(ulnK)-sin(ulnK)E[cos(ux)]}{u}
+\end{align*}
+
+\end_inset
+
+可以看出
+\begin_inset Formula $\varphi(u)\frac{e^{-iulnK}}{iu}$
+\end_inset
+
+的虚部是一个关于
+\begin_inset Formula $u$
+\end_inset
+
+的奇函数，实部是关于
+\begin_inset Formula $u$
+\end_inset
+
+的偶函数，于是(3.17)可写成：
+\begin_inset Formula 
+\begin{align*}
+Pr(S_{T}>K) & =\frac{1}{2}+\frac{1}{2\pi}\int_{-\infty}^{\infty}[\frac{Im[\varphi(u)]cos(ulnK)-Re[\varphi(u)]sin(ulnK)}{u}]du\tag{3.18}\\
+ & =Pr(S_{T}>K)=\frac{1}{2}+\frac{1}{\pi}\int_{0}^{\infty}Re[\frac{e^{iulnK}\varphi(u)}{iu}]du
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Derivation of Gatheral(2006)
 \end_layout
 
 \begin_layout Chapter
