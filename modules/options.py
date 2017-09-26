@@ -21,8 +21,10 @@ from scipy.special import comb
 from numba import jit
 import math
 from math import log,sqrt,exp,pi
+assert isinstance(pi,object )
 from scipy.optimize import fsolve
 import matplotlib.pyplot as plt
+
 norm=scis.norm
 # TODO 尝试利用broadcasting将所有methods向量化；或者丢弃class，全都写成函数的形式，将参数以字典形式储存
 class euro_option:
@@ -147,7 +149,6 @@ class euro_option:
             return self.K * (self.T - self.t) * np.exp(-self.r * (self.T - self.t)) * norm(0, 1).cdf(d2)
         else:
             return -self.K * (self.T - self.t) * np.exp(-self.r * (self.T - self.t)) * norm(0, 1).cdf(-d2)
-
     @property
     def vega(self):
         '''
@@ -570,9 +571,9 @@ class HestonOptions:
         inte = Heston_Inte(phi)
         I = np.trapz(inte) * dphi
         if self.otype == 'call':
-            return self.St * np.exp(-self.q * self.tau) *0.5 - self.K * np.exp(-self.r * self.tau) * 0.5 + I/math.pi
+            return self.St * np.exp(-self.q * self.tau) *0.5 - self.K * np.exp(-self.r * self.tau) * 0.5 + I/pi
         else:
-            return self.K * np.exp(-self.r * self.tau) *0.5 - self.St * np.exp(-self.q * self.tau) *0.5+I/math.pi
+            return self.K * np.exp(-self.r * self.tau) *0.5 - self.St * np.exp(-self.q * self.tau) *0.5+I/pi
     def ExampleIntegrandDiscontinuity():
         phi=np.arange(0.00001,10.01,0.05)
         n=len(phi)
@@ -696,7 +697,279 @@ plt.show()
         plt.plot(S, Hcalllow - BScall, label='sigma=0.1')
         plt.legend()
         plt.show()
+    def ExampleEffect_of_Heston_Parameters_on_Implied_Volatility():
+        #H_paras={'r':0.05,'q':0.0,'tau':0.25,'rho':0.0,'kappa':2.0,'theta':0.01}
+        K=np.arange(95,110.001,0.5)
+        n=len(K)
+        KK=np.resize(K,(3,n)).T
+        Uphi=50.01
+        dphi=0.1
+        sigma=(0.35,0.55,0.8)
+        Hcall=np.empty((n,3))
+        for i in range(3):
+            for j in range(n):
+                Hcall[j,i]=HestonPriceConsol(2.0,0.01,0.0,0.0,sigma[i],0.25,K[j],100.0,0.05,0.0,0.05,1,0.00001,Uphi,dphi)
+        IVsigma=imp_vol_Formula(Hcall,100.0,KK,0.05,0.25,0.5,'call')
 
+        rho = (-0.25, 0, 0.25)
+        for i in range(3):
+            for j in range(n):
+                Hcall[j, i] = HestonPriceConsol(2.0, 0.01, 0.0, rho[i],0.25, 0.25, K[j], 100.0, 0.05, 0.0, 0.05,
+                                                1, 0.00001,Uphi,dphi)
+        IVrho = imp_vol_Formula(Hcall, 100.0, KK, 0.05, 0.25, 0.5, 'call')
+
+        v0 = (0.02, 0.015, 0.01)
+        for i in range(3):
+            for j in range(n):
+                Hcall[j, i] = HestonPriceConsol(2.0, 0.01, 0.0, 0.0, 0.5, 0.25, K[j], 100.0, 0.05, 0.0, v0[i],
+                                                1, 0.00001,Uphi,dphi)
+        IVv0 = imp_vol_Formula(Hcall, 100.0, KK, 0.05, 0.25, 0.5, 'call')
+
+        kappa=(5.0,2.0,1.0)
+        for i in range(3):
+            for j in range(n):
+                Hcall[j, i] = HestonPriceConsol(kappa[i], 0.01, 0.0, 0.0, 0.2, 0.25, K[j], 100.0, 0.05, 0.0, 0.01,
+                                                1, 0.00001,Uphi,dphi)
+        IVkappa = imp_vol_Formula(Hcall, 100.0, KK, 0.05, 0.25, 0.5, 'call')
+
+        theta=(0.02,0.015,0.01)
+        for i in range(3):
+            for j in range(n):
+                Hcall[j, i] = HestonPriceConsol(2.0, theta[i], 0.0, 0.0, 0.5, 0.25, K[j], 100.0, 0.05, 0.0, 0.05,
+                                                1, 0.00001,Uphi,dphi)
+        IVtheta = imp_vol_Formula(Hcall, 100.0, KK, 0.05, 0.25, 0.5, 'call')
+        line=('k-','r-','g-')
+        fig=plt.figure()
+        ax=fig.add_subplot(3,2,1)
+        for i in range(3):
+            ax.plot(K,IVsigma[:,i],line[i],label='sigma={}'.format(sigma[i]))
+        ax.legend()
+        ax = fig.add_subplot(3, 2, 2)
+        for i in range(3):
+            ax.plot(K,IVrho[:,i],line[i],label='rho={}'.format(rho[i]))
+        ax.legend()
+        ax = fig.add_subplot(3, 2, 3)
+        for i in range(3):
+            ax.plot(K, IVv0[:, i], line[i],label='v0={}'.format(v0[i]))
+        ax.legend()
+        ax = fig.add_subplot(3, 2, 4)
+        for i in range(3):
+            ax.plot(K, IVkappa[:, i], line[i],label='kappa={}'.format(kappa[i]))
+        ax.legend()
+        ax = fig.add_subplot(3, 2, 5)
+        for i in range(3):
+            ax.plot(K, IVtheta[:, i],line[i], label='theta={}'.format(theta[i]))
+        ax.legend()
+        plt.show()
+
+
+def HestonIntegrand_Trap(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0,Pnum=0):
+    '''
+    % Returns the integrand for the risk neutral probabilities P1 and P2.
+    % phi = integration variable
+    XXXXXX Pnum = 1 or 2 (for the probabilities)XXXXX
+    % Heston parameters:
+    %    kappa  = volatility mean reversion speed parameter
+    %    theta  = volatility mean reversion level parameter
+    %    lambda = risk parameter
+    %    rho    = correlation between two Brownian motions
+    %    sigma  = volatility of variance
+    %    v      = initial variance
+    % Option features.
+    %    PutCall = 'C'all or 'P'ut
+    %    K = strike price
+    %    S = spot price
+    %    r = risk free rate
+    %    q = dividend yield
+    %    Trap = 1 "Little Trap" formulation
+    %           0  Original Heston formulation
+    '''
+    x=log(S)
+    a=kappa*theta
+    u=np.array([0.5,-.5])[Pnum]
+    b=np.array([kappa+lam-rho*sigma,kappa+lam])[Pnum]
+    d=np.sqrt((rho*sigma*1.0j*phi-b)**2-sigma*sigma*(2*u*1.0j*phi-phi*phi))
+    g=(b-rho*sigma*1.0j*phi+d)/(b-rho*sigma*1.0j*phi-d)
+    c=1.0/g
+    D=(b-rho*sigma*1.0j*phi-d)/sigma/sigma*(1-np.exp(-d*tau))/(1-c*np.exp(-d*tau))
+    G=(1-c*np.exp(-d*tau))/(1-c)
+    C=(r-q)*1.0j*phi*tau+a/sigma/sigma*((b-rho*sigma*1.0j*phi-d)*tau-2*np.log(G))
+    f=np.exp(C+D*v0+1.0j*phi*x)
+    return (np.exp(-1.0j*phi*np.log(K))*f/1.0j/phi).real
+def HestonIntegrand_Orig(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0,Pnum=0):
+    '''
+    % Returns the integrand for the risk neutral probabilities P1 and P2.
+    % phi = integration variable
+    XXXXXX Pnum = 1 or 2 (for the probabilities)XXXXX
+    % Heston parameters:
+    %    kappa  = volatility mean reversion speed parameter
+    %    theta  = volatility mean reversion level parameter
+    %    lambda = risk parameter
+    %    rho    = correlation between two Brownian motions
+    %    sigma  = volatility of variance
+    %    v      = initial variance
+    % Option features.
+    %    PutCall = 'C'all or 'P'ut
+    %    K = strike price
+    %    S = spot price
+    %    r = risk free rate
+    %    q = dividend yield
+    %    Trap = 1 "Little Trap" formulation
+    %           0  Original Heston formulation
+    '''
+    x=log(S)
+    a=kappa*theta
+    u=np.array([0.5,-.5])[Pnum]
+    b=np.array([kappa+lam-rho*sigma,kappa+lam])[Pnum]
+    d=np.sqrt((rho*sigma*1.0j*phi-b)**2-sigma*sigma*(2*u*1.0j*phi-phi*phi))
+    g=(b-rho*sigma*1.0j*phi+d)/(b-rho*sigma*1.0j*phi-d)
+    G=(1-g*np.exp(d*tau))/(1-g)
+    C=(r-q)*1.0j*phi*tau+a/sigma/sigma*((b-rho*sigma*1.0j*phi+d)*tau-2*np.log(G))
+    D=(b-rho*sigma*1.0j*phi+d)/sigma/sigma*(1-np.exp(d*tau))/(1-g*np.exp(d*tau))
+    f=np.exp(C+D*v0+1.0j*phi*x)
+    return (np.exp(-1.0j*phi*np.log(K))*f/1.0j/phi).real
+def HestonPrice(kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,Trap,Lphi,Uphi,dphi,PutCall='call'):
+    '''
+    % Heston (1993) price of a European option.
+    % Uses the original formulation by Heston
+    % Heston parameters:
+    %    kappa  = volatility mean reversion speed parameter
+    %    theta  = volatility mean reversion level parameter
+    %    lambda = risk parameter
+    %    rho    = correlation between two Brownian motions
+    %    sigma  = volatility of variance
+    %    v0     = initial variance
+    % Option features.
+    %    PutCall = 'C'all or 'P'ut
+    %    K = strike price
+    %    S = spot price
+    %    r = risk free rate
+    %    q = dividend yield
+    %    T = maturity
+    % Integration features
+    %    L = lower limit
+    %    U = upper limit
+    %    dphi = integration increment
+    % 此处主要是用基于梯形法则的数值积分
+    % example: HestonPrice('put',5.0,.05,0.0,-.8,.5,.5,100.0,100.0,.03,.02,.05,1,0.00001,50,0.001)
+    '''
+    phi=np.arange(Lphi,Uphi+.001,dphi)
+    N=len(phi)
+    int1=np.empty(N)
+    int2=np.empty(N)
+    if Trap == 1:
+        Heston_Inte = HestonIntegrand_Trap
+    else:
+        Heston_Inte = HestonIntegrand_Orig
+    int1=Heston_Inte(phi,kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,0)
+    int2=Heston_Inte(phi,kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,1)
+    I1=np.trapz(int1)*dphi
+    I2=np.trapz(int2)*dphi
+    P1=0.5+1.0/pi*I1
+    P2=0.5+1.0/pi*I2
+    if PutCall=='call':
+        return S*np.exp(-q*T)*P1-K*np.exp(-r*T)*P2
+    else:
+        return K*np.exp(-r*T)*(1.0-P2)-S*np.exp(-q*T)*(1-P1)
+
+def HestonInteConsol_Trap(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0):
+    '''
+    % Returns the integrand for the risk neutral probabilities P1 and P2.
+    % phi = integration variable
+    XXXXXX Pnum = 1 or 2 (for the probabilities)XXXXX
+    % Heston parameters:
+    %    kappa  = volatility mean reversion speed parameter
+    %    theta  = volatility mean reversion level parameter
+    %    lambda = risk parameter
+    %    rho    = correlation between two Brownian motions
+    %    sigma  = volatility of variance
+    %    v      = initial variance
+    % Option features.
+    %    PutCall = 'C'all or 'P'ut
+    %    K = strike price
+    %    S = spot price
+    %    r = risk free rate
+    %    q = dividend yield
+    %    Trap = 1 "Little Trap" formulation
+    %           0  Original Heston formulation
+    '''
+    a=kappa*theta
+    u=0.5
+    b=kappa+lam-rho*sigma
+    d=np.sqrt((rho*sigma*1.0j*phi-b)**2-sigma*sigma*(2*u*1.0j*phi-phi*phi))
+    g=(b-rho*sigma*1.0j*phi+d)/(b-rho*sigma*1.0j*phi-d)
+    c=1.0/g
+    D=(b-rho*sigma*1.0j*phi-d)/sigma/sigma*(1-np.exp(-d*tau))/(1-c*np.exp(-d*tau))
+    G=(1-c*np.exp(-d*tau))/(1-c)
+    C=(r-q)*1.0j*phi*tau+a/sigma/sigma*((b-rho*sigma*1.0j*phi-d)*tau-2*np.log(G))
+    f1=np.exp(C+D*v0+1.0j*phi*log(S))
+
+    u = -.5
+    b = kappa + lam
+    d = np.sqrt((rho * sigma * 1.0j * phi - b) ** 2 - sigma * sigma * (2 * u * 1.0j * phi - phi * phi))
+    g = (b - rho * sigma * 1.0j * phi + d) / (b - rho * sigma * 1.0j * phi - d)
+    c = 1.0 / g
+    D = (b - rho * sigma * 1.0j * phi - d) / sigma / sigma * (1 - np.exp(-d * tau)) / (1 - c * np.exp(-d * tau))
+    G = (1 - c * np.exp(-d * tau)) / (1 - c)
+    C = (r - q) * 1.0j * phi * tau + a / sigma / sigma * ((b - rho * sigma * 1.0j * phi - d) * tau - 2 * np.log(G))
+    f2= np.exp(C + D * v0 + 1.0j * phi * log(S))
+
+    return (np.exp(-1.0j*phi*log(K))/1.0j/phi*(S*exp(-q*tau)*f1-K*exp(-r*tau)*f2)).real
+def HestonInteConsol_Orig(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0):
+    '''
+    % Returns the integrand for the risk neutral probabilities P1 and P2.
+    % phi = integration variable
+    XXXXXX Pnum = 1 or 2 (for the probabilities)XXXXX
+    % Heston parameters:
+    %    kappa  = volatility mean reversion speed parameter
+    %    theta  = volatility mean reversion level parameter
+    %    lambda = risk parameter
+    %    rho    = correlation between two Brownian motions
+    %    sigma  = volatility of variance
+    %    v      = initial variance
+    % Option features.
+    %    PutCall = 'C'all or 'P'ut
+    %    K = strike price
+    %    S = spot price
+    %    r = risk free rate
+    %    q = dividend yield
+    %    Trap = 1 "Little Trap" formulation
+    %           0  Original Heston formulation
+    '''
+    a=kappa*theta
+    u=0.5
+    b=kappa+lam-rho*sigma
+    d=np.sqrt((rho*sigma*1.0j*phi-b)**2-sigma*sigma*(2*u*1.0j*phi-phi*phi))
+    g=(b-rho*sigma*1.0j*phi+d)/(b-rho*sigma*1.0j*phi-d)
+    G=(1-g*np.exp(d*tau))/(1-g)
+    C=(r-q)*1.0j*phi*tau+a/sigma/sigma*((b-rho*sigma*1.0j*phi+d)*tau-2*np.log(G))
+    D=(b-rho*sigma*1.0j*phi+d)/sigma/sigma*(1-np.exp(d*tau))/(1-g*np.exp(d*tau))
+    f1=np.exp(C+D*v0+1.0j*phi*log(S))
+
+    u = -.5
+    b = kappa + lam
+    d = np.sqrt((rho * sigma * 1.0j * phi - b) ** 2 - sigma * sigma * (2 * u * 1.0j * phi - phi * phi))
+    g = (b - rho * sigma * 1.0j * phi + d) / (b - rho * sigma * 1.0j * phi - d)
+    G = (1 - g * np.exp(d * tau)) / (1 - g)
+    C = (r - q) * 1.0j * phi * tau + a / sigma / sigma * ((b - rho * sigma * 1.0j * phi + d) * tau - 2 * np.log(G))
+    D = (b - rho * sigma * 1.0j * phi + d) / sigma / sigma * (1 - np.exp(d * tau)) / (1 - g * np.exp(d * tau))
+    f2 = np.exp(C + D * v0 + 1.0j * phi * log(S))
+    return (np.exp(-1.0j*phi*log(K))/1.0j/phi*(S*exp(-q*tau)*f1-K*exp(-r*tau)*f2)).real
+
+def HestonPriceConsol(kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,Trap,Lphi,Uphi,dphi,PutCall='call'):
+    phi=np.arange(Lphi,Uphi,dphi)
+    N=len(phi)
+    inte=np.empty(N)
+    if Trap == 1:
+        Heston_Inte = HestonInteConsol_Trap
+    else:
+        Heston_Inte = HestonInteConsol_Orig
+    inte=Heston_Inte(phi,kappa,theta,lam,rho,sigma,T,K,S,r,q,v0)
+    I=np.trapz(inte)*dphi
+    if PutCall=='call':
+        return S*np.exp(-q*T)*0.5-K*np.exp(-r*T)*0.5+I/pi
+    else:
+        return K*np.exp(-r*T)*0.5-S*np.exp(-q*T)*0.5+I/pi
 
 def udp_binomial(M,mu,dt,sigma,method='CRR'):
     if method =='CRR':
@@ -704,7 +977,6 @@ def udp_binomial(M,mu,dt,sigma,method='CRR'):
     else:
         v=mu
     return math.exp(v*dt+sigma*math.sqrt(dt)),math.exp(v*dt-sigma*math.sqrt(dt)),0.5+(mu-v)/sigma*math.sqrt(dt)/2.0
-
 @jit
 def Ame_option_binomial(St,K,r,sigma,T,M,otype='call',method='CRR'):
     mu = r - sigma * sigma / 2.0
@@ -755,8 +1027,6 @@ def Ame_option_trinomial(St,K,r,sigma,T,M,otype='call',method='CRR'):
             tmp = (pu* payoff[n + 2] +pm*payoff[n+1]+ pd* payoff[n]) * disc
             payoff[n] = (St *um[m-1] * dm[2*(m-1)-n]-K)*o_value if (St * um[m-1] * dm[2*(m-1)-n]-K)*o_value- tmp>0 else tmp
     return (pu* payoff[2] +pm*payoff[1]+ pd* payoff[0]) * disc
-
-
 @jit
 def Ame_option_ExDiff(St, K, r, sigma, T, M, N, otype='call'):
     '''
@@ -834,7 +1104,6 @@ def Ame_option_ImDiff(St, K, r,q, sigma, T, M, N, otype='call'):
         f=np.where(payoff>f,payoff,f)
     f = A_inv @ f
     return f[M-1]
-
 def Euro_option_BSM(St,K,r,sigma,T,otype='call'):
     d1=(np.log(St / K) + (r + sigma *sigma / 2) * T) / (sigma*np.sqrt(T))
     d2 = d1 - sigma * np.sqrt(T)
@@ -845,8 +1114,6 @@ def Euro_option_BSM(St,K,r,sigma,T,otype='call'):
 def vega_euro(St,K,r,sigma,T,otype='call'):
     d1 = (np.log(St / K) + (r + sigma *sigma / 2) * T) / (sigma * np.sqrt(T))
     return St * norm(0, 1).pdf(d1) * np.sqrt(T)
-
-
 @jit
 def Euro_option_binomial(St,K,r,sigma,T,M=80,otype='call',method='CRR'):
     mu = r - sigma * sigma / 2.0
@@ -1011,7 +1278,6 @@ def option_binomial(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,otype='call',A
                 if gain > payoff[n]:
                     payoff[n] = gain
     return payoff[0]
-
 @jit
 def option_binomial_comb(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=80,otype='call',American=False):
     dt = T / M;
@@ -1042,8 +1308,6 @@ def option_binomial_comb(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=80,otype='cal
         for m in range(M+1):
             payoff[m] *= comb(M,m)*p**m*(1-p)**(M-m)
         return np.sum(payoff)*math.exp(-r*T)
-
-
 def option_MC(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,N=100,JumpLambda=False,JumpKappa=False,otype='call',American=False):
     '''
 
@@ -1072,162 +1336,8 @@ def option_MC(St=100.0,K=100.0,r=0.05,T=1.0,sigma=0.2,M=100,N=100,JumpLambda=Fal
     payoff=np.maximum(St*np.exp(np.cumsum(tmp,axis=1)[:,-1])-K,0)
     return math.exp(-r*T)*np.mean(payoff)
 
-@jit
-def HestonInte(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0,Trap):
-    '''
-    % Returns the integrand for the risk neutral probabilities P1 and P2.
-    % phi = integration variable
-    XXXXXX Pnum = 1 or 2 (for the probabilities)XXXXX
-    % Heston parameters:
-    %    kappa  = volatility mean reversion speed parameter
-    %    theta  = volatility mean reversion level parameter
-    %    lambda = risk parameter
-    %    rho    = correlation between two Brownian motions
-    %    sigma  = volatility of variance
-    %    v      = initial variance
-    % Option features.
-    %    PutCall = 'C'all or 'P'ut
-    %    K = strike price
-    %    S = spot price
-    %    r = risk free rate
-    %    q = dividend yield
-    %    Trap = 1 "Little Trap" formulation
-    %           0  Original Heston formulation
-    '''
-    x=log(S)
-    a=kappa*theta
-    u=np.array([0.5,-.5])
-    b=np.array([kappa+lam-rho*sigma,kappa+lam])
-    d=np.sqrt((rho*sigma*1.0j*phi-b)**2-sigma*sigma*(2*u*1.0j*phi-phi*phi))
-    g=(b-rho*sigma*1.0j*phi+d)/(b-rho*sigma*1.0j*phi-d)
-    if Trap==1:
-        c=1.0/g
-        D=(b-rho*sigma*1.0j*phi-d)/sigma/sigma*(1-np.exp(-d*tau))/(1-c*np.exp(-d*tau))
-        G=(1-c*np.exp(-d*tau))/(1-c)
-        C=(r-q)*1.0j*phi*tau+a/sigma/sigma*((b-rho*sigma*1.0j*phi-d)*tau-2*np.log(G))
-    else:
-        G=(1-g*np.exp(d*tau))/(1-g)
-        C=(r-q)*1.0j*phi*tau+a/sigma/sigma*((b-rho*sigma*1.0j*phi+d)*tau-2*np.log(G))
-        D=(b-rho*sigma*1.0j*phi+d)/sigma/sigma*(1-np.exp(d*tau))/(1-g*np.exp(d*tau))
-    f=np.exp(C+D*v0+1.0j*phi*x)
-    return (np.exp(-1.0j*phi*np.log(K))*f/1.0j/phi).real
 
-@jit
-def HestonPrice(PutCall,kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,trap,Lphi,Uphi,dphi):
-    '''
-    % Heston (1993) price of a European option.
-    % Uses the original formulation by Heston
-    % Heston parameters:
-    %    kappa  = volatility mean reversion speed parameter
-    %    theta  = volatility mean reversion level parameter
-    %    lambda = risk parameter
-    %    rho    = correlation between two Brownian motions
-    %    sigma  = volatility of variance
-    %    v0     = initial variance
-    % Option features.
-    %    PutCall = 'C'all or 'P'ut
-    %    K = strike price
-    %    S = spot price
-    %    r = risk free rate
-    %    q = dividend yield
-    %    T = maturity
-    % Integration features
-    %    L = lower limit
-    %    U = upper limit
-    %    dphi = integration increment
-    % 此处主要是用基于梯形法则的数值积分
-    % example: HestonPrice('put',5.0,.05,0.0,-.8,.5,.5,100.0,100.0,.03,.02,.05,1,0.00001,50,0.001)
-    '''
-    phi=np.arange(Lphi,Uphi+.001,dphi)
-    N=len(phi)
-    int1=np.empty(N)
-    int2=np.empty(N)
-    for i in range(N):
-        int1[i],int2[i]=HestonInte(phi[i],kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,trap)
-    I1=np.trapz(int1)*dphi
-    I2=np.trapz(int2)*dphi
-    P1=0.5+1.0/np.pi*I1
-    P2=0.5+1.0/np.pi*I2
-    if PutCall=='call':
-        return S*np.exp(-q*T)*P1-K*np.exp(-r*T)*P2
-    else:
-        return K*np.exp(-r*T)*(1.0-P2)-S*np.exp(-q*T)*(1-P1)
 
-@jit
-def HestonInteConsol(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0,Trap):
-    '''
-    % Returns the integrand for the risk neutral probabilities P1 and P2.
-    % phi = integration variable
-    XXXXXX Pnum = 1 or 2 (for the probabilities)XXXXX
-    % Heston parameters:
-    %    kappa  = volatility mean reversion speed parameter
-    %    theta  = volatility mean reversion level parameter
-    %    lambda = risk parameter
-    %    rho    = correlation between two Brownian motions
-    %    sigma  = volatility of variance
-    %    v      = initial variance
-    % Option features.
-    %    PutCall = 'C'all or 'P'ut
-    %    K = strike price
-    %    S = spot price
-    %    r = risk free rate
-    %    q = dividend yield
-    %    Trap = 1 "Little Trap" formulation
-    %           0  Original Heston formulation
-    '''
-    x=log(S)
-    a=kappa*theta
-    u=np.array([0.5,-.5])
-    b=np.array([kappa+lam-rho*sigma,kappa+lam])
-    d=np.sqrt((rho*sigma*1.0j*phi-b)**2-sigma*sigma*(2*u*1.0j*phi-phi*phi))
-    g=(b-rho*sigma*1.0j*phi+d)/(b-rho*sigma*1.0j*phi-d)
-    if Trap==1:
-        c=1.0/g
-        D=(b-rho*sigma*1.0j*phi-d)/sigma/sigma*(1-np.exp(-d*tau))/(1-c*np.exp(-d*tau))
-        G=(1-c*np.exp(-d*tau))/(1-c)
-        C=(r-q)*1.0j*phi*tau+a/sigma/sigma*((b-rho*sigma*1.0j*phi-d)*tau-2*np.log(G))
-    else:
-        G=(1-g*np.exp(d*tau))/(1-g)
-        C=(r-q)*1.0j*phi*tau+a/sigma/sigma*((b-rho*sigma*1.0j*phi+d)*tau-2*np.log(G))
-        D=(b-rho*sigma*1.0j*phi+d)/sigma/sigma*(1-np.exp(-d*tau))/(1-g*np.exp(-d*tau))
-    f=np.exp(C+D*v0+1.0j*phi*x)
-    return (np.exp(-1.0j*phi*log(K))/1.0j/phi*(S*exp(-q*tau)*f[0]-K*exp(-r*tau)*f[1])).real
-@jit
-def HestonPriceConsol(PutCall,kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,trap,Lphi,Uphi,dphi):
-    '''
-    % Heston (1993) price of a European option.
-    % Uses the original formulation by Heston
-    % Heston parameters:
-    %    kappa  = volatility mean reversion speed parameter
-    %    theta  = volatility mean reversion level parameter
-    %    lambda = risk parameter
-    %    rho    = correlation between two Brownian motions
-    %    sigma  = volatility of variance
-    %    v0     = initial variance
-    % Option features.
-    %    PutCall = 'C'all or 'P'ut
-    %    K = strike price
-    %    S = spot price
-    %    r = risk free rate
-    %    q = dividend yield
-    %    T = maturity
-    % Integration features
-    %    L = lower limit
-    %    U = upper limit
-    %    dphi = integration increment
-    % 此处主要是用基于梯形法则的数值积分
-    % example: HestonPrice('put',5.0,.05,0.0,-.8,.5,.5,100.0,100.0,.03,.02,.05,1,0.00001,50,0.001)
-    '''
-    phi=np.arange(Lphi,Uphi+.001,dphi)
-    N=len(phi)
-    inte=np.empty(N)
-    for i in range(N):
-        inte[i]=HestonInteConsol(phi[i],kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,trap)
-    I=np.trapz(inte)*dphi
-    if PutCall=='call':
-        return S*np.exp(-q*T)*0.5-K*np.exp(-r*T)*0.5+I/math.pi
-    else:
-        return K*np.exp(-r*T)*0.5-S*np.exp(-q*T)*0.5+I/math.pi
 
 class GenRelatedNormal:
     def __init__(self,mu,mat):
@@ -1265,7 +1375,7 @@ def imp_vol(Ct,St,K,r,T,sigma_est,otype):
     def diff(sigma):
         return Euro_option_BSM(St,K,r,sigma,T,otype)-Ct
     return fsolve(diff,sigma_est)[0]
-def imp_vol_euro(Ct,St,K,r,T,sigma_0,otype,vol=0.000001):
+def imp_vol_Formula(Ct,St,K,r,T,sigma_0,otype,vol=0.000001):
     iter_max_num=10
     sigma=sigma_0
     dC = Euro_option_BSM(St, K, r, sigma, T, otype) - Ct
