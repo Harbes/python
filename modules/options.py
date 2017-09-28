@@ -1383,7 +1383,7 @@ def imp_vol_Formula(Ct,St,K,r,T,sigma_0,otype,vol=0.000001):
         if np.percentile(abs(dC),10)<vol:
             break
     return sigma
-class Norm:
+class norm:
     def __init__(self,mu,sigma):
         self.mu=mu
         self.sigma=sigma
@@ -1403,3 +1403,5 @@ class Norm:
             k1 = 1.0 / (1.0 - gamma * d)
             return normalprime * (a1 * k1 + a2 * k1 ** 2 + a3 * k1 ** 3 + a4 * k1 ** 4 + a5 * k1 ** 5)
 
+    def pdf(self, d):
+        return np.exp(-(d - self.mu) ** 2 * 0.5 / self.sigma / self.sigma) / sqrt(2 * pi) / self.sigma
