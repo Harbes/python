@@ -2572,7 +2572,430 @@ r_{\pm}^{j}=\frac{\beta_{j}\pm\sqrt{\beta_{j}^{2}-4\alpha_{j}\gamma}}{}=\frac{b_
 \end_layout
 
 \begin_layout Section
-Atttari(2004) representation
+Attari(2004) representation
+\end_layout
+
+\begin_layout Itemize
+Attari(2004)提出了关于Heston call price的另一个方程。(此方称与Lewis(2001)提出的相似，下一章会介绍)。
+\end_layout
+
+\begin_layout Itemize
+Attari(2004)将terminal stock price写成
+\begin_inset Formula $S_{T}=S_{t}e^{r\tau+x(t,T)}$
+\end_inset
+
+，其中
+\begin_inset Formula $x(t,T)$
+\end_inset
+
+表示the stochastic component of the stock price process。于是，call price为：
+\begin_inset Formula 
+\begin{align*}
+C(K) & =e^{-r\tau}E^{Q}[S_{T}|S_{T}>K]-Ke^{-r\tau}E^{Q}[1_{S_{T}>K}]\\
+ & =S_{t}E^{Q}[e^{x}|x>ln(Ke^{-r\tau}/S_{t})]-Ke^{-r\tau}E^{Q}[1_{x>ln(Ke^{-r\tau}/S_{t}}]\\
+ & =S_{t}\Pi_{t}-Ke^{-r\tau}\Pi_{2}\tag{3.28}
+\end{align*}
+
+\end_inset
+
+注意两个期望都是风险中性测度下的，具体：
+\begin_inset Formula 
+\begin{align*}
+\Pi_{1} & =E^{Q}[e^{x}|x>ln(Ke^{-r\tau}/S_{t})]\\
+ & =\int_{ln(Ke^{-r\tau}/S_{t})}^{\infty}e^{x}q(x)dx\\
+ & \equiv\int_{ln(Ke^{-r\tau}/S_{t})}^{\infty}p(x)dx
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\Pi_{2} & =E^{Q}[1_{x>ln(Ke^{-r\tau}/S_{t}}]\\
+ & =\int_{ln(Ke^{-r\tau}/S_{t})}^{\infty}q(x)dx\tag{3.29}
+\end{align*}
+
+\end_inset
+
+注意，由于
+\begin_inset Formula $e^{x}q(x)>0,0\leq\Pi_{1}\leq1$
+\end_inset
+
+，则
+\begin_inset Formula $e^{x}q(x)=p(x)$
+\end_inset
+
+可以被看作是一个‘概率密度函数’。我们记
+\begin_inset Formula $q(x)$
+\end_inset
+
+对应的特征方程(Fourier transform)为
+\begin_inset Formula $\varphi_{2}(u)$
+\end_inset
+
+，
+\begin_inset Formula $p(x)$
+\end_inset
+
+对应的特征方程(FT)为
+\begin_inset Formula $\varphi_{1}(u)$
+\end_inset
+
+，依据二者的定义可以得到
+\begin_inset Formula $\varphi_{1}(u)=\varphi_{2}(u-i)$
+\end_inset
+
+。现在，利用inverse FT或者(3.13)可得：
+\begin_inset Formula 
+\begin{align*}
+\Pi_{1} & =\frac{1}{2\pi}\int_{-\infty}^{\infty}\varphi_{1}(v)[\int_{ln(Ke^{-r\tau}/S_{t})}^{\infty}e^{-ivx}dx]dv\\
+ & =\frac{1}{2\pi}\int_{-\infty}^{\infty}\varphi_{2}(v-i)[\int_{ln(Ke^{-r\tau}/S_{t})}^{\infty}e^{-ivx}dx]dv\tag{3.31}\\
+ & \equiv\frac{1}{2\pi}\int_{-\infty}^{\infty}\varphi_{2}(u)[\int_{ln(Ke^{-r\tau}/S_{t})}^{\infty}e^{-i(u+i)x}dx]dv\tag{3.32}
+\end{align*}
+
+\end_inset
+
+上式是Attari(2004)的equation (8)，计算内积分可得：
+\begin_inset Formula 
+\begin{align*}
+\Pi_{1} & =\frac{1}{2\pi}\int_{-\infty}^{\infty}\varphi_{2}(u)\frac{e^{-i(u+i)ln(Ke^{-r\tau}/S_{t})}}{i(u+i)}du-\frac{1}{2\pi}\underset{R\rightarrow\infty}{lim}\int_{-\infty}^{\infty}\varphi_{2}(u)\frac{e^{-i(u+i)R}}{i(u+i)}du\\
+ & =I_{1}-I_{2}\tag{3.33}
+\end{align*}
+
+\end_inset
+
+the second integral is a complex integral with a pole at 
+\begin_inset Formula $u=-i$
+\end_inset
+
+。the residue there is, therefore,
+\begin_inset Formula $\varphi_{2}(-i)/i$
+\end_inset
+
+。applying the Residue Theorem
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+留数定理，见史济怀的《复变函数》
+\end_layout
+
+\end_inset
+
+，有：
+\begin_inset Formula 
+\begin{align*}
+I_{2} & =\underset{R\rightarrow\infty}{lim}\frac{1}{2\pi}[-2\pi i\frac{\varphi_{2}(-i)}{i}]\\
+ & =-\varphi_{2}(-i)\\
+ & =-\varphi_{1}(0)\\
+ & =-1\tag{3.34}
+\end{align*}
+
+\end_inset
+
+于是，
+\begin_inset Formula 
+\begin{align*}
+\Pi_{1} & =\frac{1}{2\pi}\int_{-\infty}^{\infty}\varphi_{2}(u)\frac{e^{-i(u+i)ln(Ke^{-r\tau}/S_{t})}}{i(u+i)}du+1\tag{3.35}\\
+ & =\frac{Ke^{-r\tau}/S_{t}}{2\pi}\int_{-\infty}^{\infty}\varphi_{2}(u)\frac{e^{-iuln(Ke^{-r\tau}/S_{t})}}{i(u+i)}du+1
+\end{align*}
+
+\end_inset
+
+这正是Attari(2004)的equation (12)。对于
+\begin_inset Formula $\Pi_{2}$
+\end_inset
+
+，我们可以使用Gil-Pelaez(1951)的 inversion theorem得到：
+\begin_inset Formula 
+\[
+\Pi_{2}=\frac{1}{2}+\frac{1}{2\pi}\int_{-\infty}^{\infty}\varphi_{2}(u)\frac{e^{-iuln(Ke^{-r\tau}/S_{t})}}{iu}du\tag{3.36}
+\]
+
+\end_inset
+
+将
+\begin_inset Formula $\Pi_{1},\Pi_{2}$
+\end_inset
+
+的值代入(3.28)可得：
+\begin_inset Formula 
+\begin{align*}
+C(K) & =S_{t}[1+\frac{Ke^{-r\tau}/S_{t}}{2\pi}\int_{-\infty}^{\infty}\varphi_{2}(u)\frac{e^{-iuln(Ke^{-r\tau}/S_{t})}}{i(u+i)}du]-Ke^{-r\tau}[\frac{1}{2}+\frac{1}{2\pi}\int_{-\infty}^{\infty}\varphi_{2}(u)\frac{e^{-iuln(Ke^{-r\tau}/S_{t})}}{iu}du]\\
+ & =S_{t}-\frac{1}{2}Ke^{-r\tau}-\frac{Ke^{-r\tau}}{\pi}\int_{0}^{\infty}Re[\varphi_{2}(u)e^{-iuln(Ke^{-r\tau}/S_{t})}(\frac{1}{iu}-\frac{1}{i(u+i)})]du\tag{3.37}
+\end{align*}
+
+\end_inset
+
+其中：
+\begin_inset Formula 
+\begin{align*}
+Re[\varphi_{2}(u)e^{-iuln(Ke^{-r\tau}/S_{t})}(\frac{1}{iu}-\frac{1}{i(u+i)})] & =Re[\varphi_{2}(u)e^{-iuln(Ke^{-r\tau}/S_{t})}(\frac{1-i/u}{u^{2}+1})]\\
+ & =\frac{(R_{2}(u)+\frac{I_{2}(u)}{u})cos(uL)+(I_{2}(u)-\frac{R_{2}(u)}{u})sin(uL)}{u^{2}+1}\tag{3.39}\\
+ & \equiv A(u)
+\end{align*}
+
+\end_inset
+
+因此，Attari(2004)关于call price的方程为：
+\begin_inset Formula 
+\[
+C(K)=S_{t}-\frac{1}{2}Ke^{-r\tau}-\frac{Ke^{-r\tau}}{\pi}\int_{0}^{\infty}A(u)du\tag{3.40}
+\]
+
+\end_inset
+
+值得注意的是
+\begin_inset Formula $lnS_{T}=lnS_{t}+r\tau+x(t,T)$
+\end_inset
+
+，而特征方程
+\begin_inset Formula $\varphi_{2}(u)$
+\end_inset
+
+是针对随机变量
+\begin_inset Formula $x=x(t,T)$
+\end_inset
+
+的，而不是
+\begin_inset Formula $lnS_{T}$
+\end_inset
+
+，此时，如果用
+\begin_inset Formula $lnS_{T}$
+\end_inset
+
+的特征方程来表示
+\begin_inset Formula $\varphi_{2}(u)$
+\end_inset
+
+的话，则：
+\begin_inset Formula 
+\[
+E^{Q}[e^{iux(t,T)}]=E^{Q}[e^{iulnS_{T}}]e^{-iu(lnS_{T}+r\tau)}
+\]
+
+\end_inset
+
+于是：
+\begin_inset Formula 
+\begin{align*}
+\varphi_{2}(u) & =f_{2}(u)*exp[-iu(lnS_{t}+r\tau)]\\
+ & =exp[C_{2}(\tau,u)+D_{2}(\tau,u)v_{0}-iur\tau]
+\end{align*}
+
+\end_inset
+
+其中，
+\begin_inset Formula $f_{2}(u)$
+\end_inset
+
+就是Chapter1 Heston(1993)的一个特征函数。注意到，实际上Attari(2004)的特征函数
+\begin_inset Formula $\varphi_{2}(u)$
+\end_inset
+
+是等价于
+\begin_inset Formula $f_{2}(u)$
+\end_inset
+
+。Attari(2004)表达式的主要优势在于计算call price时只需一个数值积分就可以了，而且被积函数
+\begin_inset Formula $A(u)$
+\end_inset
+
+的分母中包含
+\begin_inset Formula $u^{2}$
+\end_inset
+
+，于是，数值积分时给定一个有限的上下限并不会大幅降低精确度。
+\end_layout
+
+\begin_layout Itemize
+code：AttariProb.m和AttariPriceGaussLaguerre.m
+\end_layout
+
+\begin_layout Section
+Carr and Madan(1999) representation
+\end_layout
+
+\begin_layout Itemize
+Carr and Madan(1999) present a derivation of the call price based on the
+ Fourier tranform。(优势在于数值计算更快，被积函数衰减更快)
+\end_layout
+
+\begin_layout Itemize
+定义：
+\begin_inset Formula $k=lnK,x=x_{T}=lnS_{T}$
+\end_inset
+
+，
+\begin_inset Formula $q(x)$
+\end_inset
+
+为
+\begin_inset Formula $S_{T}$
+\end_inset
+
+的概率密度函数，于是Call的价格可以写为：
+\begin_inset Formula 
+\begin{align*}
+C(k) & =e^{-r\tau}E^{Q}[(S_{T}-K)^{+}]\\
+ & =e^{-r\tau}\int_{k}^{\infty}(e^{x}-e^{k})q(x)dx\\
+ & =e^{x_{t}}Q^{S}(S_{T}>K)-Ke^{-r\tau}Q(S_{T}>K)\tag{3.41}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula $Q^{S}(S_{T}>K),Q(S_{T}>K)$
+\end_inset
+
+ are found by inverting a characteristic function, this inversion obviously
+ requires that characteristic function be integrable, since：
+\begin_inset Formula 
+\begin{align*}
+\underset{k\rightarrow-\infty}{lim}C(k) & =\underset{k\rightarrow-\infty}{lim}e^{-r\tau}\int_{k}^{\infty}(e^{x}-e^{k})q(x)dx\\
+ & =e^{-r\tau}E^{Q}[e^{x}]-0\\
+ & =S_{t}
+\end{align*}
+
+\end_inset
+
+显然
+\begin_inset Formula $\underset{k\rightarrow-\infty}{lim}C(k)\neq0$
+\end_inset
+
+，这就违背了
+\begin_inset Formula $C(k)$
+\end_inset
+
+在
+\begin_inset Formula $L^{1}$
+\end_inset
+
+上可积的必要条件，因而其Fourier transform并不存在。Carr and Madan(1999)对此提出了一个修正的办法：定义一个modified
+ call price为：
+\begin_inset Formula 
+\[
+c(k)=e^{\alpha k}C(k)
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $e^{\alpha k}$
+\end_inset
+
+被称为damping factor【
+\begin_inset Formula $\alpha$
+\end_inset
+
+
+\color red
+满足什么条件？？？
+\color inherit
+】。由于：
+\begin_inset Formula 
+\begin{align*}
+\underset{k\rightarrow-\infty}{lim}c(k) & =\underset{k\rightarrow-\infty}{lim}e^{-r\tau}\int_{k}^{\infty}(e^{\alpha k+x}-e^{(\alpha+1)k})q(x)dx\\
+ & =\underset{k\rightarrow-\infty}{lim}e^{-r\tau}\int_{k}^{\infty}e^{\alpha k+x}q(x)dx-\underset{k\rightarrow-\infty}{lim}e^{-r\tau+(\alpha+1)k}\int_{k}^{\infty}q(x)dx\\
+ & =e^{-r\tau}[0]-0=0
+\end{align*}
+
+\end_inset
+
+此时
+\begin_inset Formula $c(k)$
+\end_inset
+
+在
+\begin_inset Formula $L^{1}$
+\end_inset
+
+上可积，且
+\begin_inset Formula $c(k)$
+\end_inset
+
+的FT存在。Carr and Madan(1999)首先得目标就是先推导出
+\begin_inset Formula $c(k)$
+\end_inset
+
+的Fourier transform 
+\begin_inset Formula $\hat{c}(v)$
+\end_inset
+
+，然后再利用inverse FT获得
+\begin_inset Formula $c(k)$
+\end_inset
+
+，再剔除
+\begin_inset Formula $e^{\alpha k}$
+\end_inset
+
+：
+\begin_inset Formula 
+\begin{align*}
+\hat{c}(v) & =\int_{-\infty}^{\infty}e^{ivk}c(k)dk\\
+ & =\int_{-\infty}^{\infty}e^{ivk}e^{\alpha k}C(k)dk\\
+ & =e^{-r\tau}\int_{-\infty}^{\infty}[\int_{k}^{\infty}(e^{x}-e^{k})q(x)dx]dk\tag{3.42}\\
+ & =e^{-r\tau}\int_{-\infty}^{\infty}q(x)[\int_{-\infty}^{x}(e^{(\alpha+iv)k+x}-e^{(\alpha+iv+1)k})dk]dx\\
+ & =e^{-r\tau}\int_{-\infty}^{\infty}q(x)[(\frac{e^{(\alpha+iv)k+x}}{\alpha+iv}-\frac{e^{(\alpha+iv+1)k}}{\alpha+iv+1})|_{k=-\infty}^{k=x}]dx\\
+ & =\frac{e^{-r\tau}\varphi(v-(\alpha+1)i)}{\alpha^{2}+\alpha-v^{2}+iv(2\alpha+1)}\tag{3.43}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula $\varphi(u)=E^{Q}[e^{iux}]=\int_{-\infty}^{\infty}e^{iux}q(x)dx$
+\end_inset
+
+是
+\begin_inset Formula $x=lnS_{T}$
+\end_inset
+
+的特征函数。于是：
+\begin_inset Formula 
+\begin{align*}
+C(k) & =e^{-\alpha k}c(k)\\
+ & =\frac{e^{-\alpha k}}{2\pi}\int_{-\infty}^{\infty}e^{-ivk}\hat{c}(v)dv\\
+ & =\frac{e^{-\alpha k}}{\pi}\int_{0}^{\infty}Re[e^{-ivk}\hat{c}(v)]dv\tag{3.44}
+\end{align*}
+
+\end_inset
+
+Lord and Kahl(2007)认为上式至少存在三点优势：第一，只需要一个数值积分；第二，被积函数的分母是一个关于积分变量的二次函数，其衰减速度快于Hes
+ton(1993)原始被积函数；第三，恰当选取的
+\begin_inset Formula $\alpha$
+\end_inset
+
+有助于提高精确度。
+\end_layout
+
+\begin_layout Itemize
+code：CarrMadanIntegrand.m和HestonCallGaussLaguerre.m。
+\end_layout
+
+\begin_layout Section
+Bounds on the Carr-Madan damping factor and optimal value
+\end_layout
+
+\begin_layout Itemize
+Carr and Madan(1999)论证了一个关于
+\begin_inset Formula $c(k)$
+\end_inset
+
+可积的充分条件：
+\begin_inset Formula $\hat{c}(0)$
+\end_inset
+
+有限。令(3.43)中的
+\begin_inset Formula $v=0$
+\end_inset
+
+可知，当
+\begin_inset Formula $\varphi(-(\alpha+1)i)<\infty$
+\end_inset
+
+
 \end_layout
 
 \begin_layout Chapter

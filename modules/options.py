@@ -578,9 +578,8 @@ class HestonOptions:
         phi=np.arange(0.00001,10.01,0.05)
         n=len(phi)
         A=np.empty((n,2))
-        for i in range(n):
-            A[i,0]=HestonOptions(K=75.0,St=100.0,r=0.0,q=0.0,kappa=10.0,theta=.05,v0=.05,rho=-0.9,lam=0.0,sigma=0.75,tau=3.0).HestonIntegrand_Orig(phi[i])[0]
-            A[i,1]=HestonOptions(K=75.0,St=100.0,r=0.0,q=0.0,kappa=10.0,theta=.05,v0=.05,rho=-0.9,lam=0.0,sigma=0.09,tau=1.0).HestonIntegrand_Orig(phi[i])[0]
+        A[:,0]=HestonIntegrand_Orig(phi,10.0,0.05,0.0,-0.9,0.75,3.0,75.0,100.0,0.0,0.0,0.05,0)
+        A[:, 1] =HestonIntegrand_Orig(phi,10.0,0.05,0.0,-0.9,0.09,1.0,75.0,100.0,0.0,0.0,0.05,0)
         plt.plot(phi,A[:,0],label='sigma=0.75,tau=3.0')
         plt.plot(phi,A[:,1],label='sigma=0.09,tau=1.0')
         plt.legend()
@@ -589,13 +588,8 @@ class HestonOptions:
         phi = np.arange(0.00001, 100.01, 0.5)
         n = len(phi)
         A = np.empty((n, 2))
-        for i in range(n):
-            A[i, 0] = \
-            HestonOptions(K=10.0, St=7.0, r=0.0, q=0.0, kappa=10.0, theta=.01, v0=.01, rho=-0.9, lam=0.0, sigma=0.175,
-                          tau=1.0/52.0).HestonIntegrand_Orig(phi[i])[0]
-            A[i, 1] = \
-            HestonOptions(K=10.0, St=10.0, r=0.0, q=0.0, kappa=10.0, theta=.07, v0=.07, rho=-0.9, lam=0.0, sigma=0.09,
-                          tau=1.0).HestonIntegrand_Orig(phi[i])[0]
+        A[:, 0] =HestonIntegrand_Orig(phi,10.0,0.01,0.0,-0.9,0.175,1.0/52.0,10.0,7.0,0.0,0.0,0.01,0)
+        A[:, 1] =HestonIntegrand_Orig(phi,10.0,0.07,0.0,-0.9,0.09, 1.0,     10.0,10.0,0.0,0.0,0.01,0)
         plt.plot(phi, A[:, 0], label='sigma=0.175,tau=1/52,v0=0.01,theta=0.01,St=7')
         plt.plot(phi, A[:, 1], label='sigma=0.09,tau=1.0,v0=0.07,theta=0.07,St=10')
         plt.legend()
@@ -605,9 +599,8 @@ class HestonOptions:
         phi=np.arange(0.0001,10.01,0.1)
         n=len(phi)
         A=np.empty((n,2))
-        for i in range(n):
-            A[i,0]=HOpt.HestonIntegrand_Orig(phi[i])[Pnum]
-            A[i,1]=HOpt.HestonIntegrand_Trap(phi[i])[Pnum]
+        A[:,0]=HestonIntegrand_Orig(phi,1.5768,0.0398,0.0,0.5711,0.5751,5.0,100.0,100.0,0.035,0.0,0.0175,Pnum)
+        A[:,1]=HestonIntegrand_Trap(phi,1.5768,0.0398,0.0,0.5711,0.5751,5.0,100.0,100.0,0.035,0.0,0.0175,Pnum)
         plt.plot(phi,A[:,0],label='Heston Integrand')
         plt.plot(phi,A[:,1],label='Albrecher Integrand')
         plt.legend()
@@ -621,9 +614,9 @@ class HestonOptions:
         f2=np.empty(len(x))
         f3=np.empty(len(x))
         for i in range(len(x)):
-            intneg=(np.exp(-1.0j*phi*x[i])*HestonOptions(rho=-0.8,**paras).HestonCharacteristicFunction(phi)).real
-            intzero=(np.exp(-1.0j*phi*x[i])*HestonOptions(rho=0.0,**paras).HestonCharacteristicFunction(phi)).real
-            intpos=(np.exp(-1.0j*phi*x[i])*HestonOptions(rho=0.8,**paras).HestonCharacteristicFunction(phi)).real
+            intneg=(np.exp(-1.0j*phi*x[i])*HestonCharacteristicFunction(phi,2.0,0.01,0.0,-0.8,0.1,0.5,100.0,100.0,0.0,0.0,0.01)).real
+            intzero=(np.exp(-1.0j*phi*x[i])*HestonCharacteristicFunction(phi,2.0,0.01,0.0,0.0,0.1,0.5,100.0,100.0,0.0,0.0,0.01)).real
+            intpos=(np.exp(-1.0j*phi*x[i])*HestonCharacteristicFunction(phi,2.0,0.01,0.0,0.8,0.1,0.5,100.0,100.0,0.0,0.0,0.01)).real
             f1[i]=np.trapz(intneg)/math.pi*dphi
             f2[i]=np.trapz(intzero)/math.pi*dphi
             f3[i]=np.trapz(intpos)/math.pi*dphi
@@ -643,9 +636,9 @@ class HestonOptions:
         f2=np.empty(len(x))
         f3=np.empty(len(x))
         for i in range(len(x)):
-            intzero=(np.exp(-1.0j*phi*x[i])*HestonOptions(sigma=0.00001,**paras).HestonCharacteristicFunction(phi)).real
-            intlow=(np.exp(-1.0j*phi*x[i])*HestonOptions(sigma=0.2,**paras).HestonCharacteristicFunction(phi)).real
-            inthigh=(np.exp(-1.0j*phi*x[i])*HestonOptions(sigma=0.4,**paras).HestonCharacteristicFunction(phi)).real
+            intzero=(np.exp(-1.0j*phi*x[i])*HestonCharacteristicFunction(phi,2.0,0.01,0.0,0.0,0.00001,0.5,100.0,100.0,0.0,0.0,0.01)).real
+            intlow=(np.exp(-1.0j*phi*x[i])*HestonCharacteristicFunction(phi,2.0,0.01,0.0,0.0,0.2,0.5,100.0,100.0,0.0,0.0,0.01)).real
+            inthigh=(np.exp(-1.0j*phi*x[i])*HestonCharacteristicFunction(phi,2.0,0.01,0.0,0.0,0.4,0.5,100.0,100.0,0.0,0.0,0.01)).real
             f1[i]=np.trapz(intzero)/math.pi*dphi
             f2[i]=np.trapz(intlow)/math.pi*dphi
             f3[i]=np.trapz(inthigh)/math.pi*dphi
@@ -669,7 +662,6 @@ plt.legend()
 plt.show()
         '''
         S=np.arange(70,141,0.05)
-        H_paras={'kappa':2.0,'theta':0.01,'v0':0.01,'sigma':0.1,'r':0.0,'q':0.0,'tau':0.5}
         volneg=0.071037274323352*sqrt(2)
         volpos=0.070386797400082*sqrt(2)
         BScallpos=euro_option(S,r=0.0,sigma=volpos,T=0.5).value_BSM()
@@ -677,22 +669,21 @@ plt.show()
         Hcallpos=np.empty_like(S)
         Hcallneg=np.empty_like(S)
         for i in range(len(S)):
-            Hcallpos[i]=HestonOptions(St=S[i],rho=0.5,**H_paras).HestonPriceConsol(Uphi=75.001,dphi=0.1)
-            Hcallneg[i]=HestonOptions(St=S[i],rho=-0.5,**H_paras).HestonPriceConsol(Uphi=75.001,dphi=0.1)
+            Hcallpos[i]=HestonPriceConsol(2.0,0.01,0.0,0.5,0.1,0.5,100.0,S[i],0.0,0.0,0.01,1,0.00001,75.001,0.1)
+            Hcallneg[i]=HestonPriceConsol(2.0,0.01,0.0,-0.5,0.1,0.5,100.0,S[i],0.0,0.0,0.01,1,0.00001,75.001,0.1)
         plt.plot(S,Hcallpos-BScallpos,label='rho=+0.5')
         plt.plot(S,Hcallneg-BScallneg,label='rho=-0.5')
         plt.legend()
         plt.show()
     def ExampleEffect_of_Sigma_on_Heston_and_BlackScholes_Prices():
         S = np.arange(70, 141, 0.05)
-        H_paras = {'kappa': 2.0, 'theta': 0.01, 'v0': 0.01, 'rho':0, 'r': 0.0, 'q': 0.0, 'tau': 0.5}
         volzero = 0.070712338973920 * sqrt(2)
         BScall = euro_option(S, r=0.0, sigma=volzero, T=0.5).value_BSM()
         Hcallhigh = np.empty_like(S)
         Hcalllow= np.empty_like(S)
         for i in range(len(S)):
-            Hcallhigh[i] = HestonOptions(St=S[i], sigma=0.2, **H_paras).HestonPriceConsol(Uphi=90.001, dphi=0.1)
-            Hcalllow[i] = HestonOptions(St=S[i], sigma=0.1, **H_paras).HestonPriceConsol(Uphi=90.001, dphi=0.1)
+            Hcallhigh[i] = HestonPriceConsol(2.0,0.01,0.0,0.0,0.2,0.5,100.0,S[i],0.0,0.0,0.01,1,0.00001,90.001,0.1)
+            Hcalllow[i] = HestonPriceConsol(2.0,0.01,0.0,0.0,0.1,0.5,100.0,S[i],0.0,0.0,0.01,1,0.00001,90.001,0.1)
         plt.plot(S, Hcallhigh - BScall, label='sigma=0.2')
         plt.plot(S, Hcalllow - BScall, label='sigma=0.1')
         plt.legend()
@@ -871,6 +862,17 @@ def HestonPrice(kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,Trap,Lphi,Uphi,dphi,PutCa
         return S*np.exp(-q*T)*P1-K*np.exp(-r*T)*P2
     else:
         return K*np.exp(-r*T)*(1.0-P2)-S*np.exp(-q*T)*(1-P1)
+def HestonCharacteristicFunction(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0):
+    a = kappa * theta
+    u = -.5
+    b = kappa + lam
+    d = np.sqrt((rho * sigma * 1.0j * phi - b) ** 2 - sigma * sigma * (2 * u * 1.0j * phi - phi * phi))
+    g = (b - rho * sigma * 1.0j * phi + d) / (b - rho * sigma * 1.0j * phi - d)
+    G = (1 - g * np.exp(d * tau)) / (1 - g)
+    C = (r - q) * 1.0j * phi * tau + a / sigma / sigma * ((b - rho * sigma * 1.0j * phi + d) * tau - 2 * np.log(G))
+    D = (b - rho * sigma * 1.0j * phi + d) / sigma / sigma * (1 - np.exp(d * tau)) / (1 - g * np.exp(d * tau))
+    return np.exp(C + D * v0 + 1.0j * phi * np.log(S))
+
 
 def HestonInteConsol_Trap(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0):
     '''
@@ -1381,4 +1383,23 @@ def imp_vol_Formula(Ct,St,K,r,T,sigma_0,otype,vol=0.000001):
         if np.percentile(abs(dC),10)<vol:
             break
     return sigma
+class Norm:
+    def __init__(self,mu,sigma):
+        self.mu=mu
+        self.sigma=sigma
+    def cdf(self,d):
+        d=(d-self.mu)/self.sigma
+        a1=0.319381530
+        a2=-0.356563782
+        a3=1.781477937
+        a4=-1.821255978
+        a5=1.330274429
+        gamma=0.2316419
+        normalprime=math.exp(-d*d/2.0)/math.sqrt(2*math.pi)
+        if d>0:
+            k1 = 1.0 / (1.0 + gamma * d)
+            return 1-normalprime*(a1*k1+a2*k1**2+a3*k1**3+a4*k1**4+a5*k1**5)
+        else:
+            k1 = 1.0 / (1.0 - gamma * d)
+            return normalprime * (a1 * k1 + a2 * k1 ** 2 + a3 * k1 ** 3 + a4 * k1 ** 4 + a5 * k1 ** 5)
 
