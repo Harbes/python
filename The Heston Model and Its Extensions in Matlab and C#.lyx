@@ -2991,11 +2991,519 @@ Carr and Madan(1999)论证了一个关于
 \begin_inset Formula $v=0$
 \end_inset
 
-可知，当
+可知，
+\begin_inset Formula $\hat{c}(0)$
+\end_inset
+
+有限意味着
 \begin_inset Formula $\varphi(-(\alpha+1)i)<\infty$
 \end_inset
 
+。又
+\begin_inset Formula $\varphi(v)=E[e^{ivlnS_{T}}]=E[S_{T}^{iv}]$
+\end_inset
 
+，于是
+\begin_inset Formula $\varphi(-(\alpha+1)i)<\infty$
+\end_inset
+
+等价于
+\begin_inset Formula $S_{T}$
+\end_inset
+
+的
+\begin_inset Formula $(\alpha+1)$
+\end_inset
+
+阶矩存在。对于一些模型，我们可以求出一个
+\begin_inset Formula $\alpha$
+\end_inset
+
+的最大可能值
+\begin_inset Formula $\alpha_{max}$
+\end_inset
+
+，Carr and Madan(1999)建议使用
+\begin_inset Formula $\alpha=\alpha_{max}/4$
+\end_inset
+
+，他们选择了
+\begin_inset Formula $\alpha=1.5$
+\end_inset
+
+。其他的研究中一般选取
+\begin_inset Formula $\alpha=0.75\sim25$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+Lee(2004a) shows how minimum and maximum values for 
+\begin_inset Formula $\alpha$
+\end_inset
+
+can be obtained。记
+\begin_inset Formula $A_{X}=(a_{-},a_{+})$
+\end_inset
+
+表示
+\begin_inset Formula $\alpha+1$
+\end_inset
+
+可能的取值范围，其中
+\begin_inset Formula $a_{-}<0,a_{+}>1$
+\end_inset
+
+，而
+\begin_inset Formula $a_{-},a_{+}$
+\end_inset
+
+的值可以通过下列的等式解得：
+\begin_inset Formula 
+\[
+g(-ia)e^{d(-ia)\tau}=1\tag{3.45}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $g(\phi)$
+\end_inset
+
+和
+\begin_inset Formula $d(\phi)$
+\end_inset
+
+是
+\begin_inset Formula $\lambda=0$
+\end_inset
+
+时Heston characteristic function 
+\begin_inset Formula $g_{2}$
+\end_inset
+
+和
+\begin_inset Formula $d_{2}$
+\end_inset
+
+：
+\begin_inset Formula 
+\[
+g(\phi)=\frac{\kappa-\rho\sigma i\phi+d(\phi)}{\kappa-\rho\sigma i\phi-d(\phi)}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+d(\phi)=\sqrt{(\kappa-\rho\sigma\phi i)^{2}+\sigma^{2}(\phi i+\phi^{2})}
+\]
+
+\end_inset
+
+上述非线性方程的解往往有多个。当
+\begin_inset Formula $\kappa-\rho\sigma>0$
+\end_inset
+
+时，我们可以定义
+\begin_inset Formula $a_{-}$
+\end_inset
+
+是
+\begin_inset Formula $(-\infty,y_{-})$
+\end_inset
+
+上最大的解，
+\begin_inset Formula $a_{+}$
+\end_inset
+
+是
+\begin_inset Formula $(y_{+},\infty)$
+\end_inset
+
+上的最小的解，其中：
+\begin_inset Formula 
+\[
+y_{\pm}=\frac{\sigma-2\kappa\rho\pm\sqrt{\rho^{2}-4\kappa\rho\sigma+4\kappa^{2}}}{2\sigma(1-\rho^{2})}\tag{3.46}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+一个例子
+\end_layout
+
+\begin_layout Subsection
+optimal damping factor
+\end_layout
+
+\begin_layout Itemize
+我们希望进一步在
+\begin_inset Formula $\alpha$
+\end_inset
+
+的可接受的取值范围中寻找一个最优值（我们希望最优
+\begin_inset Formula $\alpha$
+\end_inset
+
+使得(3.44)中的被积函数尽可能少的振荡）。
+\end_layout
+
+\begin_layout Itemize
+Carr and Madan(1999)的call price为：
+\begin_inset Formula 
+\[
+C(k)=\frac{e^{-\alpha k}}{\pi}\int_{0}^{\infty}\psi(v,\alpha)dv
+\]
+
+\end_inset
+
+其中：
+\begin_inset Formula 
+\begin{align*}
+\psi(v,\alpha) & =Re[e^{-ivk}\hat{c}(v)]\\
+ & =Re[\frac{e^{-ivk}e^{-r\tau}\varphi(v-(\alpha+1)i)}{\alpha^{2}+\alpha-v^{2}+iv(2\alpha+1)}]\tag{3.47}
+\end{align*}
+
+\end_inset
+
+Lord and Kahl(2007)认为最优的
+\begin_inset Formula $\alpha$
+\end_inset
+
+会最大限度的降低the total variation of the integrand 
+\begin_inset Formula $\psi(v,\alpha)$
+\end_inset
+
+ over the integration domain 
+\begin_inset Formula $[0,\infty)$
+\end_inset
+
+。在假设
+\begin_inset Formula $\psi(v,\alpha)$
+\end_inset
+
+关于
+\begin_inset Formula $v$
+\end_inset
+
+在
+\begin_inset Formula $[0,\infty)$
+\end_inset
+
+上单调，则：
+\begin_inset Formula 
+\[
+\alpha^{*}=\underset{\alpha_{min}\leq\alpha\leq\alpha_{max}}{arg\:min}[-\alpha k+\frac{1}{2}ln(\psi(v,\alpha)^{2})]\tag{3.48}
+\]
+
+\end_inset
+
+在单调的假设下通过bisection算法很容易求得近似解。
+\end_layout
+
+\begin_layout Itemize
+一个例子。
+\end_layout
+
+\begin_layout Subsection
+Numerical implementation and illustration
+\end_layout
+
+\begin_layout Itemize
+code：RogerLeeGExpD.m、LordKahlFindAlpha.m
+\end_layout
+
+\begin_layout Itemize
+例子。
+\end_layout
+
+\begin_layout Itemize
+另外，Lee(2004b)提出最小化两种误差来寻求最优值：trunction error和sampling error。
+\end_layout
+
+\begin_layout Section
+the Carr-Madan representation for puts
+\end_layout
+
+\begin_layout Itemize
+the put price：
+\begin_inset Formula 
+\begin{align*}
+P(k) & =e^{-r\tau}E^{Q}[(K-S_{T})^{+}]\\
+ & =e^{-r\tau}\int_{-\infty}^{k}(e^{k}-e^{x})q(x)dx\tag{3.49}
+\end{align*}
+
+\end_inset
+
+由于
+\begin_inset Formula $\underset{k\rightarrow\infty}{lim}P(k)=\underset{k\rightarrow\infty}{lim}e^{-r\tau}\int_{-\infty}^{k}(e^{k}-e^{x})q(x)dx=\infty$
+\end_inset
+
+，因此，在
+\begin_inset Formula $L^{1}$
+\end_inset
+
+上也不存在Fourier transform。注意到，
+\begin_inset Formula $P(k)$
+\end_inset
+
+的上界是
+\begin_inset Formula $+\infty$
+\end_inset
+
+，此时我们需要一个一个负指数的damping factor。Schmelzle(2010)使用如下的modified put price：
+\begin_inset Formula 
+\[
+p(k)=e^{-\alpha k}P(k)
+\]
+
+\end_inset
+
+它是
+\begin_inset Formula $L^{1}$
+\end_inset
+
+上可积，因为：
+\begin_inset Formula 
+\[
+\underset{k\rightarrow\infty}{lim}p(k)=\underset{k\rightarrow\infty}{lim}e^{-r\tau}\int_{-\infty}^{k}(e^{(-\alpha+1)k}-e^{-\alpha k+x})q(x)dx=0-0
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula $p(k)$
+\end_inset
+
+的FT为:
+\begin_inset Formula 
+\begin{align*}
+\hat{p}(v) & =\int_{-\infty}^{\infty}e^{ivk}p(k)dk\\
+ & =\int_{-\infty}^{\infty}e^{ivk}e^{-\alpha k}P(k)dk\\
+ & =e^{-r\tau}\int_{-\infty}^{\infty}e^{(-\alpha+iv)k}[\int_{-\infty}^{k}(e^{k}-e^{x})q(x)dx]dk\\
+ & =e^{-r\tau}\int_{-\infty}^{\infty}q(x)[\int_{x}^{\infty}(e^{(-\alpha+iv+1)k}-e^{(-\alpha+iv)k+x})dk]dx\\
+ & =e^{-r\tau}\int_{-\infty}^{\infty}q(x)[\frac{e^{(-\alpha+iv+1)x}}{\alpha^{2}-\alpha-v^{2}+iv(1-2\alpha)}]dx\\
+ & =\frac{e^{-r\tau}\varphi(v+(\alpha-1)i)}{\alpha^{2}-\alpha-v^{2}+iv(1-2\alpha}
+\end{align*}
+
+\end_inset
+
+于是：
+\begin_inset Formula 
+\[
+P(k)=e^{\alpha k}p(k)=\frac{e^{\alpha k}}{2\pi}\int_{-\infty}^{\infty}e^{-ivk}\hat{p}(v)dv=\frac{e^{-\alpha k}}{\pi}\int_{0}^{\infty}Re[e^{-ivk}\hat{p}(v)]dv\tag{3.50}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+code
+\end_layout
+
+\begin_layout Section
+the representation OTM options
+\end_layout
+
+\begin_layout Itemize
+Carr and Madan(1999)强调了一个事实：当maturity极短时，the call value approaches its intrinsic
+ value，and this caused the integrand in the Fourier inversion in Equation(3.44)
+ to be highly oscillatory and,therefore , difficult to integrate。
+\end_layout
+
+\begin_layout Itemize
+Carr and Madan(1999) define 
+\begin_inset Formula $z(k)$
+\end_inset
+
+ to be the time-
+\begin_inset Formula $t$
+\end_inset
+
+ price of out-of-the-money (OTM) calls and puts with strike 
+\begin_inset Formula $K=e^{k}$
+\end_inset
+
+，为简便，假定
+\begin_inset Formula $S_{t}=1$
+\end_inset
+
+，于是：
+\begin_inset Formula 
+\begin{align*}
+z(k) & =\begin{cases}
+OTM\,put\,price\,when\,k<0\\
+OTM\,callprice\,when\,k>0
+\end{cases}\\
+ & =e^{-r\tau}\int_{-\infty}^{\infty}[(e^{k}-e^{x})^{+}1_{k<0}+(e^{x}-e^{k})^{+}1_{k>0}]q(x)dx\\
+ & =e^{-r\tau}\int_{-\infty}^{\infty}(e^{k}-e^{x})1_{k<0}q(x)dx+e^{-r\tau}\int_{k}^{\infty}(e^{x}-e^{k})1_{k>0}q(x)dx
+\end{align*}
+
+\end_inset
+
+相应的FT为：
+\begin_inset Formula 
+\begin{align*}
+\hat{z}(v) & =e^{-r\tau}\int_{-\infty}^{\infty}e^{ivk}z(k)dk\\
+ & =e^{-r\tau}\int_{-\infty}^{\infty}e^{ivk}\int_{-\infty}^{k}(e^{k}-e^{x})1_{k<0}q(x)dxdk+e^{-r\tau}\int_{-\infty}^{\infty}e^{ivk}\int_{-\infty}^{k}(e^{x}-e^{k})1_{k>0}q(x)dxdk\\
+ & =e^{-r\tau}\int_{-\infty}^{0}e^{ivk}\int_{-\infty}^{k}(e^{k}-e^{x})q(x)dxdk+e^{-r\tau}\int_{0}^{\infty}e^{ivk}\int_{k}^{\infty}(e^{x}-e^{k})q(x)dxdk\tag{3.52}\\
+ & =e^{-r\tau}\int_{-\infty}^{0}q(x)\int_{x}^{0}(e^{(iv+1)k}-e^{ivk+x})dkdx+e^{-r\tau}\int_{0}^{\infty}q(x)\int_{0}^{x}(e^{ivk+x}-e^{(iv+1)k})dkdx\tag{3.53}
+\end{align*}
+
+\end_inset
+
+注意到(3.53)两个积分的内部积分实际上是同一个积分，于是：
+\begin_inset Formula 
+\begin{align*}
+\hat{z}(v) & =e^{-r\tau}\int_{-\infty}^{\infty}q(x)\int_{x}^{0}(e^{(iv+1)k}-e^{ivk+x})dkdx\tag{3.54}\\
+ & =e^{-r\tau}\int_{-\infty}^{\infty}q(x)[\frac{e^{x(iv+1)}}{iv(iv+1)}-\frac{e^{x}}{iv}+\frac{1}{iv+1}]dx\\
+ & =e^{-r\tau}(\frac{E^{Q}[e^{x(iv+1)}]}{iv(iv+1)}-\frac{E^{Q}[e^{x}]}{iv}+\frac{1}{iv+1})
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula $E^{Q}[e^{x(iv+1)}]=\varphi(v-i)$
+\end_inset
+
+，由于
+\begin_inset Formula $q(x)$
+\end_inset
+
+是关于
+\begin_inset Formula $x=lnS_{T}$
+\end_inset
+
+的风险中性概率密度，则
+\begin_inset Formula $E^{Q}[e^{x}]=S_{t}e^{r\tau}=e^{r\tau}$
+\end_inset
+
+。于是：
+\begin_inset Formula 
+\[
+\hat{z}(v)=e^{-r\tau}(\frac{\varphi(v-i)}{iv(iv+1)}-\frac{e^{r\tau}}{iv}+\frac{1}{iv+1})\tag{3.55}
+\]
+
+\end_inset
+
+进一步，利用inverse FT，有：
+\begin_inset Formula 
+\begin{align*}
+z(k) & =\frac{1}{2\pi}\int_{-\infty}^{\infty}e^{-ivk}\hat{z}(v)dv\\
+ & =\frac{1}{\pi}\int_{0}^{\infty}Re[e^{-ivk}\hat{z}(v)]dv\tag{3.56}
+\end{align*}
+
+\end_inset
+
+Carr and Madan(1999)指出：当
+\begin_inset Formula $\tau$
+\end_inset
+
+较小、
+\begin_inset Formula $k\approx0$
+\end_inset
+
+时，
+\begin_inset Formula $\hat{z}(v)$
+\end_inset
+
+高度振荡，因此他们建议利用
+\begin_inset Formula $y(k)=z(k)sinh(\alpha k)$
+\end_inset
+
+，其中
+\begin_inset Formula $sinh(x)=(e^{x}-e^{-x})/2$
+\end_inset
+
+。于是，
+\begin_inset Formula $y(k)$
+\end_inset
+
+的FT为：
+\begin_inset Formula 
+\begin{align*}
+\hat{y}(v) & =\int_{-\infty}^{\infty}e^{ivk}y(k)dk\\
+ & =\int_{-\infty}^{\infty}e^{ivk}z(k)\frac{e^{\alpha k}-e^{-\alpha k})}{2}dk\\
+ & =\frac{1}{2}\int_{-\infty}^{\infty}e^{(iv+\alpha)k}z(k)dk-\frac{1}{2}\int_{-\infty}^{\infty}e^{(iv-\alpha)k}z(k)dk\\
+ & =\frac{\hat{z}(v-i\alpha)-\hat{z}(v+iv)}{2}\tag{3.57}
+\end{align*}
+
+\end_inset
+
+由此，OTM option price is then obtained by FT：
+\begin_inset Formula 
+\begin{align*}
+z(k) & =\frac{1}{sinh(\alpha k)}y(k)\\
+ & =\frac{1}{2\pi sin(\alpha k)}\int_{-\infty}^{\infty}e^{-ivk}\hat{y}(v)dv\\
+ & =\frac{1}{\pi sin(\alpha k)}\int_{0}^{\infty}Re[e^{-ivk}\hat{y}(v)]dv\tag{3.58}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+一个例子。
+\end_layout
+
+\begin_layout Subsection
+generaliztion of the OTM representation
+\end_layout
+
+\begin_layout Itemize
+放松
+\begin_inset Formula $S_{t}=1$
+\end_inset
+
+的假设，实际上只要改变积分区间既可以了，具体：
+\begin_inset Formula 
+\[
+z(k)=e^{-r\tau}\int_{-\infty}^{\infty}(e^{k}-e^{x})1_{k<x_{t}}q(x)dx+e^{-r\tau}\int_{k}^{\infty}(e^{x}-e^{k})1_{k>x_{t}}q(x)dx
+\]
+
+\end_inset
+
+于是（3.52）就变成了：
+\begin_inset Formula 
+\begin{align*}
+\hat{z}(v) & =e^{-r\tau}\int_{-\infty}^{x_{0}}e^{ivk}\int_{-\infty}^{k}(e^{k}-e^{x})q(x)dxdk+e^{-r\tau}\int_{x_{0}}^{\infty}e^{ivk}\int_{k}^{\infty}(e^{x}-e^{k})q(x)dxdk\\
+ & =e^{-r\tau}\int_{-\infty}^{\infty}(\int_{x}^{x_{t}}(e^{(iv+1)k}-e^{ivk+x})dk)q(x)dx\tag{3.59}\\
+ & =e^{-r\tau}\int_{-\infty}^{\infty}(\frac{e^{x(iv+1)}}{iv(iv+1)}-\frac{e^{ivx_{t}+x}}{iv}+\frac{e^{(iv+1)x_{t}}}{iv+1})q(x)dx\\
+ & =e^{-r\tau}(\frac{\varphi(v-i)}{iv(iv+1)}-\frac{e^{r\tau}S_{t}^{iv+1}}{iv}+\frac{S_{t}^{iv+1}}{iv+1})\tag{3.60}
+\end{align*}
+
+\end_inset
+
+将上式代入(3.56)即可得OTM option price。
+\end_layout
+
+\begin_layout Itemize
+code
+\end_layout
+
+\begin_layout Itemize
+一个例子。
+\end_layout
+
+\begin_layout Section
+Conclusion 
+\end_layout
+
+\begin_layout Chapter
+the fundamental transform for pricing options
+\end_layout
+
+\begin_layout Section
+the payoff transform
 \end_layout
 
 \begin_layout Chapter
