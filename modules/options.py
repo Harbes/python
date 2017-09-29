@@ -24,6 +24,7 @@ from math import log,sqrt,exp,pi
 assert isinstance(pi,object )
 from scipy.optimize import fsolve
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 norm=scis.norm
 # TODO 尝试利用broadcasting将所有methods向量化；或者丢弃class，全都写成函数的形式，将参数以字典形式储存
@@ -752,6 +753,34 @@ plt.show()
             ax.plot(K, IVtheta[:, i],line[i], label='theta={}'.format(theta[i]))
         ax.legend()
         plt.show()
+    def ExamplePlot_ImpliedVol_and_LocalVol_surface():
+        v0=0.4*0.4
+        theta=0.2*0.2
+        rho=-0.6
+        kappa=1.5
+        sigma=5.1
+        lam=0
+        S=100.0
+        r=0.0
+        q=0.0
+        Lphi=0.00001
+        Uphi=50.001
+        dphi=0.1
+
+        K=np.arange(95,105.01,0.5)
+        tau=np.arange(0.25,1.0301,0.04)
+        Nk=len(K)
+        Nt=len(tau)
+        tt,KK= np.meshgrid(tau,K)
+        price=v_HestonPriceConsol(kappa, theta, lam, rho, sigma, tt, KK, S, r, q, v0, 1, Lphi, Uphi,dphi)
+        LV = LocalVariance(kappa, theta, lam, rho, sigma, tt, KK, S, r, q, v0, 1, Lphi, Uphi, dphi, 0.001,0.0125)
+        IV=imp_vol_Formula(price,S,KK,r,tt,0.4,'call')
+        fig=plt.figure()
+        ax=Axes3D(fig)
+        ax.plot_surface(KK,tt,IV,rstride=1,cstride=1,cmap='rainbow')
+        ax.plot_surface(KK,tt,LV)
+        plt.show()
+
 
 
 def HestonIntegrand_Trap(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0,Pnum=0):
@@ -862,6 +891,7 @@ def HestonPrice(kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,Trap,Lphi,Uphi,dphi,PutCa
         return S*np.exp(-q*T)*P1-K*np.exp(-r*T)*P2
     else:
         return K*np.exp(-r*T)*(1.0-P2)-S*np.exp(-q*T)*(1-P1)
+v_HestonPrice=np.vectorize(HestonPrice)
 def HestonCharacteristicFunction(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0):
     a = kappa * theta
     u = -.5
@@ -872,7 +902,6 @@ def HestonCharacteristicFunction(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0):
     C = (r - q) * 1.0j * phi * tau + a / sigma / sigma * ((b - rho * sigma * 1.0j * phi + d) * tau - 2 * np.log(G))
     D = (b - rho * sigma * 1.0j * phi + d) / sigma / sigma * (1 - np.exp(d * tau)) / (1 - g * np.exp(d * tau))
     return np.exp(C + D * v0 + 1.0j * phi * np.log(S))
-
 
 def HestonInteConsol_Trap(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0):
     '''
@@ -971,6 +1000,18 @@ def HestonPriceConsol(kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,Trap,Lphi,Uphi,dphi
         return S*np.exp(-q*T)*0.5-K*np.exp(-r*T)*0.5+I/pi
     else:
         return K*np.exp(-r*T)*0.5-S*np.exp(-q*T)*0.5+I/pi
+v_HestonPriceConsol=np.vectorize(HestonPriceConsol)
+def LocalVariance(kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,Trap,Lphi,Uphi,dphi,dt,dK,PutCall='call'):
+
+    CT =v_HestonPriceConsol(kappa,theta,lam,rho,sigma,T+dt,K,S,r,q,v0,Trap,Lphi,Uphi,dphi,PutCall)
+    CT_=v_HestonPriceConsol(kappa,theta,lam,rho,sigma,T-dt,K,S,r,q,v0,Trap,Lphi,Uphi,dphi,PutCall)
+    dCdT=(CT-CT_)/2/dt
+    CK=v_HestonPriceConsol(kappa,theta,lam,rho,sigma,T,K+dK,S,r,q,v0,Trap,Lphi,Uphi,dphi,PutCall)
+    CK0=v_HestonPriceConsol(kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,Trap,Lphi,Uphi,dphi,PutCall)
+    CK_=v_HestonPriceConsol(kappa,theta,lam,rho,sigma,T,K-dK,S,r,q,v0,Trap,Lphi,Uphi,dphi,PutCall)
+    dC2dK2=(CK+CK_-2*CK0)/dK/dK
+    return np.sqrt(2*dCdT/K/K/dC2dK2)
+
 
 def udp_binomial(M,mu,dt,sigma,method='CRR'):
     if method =='CRR':
@@ -1383,7 +1424,7 @@ def imp_vol_Formula(Ct,St,K,r,T,sigma_0,otype,vol=0.000001):
         if np.percentile(abs(dC),10)<vol:
             break
     return sigma
-class norm:
+class Norm:
     def __init__(self,mu,sigma):
         self.mu=mu
         self.sigma=sigma
