@@ -3502,8 +3502,204 @@ Conclusion
 the fundamental transform for pricing options
 \end_layout
 
+\begin_layout Itemize
+in his excellent book，
+\begin_inset Formula $option\,valuation\,under\,stochastic\,volatility:\,with\,mathematica\,code$
+\end_inset
+
+, Alan Lewis(2000) offers valuation approach
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+fundamental transform approacch
+\end_layout
+
+\end_inset
+
+ that is applicable to a wide range of European options。the advantage of
+ this approach over other approaches that use Fourier transforms is that,
+ once the fundamental transform of a given model is obtained, it can be
+ used repeatedly to price European options for which the payoff transform
+ is known。
+\end_layout
+
 \begin_layout Section
 the payoff transform
+\end_layout
+
+\begin_layout Itemize
+在Lewis(2000)的方法，不是对option value进行Fourier transform，而是对option payoff进行Fourier
+ transform。这种方式使得在一种框架设定中，对多种option进行定价成为可能。另外，他的方法还需要一个fundamental transform。总结
+：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+the payoff transform for given option，which is model independent and does
+ not depend on the fundamental transform；
+\end_layout
+
+\begin_layout Itemize
+the fundamental transform for a given model，which is model dependent and
+ analogous to the characteristic function。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+the first element——generalized Fourier transform 
+\begin_inset Formula $\hat{f}(k,t)$
+\end_inset
+
+ of the derivative value 
+\begin_inset Formula $f(x,t)$
+\end_inset
+
+ at time 
+\begin_inset Formula $t$
+\end_inset
+
+：
+\begin_inset Formula 
+\[
+\hat{f}(k,t)=\int_{-\infty}^{\infty}e^{ikx}f(x,t)dx\tag{4.1}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $x=lnS_{t}$
+\end_inset
+
+。上式很像是FT，不过上式允许
+\begin_inset Formula $k$
+\end_inset
+
+是一个复数。我们很容易得到
+\begin_inset Formula $\hat{f}(k,T)$
+\end_inset
+
+，因为
+\begin_inset Formula $f(x,T)$
+\end_inset
+
+是知道的，于是，我们把
+\begin_inset Formula $\hat{f}(x,T)$
+\end_inset
+
+称为the payoff transform。例如，对于vanilla European call option来说：
+\begin_inset Formula 
+\begin{align*}
+\hat{f}(k,T) & =\int_{-\infty}^{\infty}e^{ikx}(e^{x}-K)^{+}dx\\
+ & =(\frac{e^{(ik+1)x}}{ik+1}-\frac{Ke^{ikx}}{ik})|_{x=lnK}^{x=\infty}\\
+ & =-\frac{K^{ik+1}}{k^{2}-ik}\tag{4.2}
+\end{align*}
+
+\end_inset
+
+其中最后一个等式成立需要一个假定：k的虚部大于1
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+为保证(4.2)中的被积函数不会explode at the upper limit 
+\begin_inset Formula $x=\infty$
+\end_inset
+
+，需要让
+\begin_inset Formula $e^{ikx}$
+\end_inset
+
+衰减的速度快于
+\begin_inset Formula $e^{x}$
+\end_inset
+
+增长的速度
+\end_layout
+
+\end_inset
+
+。对于put来说，情况基本类似，只是要满足：k的虚部小于0。
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Payoff transform for other options are in Table 2.2.1 of Lewis(2000)。
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+然后再对(4.1)应用inverse transform：
+\begin_inset Formula 
+\[
+f(x,t)=\frac{1}{2\pi}\int_{ik_{i}-\infty}^{ik_{i}+\infty}e^{-ikx}\hat{f}(k,t)dk\tag{4.3}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+the fundamental transform and the option price
+\end_layout
+
+\begin_layout Itemize
+the second element required for Lewis(2000) approach is the fundamental
+ transform itself。首先，the Heston partial differential equation(PDE) for the
+ value of the derivative 
+\begin_inset Formula $U=U(x,t)$
+\end_inset
+
+：
+\begin_inset Formula 
+\[
+-\frac{\partial U}{\partial t}=-rU+(r-q-\frac{1}{2}v)\frac{\partial U}{\partial x}+\frac{1}{2}v\frac{\partial^{2}U}{\partial x^{2}}+[\kappa(\theta-v)-\lambda v]\frac{\partial U}{\partial v}+\frac{1}{2}\sigma^{2}v\frac{\partial^{2}U}{\partial v^{2}}+\rho\sigma v\frac{\partial^{2}U}{\partial v\partial x}\tag{4.4}
+\]
+
+\end_inset
+
+于是(4.1)关于
+\begin_inset Formula $t$
+\end_inset
+
+求导后应用上式得：
+\begin_inset Formula 
+\begin{align*}
+-\frac{\partial\hat{U}}{\partial t} & =\int_{-\infty}^{\infty}e^{ikx}\{-\frac{\partial U}{\partial t}\}dx\\
+ & =\int_{-\infty}^{\infty}e^{ikx}\{-rU+(r-q-\frac{1}{2}v)\frac{\partial U}{\partial x}+\frac{1}{2}v\frac{\partial^{2}U}{\partial x^{2}}+[\kappa(\theta-v)-\lambda v]\frac{\partial U}{\partial v}+\frac{1}{2}\sigma^{2}v\frac{\partial^{2}U}{\partial v^{2}}+\rho\sigma v\frac{\partial^{2}U}{\partial v\partial x}\}dx\tag{4.5}
+\end{align*}
+
+\end_inset
+
+其中：
+\begin_inset Formula 
+\begin{align*}
+\int_{-\infty}^{\infty}e^{ikx}\frac{\partial U}{\partial x}dx & =e^{ikx}U(x,t)|_{x=-\infty}^{x=\infty}-ik\int_{-\infty}^{\infty}e^{ikx}U(x,t)dx\\
+ & =-ik\hat{U}(x,t)\tag{4.6}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+the boundary term 
+\begin_inset Formula $e^{ikx}U(x,t)|_{x=-\infty}^{x=\infty}$
+\end_inset
+
+ has been set to zero。Lewis(2000) explains why this can be done。
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Chapter
