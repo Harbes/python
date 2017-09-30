@@ -845,6 +845,54 @@ plt.show()
         plt.plot(phi,zero,'k-')
         plt.legend()
         plt.show()
+    def ExampleComparison_of_Heston_and_Carr_Madan_Calls(PutCall='call'):
+        S=100.0
+        K=100.0
+        T=0.5
+        r=0.1
+        q=0.07
+        kappa=2.0
+        theta=0.06
+        sigma=0.1
+        v0=0.06
+        rho=-0.7
+        lam=0.0
+        Trap=1
+        alpha=1.75
+        Lphi=1e-5
+        Uphi=50.001
+        dphi=0.1
+        callHeston=HestonPriceConsol(kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,Trap,Lphi,Uphi,dphi,PutCall)
+        priceCarrMadan=CarrMadanPrice(alpha,kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,Lphi,Uphi,dphi,PutCall)
+        print('Heston call price:{}'.format(callHeston))
+        print('Carr&Madan call price:{}'.format(priceCarrMadan))
+    def ExampleCarrMadan_OTM_Damped_Undamped_Integrands_Figure():
+        S=1.0
+        K=0.96
+        tau=1.0/52.0
+        r=0.03
+        q=0.0
+        kappa=2.0
+        theta=0.25
+        sigma=0.3
+        lam=0
+        v0=0.05
+        rho=-0.8
+        Trap=1
+        alpha=1.1
+
+        U=np.arange(-170,170.001)
+        T=np.arange(1,5)/52.0
+        UU,TT=np.meshgrid(U,T)
+        undamped=CarrMadanIntegrandOTM(UU,kappa,theta,lam,rho,sigma,TT,K,S,r,q,v0)
+        a=CarrMadanIntegrandOTM(UU-1.0j*alpha,kappa,theta,lam,rho,sigma,TT,K,S,r,q,v0)
+        b=CarrMadanIntegrandOTM(UU+1.0j*alpha,kappa,theta,lam,rho,sigma,TT,K,S,r,q,v0)
+        damped=(a-b)*0.5
+        fig = plt.figure()
+        ax = Axes3D(fig)
+        ax.plot_surface(UU, TT, undamped, rstride=1, cstride=1, cmap='rainbow')
+        ax.plot_surface(UU, TT, damped)
+        plt.show()
 
 
 
@@ -958,7 +1006,7 @@ def HestonPrice(kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,Trap,Lphi,Uphi,dphi,PutCa
     else:
         return K*np.exp(-r*T)*(1.0-P2)-S*np.exp(-q*T)*(1-P1)
 v_HestonPrice=np.vectorize(HestonPrice)
-def HestonCharacteristicFunction(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0):
+def HestonCharacteristicFunction(phi,kappa,theta,lam,rho,sigma,tau,S,r,q,v0):
     a = kappa * theta
     u = -.5
     b = kappa + lam
@@ -1198,6 +1246,21 @@ def AttariPrice(kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,Trap,Lphi,Uphi,dphi,PutCa
         return S*np.exp(-q*T)-K*np.exp(-r*T)*(0.5+np.trapz(int1)*dphi/pi)
     else:
         return K*np.exp(-r*T)*(0.5-np.trapz(int1)*dphi/pi)
+
+def CarrMadanIntegrand(phi,alpha,kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,PutCall):
+    S *= exp(-q * T)
+    iscall=1.0 if PutCall=='call' else -1.0
+    return (np.exp(-1.0j * phi * log(K) - r * T) * HestonCharacteristicFunction(phi - (iscall*alpha + 1.0) * 1.0j, kappa, theta, lam,
+                                                                        rho, sigma, T, S, r, 0.0,v0) / (
+    alpha * alpha + iscall*alpha - phi * phi + 1.0j * (2.0*iscall * alpha + 1.0) * phi)).real
+def CarrMadanIntegrandOTM(phi,kappa,theta,lam,rho,sigma,T,K,S,r,q,v0):
+    CF=HestonCharacteristicFunction(phi-1.0j,kappa,theta,lam,rho,sigma,T,S,r,q,v0)
+    return (np.exp(-1.0j * phi * np.log(K) - r * T)*(S**(1.0j*phi+1.0)/(1.0+1.0j*phi)-np.exp(r*T)*S**(1.0j*phi+1.0)/(1.0j*phi)-CF/(phi*phi-1.0j*phi))).real
+def CarrMadanPrice(alpha,kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,Lphi,Uphi,dphi,PutCall='call'):
+    phi=np.arange(Lphi,Uphi,dphi)
+    int1=CarrMadanIntegrand(phi,alpha,kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,PutCall)
+    return exp(-alpha * log(K)) * np.trapz(int1) * dphi / pi
+
 
 def udp_binomial(M,mu,dt,sigma,method='CRR'):
     if method =='CRR':
