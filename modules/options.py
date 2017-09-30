@@ -773,13 +773,81 @@ plt.show()
         Nt=len(tau)
         tt,KK= np.meshgrid(tau,K)
         price=v_HestonPriceConsol(kappa, theta, lam, rho, sigma, tt, KK, S, r, q, v0, 1, Lphi, Uphi,dphi)
-        LV = LocalVariance(kappa, theta, lam, rho, sigma, tt, KK, S, r, q, v0, 1, Lphi, Uphi, dphi, 0.001,0.0125)
+        LV = LocalVariance_FD(kappa, theta, lam, rho, sigma, tt, KK, S, r, q, v0, 1, Lphi, Uphi, dphi, 0.001,0.0125)
         IV=imp_vol_Formula(price,S,KK,r,tt,0.4,'call')
         fig=plt.figure()
         ax=Axes3D(fig)
         ax.plot_surface(KK,tt,IV,rstride=1,cstride=1,cmap='rainbow')
         ax.plot_surface(KK,tt,LV)
         plt.show()
+    def ExampleHeston_Local_Vol_Gatheral_Example():
+        v0=0.57942364171876
+        theta=0.00701250929769
+        kappa=0.00000645051426
+        sigma=0.63913150446556
+        rho=-0.80541286329551
+        lam=0.0
+        T=222.0/365.0
+        r=0.0
+        q=0.0
+        Lphi=1e-5
+        Uphi=50.01
+        dphi=0.1
+        Trap=1
+        PutCall = 'put'
+
+        K=np.arange(15,65.01)
+        S=30.67
+        xT=np.log(K/S)
+        # local vol
+        dt=1e-5
+        dK=1e-1
+        LVFD=LocalVariance_FD(kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,Trap,Lphi,Uphi,dphi,dt,dK)
+        LVAN=v_LocalVariance_Analytic(kappa,theta,lam,rho,sigma,T,K,S,r,v0,Trap,Lphi,Uphi,dphi)
+        LVAP=LocalVariance_Approx(kappa,theta,rho,sigma,T,K,S,v0)
+
+        # implied vol
+        price=v_HestonPriceConsol(kappa, theta, lam, rho, sigma, T, K, S, r, q, v0, Trap, Lphi, Uphi,dphi,PutCall)
+        IV=imp_vol_Formula(price,S,K,r,T,0.5,PutCall)
+
+        plt.plot(K,LVAP,'r-',label='Approx')
+        plt.plot(K,LVAN,'p-',label='Analytic')
+        plt.plot(K,LVFD,'kx',label='Finite Diff')
+        plt.plot(K,IV,'rx-',label='Implied Vol')
+        plt.legend()
+        plt.show()
+    def ExampleHeston_Price_Using_Heston_and_Attari():
+        S=30.0
+        K=20.0
+        T=1.0/12.0
+        r=0.01
+        q=0.0
+        kappa=1.4
+        theta=0.05
+        sigma=0.3
+        v0=0.05
+        rho=-0.8
+        lam=0.0
+        Trap=1
+        PutCall='call'
+        if Trap==1:
+            HestonIntegrand=HestonIntegrand_Trap
+            AttariIntegrand=AttariIntegrand_Trap
+        else:
+            HestonIntegrand = HestonIntegrand_Orig
+            AttariIntegrand = AttariIntegrand_Orig
+        phi=np.arange(1e-6,20.0001,0.01)
+        Heston=HestonIntegrand(phi,kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,1)
+        Attari=AttariIntegrand(phi,kappa,theta,lam,rho,sigma,T,K,S,r,q,v0)
+        zero=np.zeros(len(phi))
+        plt.plot(phi,Heston,label='Heston')
+        plt.plot(phi,Attari,label='Attari')
+        plt.plot(phi,zero,'k-')
+        plt.legend()
+        plt.show()
+
+
+
 
 
 
@@ -804,7 +872,6 @@ def HestonIntegrand_Trap(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0,Pnum=0):
     %    Trap = 1 "Little Trap" formulation
     %           0  Original Heston formulation
     '''
-    x=log(S)
     a=kappa*theta
     u=np.array([0.5,-.5])[Pnum]
     b=np.array([kappa+lam-rho*sigma,kappa+lam])[Pnum]
@@ -814,7 +881,7 @@ def HestonIntegrand_Trap(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0,Pnum=0):
     D=(b-rho*sigma*1.0j*phi-d)/sigma/sigma*(1-np.exp(-d*tau))/(1-c*np.exp(-d*tau))
     G=(1-c*np.exp(-d*tau))/(1-c)
     C=(r-q)*1.0j*phi*tau+a/sigma/sigma*((b-rho*sigma*1.0j*phi-d)*tau-2*np.log(G))
-    f=np.exp(C+D*v0+1.0j*phi*x)
+    f=np.exp(C+D*v0+1.0j*phi*log(S))
     return (np.exp(-1.0j*phi*np.log(K))*f/1.0j/phi).real
 def HestonIntegrand_Orig(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0,Pnum=0):
     '''
@@ -837,7 +904,6 @@ def HestonIntegrand_Orig(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0,Pnum=0):
     %    Trap = 1 "Little Trap" formulation
     %           0  Original Heston formulation
     '''
-    x=log(S)
     a=kappa*theta
     u=np.array([0.5,-.5])[Pnum]
     b=np.array([kappa+lam-rho*sigma,kappa+lam])[Pnum]
@@ -846,7 +912,7 @@ def HestonIntegrand_Orig(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0,Pnum=0):
     G=(1-g*np.exp(d*tau))/(1-g)
     C=(r-q)*1.0j*phi*tau+a/sigma/sigma*((b-rho*sigma*1.0j*phi+d)*tau-2*np.log(G))
     D=(b-rho*sigma*1.0j*phi+d)/sigma/sigma*(1-np.exp(d*tau))/(1-g*np.exp(d*tau))
-    f=np.exp(C+D*v0+1.0j*phi*x)
+    f=np.exp(C+D*v0+1.0j*phi*log(S))
     return (np.exp(-1.0j*phi*np.log(K))*f/1.0j/phi).real
 def HestonPrice(kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,Trap,Lphi,Uphi,dphi,PutCall='call'):
     '''
@@ -1001,17 +1067,137 @@ def HestonPriceConsol(kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,Trap,Lphi,Uphi,dphi
     else:
         return K*np.exp(-r*T)*0.5-S*np.exp(-q*T)*0.5+I/pi
 v_HestonPriceConsol=np.vectorize(HestonPriceConsol)
-def LocalVariance(kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,Trap,Lphi,Uphi,dphi,dt,dK,PutCall='call'):
 
+def LocalVariance_FD(kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,Trap,Lphi,Uphi,dphi,dt,dK,PutCall='call'):
+    '''obtain local volatility in the Heston model using the central difference approximation to the derivatives'''
     CT =v_HestonPriceConsol(kappa,theta,lam,rho,sigma,T+dt,K,S,r,q,v0,Trap,Lphi,Uphi,dphi,PutCall)
     CT_=v_HestonPriceConsol(kappa,theta,lam,rho,sigma,T-dt,K,S,r,q,v0,Trap,Lphi,Uphi,dphi,PutCall)
     dCdT=(CT-CT_)/2/dt
     CK=v_HestonPriceConsol(kappa,theta,lam,rho,sigma,T,K+dK,S,r,q,v0,Trap,Lphi,Uphi,dphi,PutCall)
     CK0=v_HestonPriceConsol(kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,Trap,Lphi,Uphi,dphi,PutCall)
     CK_=v_HestonPriceConsol(kappa,theta,lam,rho,sigma,T,K-dK,S,r,q,v0,Trap,Lphi,Uphi,dphi,PutCall)
-    dC2dK2=(CK+CK_-2*CK0)/dK/dK
-    return np.sqrt(2*dCdT/K/K/dC2dK2)
+    d2CdK2=(CK+CK_-2*CK0)/dK/dK
+    return np.sqrt(2*dCdT/K/K/d2CdK2)
+def dPjdT_Trap(phi,kappa,theta,lam,rho,sigma,T,K,S,r,v0,Pnum):
+    u = np.array([0.5, -.5])[Pnum]
+    b = np.array([kappa + lam - rho * sigma, kappa + lam])[Pnum]
+    d = np.sqrt((rho * sigma * 1.0j * phi - b) ** 2 - sigma * sigma * (2 * u * 1.0j * phi - phi * phi))
+    g = (b - rho * sigma * 1.0j * phi + d) / (b - rho * sigma * 1.0j * phi - d)
+    edT=np.exp(-d*T)
+    c=1.0/g
+    dDdT=(b-rho*sigma*1.0j*phi-d)/sigma/sigma*d*edT*(1.0-c)/(1.0-c*edT)**2
+    dCdT=r*1.0j*phi+kappa*theta/sigma/sigma*((b-rho*sigma*1.0j*phi-d)-2.0*c*d*edT/(1-c*edT))
+    G=(1-c*edT)/(1-c)
+    D=(b-rho*sigma*1.0j*phi-d)/sigma/sigma*(1-edT)/(1-c*edT)
+    C=r*1.0j*phi*T+kappa*theta/sigma/sigma*((b-rho*sigma*1.0j*phi-d)*T-2.0*np.log(G))
+    dfdT=np.exp(C+D*v0+1.0j*phi*log(S))*(dCdT+dDdT*v0)
+    return (K**(-1.0j*phi)*dfdT/1.0j/phi).real
+def dPjdT_Orig(phi,kappa,theta,lam,rho,sigma,T,K,S,r,v0,Pnum):
+    u = np.array([0.5, -.5])[Pnum]
+    b = np.array([kappa + lam - rho * sigma, kappa + lam])[Pnum]
+    d = np.sqrt((rho * sigma * 1.0j * phi - b) ** 2 - sigma * sigma * (2 * u * 1.0j * phi - phi * phi))
+    g = (b - rho * sigma * 1.0j * phi + d) / (b - rho * sigma * 1.0j * phi - d)
+    edT=np.exp(d*T)
+    dDdT=(b-rho*sigma*1.0j*phi-d)/sigma/sigma*d*edT*(g-1.0)/(1.0-g*edT)**2
+    dCdT=r*1.0j*phi+kappa*theta/sigma/sigma*((b-rho*sigma*1.0j*phi+d)-2.0*g*d*edT/(1-g*edT))
+    G=(1-g*edT)/(1-g)
+    D=(b-rho*sigma*1.0j*phi+d)/sigma/sigma*(1-edT)/(1-g*edT)
+    C=r*1.0j*phi*T+kappa*theta/sigma/sigma*((b-rho*sigma*1.0j*phi+d)*T-2.0*np.log(G))
+    dfdT=np.exp(C+D*v0+1.0j*phi*log(S))*(dCdT+dDdT*v0)
+    return (K**(-1.0j*phi)*dfdT/1.0j/phi).real
+def d2P1dK2(phi,kappa,theta,lam,rho,sigma,T,K,S,r,v0):
+    u=0.5
+    b=kappa+lam-rho*sigma
+    d = np.sqrt((rho * sigma * 1.0j * phi - b) ** 2 - sigma * sigma * (2 * u * 1.0j * phi - phi * phi))
+    g = (b - rho * sigma * 1.0j * phi + d) / (b - rho * sigma * 1.0j * phi - d)
+    edT = np.exp(d * T)
+    G = (1 - g * edT) / (1 - g)
+    D = (b - rho * sigma * 1.0j * phi + d) / sigma / sigma * (1 - edT) / (1 - g * edT)
+    C = r * 1.0j * phi * T + kappa * theta / sigma / sigma * ((b - rho * sigma * 1.0j * phi + d) * T - 2.0 * np.log(G))
+    return ((1.0j*phi+1)*K**(-1.0j*phi-2.0)*np.exp(C+D*v0+1.0j*phi*log(S))).real
+def d2P2dK2(phi,kappa,theta,lam,rho,sigma,T,K,S,r,v0):
+    u=-0.5
+    b=kappa+lam
+    d = np.sqrt((rho * sigma * 1.0j * phi - b) ** 2 - sigma * sigma * (2 * u * 1.0j * phi - phi * phi))
+    g = (b - rho * sigma * 1.0j * phi + d) / (b - rho * sigma * 1.0j * phi - d)
+    edT = np.exp(d * T)
+    G = (1 - g * edT) / (1 - g)
+    D = (b- rho * sigma * 1.0j * phi + d) / sigma / sigma * (1 - edT) / (1 - g * edT)
+    C = r * 1.0j * phi * T + kappa * theta / sigma / sigma * ((b - rho * sigma * 1.0j * phi + d) * T - 2.0 * np.log(G))
+    return ((1.0j*phi-1.0)*K**(-1.0j*phi-1.0)*np.exp(C+D*v0+1.0j*phi*log(S))).real
+def LocalVariance_Analytic(kappa,theta,lam,rho,sigma,T,K,S,r,v0,Trap,Lphi,Uphi,dphi):
+    phi=np.arange(Lphi,Uphi,dphi)
+    if Trap==1:
+        dPjdT=dPjdT_Trap
+        HestonIntegrand=HestonIntegrand_Trap
+    else:
+        dPjdT=dPjdT_Orig
+        HestonIntegrand = HestonIntegrand_Orig
+    int1=dPjdT(phi,kappa,theta,lam,rho,sigma,T,K,S,r,v0,0)
+    int2 = dPjdT(phi, kappa, theta, lam, rho, sigma, T, K, S, r, v0, 1)
+    int3=HestonIntegrand(phi,kappa,theta,lam,rho,sigma,T,K,S,r,0.0,v0,1)
+    int4=d2P1dK2(phi,kappa,theta,lam,rho,sigma,T,K,S,r,v0)
+    int5 = d2P2dK2(phi, kappa, theta, lam, rho, sigma, T, K, S, r, v0)
 
+    dP1dT=np.trapz(int1)*dphi/pi
+    dP2dT = np.trapz(int2) * dphi / pi
+    P2=0.5+np.trapz(int3)*dphi/pi
+    dCdT=S*dP1dT-K*np.exp(-r*T)*(-r*P2+dP2dT)
+    dP1dK2=np.trapz(int4)*dphi/pi
+    TwodP2dK2=np.trapz(int5)*dphi/pi
+    d2CdK2=S*dP1dK2-np.exp(-r*T)*TwodP2dK2
+    return np.sqrt(2.0*dCdT/K/K/d2CdK2)
+v_LocalVariance_Analytic=np.vectorize(LocalVariance_Analytic)
+def LocalVariance_Approx(kappa,theta,rho,sigma,T,K,S,v0):
+    kappa_=kappa-rho*sigma*0.5
+    theta_=theta*kappa/kappa_
+    xT=np.log(K/S)
+    wT=(v0-theta)*(1-np.exp(-kappa*T))/kappa+theta*T
+    vT=(v0-theta_)*np.exp(-kappa_*T)+theta_
+    F1=(v0-theta)/(kappa_-kappa)
+    E1=np.exp((kappa_-kappa)*T)-1.0
+    F2=theta/kappa_
+    E2=np.exp(kappa_*T)-1.0
+    Integral=np.exp(-kappa_*T)*(F1*E1+F2*E2)
+    return np.sqrt(vT+rho*sigma*xT/wT*Integral)
+
+def AttariIntegrand_Trap(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0):
+    a=kappa*theta
+    u=-0.5
+    b=kappa+lam
+    d = np.sqrt((rho * sigma * 1.0j * phi - b) ** 2 - sigma * sigma * (2 * u * 1.0j * phi - phi * phi))
+    g = (b - rho * sigma * 1.0j * phi + d) / (b - rho * sigma * 1.0j * phi - d)
+    c = 1.0 / g
+    D = (b - rho * sigma * 1.0j * phi - d) / sigma / sigma * (1 - np.exp(-d * tau)) / (1 - c * np.exp(-d * tau))
+    G = (1 - c * np.exp(-d * tau)) / (1 - c)
+    C = (r - q) * 1.0j * phi * tau + a / sigma / sigma * ((b - rho * sigma * 1.0j * phi - d) * tau - 2.0 * np.log(G))
+    f=np.exp(C+D*v0-1.0j*phi*r*tau)
+    L=-r*tau+np.log(K/S)
+    return ((f.real+f.imag/phi)*np.cos(L*phi)+(f.imag-f.real/phi)*np.sin(L*phi))/(1.0+phi*phi)
+def AttariIntegrand_Orig(phi,kappa,theta,lam,rho,sigma,tau,K,S,r,q,v0):
+    a=kappa*theta
+    u=-0.5
+    b=kappa+lam
+    d = np.sqrt((rho * sigma * 1.0j * phi - b) ** 2 - sigma * sigma * (2 * u * 1.0j * phi - phi * phi))
+    g = (b - rho * sigma * 1.0j * phi + d) / (b - rho * sigma * 1.0j * phi - d)
+
+    D = (b - rho * sigma * 1.0j * phi + d) / sigma / sigma * (1 - np.exp(d * tau)) / (1 - g * np.exp(d * tau))
+    G = (1 - g * np.exp(d * tau)) / (1 - g)
+    C = (r - q) * 1.0j * phi * tau + a / sigma / sigma * ((b - rho * sigma * 1.0j * phi + d) * tau - 2.0 * np.log(G))
+    f=np.exp(C+D*v0-1.0j*phi*r*tau)
+    L=-r*tau+np.log(K/S)
+    return ((f.real+f.imag/phi)*np.cos(L*phi)+(f.imag-f.real/phi)*np.sin(L*phi))/(1.0+phi*phi)
+def AttariPrice(kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,Trap,Lphi,Uphi,dphi,PutCall='call'):
+    phi=np.arange(Lphi,Uphi,dphi)
+    if Trap==1:
+        AttariIntegrand=AttariIntegrand_Trap
+    else:
+        AttariIntegrand=AttariIntegrand_Orig
+    int1=AttariIntegrand(phi,kappa,theta,lam,rho,sigma,T,K,S,r,q,v0)
+    if PutCall=='call':
+        return S*np.exp(-q*T)-K*np.exp(-r*T)*(0.5+np.trapz(int1)*dphi/pi)
+    else:
+        return K*np.exp(-r*T)*(0.5-np.trapz(int1)*dphi/pi)
 
 def udp_binomial(M,mu,dt,sigma,method='CRR'):
     if method =='CRR':
