@@ -3687,7 +3687,7 @@ the second element required for Lewis(2000) approach is the fundamental
 
 
 \begin_inset Foot
-status open
+status collapsed
 
 \begin_layout Plain Layout
 the boundary term 
@@ -3700,6 +3700,425 @@ the boundary term
 \end_inset
 
 
+\begin_inset Formula 
+\[
+\int_{-\infty}^{\infty}e^{ikx}\frac{\partial^{2}U}{\partial x^{2}}dx=-k^{2}\hat{U}(x,t)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\int_{-\infty}^{\infty}e^{ikx}\frac{\partial^{2}U}{\partial x\partial v}dx=-ik\frac{\partial\hat{U}(x,t)}{\partial v}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\int_{-\infty}^{\infty}e^{ikx}\frac{\partial U}{\partial v}dx=\frac{\partial\hat{U}(x,t)}{\partial v}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\int_{-\infty}^{\infty}e^{ikx}\frac{\partial^{2}U}{\partial v^{2}}dx=\frac{\partial^{2}\hat{U}(x,t)}{\partial v^{2}}
+\]
+
+\end_inset
+
+将上面这些式子代入
+\begin_inset Formula $(4.5)$
+\end_inset
+
+中可得关于
+\begin_inset Formula $\hat{U}$
+\end_inset
+
+的PDE：
+\begin_inset Formula 
+\[
+-\frac{\partial\hat{U}}{\partial t}=[-r-ik(r-q)]\hat{U}-\frac{1}{2}v(k^{2}-ik)\hat{U}+[\kappa(\theta-v)-\lambda v-ik\rho\sigma v]\frac{\partial\hat{U}}{\partial v}+\frac{1}{2}\sigma^{2}v\frac{\partial^{2}\hat{U}}{\partial v^{2}}\tag{4.7}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+在Lewis(2000)的equation(2.2.6)，the transform in (4.1) is written in the form：
+\begin_inset Formula 
+\[
+\hat{U}(k,t)=exp([-r-ik(r-q)]\tau)*\hat{H}(k,v,\tau)\tag{4.8}
+\]
+
+\end_inset
+
+对上式分别关于
+\begin_inset Formula $\tau$
+\end_inset
+
+、
+\begin_inset Formula $v$
+\end_inset
+
+求导可得：
+\begin_inset Formula 
+\[
+-\frac{\partial\hat{U}}{\partial t}=\frac{\partial\hat{U}}{\partial\tau}=[-r-ik(r-q)]e^{[-r-ik(r-q)]\tau}\hat{H}(k,v,\tau)+e^{[-r-ik(r-q)]\tau}\frac{\partial\hat{H}}{\partial\tau}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial\hat{U}}{\partial v}=e^{[-r-ik(r-q)]\tau}\frac{\partial\hat{H}}{\partial v}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial^{2}\hat{U}}{\partial v^{2}}=e^{[-r-ik(r-q)]\tau}\frac{\partial^{2}\hat{H}}{\partial v^{2}}
+\]
+
+\end_inset
+
+将上式代入(4.7)可得：
+\begin_inset Formula 
+\[
+\frac{\partial\hat{H}}{\partial\tau}=\frac{1}{2}\sigma^{2}v\frac{\partial^{2}\hat{H}}{\partial v^{2}}+[\kappa(\theta-v)-\lambda v-ik\rho\sigma v]\frac{\partial\hat{H}}{\partial v}-vc(k)\hat{H}(k,v,\tau)\tag{4.9}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $c(k)=\frac{1}{2}(k^{2}-ik)$
+\end_inset
+
+。Lewis(2000) explains that only the special case of a payoff of 
+\begin_inset Formula $1$
+\end_inset
+
+，namely 
+\begin_inset Formula $\hat{H}(k,v,0)=1$
+\end_inset
+
+。A solution 
+\begin_inset Formula $\hat{H}(k,v,\tau)$
+\end_inset
+
+ to the PDE in equation(4.9) that satisfies the initial condition 
+\begin_inset Formula $\hat{H}(k,v,0)=1$
+\end_inset
+
+ is called a
+\begin_inset Formula $fundamental\,transform$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+此方法的优势。
+\end_layout
+
+\begin_layout Section
+the fundamental transform for the Heston model
+\end_layout
+
+\begin_layout Itemize
+由(4.9)，取
+\begin_inset Formula $\lambda=0$
+\end_inset
+
+【？？？】，此时，the PDE for 
+\begin_inset Formula $\hat{H}(k,v,\tau)$
+\end_inset
+
+为：
+\begin_inset Formula 
+\[
+\frac{\partial\hat{H}}{\partial\tau}=\frac{1}{2}\sigma^{2}v\frac{\partial^{2}\hat{H}}{\partial v^{2}}+[\kappa(\theta-v)-ik\rho\sigma v]\frac{\partial\hat{H}}{\partial v}-vc(k)\hat{H}(k,v,\tau)\tag{4.10}
+\]
+
+\end_inset
+
+this PDE must be converted into a form similar to the Riccati equation for
+ which the solution is known。Following Chapter11 of Lewis(2000), define
+ 
+\begin_inset Formula $t=\sigma^{2}\tau/2$
+\end_inset
+
+ so that：
+\begin_inset Formula 
+\[
+\frac{\partial\hat{H}}{\partial\tau}=\frac{2}{\sigma^{2}}\frac{\partial\hat{H}}{\partial t}
+\]
+
+\end_inset
+
+此时，(4.10)就变成了：
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial\hat{H}}{\partial t} & =v\frac{\partial^{2}\hat{H}}{\partial v^{2}}+\frac{2}{\sigma^{2}}[\kappa(\theta-v)-ik\rho\sigma v]\frac{\partial\hat{H}}{\partial v}-\frac{2c(k)}{\sigma^{2}}v\hat{H}(k,v,\tau)\\
+ & =v\frac{\partial^{2}\hat{H}}{\partial v^{2}}+\tilde{\kappa}(\tilde{\theta}-v)\frac{\partial\hat{H}}{\partial v}-\tilde{c}(k)v\hat{H}(k,v,\tau)\tag{4.11}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula $\tilde{\kappa}=\frac{2(\kappa+ik\rho\sigma)}{\sigma^{2}},\tilde{\theta}=\frac{\kappa\theta}{\kappa+ik\rho\sigma},\tilde{c}(k)=2c(k)/\sigma^{2}=(k^{2}-ik)/\sigma^{2}$
+\end_inset
+
+。(4.11)的第二个等式是一个关于
+\begin_inset Formula $v$
+\end_inset
+
+的parabolic equation
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+parabolic partial differential equation
+\end_layout
+
+\end_inset
+
+，其解具有如下形式：
+\begin_inset Formula 
+\[
+f(v,t)=exp(C(t)+D(t)v)
+\]
+
+\end_inset
+
+初始条件为
+\begin_inset Formula $C(0)=D(0)=0$
+\end_inset
+
+。对上式求导然后代入(4.11)可得：
+\begin_inset Formula 
+\[
+\frac{\partial C}{\partial t}+\frac{\partial D}{\partial t}v=vD^{2}+\tilde{\kappa}(\tilde{\theta}-v)D-\tilde{c}v
+\]
+
+\end_inset
+
+两边恒等，于是：
+\begin_inset Formula 
+\[
+\frac{\partial D}{\partial t}=D^{2}-\tilde{\kappa}D-\tilde{c}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial C}{\partial t}=\tilde{\kappa}\tilde{\theta}D\tag{4.12}
+\]
+
+\end_inset
+
+后面的解法与Chapter1类似（过程书上有），结果为：
+\begin_inset Formula 
+\[
+D(t)=\frac{\tilde{\kappa}+d}{2}(\frac{1-e^{dt}}{1-ge^{dt}})\tag{4.13}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+C(t)=\tilde{\kappa}\tilde{\theta}[\frac{\tilde{\kappa}+d}{2}t-ln(\frac{1-ge^{dt}}{1-g})]\tag{4.14}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $g=\frac{\tilde{\kappa}+d}{\tilde{\kappa}-d},d=\sqrt{\tilde{\kappa}+4\tilde{c}}$
+\end_inset
+
+。于是the fundamental transform of the Heston model is ：
+\begin_inset Formula 
+\[
+\hat{H}(k,v,\tau)=exp(C(t)+D(t)v)\tag{4.15}
+\]
+
+\end_inset
+
+这与Chapter1中的特征方程是一致的。Lewis(2000,section 2.4) describes the conditions under
+ which 
+\begin_inset Formula $\hat{H}(k,v,\tau)$
+\end_inset
+
+ is an analytic characteristic function。
+\end_layout
+
+\begin_layout Subsection
+the call price using the fundamental transform
+\end_layout
+
+\begin_layout Itemize
+use the payoff transform obtained in equation(4.2), the integral to solve
+ is：
+\begin_inset Formula 
+\[
+C_{1}(K)=\frac{1}{2\pi}\int_{ik_{i}-\infty}^{ik_{i}+\infty}e^{-ikx}e^{[-r-ik(r-q)]\tau}\hat{H}(k,v,\tau)(\frac{-K^{ik+1}}{k^{2}-ik})dk\tag{4.16}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $x=lnS_{t}$
+\end_inset
+
+。定义
+\begin_inset Formula $X=ln(S_{t}/K)+(r-q)\tau$
+\end_inset
+
+，将call price写成Lewis(2000)的equation(2.2.8)，即：
+\begin_inset Formula 
+\[
+C_{1}(K)=-\frac{Ke^{-r\tau}}{2\pi}\int_{ik_{i}-\infty}^{ik_{i}+\infty}e^{-ikX}\frac{\hat{H}(k,v,\tau)}{k^{2}-ik}dk\tag{4.17}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $1<k_{i}<\beta$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+Lewis(2000) also find an alternative solution to the call price in (4.17),
+ based on put-call parity and a covered call, which has the payoff 
+\begin_inset Formula $min(S_{T},K)$
+\end_inset
+
+。this solution is valid under the simpler restriction that 
+\begin_inset Formula $0<k_{i}<1$
+\end_inset
+
+。the payoff of the covered call is：
+\begin_inset Formula 
+\[
+min(S_{T},K)=K-(K-S_{T})^{+}
+\]
+
+\end_inset
+
+两边同时取期望并折现，则：
+\begin_inset Formula 
+\[
+e^{-r\tau}E[min(S_{T},K)]=Ke^{-r\tau}-P(K)
+\]
+
+\end_inset
+
+又put-call parity：
+\begin_inset Formula 
+\[
+C(K)=S_{t}e^{-q\tau}-[Ke^{-r\tau}-P(K)]\tag{4.18}
+\]
+
+\end_inset
+
+这意味着the call price可以用the spot price以及the covered call来表示。于是，我们利用Alan Lewis'
+ recipe to the covered call, which has the payoff transform：
+\begin_inset Formula 
+\begin{align*}
+\hat{f}(k,T) & =\int_{-\infty}^{\infty}e^{ikx}[K-(K-e^{x})^{+}]dx\\
+ & =K\int_{lnK}^{\infty}e^{ikx}dx+\int_{-\infty}^{lnK}e^{(ik+1)x}dx\\
+ & =K(\frac{e^{ikx}}{ik}|_{x=lnK}^{x=\infty})+(\frac{e^{(ik+1)x}}{ik+1})|_{x=-\infty}^{x=lnK}\\
+ & =-\frac{K^{ik+1}}{ik}+\frac{K^{ik+1}}{ik+1}\\
+ & =\frac{K^{ik+1}}{k^{2}-ik}
+\end{align*}
+
+\end_inset
+
+其中，k的虚部满足
+\begin_inset Formula $0<k_{i}<1$
+\end_inset
+
+。然后，应用Lewis(2000) recipe to the covered call and using put-call parity in
+ equation(4.18)，得：
+\begin_inset Formula 
+\[
+C_{2}(K)=S_{t}e^{-q\tau}-\frac{Ke^{-r\tau}}{2\pi}\int_{ik_{i}-\infty}^{ik_{i}+\infty}e^{-ikX}\frac{1}{k^{2}-ik}\hat{H}(k,v,\tau)dk\tag{4.19}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+the integral for the call price 
+\begin_inset Formula $C_{1}(K)$
+\end_inset
+
+ in (4.17) or for 
+\begin_inset Formula $C_{2}(K)$
+\end_inset
+
+ in (4.19) can be simplified by noting that the integrand is also even in
+ its real part, and odd in its imaginary part。于是：
+\begin_inset Formula 
+\[
+C_{1}(K)=-\frac{Ke^{-r\tau}}{\pi}\int_{0}^{\infty}Re[e^{-ikX}\frac{1}{k^{2}-ik}\hat{H}(k,v,\tau)]dk\tag{4.20}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $1<k_{i}<\beta$
+\end_inset
+
+。
+\begin_inset Formula 
+\[
+C_{2}(K)=S_{t}e^{-q\tau}-\frac{Ke^{-r\tau}}{\pi}\int_{0}^{\infty}Re[e^{-ikX}\frac{1}{k^{2}-ik}\hat{H}(k,v,\tau)]dk\tag{4.21}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $max(0,\alpha)<k_{i}<min(1,\beta)$
+\end_inset
+
+，
+\begin_inset Formula $X=ln(S_{t}/K)+(r-q)\tau$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+code
+\end_layout
+
+\begin_layout Section
+option prices using Parseval's identity
+\end_layout
+
+\begin_layout Section
+volatility of volatility series expansion
+\end_layout
+
+\begin_layout Section
+conclusion
 \end_layout
 
 \begin_layout Chapter

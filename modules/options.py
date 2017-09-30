@@ -177,8 +177,6 @@ class ame_option:
             return np.maximum(S-K,0)
         else:
             return np.maximum(K-S,0)
-
-
     @jit
     def value_binomial_0(self, M=80):
         dt = (self.T-self.t) / M
