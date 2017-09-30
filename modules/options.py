@@ -893,6 +893,8 @@ plt.show()
         ax.plot_surface(UU, TT, undamped, rstride=1, cstride=1, cmap='rainbow')
         ax.plot_surface(UU, TT, damped)
         plt.show()
+    def ExampleLee_Bounds_on_Alpha_Lord_Kahl_Optimal_Alpha():
+        pass
 
 
 
@@ -1256,6 +1258,10 @@ def CarrMadanIntegrand(phi,alpha,kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,PutCall)
 def CarrMadanIntegrandOTM(phi,kappa,theta,lam,rho,sigma,T,K,S,r,q,v0):
     CF=HestonCharacteristicFunction(phi-1.0j,kappa,theta,lam,rho,sigma,T,S,r,q,v0)
     return (np.exp(-1.0j * phi * np.log(K) - r * T)*(S**(1.0j*phi+1.0)/(1.0+1.0j*phi)-np.exp(r*T)*S**(1.0j*phi+1.0)/(1.0j*phi)-CF/(phi*phi-1.0j*phi))).real
+def CarrMadanDampedIntegrandOTM(phi,alpha,kappa,theta,lam,rho,sigma,T,K,S,r,q,v0):
+    a=CarrMadanIntegrandOTM(phi-1.0j*alpha,kappa,theta,lam,rho,sigma,T,K,S,r,q,v0)
+    b=CarrMadanIntegrandOTM(phi+1.0j*alpha,kappa,theta,lam,rho,sigma,T,K,S,r,q,v0)
+    return (a-b)*0.5
 def CarrMadanPrice(alpha,kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,Lphi,Uphi,dphi,PutCall='call'):
     phi=np.arange(Lphi,Uphi,dphi)
     int1=CarrMadanIntegrand(phi,alpha,kappa,theta,lam,rho,sigma,T,K,S,r,q,v0,PutCall)
