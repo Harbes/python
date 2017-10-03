@@ -166,5 +166,894 @@ Ubuntu：
 复数与复变函数
 \end_layout
 
+\begin_layout Section
+复数的定义及其运算
+\end_layout
+
+\begin_layout Itemize
+定义：一对有序的实数
+\begin_inset Formula $(a,b)$
+\end_inset
+
+，
+\begin_inset Formula $\boldsymbol{C}$
+\end_inset
+
+记复数的全体，则
+\begin_inset Formula $\boldsymbol{C}=\{(a,b):a\in\boldsymbol{R},b\in\boldsymbol{R}\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+加法，减法（都满足交换律、结合律、分配律）【
+\begin_inset Formula $\boldsymbol{C}$
+\end_inset
+
+在这些加法和乘法运算下构成一个域，称为
+\series bold
+复数域
+\series default
+】
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $(1,0)$
+\end_inset
+
+是乘法单位元素
+\end_layout
+
+\begin_layout Itemize
+每个非零元素
+\begin_inset Formula $(a,b)$
+\end_inset
+
+都有逆元素
+\begin_inset Formula $(\frac{a}{a^{2}+b^{2}},-\frac{b}{a^{2}+b^{2}})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+【注意：复数域和实数域的一个重要区别是在复数域中不能定义两个复数的大小】
+\end_layout
+
+\begin_layout Itemize
+复数的模
+\end_layout
+
+\begin_layout Itemize
+共轭复数
+\end_layout
+
+\begin_layout Itemize
+一些基本性质：
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Formula $Re(z)=\frac{1}{2}(z+\bar{z}).Im(z)=\frac{1}{2i}(z-\bar{z})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $z\bar{z}=|z|^{2},z_{1}\bar{z}_{2}=\frac{z_{1}}{z_{2}}|z_{2}|^{2}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\overline{z+w}=\bar{z}+\bar{w},\overline{zw}=\bar{z}\bar{w}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $|zw|=|z||w|,|\frac{z}{w}|=\frac{|z|}{|w|}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $|z|=|\bar{z}|$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $|Re(z)|\leq|z|,|Im(z)|\leq|z|$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $||z|-|w||\leq|z\pm w|\leq|z|+|w|$
+\end_inset
+
+，当且仅当存在某个
+\begin_inset Formula $t\geq0$
+\end_inset
+
+，使得
+\begin_inset Formula $z=tw$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Section
+复数的几何表示
+\end_layout
+
+\begin_layout Itemize
+复数
+\begin_inset Formula $z=a+ib$
+\end_inset
+
+可以标示为
+\begin_inset Formula $z=r(cos\theta+isin\theta)$
+\end_inset
+
+，其中
+\begin_inset Formula $r=|z|=\sqrt{a^{2}+b^{2}}$
+\end_inset
+
+，
+\begin_inset Formula $\theta$
+\end_inset
+
+为
+\begin_inset Formula $z$
+\end_inset
+
+的辐角，记为
+\begin_inset Formula $\theta=Arg(z)$
+\end_inset
+
+。容易看出，当
+\begin_inset Formula $\theta$
+\end_inset
+
+为
+\begin_inset Formula $z$
+\end_inset
+
+的辐角，则
+\begin_inset Formula $\theta+2k\pi$
+\end_inset
+
+也是
+\begin_inset Formula $z$
+\end_inset
+
+的辐角，因此，我们限定在
+\begin_inset Formula $-\pi<\theta\leq\pi$
+\end_inset
+
+，并称这个
+\begin_inset Formula $\theta$
+\end_inset
+
+为
+\begin_inset Formula $z$
+\end_inset
+
+的辐角的主值，记为
+\begin_inset Formula $arg(z)$
+\end_inset
+
+，因此
+\begin_inset Formula $Arg(z)=arg(z)+2k\pi$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+通过上面的变换，我们可以复数
+\begin_inset Formula $z=a+bi$
+\end_inset
+
+看成在某个在x轴、y轴上的投影分别为a、b的向量，于是，令
+\begin_inset Formula 
+\[
+z_{1}=r_{1}(cos\theta_{1}+isin\theta_{1})
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+z_{2}=r_{2}(cos\theta_{2}+isin\theta_{2})
+\]
+
+\end_inset
+
+则：
+\begin_inset Formula 
+\[
+z_{1}z_{2}=r_{1}r_{2}(cos(\theta_{1}+\theta_{2})+isin(\theta_{1}+\theta_{2}))
+\]
+
+\end_inset
+
+由此，立刻得出：
+\begin_inset Formula 
+\[
+|z_{1}z_{2}|=|z_{1}||z_{2}|
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+Arg(z_{1}z_{2})=Arg(z_{1})+Arg(z_{2})
+\]
+
+\end_inset
+
+类似的，除法：
+\begin_inset Formula 
+\[
+\frac{z_{1}}{z_{2}}=\frac{r_{1}}{r_{2}}[cos(\theta_{1}-\theta_{2})+isin(\theta_{1}-\theta_{2})]
+\]
+
+\end_inset
+
+因此：
+\begin_inset Formula 
+\[
+|\frac{z_{1}}{z_{2}}|=\frac{|z_{1}|}{|z_{2}|}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+Arg(\frac{z_{1}}{z_{2}})=Arg(z_{1})-Arg(z_{2})
+\]
+
+\end_inset
+
+利用上面的信息，很容易得到：向量
+\begin_inset Formula $z_{1}$
+\end_inset
+
+与
+\begin_inset Formula $z_{2}$
+\end_inset
+
+垂直的充要条件是
+\begin_inset Formula $Re(z_{1}\bar{z}_{2})=0$
+\end_inset
+
+，这是因为
+\begin_inset Formula $z_{1}$
+\end_inset
+
+与
+\begin_inset Formula $z_{2}$
+\end_inset
+
+垂直就是
+\begin_inset Formula $z_{1}$
+\end_inset
+
+与
+\begin_inset Formula $z_{2}$
+\end_inset
+
+之间的夹角为
+\begin_inset Formula $\pm\frac{\pi}{2}$
+\end_inset
+
+，即
+\begin_inset Formula $arg(\frac{z_{1}}{z_{2}})=\pm\frac{\pi}{2}$
+\end_inset
+
+，这说明
+\begin_inset Formula $\frac{z_{1}}{z_{2}}$
+\end_inset
+
+是一个纯虚数，因此，根据基本性质2，
+\begin_inset Formula $z_{1}\bar{z}_{2}=\frac{z_{1}}{z_{2}}|z_{2}|^{2}$
+\end_inset
+
+也是一个纯虚数，即
+\begin_inset Formula $Re(z_{1}\bar{z}_{2})=0$
+\end_inset
+
+。同理：
+\begin_inset Formula $z_{1}$
+\end_inset
+
+与
+\begin_inset Formula $z_{2}$
+\end_inset
+
+平行的充要条件为
+\begin_inset Formula $Im(z_{1}\bar{z}_{2})=0$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Section
+扩充平面和复数的球面表示
+\end_layout
+
+\begin_layout Itemize
+为了后面讨论的需要，在
+\series bold
+
+\begin_inset Formula $\boldsymbol{C}$
+\end_inset
+
+
+\series default
+中引入一个新的数
+\begin_inset Formula $\infty$
+\end_inset
+
+，它的模为
+\begin_inset Formula $\infty$
+\end_inset
+
+，辐角没有意义，它和其他数的运算规则为：
+\begin_inset Formula 
+\[
+z\pm\infty=\infty
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+z*\infty=\infty(z\neq0)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{z}{\infty}=0
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{z}{0}=\infty(z\neq0)
+\]
+
+\end_inset
+
+注意：
+\begin_inset Formula $0*\infty$
+\end_inset
+
+和
+\begin_inset Formula $\infty\pm\infty$
+\end_inset
+
+都不规定其意义(尤其是
+\begin_inset Formula $\infty+\infty$
+\end_inset
+
+)。于是，我们称引入了
+\begin_inset Formula $\infty$
+\end_inset
+
+的复平面为
+\series bold
+扩充平面
+\series default
+。
+\end_layout
+
+\begin_layout Itemize
+在复平面上，无穷点和普通的点是不一样的，Riemann首先引入了复数的球面表示，在这种表示中，
+\begin_inset Formula $\infty$
+\end_inset
+
+和普通的复数没有什么区别。令
+\begin_inset Formula $S$
+\end_inset
+
+是
+\begin_inset Formula $\boldsymbol{R}^{3}$
+\end_inset
+
+中的单位球面，即
+\begin_inset Formula 
+\[
+S=\{(x_{1},x_{2},x_{3})\in\boldsymbol{R}^{3}:x_{1}^{2}+x_{2}^{2}+x_{3}^{2}=1\}
+\]
+
+\end_inset
+
+于是，我们可以把
+\begin_inset Formula $\boldsymbol{C}$
+\end_inset
+
+看成平面：
+\begin_inset Formula 
+\[
+\boldsymbol{C}=\{(x_{1},x_{2},0):x_{1},x_{2}\in R\}
+\]
+
+\end_inset
+
+固定单位球面
+\begin_inset Formula $S$
+\end_inset
+
+的北极
+\begin_inset Formula $N$
+\end_inset
+
+，即
+\begin_inset Formula $N=(0,0,1)$
+\end_inset
+
+，对于
+\begin_inset Formula $\boldsymbol{C}$
+\end_inset
+
+上的任意点
+\begin_inset Formula $z$
+\end_inset
+
+，联结
+\begin_inset Formula $N$
+\end_inset
+
+和
+\begin_inset Formula $z$
+\end_inset
+
+的直线必和
+\begin_inset Formula $S$
+\end_inset
+
+交于一点
+\begin_inset Formula $P$
+\end_inset
+
+。若
+\begin_inset Formula $|z|>1$
+\end_inset
+
+，则
+\begin_inset Formula $P$
+\end_inset
+
+在北半球；若
+\begin_inset Formula $|z|<1$
+\end_inset
+
+，则
+\begin_inset Formula $P$
+\end_inset
+
+在南半球上；若
+\begin_inset Formula $|z|=1$
+\end_inset
+
+，则P就是
+\begin_inset Formula $z$
+\end_inset
+
+。容易看出，当
+\begin_inset Formula $z$
+\end_inset
+
+趋向于
+\begin_inset Formula $\infty$
+\end_inset
+
+时，球面上对应的点
+\begin_inset Formula $P$
+\end_inset
+
+趋向于北极
+\begin_inset Formula $N$
+\end_inset
+
+。于是，我们就把
+\begin_inset Formula $\boldsymbol{C}_{\infty}$
+\end_inset
+
+中的
+\begin_inset Formula $\infty$
+\end_inset
+
+对应于北极
+\begin_inset Formula $N$
+\end_inset
+
+。这样一来，
+\begin_inset Formula $\boldsymbol{C}_{\infty}$
+\end_inset
+
+中的所有点都被移植到球面上了。相应的表达式：令
+\begin_inset Formula $z=x+iy$
+\end_inset
+
+，容易算出交点
+\begin_inset Formula $P$
+\end_inset
+
+的坐标为：
+\begin_inset Formula 
+\[
+x_{1}=\frac{2x}{x^{2}+y^{2}+1}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+x_{2}=\frac{2y}{x^{2}+y^{2}+1}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+x_{3}=\frac{x^{2}+y^{2}-1}{x^{2}+y^{2}+1}
+\]
+
+\end_inset
+
+若直接用复数表示，则：
+\begin_inset Formula 
+\[
+x_{1}=\frac{z+\bar{z}}{1+|z|^{2}}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+x_{2}=\frac{z-\bar{z}}{i(1+|z|^{2})}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+x_{3}=\frac{|z|^{2}-1}{|z|^{2}+1}
+\]
+
+\end_inset
+
+反过来，如果已知球上的点
+\begin_inset Formula $(x_{1},x_{2},x_{3})$
+\end_inset
+
+，也可以反推平面上的点：
+\begin_inset Formula 
+\[
+\begin{cases}
+x_{1}+ix_{2}=\frac{2z}{1+|z|^{2}}\\
+1-x_{3}=\frac{2}{1+|z|^{2}}
+\end{cases}
+\]
+
+\end_inset
+
+由此
+\begin_inset Formula 
+\[
+z=\frac{x_{1}+ix_{2}}{1-x_{3}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+复数列的极限
+\end_layout
+
+\begin_layout Section
+开集、闭集和紧集
+\end_layout
+
+\begin_layout Section
+曲线和域
+\end_layout
+
+\begin_layout Itemize
+连续曲线。简单曲线(Jordan曲线)，闭曲线，简单闭曲线(Jordan闭曲线，围道)
+\end_layout
+
+\begin_layout Itemize
+曲线是否
+\series bold
+可求长
+\series default
+的
+\end_layout
+
+\begin_layout Itemize
+光滑曲线，逐段光滑
+\end_layout
+
+\begin_layout Itemize
+连通
+\end_layout
+
+\begin_layout Itemize
+域：非空的连通开集
+\end_layout
+
+\begin_layout Section
+复变函数的极限和连续性
+\end_layout
+
+\begin_layout Chapter
+全纯函数
+\end_layout
+
+\begin_layout Section
+复变函数的导数
+\end_layout
+
+\begin_layout Itemize
+全纯函数(解析函数)
+\end_layout
+
+\begin_layout Itemize
+函数
+\begin_inset Formula $f(z)=\bar{z}$
+\end_inset
+
+在
+\begin_inset Formula $\boldsymbol{C}$
+\end_inset
+
+中处处不可微
+\end_layout
+
+\begin_layout Section
+Cauchy-Riemann方程
+\end_layout
+
+\begin_layout Itemize
+设
+\begin_inset Formula $z=x+iy$
+\end_inset
+
+，
+\begin_inset Formula $f(z)=u(x,y)+iv(x,y)$
+\end_inset
+
+是定义在域
+\begin_inset Formula $D$
+\end_inset
+
+上的函数，
+\begin_inset Formula $z_{0}=x_{0}+iy_{0}\in D$
+\end_inset
+
+。我们说
+\begin_inset Formula $f$
+\end_inset
+
+在
+\begin_inset Formula $z_{0}$
+\end_inset
+
+处
+\series bold
+实可微
+\series default
+，是指
+\begin_inset Formula $u$
+\end_inset
+
+和
+\begin_inset Formula $v$
+\end_inset
+
+作为
+\begin_inset Formula $x,y$
+\end_inset
+
+的二元函数在
+\begin_inset Formula $(x_{0},y_{0})$
+\end_inset
+
+处可微。
+\end_layout
+
+\begin_layout Itemize
+假设
+\begin_inset Formula $f$
+\end_inset
+
+在
+\begin_inset Formula $z_{0}$
+\end_inset
+
+处实可微，
+\begin_inset Formula $|\Delta z|=\sqrt{(\Delta x)^{2}+(\Delta y)^{2}}$
+\end_inset
+
+，于是：
+\begin_inset Formula 
+\begin{align*}
+f(z_{0}+\Delta z)-f(z_{0}) & =u(x_{0}+\Delta x,y_{0}+\Delta y)-u(x_{0},y_{0})+i(v(x_{0}+\Delta x,y_{0}+\Delta y)-v(x_{0},y_{0}))\\
+ & =\frac{\partial u}{\partial x}(x_{0},y_{0})\Delta x+\frac{\partial u}{\partial y}(x_{0},y_{0})\Delta y+o(|\Delta z|)+i[\frac{\partial v}{\partial x}(x_{0},y_{0})\Delta x+\frac{\partial v}{\partial y}(x_{0},y_{0})\Delta y+o(|\Delta z|)]\\
+ & =[\frac{\partial u}{\partial x}(x_{0},y_{0})+i\frac{\partial v}{\partial x}(x_{0},y_{0})]\Delta x+[\frac{\partial u}{\partial y}(x_{0},y_{0})+i\frac{\partial v}{\partial y}(x_{0},y_{0})]\Delta y+o(|\Delta z|)\\
+ & =\frac{\partial f}{\partial x}(x_{0},y_{0})\Delta x+\frac{\partial f}{\partial y}(x_{0},y_{0})\Delta y+o(|\Delta z|)
+\end{align*}
+
+\end_inset
+
+把
+\begin_inset Formula $\Delta x=\frac{1}{2}(\Delta z+\overline{\Delta z})$
+\end_inset
+
+，
+\begin_inset Formula $\Delta y=\frac{1}{2i}(\Delta z-\overline{\Delta z})$
+\end_inset
+
+代入上式可得：
+\begin_inset Formula 
+\begin{align*}
+f(z_{0}+\Delta z)-f(z_{0}) & =\frac{1}{2}\frac{\partial f}{\partial x}(x_{0},y_{0})(\Delta z+\overline{\Delta z})-\frac{i}{2}\frac{\partial f}{\partial y}(x_{0},y_{0})(\Delta z-\overline{\Delta z})+o(|\Delta z|)\\
+ & =\frac{1}{2}(\frac{\partial}{\partial x}-i\frac{\partial}{\partial y})f(x_{0},y_{0})\Delta z+\frac{1}{2}(\frac{\partial}{\partial x}+i\frac{\partial}{\partial y})f(x_{0},y_{0})\overline{\Delta z}+o(|\Delta z|)
+\end{align*}
+
+\end_inset
+
+引进算子
+\begin_inset Formula 
+\[
+\frac{\partial}{\partial z}=\frac{1}{2}(\frac{\partial}{\partial x}-i\frac{\partial}{\partial y})
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial}{\partial\bar{z}}=\frac{1}{2}(\frac{\partial}{\partial x}+i\frac{\partial}{\partial y})
+\]
+
+\end_inset
+
+于是：
+\begin_inset Formula 
+\[
+f(z_{0}+\Delta z)-f(z_{0})=\frac{\partial f}{\partial z}(z_{0})\Delta z+\frac{\partial f}{\partial\bar{z}}(z_{0})\overline{\Delta z}+o(|\Delta z|)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+从上面的推导可以看出：
+\begin_inset Formula $f$
+\end_inset
+
+在
+\begin_inset Formula $z_{0}$
+\end_inset
+
+处实可微的充分条件是上式成立。
+\end_layout
+
+\begin_layout Itemize
+实际上，我们可以把
+\begin_inset Formula $f(z)$
+\end_inset
+
+写成
+\begin_inset Formula $f(x,y)=f(\frac{z+\bar{z}}{2},-i\frac{z-\bar{z}}{2})$
+\end_inset
+
+，把
+\begin_inset Formula $z,\bar{z}$
+\end_inset
+
+看成独立变量，分别对
+\begin_inset Formula $z$
+\end_inset
+
+和
+\begin_inset Formula $\bar{z}$
+\end_inset
+
+求偏导数，可得：
+\begin_inset Formula 
+\[
+\frac{\partial f}{\partial z}=\frac{\partial f}{\partial x}\frac{\partial x}{\partial z}+\frac{\partial f}{\partial y}\frac{\partial y}{\partial z}=\frac{1}{2}(\frac{\partial f}{\partial x}-i\frac{\partial f}{\partial y})
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial f}{\partial\bar{z}}=\frac{\partial f}{\partial x}\frac{\partial x}{\partial\bar{z}}+\frac{\partial f}{\partial y}\frac{\partial y}{\partial\bar{z}}=\frac{1}{2}(\frac{\partial f}{\partial x}+i\frac{\partial f}{\partial y})
+\]
+
+\end_inset
+
+这说明在进行微分运算时，可以把
+\begin_inset Formula $z,\bar{z}$
+\end_inset
+
+看成独立的变量。
+\end_layout
+
+\begin_layout Itemize
+定理：设
+\begin_inset Formula $f$
+\end_inset
+
+是定义在域
+\begin_inset Formula $D$
+\end_inset
+
+上的函数，
+\begin_inset Formula $z_{0}\in D$
+\end_inset
+
+，那么
+\begin_inset Formula $f$
+\end_inset
+
+在
+\begin_inset Formula $z_{0}$
+\end_inset
+
+处可微的充要条件是
+\begin_inset Formula $f$
+\end_inset
+
+在
+\begin_inset Formula $z_{0}$
+\end_inset
+
+处实可微且
+\begin_inset Formula $\frac{\partial f}{\partial\bar{z}}(z_{0})=0$
+\end_inset
+
+。在可微的情况下，
+\begin_inset Formula $f'(z_{0})=\frac{\partial f}{\partial z}(z_{0})$
+\end_inset
+
+
+\end_layout
+
 \end_body
 \end_document
