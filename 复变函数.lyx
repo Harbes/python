@@ -943,7 +943,7 @@ f(z_{0}+\Delta z)-f(z_{0}) & =\frac{1}{2}\frac{\partial f}{\partial x}(x_{0},y_{
 
 \begin_inset Formula 
 \[
-\frac{\partial}{\partial\bar{z}}=\frac{1}{2}(\frac{\partial}{\partial x}+i\frac{\partial}{\partial y})
+\frac{\partial}{\partial\bar{z}}=\frac{1}{2}(\frac{\partial}{\partial x}+i\frac{\partial}{\partial y})\tag{3}
 \]
 
 \end_inset
@@ -951,7 +951,7 @@ f(z_{0}+\Delta z)-f(z_{0}) & =\frac{1}{2}\frac{\partial f}{\partial x}(x_{0},y_{
 于是：
 \begin_inset Formula 
 \[
-f(z_{0}+\Delta z)-f(z_{0})=\frac{\partial f}{\partial z}(z_{0})\Delta z+\frac{\partial f}{\partial\bar{z}}(z_{0})\overline{\Delta z}+o(|\Delta z|)
+f(z_{0}+\Delta z)-f(z_{0})=\frac{\partial f}{\partial z}(z_{0})\Delta z+\frac{\partial f}{\partial\bar{z}}(z_{0})\overline{\Delta z}+o(|\Delta z|)\tag{4}
 \]
 
 \end_inset
@@ -1016,7 +1016,7 @@ f(z_{0}+\Delta z)-f(z_{0})=\frac{\partial f}{\partial z}(z_{0})\Delta z+\frac{\p
 \end_layout
 
 \begin_layout Itemize
-定理：设
+定理2.2.3：设
 \begin_inset Formula $f$
 \end_inset
 
@@ -1052,7 +1052,256 @@ f(z_{0}+\Delta z)-f(z_{0})=\frac{\partial f}{\partial z}(z_{0})\Delta z+\frac{\p
 \begin_inset Formula $f'(z_{0})=\frac{\partial f}{\partial z}(z_{0})$
 \end_inset
 
+。【主要是把
+\begin_inset Formula $f(z_{0}+\Delta z)-f(z_{0})=f'(z_{0})\Delta z+o(|\Delta z|)$
+\end_inset
 
+与(4)式做对比】
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\frac{\partial f}{\partial\bar{z}}=0$
+\end_inset
+
+称为Cauchy-Riemann方程，从这个方程可以得到
+\begin_inset Formula $f$
+\end_inset
+
+的实部和虚部应满足的条件：
+\begin_inset Formula $f=u+iv$
+\end_inset
+
+，由(3)可得：
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial f}{\partial\bar{z}} & =\frac{\partial u}{\partial\bar{z}}+i\frac{\partial v}{\partial\bar{z}}\\
+ & =\frac{1}{2}(\frac{\partial u}{\partial x}+i\frac{\partial u}{\partial y})+\frac{i}{2}(\frac{\partial v}{\partial x}+i\frac{\partial v}{\partial y})\\
+ & =\frac{1}{2}(\frac{\partial u}{\partial x}-\frac{\partial v}{\partial y})+\frac{i}{2}(\frac{\partial u}{\partial y}+\frac{\partial v}{\partial x})\\
+ & =0
+\end{align*}
+
+\end_inset
+
+这意味着：
+\begin_inset Formula 
+\[
+\frac{\partial u}{\partial x}=\frac{\partial v}{\partial y}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial u}{\partial y}=-\frac{\partial v}{\partial x}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+定理2.2.4：设
+\begin_inset Formula $f=u+iv$
+\end_inset
+
+是定义在域
+\begin_inset Formula $D$
+\end_inset
+
+上的函数，
+\begin_inset Formula $z_{0}=x_{0}+iy_{0}\in D$
+\end_inset
+
+，那么
+\begin_inset Formula $f$
+\end_inset
+
+在
+\begin_inset Formula $z_{0}$
+\end_inset
+
+处可微的充要条件是
+\begin_inset Formula $u(x,y),v(x,y)$
+\end_inset
+
+在
+\begin_inset Formula $(x_{0},y_{0})$
+\end_inset
+
+处可微，且在
+\begin_inset Formula $(x_{0},y_{0})$
+\end_inset
+
+处满足
+\begin_inset Formula $\frac{\partial u}{\partial x}=\frac{\partial v}{\partial y}$
+\end_inset
+
+和
+\begin_inset Formula $\frac{\partial u}{\partial y}=-\frac{\partial v}{\partial x}$
+\end_inset
+
+。于是在可微的情况下，有
+\begin_inset Formula 
+\begin{align*}
+f'(z_{0}) & =\frac{\partial u}{\partial x}+i\frac{\partial v}{\partial x}\\
+ & =\frac{\partial v}{\partial y}+i\frac{\partial v}{\partial x}\\
+ & =\frac{\partial u}{\partial x}-i\frac{\partial u}{\partial y}\\
+ & =\frac{\partial v}{\partial y}-i\frac{\partial u}{\partial y}
+\end{align*}
+
+\end_inset
+
+这里的偏导数都在
+\begin_inset Formula $(x_{0},y_{0})$
+\end_inset
+
+处取值。
+\end_layout
+
+\begin_layout Itemize
+定义2.2.7：设
+\begin_inset Formula $u$
+\end_inset
+
+是域
+\begin_inset Formula $D$
+\end_inset
+
+上的实值函数，如果
+\begin_inset Formula $u\in C^{2}(D)$
+\end_inset
+
+，且对任意
+\begin_inset Formula $z\in D$
+\end_inset
+
+，有
+\begin_inset Formula $\Delta u(z)\equiv\frac{\partial^{2}u(z)}{\partial x^{2}}+\frac{\partial^{2}u(z)}{\partial y^{2}}=0$
+\end_inset
+
+，就称
+\begin_inset Formula $u$
+\end_inset
+
+是
+\begin_inset Formula $D$
+\end_inset
+
+中的
+\series bold
+调和函数
+\series default
+，
+\begin_inset Formula $\Delta=\frac{\partial^{2}}{\partial x^{2}}+\frac{\partial^{2}}{\partial y^{2}}$
+\end_inset
+
+称为
+\series bold
+调和算子
+\series default
+。
+\end_layout
+
+\begin_layout Itemize
+命题2.2.8：如果
+\begin_inset Formula $u\in C^{2}(D)$
+\end_inset
+
+，那么
+\begin_inset Formula $\Delta u=4\frac{\partial^{2}u}{\partial z\partial\bar{z}}$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+定理2.2.9：设
+\begin_inset Formula $f=u+iv$
+\end_inset
+
+是定义在域
+\begin_inset Formula $D$
+\end_inset
+
+上的函数，那么
+\begin_inset Formula $u$
+\end_inset
+
+和
+\begin_inset Formula $v$
+\end_inset
+
+是
+\begin_inset Formula $D$
+\end_inset
+
+上的调和函数。【即证明
+\begin_inset Formula $\Delta u=4\frac{\partial^{2}u}{\partial z\partial\bar{z}}=0,\Delta v=4\frac{\partial^{2}v}{\partial z\partial\bar{z}}=0$
+\end_inset
+
+。其中会用到
+\begin_inset Formula $\frac{\partial\bar{f}}{\partial z}=\overline{\frac{\partial f}{\partial\bar{z}}}$
+\end_inset
+
+】
+\end_layout
+
+\begin_layout Itemize
+定义2.2.10：设
+\begin_inset Formula $u$
+\end_inset
+
+和
+\begin_inset Formula $v$
+\end_inset
+
+是
+\begin_inset Formula $D$
+\end_inset
+
+上的一对调和函数，如果它们还满足Cauchy-Riemann方程：
+\begin_inset Formula $\frac{\partial u}{\partial x}=\frac{\partial v}{\partial y}$
+\end_inset
+
+和
+\begin_inset Formula $\frac{\partial u}{\partial y}=-\frac{\partial v}{\partial x}$
+\end_inset
+
+，就称
+\begin_inset Formula $v$
+\end_inset
+
+为
+\begin_inset Formula $u$
+\end_inset
+
+的共轭调和函数。显然，全纯函数的实部和虚部就构成了一对共轭调和函数。
+\end_layout
+
+\begin_layout Itemize
+定理2.2.11：设
+\begin_inset Formula $u$
+\end_inset
+
+是单连通域
+\begin_inset Formula $D$
+\end_inset
+
+上的调和函数，则必存在
+\begin_inset Formula $u$
+\end_inset
+
+的共轭调和函数
+\begin_inset Formula $v$
+\end_inset
+
+，使得
+\begin_inset Formula $u+iv$
+\end_inset
+
+是D上的全纯函数。
 \end_layout
 
 \end_body
