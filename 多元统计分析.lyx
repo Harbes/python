@@ -19,9 +19,9 @@
 \language_package default
 \inputencoding utf8-plain
 \fontencoding global
-\font_roman "default" "Noto Sans Mono CJK SC"
-\font_sans "default" "Noto Sans CJK SC"
-\font_typewriter "default" "Noto Sans Mono CJK SC"
+\font_roman "default" "Xingkai SC"
+\font_sans "default" "Xingkai SC"
+\font_typewriter "default" "Songti SC"
 \font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts true
@@ -162,10 +162,6 @@ Ubuntu：
 \end_layout
 
 \end_deeper
-\begin_layout Part
-统计描述技术
-\end_layout
-
 \begin_layout Chapter
 批量数据比较
 \end_layout
@@ -443,6 +439,658 @@ f_{i}(t)=\begin{cases}
 
 \begin_layout Itemize
 一个例子：波士顿住房
+\end_layout
+
+\begin_layout Chapter
+矩阵代数
+\end_layout
+
+\begin_layout Chapter
+转向高维数据
+\end_layout
+
+\begin_layout Chapter
+多元分布
+\end_layout
+
+\begin_layout Chapter
+均值向量的推断与比较
+\end_layout
+
+\begin_layout Chapter
+估计理论与假设检验
+\end_layout
+
+\begin_layout Chapter
+多元线性回归模型
+\end_layout
+
+\begin_layout Chapter
+因子方法
+\end_layout
+
+\begin_layout Itemize
+因子方法主要是为了降低多元数据集的唯独
+\end_layout
+
+\begin_layout Section
+描述性视角：根据因子分解数据矩阵
+\end_layout
+
+\begin_layout Subsection
+几何观点
+\end_layout
+
+\begin_layout Itemize
+假定数据矩阵
+\begin_inset Formula $X_{(n\times p)}$
+\end_inset
+
+由
+\begin_inset Formula $p$
+\end_inset
+
+个变量的
+\begin_inset Formula $n$
+\end_inset
+
+个个体组成。一般，我们至少有两种方法来观察
+\begin_inset Formula $X$
+\end_inset
+
+：按行或按列。
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+行。每个观测值为
+\begin_inset Formula $x_{i}^{T}=(x_{i1},...,x_{ip})\in R^{p},i=1,2,...,n$
+\end_inset
+
+。于是，数据矩阵
+\begin_inset Formula $X$
+\end_inset
+
+可以表示为
+\begin_inset Formula $R^{p}$
+\end_inset
+
+空间的
+\begin_inset Formula $n$
+\end_inset
+
+个点。
+\end_layout
+
+\begin_layout Enumerate
+列。每个观测值为
+\begin_inset Formula $x_{[j]}=(x_{1j},x_{2j},...,x_{nj})^{T}\in R^{n},j=1,2,...,p$
+\end_inset
+
+。于是，数据矩阵
+\begin_inset Formula $X$
+\end_inset
+
+可以表示为
+\begin_inset Formula $R^{n}$
+\end_inset
+
+空间的
+\begin_inset Formula $p$
+\end_inset
+
+个点。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+显然，当n或p较大时，无法简单地用图形表示这些点。
+\end_layout
+
+\begin_layout Subsection
+拟合
+\begin_inset Formula $p$
+\end_inset
+
+维点云—针对按行的情况
+\end_layout
+
+\begin_layout Subsubsection
+一维子空间
+\end_layout
+
+\begin_layout Itemize
+我们希望找到一条直线(假定穿过原点【为什么？中心化？】)，使得这条直线能够最好的拟合这些点。于是问题可以转化为：寻找一个单位向量
+\begin_inset Formula $u_{1}$
+\end_inset
+
+，使得
+\begin_inset Formula $\Sigma_{i=1}^{n}||P_{x_{i}}||^{2}$
+\end_inset
+
+最大，其中
+\begin_inset Formula $P_{x_{i}}=x_{i}^{T}u_{1}/||u_{1}||=x_{i}^{T}u_{1}$
+\end_inset
+
+，即：
+\begin_inset Formula 
+\[
+\underset{u_{1}^{T}u_{1}=1}{max}u_{1}^{T}(X^{T}X)u_{1}
+\]
+
+\end_inset
+
+可以证明，上述问题的最优解为对应
+\begin_inset Formula $X^{T}X$
+\end_inset
+
+最大特征值
+\begin_inset Formula $\lambda_{1}$
+\end_inset
+
+的特征向量【见“应用多元统计分析。Wolfgang Hardle；Leopold Simar”的定理2.5，取B为单位矩阵即可】
+\end_layout
+
+\begin_layout Itemize
+于是，我们可以得到每个观测值在所求直线上的对应点为
+\begin_inset Formula $Xu_{1}$
+\end_inset
+
+(第一因子变量或第一因子)。
+\end_layout
+
+\begin_layout Subsubsection
+二维子空间
+\end_layout
+
+\begin_layout Itemize
+如果把这些点投影到一个二维平面上，显然，在最优条件下，前面
+\begin_inset Formula $u_{1}$
+\end_inset
+
+所在的直线应在此二维平面内。于是，该平面由最优线性拟合
+\begin_inset Formula $u_{1}$
+\end_inset
+
+和一个正交于
+\begin_inset Formula $u_{1}$
+\end_inset
+
+的单位向量
+\begin_inset Formula $u_{2}$
+\end_inset
+
+决定，即：
+\begin_inset Formula 
+\[
+\underset{\begin{array}{c}
+u_{2}^{T}u_{2}=1\\
+u_{1}^{T}u_{2}=0
+\end{array}}{max}u_{1}^{T}(X^{T}X)u_{1}
+\]
+
+\end_inset
+
+注意，此时
+\begin_inset Formula $u_{1}$
+\end_inset
+
+已知。显然，可以得到
+\begin_inset Formula $u_{2}$
+\end_inset
+
+是对应
+\begin_inset Formula $X^{T}X$
+\end_inset
+
+第二个最大特征值
+\begin_inset Formula $\lambda_{2}$
+\end_inset
+
+的特征向量。
+\end_layout
+
+\begin_layout Subsubsection
+\begin_inset Formula $q$
+\end_inset
+
+维子空间(
+\begin_inset Formula $q\leq p$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+与上同理
+\end_layout
+
+\begin_layout Subsection
+拟合
+\begin_inset Formula $n$
+\end_inset
+
+维点云—针对按列的情况
+\end_layout
+
+\begin_layout Itemize
+与上同理，不过结果上由少许区别，例如，对于第一因子向量：
+\begin_inset Formula $v_{1}$
+\end_inset
+
+是
+\begin_inset Formula $XX^{T}$
+\end_inset
+
+的最大特征值对应的特征向量。
+\end_layout
+
+\begin_layout Subsection
+子空间之间的关系—对偶关系
+\end_layout
+
+\begin_layout Itemize
+考虑
+\begin_inset Formula $R^{n}$
+\end_inset
+
+中的特征向量方程：
+\begin_inset Formula 
+\[
+(XX^{T})v_{k}=\mu_{k}v_{k}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $k\leq r=rank(XX^{T})=rank(X)\leq min(p,n)$
+\end_inset
+
+。于是：
+\begin_inset Formula 
+\[
+X^{T}(XX^{T})v_{k}=\mu_{k}X^{T}v_{k}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+(X^{T}X)(X^{T}v_{k})=\mu_{k}(X^{T}v_{k})
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+(X^{T}X)a_{k}=\mu_{k}a_{k}
+\]
+
+\end_inset
+
+因此，
+\begin_inset Formula $XX^{T}$
+\end_inset
+
+的每个特征向量对应于
+\begin_inset Formula $X^{T}X$
+\end_inset
+
+的特征向量，且具有相同的特征值
+\begin_inset Formula $\mu_{k}$
+\end_inset
+
+，即：
+\begin_inset Formula 
+\[
+u_{k}=c_{k}X^{T}v_{k}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+反过来考虑
+\begin_inset Formula $R^{p}$
+\end_inset
+
+中的特征向量方程，结果一致。
+\end_layout
+
+\begin_layout Itemize
+于是，可以得到下面的定理（对偶关系）：令
+\begin_inset Formula $r$
+\end_inset
+
+为
+\begin_inset Formula $X$
+\end_inset
+
+的秩，矩阵
+\begin_inset Formula $X^{T}X$
+\end_inset
+
+和
+\begin_inset Formula $XX^{T}$
+\end_inset
+
+的特征值
+\begin_inset Formula $\lambda_{k}$
+\end_inset
+
+是相同的，且特征向量
+\begin_inset Formula $u_{k},v_{k}$
+\end_inset
+
+与下式相关联：
+\begin_inset Formula 
+\[
+u_{k}=\frac{1}{\sqrt{\lambda_{k}}}X^{T}v_{k}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+v_{k}=\frac{1}{\sqrt{\lambda_{k}}}Xu_{k}
+\]
+
+\end_inset
+
+此时
+\begin_inset Formula $R^{n}$
+\end_inset
+
+中的
+\begin_inset Formula $p$
+\end_inset
+
+个变量在因子轴
+\begin_inset Formula $v_{k}$
+\end_inset
+
+上的映射为：
+\begin_inset Formula 
+\[
+w_{k}=X^{T}v_{k}=\frac{1}{\sqrt{\lambda_{k}}}X^{T}Xu_{k}=\frac{1}{\sqrt{\lambda_{k}}}\lambda_{k}u_{k}=\sqrt{\lambda_{k}}u_{k}
+\]
+
+\end_inset
+
+ 【事实上，
+\begin_inset Formula $u_{k}$
+\end_inset
+
+和
+\begin_inset Formula $v_{k}$
+\end_inset
+
+提供了
+\begin_inset Formula $X$
+\end_inset
+
+的SVD。“应用多元统计分析。Wolfgang Hardle；Leopold Simar”】
+\end_layout
+
+\begin_layout Section
+主成分分析
+\end_layout
+
+\begin_layout Subsection
+标准化的线性组合
+\end_layout
+
+\begin_layout Itemize
+主成分分析的主要目的是降低观测值的维度。最简单的方法是选取其中某一个维度，而放弃其他维度的数据，显然，这回损失大量有用信息。还有一种方法是赋予所有变量相同权重，
+然后取平均，但这也不够理想。于是，放弃等权重的假设，利用加权平均：
+\begin_inset Formula 
+\[
+\delta^{T}X=\Sigma_{j=1}^{p}\delta_{j}X_{j}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\Sigma_{j=1}^{p}=\delta_{j}^{2}=1
+\]
+
+\end_inset
+
+注意，此处将数据看成
+\begin_inset Formula $n$
+\end_inset
+
+维点云。我们引入一个优化：最大化映射
+\begin_inset Formula $\delta^{T}X$
+\end_inset
+
+的方差：
+\begin_inset Formula 
+\[
+\underset{||\delta||=1}{max}Var(\delta^{T}X)=\delta^{T}Var(X)\delta
+\]
+
+\end_inset
+
+同样的，利用定理2.5可知，上述的最优解为
+\begin_inset Formula $Var(X)$
+\end_inset
+
+最大特征值
+\begin_inset Formula $\lambda_{1}$
+\end_inset
+
+对应的特征向量
+\begin_inset Formula $\gamma_{1}$
+\end_inset
+
+【注意：
+\begin_inset Formula $X$
+\end_inset
+
+的平移并不影响最优解】。于是，对应的第一个主成分为：
+\begin_inset Formula 
+\[
+y_{1}=\gamma_{1}^{T}X
+\]
+
+\end_inset
+
+同理，在与
+\begin_inset Formula $\gamma_{1}$
+\end_inset
+
+正交的方向上，可以找到第二个主成分对应的向量
+\begin_inset Formula $\gamma_{2}$
+\end_inset
+
+，以此类推。于是，我们可以定义主成分转换为：
+\begin_inset Formula 
+\[
+Y=\Gamma^{T}(X-\mu)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+定理9.1：对一个给定的
+\begin_inset Formula $X\sim(\mu,\Sigma)$
+\end_inset
+
+，令
+\begin_inset Formula $Y=\Gamma^{T}(X-\mu)$
+\end_inset
+
+为主成分转换，则有：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $EY_{j}=0,j=1,2,...,p$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $Var(Y_{j})=\lambda_{j},j=1,2,...,p$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $Cov(Y_{i},Y_{j})=0,i\text{≠j}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $Var(Y_{1})\geq Var(Y_{2})]\geq...\geq Var(Y_{p})\geq0$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\Sigma_{j=1}^{p}Var(Y_{j})=tr(\Sigma)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\Pi_{j=1}^{p}Var(Y_{j})=|\Sigma|$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+注意，主成分技术对单位变化非常敏感，这是因为，特征值分解是基于协方差矩阵而不是相关系数矩阵，因此，主成分转换应该被运用到具有相思单位的数据上。
+\end_layout
+
+\begin_layout Subsection
+主成分的解释
+\end_layout
+
+\begin_layout Itemize
+主成分向量
+\begin_inset Formula $Y$
+\end_inset
+
+和原始向量
+\begin_inset Formula $X$
+\end_inset
+
+之间的协方差为：
+\begin_inset Formula 
+\begin{align*}
+Cov(X,Y) & =E(XY^{T})-E(X)E(Y^{T})\\
+ & =E(XY^{T})\\
+ & =E[X(X^{T}-\mu^{T})\Gamma]\\
+ & =E(XX^{T}\Gamma)-E(X)\mu^{T}\Gamma\\
+ & =Var(X)\Gamma\\
+ & =\Gamma\Lambda\Gamma^{T}\Gamma\\
+ & =\Gamma\Lambda
+\end{align*}
+
+\end_inset
+
+因此，变量
+\begin_inset Formula $X_{i}$
+\end_inset
+
+和主成分
+\begin_inset Formula $Y_{j}$
+\end_inset
+
+之间的相关系数为：
+\begin_inset Formula 
+\[
+\rho_{X_{i}Y_{j}}=\frac{\gamma_{ij}\lambda_{j}}{(\sigma_{X_{i}X_{i}}\lambda_{j})^{1/2}}=\gamma_{ij}(\frac{\lambda_{j}}{\sigma_{X_{i}X_{i}}})^{1/2}
+\]
+
+\end_inset
+
+对于样本数据，则有：
+\begin_inset Formula 
+\[
+r_{X_{i}Y_{j}}=g_{ij}(\frac{l_{j}}{s_{X_{i}X_{i}}})^{1/2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+主成分的渐近性质
+\end_layout
+
+\begin_layout Subsection
+标准化的主成分分析
+\end_layout
+
+\begin_layout Itemize
+在某些情形下，原始变量表现出异方差，尤其是变量具有不同单位时。在这种情况下，包含在数据集中的信息描述相对于单位的选择必须是稳健的，这可以通过变量的标准化来达到：
+\begin_inset Formula 
+\[
+X_{s}=HXD^{-1/2}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $D=diag(s_{X_{1}X_{1}},...,s_{X_{p}X_{p}})$
+\end_inset
+
+，此时，
+\begin_inset Formula $R=Var(X_{s})$
+\end_inset
+
+实际上就是原数据的相关系数矩阵。
+\begin_inset Formula $X_{s}$
+\end_inset
+
+矩阵的主成分转换被称作标准化主成分(NPC)。
+\end_layout
+
+\begin_layout Itemize
+标准化的主成分(NPC)提供了与主成分相同的一个视角，但是基于个体的相对位置，它赋予每个变量相同的权重(而在一般的主成分分析中，具有最大方差的变量被赋予了最大权
+重)
+\end_layout
+
+\begin_layout Subsection
+作为因子分析的主成分
+\end_layout
+
+\begin_layout Subsection
+共同主成分—CPCA
+\end_layout
+
+\begin_layout Chapter
+判别与分类
+\end_layout
+
+\begin_layout Chapter
+聚类
+\end_layout
+
+\begin_layout Chapter
+其他
 \end_layout
 
 \end_body
