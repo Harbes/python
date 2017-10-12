@@ -613,9 +613,9 @@ class HestonOptions:
         f2=np.empty(len(x))
         f3=np.empty(len(x))
         for i in range(len(x)):
-            intneg=(np.exp(-1.0j*phi*x[i])*HestonCharacteristicFunction(phi,2.0,0.01,0.0,-0.8,0.1,0.5,100.0,100.0,0.0,0.0,0.01)).real
-            intzero=(np.exp(-1.0j*phi*x[i])*HestonCharacteristicFunction(phi,2.0,0.01,0.0,0.0,0.1,0.5,100.0,100.0,0.0,0.0,0.01)).real
-            intpos=(np.exp(-1.0j*phi*x[i])*HestonCharacteristicFunction(phi,2.0,0.01,0.0,0.8,0.1,0.5,100.0,100.0,0.0,0.0,0.01)).real
+            intneg=(np.exp(-1.0j*phi*x[i])*HestonCharacteristicFunction(phi,2.0,0.01,0.0,-0.8,0.1,0.5,100.0,0.0,0.0,0.01)).real
+            intzero=(np.exp(-1.0j*phi*x[i])*HestonCharacteristicFunction(phi,2.0,0.01,0.0,0.0,0.1,0.5,100.0,0.0,0.0,0.01)).real
+            intpos=(np.exp(-1.0j*phi*x[i])*HestonCharacteristicFunction(phi,2.0,0.01,0.0,0.8,0.1,0.5,100.0,0.0,0.0,0.01)).real
             f1[i]=np.trapz(intneg)/math.pi*dphi
             f2[i]=np.trapz(intzero)/math.pi*dphi
             f3[i]=np.trapz(intpos)/math.pi*dphi
@@ -654,8 +654,8 @@ class HestonOptions:
 import numpy as np
 from modules import HestonOptions as Hoptions
 import matplotlib.pyplot as plt
-x,f1,f2,f3=Hoptions.ExampleEffectOfCorrelation(True)
-
+Hoptions.ExampleEffect_of_Correlation_on_Heston_and_BlackScholes_Prices()
+x,f1,f2,f3=Hoptions.ExampleEffect_of_Correlation_on_Terminal_Price_Density(True)
 plt.plot(x,np.cumsum(f3-f2).cumsum(),label='survive diff : positive-normal')
 plt.legend()
 plt.show()
