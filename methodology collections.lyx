@@ -166,5 +166,117 @@ Ubuntu：
 【JFE.2016】Have we solved the idiosyncratic volatility puzzle?
 \end_layout
 
+\begin_layout Itemize
+Our decomposition methodology is based on individual stock-level Fama-MacBeth
+ cross-sectional regressions, which are commonly used in the literature
+ to study the relation between idiosyncratic volatility and returns.
+ For each month t, we regress the cross-section of individual stock characterist
+ic-adjusted returns on their month
+\begin_inset Formula $t−1$
+\end_inset
+
+ 
+\begin_inset Formula $IVOL$
+\end_inset
+
+ as follows:
+\begin_inset Formula 
+\[
+R_{it}=\alpha_{t}+\gamma_{t}IVOL_{i,t-1}+\varepsilon_{it}\tag{1}
+\]
+
+\end_inset
+
+
+\begin_inset Formula $R_{it}$
+\end_inset
+
+is stock i’s characteristic-adjusted return, computed following Daniel,
+ Grinblatt, Titman, and Wermers (1997) (hereafter DGTW).
+ Our results are robust to using raw returns instead of DGTW-adjusted returns.
+ For our baseline sample, the average 
+\begin_inset Formula $γ_{t}$
+\end_inset
+
+coefficient (×100 and reported in percent) equals –16.955% with a t-statistic
+ of –8.19 (hence the idiosyncratic volatility puzzle).
+ Next, we regress 
+\begin_inset Formula $IVOL_{i,t-1}$
+\end_inset
+
+ on a candidate explanatory variable (
+\begin_inset Formula $Candidate_{i,t-1}$
+\end_inset
+
+):
+\begin_inset Formula 
+\[
+IVOL_{i,t-1}=a_{t-1}+\delta_{t-1}Candidate_{i,t-1}+\mu_{i,t-1}\tag{2}
+\]
+
+\end_inset
+
+This regression allows us to assess the relation between idiosyncratic volatilit
+y and the candidate variable as any candidate variable that can potentially
+ explain the puzzle must be correlated with idiosyncratic volatility.7 We
+ then use the regression coefficient estimates to decompose 
+\begin_inset Formula $IVOL_{i,t-1}$
+\end_inset
+
+ into two orthogonal components: 
+\begin_inset Formula $δ_{t-1}Candidate_{i,t-1}$
+\end_inset
+
+ is the component of 
+\begin_inset Formula $IVOL_{i,t-1}$
+\end_inset
+
+ that is related to the candidate variable and (
+\begin_inset Formula $a_{t-1}+\mu_{i,t-1}$
+\end_inset
+
+) is the residual component that is unrelated to the candidate variable.
+ The final step is to use the linearity of covariances to decompose the
+ estimated 
+\begin_inset Formula $γ_{t}$
+\end_inset
+
+coefficient from Eq.
+ (1):
+\begin_inset Formula 
+\begin{align*}
+\gamma_{t} & =\frac{Cov[R_{it},IVOL_{i,t-1}]}{Var[IVOL_{i,t-1}]}\\
+ & =\frac{Cov[R_{it},a_{t-1}+\delta_{t-1}Candidate_{i,t-1}+\mu_{i,t-1}]}{Var[IVOL_{i,t-1}]}\\
+ & =\frac{Cov[R_{it},\delta_{t-1}Candidate_{i,t-1}]}{Var[IVOL_{i,t-1}]}+\frac{Cov[R_{it},a_{t-1}+\mu_{i,t-1}]}{Var[IVOL_{i,t-1}]}\\
+ & =\gamma_{t}^{C}+\gamma_{t}^{R}\tag{3}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula $\gamma_{t}^{C}/\gamma_{t}$
+\end_inset
+
+ then measure the fraction of the idiosyncratic volatility-return relation
+ (the idiosyncratic volatility puzzle) explained by the candidate variable,
+ and 
+\begin_inset Formula $\gamma_{t}^{R}/\gamma_{t}$
+\end_inset
+
+ measures the fraction of the puzzle left unexplained by the candidate variable.
+ While the means and variances of the two fractions are unattainable in
+ closed-form, we can use the standard multivariate delta method based on
+ Taylor series expansions to find approximations using the means, variances
+ and covariance of 
+\begin_inset Formula $\gamma_{t}^{C},\gamma_{t}^{R},\gamma_{t}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+conventional approach
+\end_layout
+
 \end_body
 \end_document

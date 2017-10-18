@@ -12,15 +12,18 @@ group_label=[i+1 for i in range(group_number)]
 percentile=np.linspace(0,1,group_number+1) 
 
 #数据导入
-data=pd.read_pickle('F:/data/xccdata/PV_datetime1')[['adj_close','size_free','size_tot']]
+data=pd.read_pickle('F:/data/xccdata/PV')[['adj_close','size_free','size_tot']]
+data=pd.read_pickle('/Users/harbes/data/xccdata/PV')#[['trddt','stkcd','adj_close','size_free','size_tot']]
 #data=pd.read_pickle('F:/data/xccdata/PV')#[['stkcd','trddt','adj_close','size_free','size_tot']]
 
-#data.index=[data['trddt'],data['stkcd']]
+
+#数据处理与删除重复条目
+data['trddt']=pd.to_datetime(data['trddt'].astype(int).astype(str),format='%Y%m%d')
+data=data.set_index(['trddt','stkcd'])
+data.drop_duplicates(subset=None, keep='last',inplace=True)
 #del data['trddt']
 #del data['stkcd']
-#data.sort_index().to_pickle('F:/data/xccdata/PV_datetime1')
-#data.to_pickle('F:/data/xccdata/PV_datetime')
-
+data.sort_index().to_pickle('/Users/harbes/data/xccdata/PV_datetime')
 
 #计算回报率
 data_adj_close=data['adj_close'].unstack()
@@ -40,4 +43,3 @@ print(time()-now0)#20秒左右
 
 tmp=data[:10]
 
-data['trddt']=pd.to_datetime(data['trddt'].astype(int).astype(str),format='%Y%m%d')
