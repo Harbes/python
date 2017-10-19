@@ -235,19 +235,20 @@ import pandas as pd
 from pandas import DataFrame as DF
 from pandas import Series as SS
 import numpy as np
-from numpy.linalg import pinv
+from numba import jit
+from numpy.linalg import pinv,inv
 
 from datetime import datetime
-t0=datetime.strptime('2005-02-01','%Y-%m-%d')
+t0=datetime.strptime('2005-02-02','%Y-%m-%d')
 t1=datetime.strptime('2017-09-29','%Y-%m-%d')
 
-data_adj_close=pd.read_pickle('F:/data/xccdata/PV_datetime')[['adj_close']].unstack()
+data_adj_close=pd.read_pickle('/Users/harbes/data/xccdata/PV_datetime')[['adj_close']].unstack()
 rtn=(data_adj_close/data_adj_close.shift(1)-1)*100
-SMB=pd.read_pickle('F:/data/xccdata/essay/SMB_tot_daily') #153
+SMB=pd.read_pickle('/Users/harbes/data/xccdata/essay/SMB_tot_daily') #153
 SMB.name='SMB'
-HML=pd.read_pickle('F:/data/xccdata/essay/HML_tot_daily')  #153
+HML=pd.read_pickle('/Users/harbes/data/xccdata/essay/HML_tot_daily')  #153
 HML.name='HML'
-market=pd.read_pickle('F:/data/xccdata/essay/index_hs300_daily')  #154
+market=pd.read_pickle('/Users/harbes/data/xccdata/essay/index_hs300_daily')  #154
 market.name='market'
 
 
@@ -255,23 +256,82 @@ c=pd.Series(1,index=market.index)
 X=pd.concat([c,market,SMB,HML],axis=1)
 X=X.loc[t0:t1]
 rtn=rtn.loc[t0:t1]
-rtn.index=(rtn.index.year).astype(str)+'-'+(rtn.index.month).astype(str).str.zfill(2)
+#rtn.index=(rtn.index.year).astype(str)+'-'+(rtn.index.month).astype(str).str.zfill(2)
 rtn.index.name='date'
-rtn=rtn.stack()
+rtn.columns=rtn.columns.get_level_values(1)
+rtn.columns.name='stkcd'
+#rtn=rtn.T.stack()
 #rtn['date']=(rtn.index.get_level_values(0).year).astype(str)+'-'+(rtn.index.get_level_values(0).month).astype(str).str.zfill(2)
 #rtn=rtn.set_index(['date',rtn.index.get_level_values(1)])
 
-def func(arr):
-    z= arr.values!=np.nan
+
+tmp=(rtn.index.year).astype(str)+'-'+(rtn.index.month).astype(str).str.zfill(2)
+date_set=sorted(list(set(tmp)),key=str.lower)
+
+alpha=pd.DataFrame(0,index=date_set,columns=rtn.columns)
+beta_market=pd.DataFrame(0,index=date_set,columns=rtn.columns)
+beta_SMB=pd.DataFrame(0,index=date_set,columns=rtn.columns)
+beta_HML=pd.DataFrame(0,index=date_set,columns=rtn.columns)
+err=pd.DataFrame(0,index=rtn.index,columns=rtn.columns)
+
+
+def func(arr,i):
+    z= np.invert(np.isnan(arr))
+    x = X[i].values[z]
     if z.sum()<=10:
-        return 0.0
+        return 0.0,0.0,0.0,0.0
     else:
-        x=(X[arr.index.get_level_values(0)[0]]).values[z,:]
-        return pinv(x.T@x)@x.T@(arr.values[z])[0]
-alpha=rtn[:100].groupby(['date','stkcd']).apply(func)
+        return pinv(x.T@x)@x.T@arr[z]
 
 
-rtn.index.get_level_values(0).year
+
+from time import time
+now0=time()
+
+for i in date_set:
+    for j in rtn.columns:
+        alpha.loc[i,j],beta_market.loc[i,j],beta_SMB.loc[i,j],beta_HML.loc[i,j]=func(rtn.loc[i,j].values,i)
+        #err.loc[i,j]=rtn.loc[i,j]-alpha.loc[i,j]-beta_market.loc[i,j]*market.loc[i]-beta_SMB.loc[i,j]*SMB.loc[i]-beta_HML.loc[i,j]*HML.loc[i]
+print(time()-now0)
+
+
+
+beta_market.to_pickle('/Users/harbes/data/xccdata/essay/beta_market')
+
+
+
+
+# 把 beta 数据resample，
+alpha=pd.read_pickle('/Users/harbes/data/xccdata/essay/beta_HML')
+alpha.index=pd.to_datetime(alpha.index,format='%Y-%m')
+#np.where(alpha==0,np.nan)
+alpha=alpha.resample('D').first().ffill()
+alpha=pd.DataFrame(alpha,index=rtn.index,columns=rtn.columns)
+alpha=alpha.ffill()
+alpha.to_pickle('/Users/harbes/data/xccdata/essay/beta_HML_daily')
+
+
+# 计算 error
+alpha=pd.read_pickle('/Users/harbes/data/xccdata/essay/alpha_daily')
+beta_market=pd.read_pickle('/Users/harbes/data/xccdata/essay/beta_market_daily')
+beta_SMB=pd.read_pickle('/Users/harbes/data/xccdata/essay/beta_SMB_daily')
+beta_HML=pd.read_pickle('/Users/harbes/data/xccdata/essay/beta_HML_daily')
+rtn=pd.read_pickle('/Users/harbes/data/xccdata/essay/rtn_daily')
+market=pd.read_pickle('/Users/harbes/data/xccdata/essay/index_hs300_daily')
+SMB=pd.read_pickle('/Users/harbes/data/xccdata/essay/SMB_tot_daily')
+HML=pd.read_pickle('/Users/harbes/data/xccdata/essay/HML_tot_daily')
+
+note_nan=alpha!=0
+
+error=rtn.sub(alpha).sub(beta_market.mul(market,axis=0)).sub(beta_SMB.mul(SMB,axis=0)).sub(beta_HML.mul(HML,axis=0))
+
+error=error.where(note_nan)
+error.to_pickle('/Users/harbes/data/xccdata/essay/error_daily')
+
+beta_market.mul(market,axis=0)
+
+
+
 
 
 
