@@ -1,0 +1,208 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass book
+\begin_preamble
+%不显示日期
+\date{}
+
+%自动换行
+\XeTeXlinebreaklocale "zh" 
+\XeTeXlinebreakskip = 0pt plus 1pt
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language chinese-simplified
+\language_package default
+\inputencoding utf8-plain
+\fontencoding global
+\font_roman "default" "STFangsong"
+\font_sans "default" "STHeiti"
+\font_typewriter "default" "Xingkai SC"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts true
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered true
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2.5page%
+\topmargin 5pheight%
+\rightmargin 2.5page%
+\bottommargin 5pheight%
+\headheight 2.5pheight%
+\headsep 2.5pheight%
+\footskip 2.5pheight%
+\secnumdepth 3
+\tocdepth 1
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+硕士论文开题报告
+\end_layout
+
+\begin_layout Author
+Harbes
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+字体设置
+\end_layout
+
+\begin_layout Itemize
+Windows：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+衬线字体：微软雅黑
+\end_layout
+
+\begin_layout Itemize
+无衬线字体：微软雅黑、楷体
+\end_layout
+
+\begin_layout Itemize
+等宽字体：微软雅黑、楷体、新宋体
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Ubuntu：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+衬线字体：Noto Sans CJK SC
+\end_layout
+
+\begin_layout Itemize
+无衬线字体：Noto Sans CJK SC
+\end_layout
+
+\begin_layout Itemize
+等宽字体：Noto Sans Mono CJK SC
+\end_layout
+
+\end_deeper
+\begin_layout Part
+选题依据 
+\end_layout
+
+\begin_layout Chapter
+选题的理论意义及实践意义 
+\end_layout
+
+\begin_layout Chapter
+国内外研究现状分析及主要中外文参考文献
+\end_layout
+
+\begin_layout Standard
+Ang等人(2006，2009)发现一个有趣的现象：有较高特质性波动率的股票其未来收益率往往较低(the idiosyncratic volatility
+ puzzle，简称IVOL puzzle)，并且这种现象在美国和美国之外的许多股票市场上的存在。其中，他们将特质性波动率的定义为Fama-French三因子模
+型残差的标准差。然而，这一“异常”现象不符合传统金融理论的预期。首先，根据CAMPM模型，特质性风险属于非系统性风险，在没有市场摩擦的情况下，投资者可以通过分散
+投资组合来消除这种风险，因而不应该作为定价因子。另一方面，Merton(1987)认为，如果投资者自身无法构建充分分散的投资组合，那么他们就会要求一个更高的收益
+率作为对特质性风险的补偿。也就是说，传统的金融理论认为特质性波动率要么不应该被定价，要么就应该作为一个风险溢价显著为正的定价因子。
+\end_layout
+
+\begin_layout Standard
+针对此“异常”现象，国内外学者尝试从不同角度去进行解释。Boyer, Mitton以及Vorkink(2010)发现预期的特质性偏度(expected
+ idiosyncratic skewness)与股票收益有显著的负相关关系，并且特质性波动率是特质性偏度的一个有效的预测变量，据此，他们认为，投资者之所以能够
+接受“高特质性波动股票具有相对较低的平均收益”，是因为投资者具有一种“彩票偏好”(lottery preference)。Bali、Cakici以及Whitel
+aw(2011)在研究极端收益对股票定价的影响时，发现过去一个月的极端正收益与股票未来收益具有显著的负相关关系。他们又联想到具有极端收益的股票在同期也往往具有较
+大的特质性波动率，于是，借助双变量排序以及截面回归的方法，他们发现当控制住极端收益时，特质性波动与股票的未来收益呈现显著的正向关系。对此，他们的解释与Boyer
+, Mitton以及Vorkink(2010)相似：投资者并不是偏好特质性波动率，而是偏好具有“彩票”特征的收益。Han和Kumar(2013)在研究股票特征与
+股票定价之间的关系时，发现个体投资者持有比例较高的股票具有显著为负的alpha，极端组合之间的月度收益差为-0.6%，并且在统计上显著。他们发现这些个体投资者持有
+比例较高的股票往往是那些具有高特质性波动率、高特质性偏度的股票，这些股票投机属性较强。以上这些文献主要从投资者偏好角度对IVOL puzzle进行解释，还有文献
+从市场摩擦的角度进行解释。例如，
+\end_layout
+
+\begin_layout Part
+研究方案 
+\end_layout
+
+\begin_layout Chapter
+主要研究内容（特别是论证的主题是什么） 
+\end_layout
+
+\begin_layout Chapter
+研究中所要突破的难题 
+\end_layout
+
+\begin_layout Chapter
+有何特色与创新之处 
+\end_layout
+
+\begin_layout Chapter
+拟采取的研究方法和时间安排
+\end_layout
+
+\end_body
+\end_document
