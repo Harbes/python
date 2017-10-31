@@ -166,6 +166,45 @@ Ubuntu：
 一致预期收益率：CAPM
 \end_layout
 
+\begin_layout Itemize
+利用beta(市场)可以将任意组合的超额收益率分解为两个不相关的部分：市场部分和残差部分。
+\end_layout
+
+\begin_layout Itemize
+CAPM认为任意的股票或者组合预期的残差收益率为0。
+\end_layout
+
+\begin_layout Itemize
+CAPM认为承担非必要风险不会得到任何补偿。如果市场存在一个正值预期残差收益率的投资者，那么从数学的角度来说，一定要假设存在一个“傻瓜”，即具有负值预期残差收益
+率的投资者。然而，对于这样的“傻瓜”来说，一个更好的替代方案应该是采取被动式投资。【在CAPM下，持有异于市场组合的投资者在玩一个零和游戏】
+\end_layout
+
+\begin_layout Itemize
+一致预期收益率就是指CAPM预期收益率。因为，CAPM认为最有组合就是市场组合，假设在此基础上，我们想要复制出具有某个预期收益率的组合，那么这个收益率也必然是C
+APM产生的收益率。
+\end_layout
+
+\begin_layout Itemize
+CAPM是关于预期的。
+\begin_inset Formula $E(r)-\beta$
+\end_inset
+
+平面上的那条直线被称为“证券市场线”(security market line)。对于实际的数据，“残差收益率的市值加权平均值等于零”【一个问题，我们在计算CA
+PM时，所得到的结果是残差的简单平均值为0】
+\end_layout
+
+\begin_layout Itemize
+任何beta中性策略都不需要精确估计
+\begin_inset Formula $\mu_{M}$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+附录中包含关于CAPM实证测试结果的参考文献以及CAPM相关的数学推到【有值得学习的地方】。
+\end_layout
+
 \begin_layout Chapter
 风险
 \end_layout
