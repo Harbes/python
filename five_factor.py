@@ -138,33 +138,33 @@ mark_INV=pd.DataFrame([pd.qcut(INV.iloc[i],q=percentile,labels=label_INV) for i 
 
 ######### 计算多空组合收益（市值加权）#########
 ### 对应"独立分组" ###
-size=size=pd.read_pickle('./five_factor/size_monthly')[stock_selected]/100000.0
-rtn=pd.read_pickle('./five_factor/rtn_monthly')[size.columns]
+size=pd.read_pickle('./five_factor/size_monthly')[stock_selected]/100000.0
+rtn=pd.read_pickle('./five_factor/rtn_monthly')[stock_selected]
 #rtn=price.pct_change()*100.0
 
 ### size-B/M ###
 S_BM=pd.DataFrame([[(rtn.iloc[i+1]*size.iloc[i])[mark_size.iloc[i]==1][mark_BM.iloc[i]==j+1].sum()
-                    /size.iloc[i][mark_size.iloc[i]==1][mark_BM.iloc[i]==j+1].sum() for j in range(3)]
+                    /(size.iloc[i]*(~np.isnan(rtn.iloc[i+1]*size.iloc[i])))[mark_size.iloc[i]==1][mark_BM.iloc[i]==j+1].sum() for j in range(3)]
                    for i in range(len(rtn)-1)],index=rtn.index[1:],columns=['H','N','L'])
 B_BM=pd.DataFrame([[(rtn.iloc[i+1]*size.iloc[i])[mark_size.iloc[i]==2][mark_BM.iloc[i]==j+1].sum()
-                    /size.iloc[i][mark_size.iloc[i]==2][mark_BM.iloc[i]==j+1].sum() for j in range(3)]
+                    /(size.iloc[i]*(~np.isnan(rtn.iloc[i+1]*size.iloc[i])))[mark_size.iloc[i]==2][mark_BM.iloc[i]==j+1].sum() for j in range(3)]
                    for i in range(len(rtn)-1)],index=rtn.index[1:],columns=['H','N','L'])
 
 S_OP=pd.DataFrame([[(rtn.iloc[i+1]*size.iloc[i])[mark_size.iloc[i]==1][mark_OP.iloc[i]==j+1].sum()
-                    /size.iloc[i][mark_size.iloc[i]==1][mark_OP.iloc[i]==j+1].sum() for j in range(3)]
+                    /(size.iloc[i]*(~np.isnan(rtn.iloc[i+1]*size.iloc[i])))[mark_size.iloc[i]==1][mark_OP.iloc[i]==j+1].sum() for j in range(3)]
                    for i in range(len(rtn)-1)],index=rtn.index[1:],columns=['R','N','W'])
 B_OP=pd.DataFrame([[(rtn.iloc[i+1]*size.iloc[i])[mark_size.iloc[i]==2][mark_OP.iloc[i]==j+1].sum()
-                    /size.iloc[i][mark_size.iloc[i]==2][mark_OP.iloc[i]==j+1].sum() for j in range(3)]
+                    /(size.iloc[i]*(~np.isnan(rtn.iloc[i+1]*size.iloc[i])))[mark_size.iloc[i]==2][mark_OP.iloc[i]==j+1].sum() for j in range(3)]
                    for i in range(len(rtn)-1)],index=rtn.index[1:],columns=['R','N','W'])
 
 S_INV=pd.DataFrame([[(rtn.iloc[i+1]*size.iloc[i])[mark_size.iloc[i]==1][mark_INV.iloc[i]==j+1].sum()
-                    /size.iloc[i][mark_size.iloc[i]==1][mark_INV.iloc[i]==j+1].sum() for j in range(3)]
+                    /(size.iloc[i]*(~np.isnan(rtn.iloc[i+1]*size.iloc[i])))[mark_size.iloc[i]==1][mark_INV.iloc[i]==j+1].sum() for j in range(3)]
                    for i in range(len(rtn)-1)],index=rtn.index[1:],columns=['C','N','A'])
 B_INV=pd.DataFrame([[(rtn.iloc[i+1]*size.iloc[i])[mark_size.iloc[i]==2][mark_INV.iloc[i]==j+1].sum()
-                    /size.iloc[i][mark_size.iloc[i]==2][mark_INV.iloc[i]==j+1].sum() for j in range(3)]
+                    /(size.iloc[i]*(~np.isnan(rtn.iloc[i+1]*size.iloc[i])))[mark_size.iloc[i]==2][mark_INV.iloc[i]==j+1].sum() for j in range(3)]
                    for i in range(len(rtn)-1)],index=rtn.index[1:],columns=['C','N','A'])
 
-tmp=(S_INV.mean(axis=1)-B_INV.mean(axis=1)+S_OP.mean(axis=1)-B_OP.mean(axis=1)+S_BM.mean(axis=1)-B_BM.mean(axis=1))/0.3
+tmp=(S_INV.mean(axis=1)-B_INV.mean(axis=1)+S_OP.mean(axis=1)-B_OP.mean(axis=1)+S_BM.mean(axis=1)-B_BM.mean(axis=1))/3
 tmp.mean()/tmp.std()*np.sqrt(len(tmp))
 
 
