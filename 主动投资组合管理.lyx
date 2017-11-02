@@ -19,9 +19,9 @@
 \language_package default
 \inputencoding utf8-plain
 \fontencoding global
-\font_roman "default" "Noto Sans Mono CJK SC"
-\font_sans "default" "Noto Sans CJK SC"
-\font_typewriter "default" "Noto Sans Mono CJK SC"
+\font_roman "default" "Songti SC"
+\font_sans "default" "STFangsong"
+\font_typewriter "default" "Songti SC"
 \font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts true
@@ -154,6 +154,25 @@ Ubuntu：
 \end_layout
 
 \end_deeper
+\begin_layout Itemize
+一些疑问：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+什么是主动收益率？—主动投资所得到的收益率与基准收益率之间的差值“the difference between the manager’s portfolio’
+s return 
+\begin_inset Formula $r_{P}$
+\end_inset
+
+ and the benchmark’s return 
+\begin_inset Formula $r_{B}$
+\end_inset
+
+”
+\end_layout
+
+\end_deeper
 \begin_layout Chapter
 绪论
 \end_layout
@@ -207,6 +226,387 @@ PM时，所得到的结果是残差的简单平均值为0】
 
 \begin_layout Chapter
 风险
+\end_layout
+
+\begin_layout Itemize
+收益率的分布描述了所有可能结果的概率，信息最全面，但是并不适用(不够简洁)
+\end_layout
+
+\begin_layout Itemize
+常见的风险度量：标准差(波动率)、半方差、下行风险(人们对此的定义不统一，其中一种是定义为半方差的平方根)、目标半方差、损失概率(shortfall
+ probability)、在险价值(value at risk)、
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+对标准差的批评：标准差同时包含了收益率高于和低于均值的情形，而多数投资者认为较低的或者负的收益率才是风险(虽然卖空者持有相反的观点)
+\end_layout
+
+\begin_layout Itemize
+对半方差、下行风险、目标半方差等的批评：第一，定义不想标准差或者方差那样明确，且其统计属性并不熟识；第二，大规模投资组合的下行风险在计算上非常具有挑战性，因为把
+下行风险从单只资产汇总到组合很难做好；第三，如果收益率分布是对称的，那么下行风险的多数定义仅仅是标准差或者方差的一个倍数，并不蕴含而外的信息；最后，这些指标会损
+失样本信息(尤其是对于目标半方差，因为它通常更加关注于分布“尾部”的样本)。
+\end_layout
+
+\begin_layout Itemize
+损失概率定义为收益率落在目标值以下的概率。它的问题在于：定义模糊、不为熟知的统计属性、难于预测以及依赖于投资者个人的偏好等。一个极端的情况是：对于特大损失发生概
+率的预测受到一两个观测值的影响。
+\end_layout
+
+\begin_layout Itemize
+在险价值定义为与目标概率相对应的收益率。缺点与损失概率一样。
+\end_layout
+
+\begin_layout Itemize
+注意一个问题：风险既不能沿着横截面也不能沿着时间相加；但是方差可以沿着时间相加。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+一个分散化投资的例子：考虑一个由N只股票构成的等权重投资组合，每只股票的风险都是
+\begin_inset Formula $\sigma$
+\end_inset
+
+，并且股票之间互不相关，则该组合的风险是：
+\begin_inset Formula 
+\[
+\sigma_{P}=\frac{\sigma}{\sqrt{N}}
+\]
+
+\end_inset
+
+如果假设任意两只股票收益率之间的相关系数为
+\begin_inset Formula $\rho$
+\end_inset
+
+，那么一个包含N只股票的等权重投资组合的风险是
+\begin_inset Formula 
+\[
+\sigma_{P}=\sigma\sqrt{\frac{1+\rho(N-1)}{N}}\rightarrow\sigma\sqrt{\rho}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+主动收益率
+\begin_inset Formula $r_{PA}$
+\end_inset
+
+是指主动投资所得到的收益率与基准收益率之间的差值“the difference between the manager’s portfolio’s
+ return 
+\begin_inset Formula $r_{P}$
+\end_inset
+
+ and the benchmark’s return 
+\begin_inset Formula $r_{B}$
+\end_inset
+
+”。
+\end_layout
+
+\begin_layout Itemize
+主动风险(有时也称为跟踪误差tracking error，因为它描述了组合对业绩基准的跟踪效果)
+\begin_inset Formula $\psi_{P}$
+\end_inset
+
+定义为主动收益率的标准差：
+\begin_inset Formula $\psi_{P}=std(r_{PA})=std(r_{P}-r_{B})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+很多投资者认为资产的主动风险与其市值成比例，因此，他们会对资产的头寸进行限制(50%-150%)。然而，实际上，主动风险取决于主动暴露和股票风险(“active
+ exposure and stock risk”)
+\end_layout
+
+\begin_layout Itemize
+残差风险：收益率中与系统性收益率正交的那部分风向
+\end_layout
+
+\begin_layout Itemize
+三种基本的风险模型：单因子模型(与CAPM相似但不同，因为CAPM是预期收益率模型)、假设任意两只股票之间相关系数相同的模型、用历史收益率估计协方差矩阵的模型。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+单因子风险模型将收益率分解为市场风险和残差风险，并将股票之间的残差协方差保守估计为0，即不相关。(一般同行业股票具有正的残差相关性；而市场中所有股票之间的残差相
+关性整体上应该为负值)
+\end_layout
+
+\begin_layout Itemize
+第二种基本风险模型需要对每只股票的波动率
+\begin_inset Formula $\sigma_{n}$
+\end_inset
+
+，以及股票之间的平均相关系数
+\begin_inset Formula $\rho$
+\end_inset
+
+进行估计。适用于“快速但不必精确”的应用。
+\end_layout
+
+\begin_layout Itemize
+第三种依赖于历史数据的样本方差和协方差，这种估计既不稳健也不合理。理论上，具有的数据需要满足
+\begin_inset Formula $T>N$
+\end_inset
+
+，否则，就能构建一个理论上具有零风险的投资组合。【数学理论中，一个由T个时期的收益率样本产生的
+\begin_inset Formula $N*N$
+\end_inset
+
+的协方差矩阵的秩等于
+\begin_inset Formula $min{N,T-1}$
+\end_inset
+
+】另一方面，历史样本模型还存在其他可能的问题：预测时间长度、历史数据无法反映快速变化的基本面、选择偏差、样本偏差导致某些整体偏差。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+结构化风险模型：多因子模型
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+多因子风险模型基于如下想法：股票的收益率可以被一组共同因子和一个仅与该股票有关的特异因子解释。我们可以把这些共同因子看作是影响一组股票价格变动的作用力。通过识别
+出因子，可以有效降低问题的规模(reduce the size of the problem)
+\end_layout
+
+\begin_layout Itemize
+结构化风险模型对收益率进行线性分解：股票超额收益率、股票的因子暴露、因子收益率以及股票的特异收益率，具体关系：
+\begin_inset Formula 
+\[
+r_{n}(t)=\Sigma_{k}X_{n,k}(t)*b_{k}(t)+u_{n}(t)
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $r_{n}(t)$
+\end_inset
+
+表示超额收益率；
+\begin_inset Formula $X_{n,k}(t)$
+\end_inset
+
+表示资产
+\begin_inset Formula $n$
+\end_inset
+
+对因子
+\begin_inset Formula $k$
+\end_inset
+
+的暴露度(exposure)，它也经常被称为因子载荷(loading)【行业因子的暴露度要么是1，要么是0。对于其他共同因子，暴露度通常是标准化的，因此全部股票
+的平均暴露度为0，并且暴露度的横截面标准差等于1】；
+\begin_inset Formula $b_{k}(t)$
+\end_inset
+
+表示因子收益率；
+\begin_inset Formula $u_{n}(t)$
+\end_inset
+
+表示股票的特异收益率。
+\end_layout
+
+\begin_layout Itemize
+注意：因子载荷是在考察期的初始时刻获知的。
+\end_layout
+
+\begin_layout Itemize
+多因子模型并不蕴含认为意义上的因果关系。因子只代表了我们试图解释风险的维度。
+\end_layout
+
+\begin_layout Itemize
+进一步假定：特异收益率和因子收益率不相关，不同股票的特异收益率之间也互不相关。再结合上式，可以得到：
+\begin_inset Formula 
+\[
+V_{n,m}=\Sigma_{k_{1},k_{2}=1}^{K}X_{n,k_{1}}*F_{k_{1},k_{2}}*X_{m,k_{2}}+\Delta_{n,m}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $V_{n,m}$
+\end_inset
+
+表示资产
+\begin_inset Formula $n$
+\end_inset
+
+和资产
+\begin_inset Formula $m$
+\end_inset
+
+的协方差；
+\begin_inset Formula $X_{n,k_{1}}$
+\end_inset
+
+表示资产
+\begin_inset Formula $n$
+\end_inset
+
+对因子
+\begin_inset Formula $k_{1}$
+\end_inset
+
+的暴露度；
+\begin_inset Formula $F_{k_{1},k_{2}}$
+\end_inset
+
+表示因子
+\begin_inset Formula $k_{1}$
+\end_inset
+
+和因子
+\begin_inset Formula $k_{2}$
+\end_inset
+
+之间的收益率协方差；
+\begin_inset Formula $\Delta_{n,m}$
+\end_inset
+
+表示资产
+\begin_inset Formula $n$
+\end_inset
+
+和资产
+\begin_inset Formula $m$
+\end_inset
+
+之间的特异协方差，根据假设有：当
+\begin_inset Formula $n\neq m$
+\end_inset
+
+时，
+\begin_inset Formula $\Delta_{n,m}=0$
+\end_inset
+
+，当
+\begin_inset Formula $n=m$
+\end_inset
+
+时，
+\begin_inset Formula $\Delta_{n,m}$
+\end_inset
+
+就是资产
+\begin_inset Formula $n$
+\end_inset
+
+的特异方差。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+建立多因子模型的艺术在于挑选合适的一组因子，寻找因子只有一个限制条件：所有因子必须是先验因子(priori factor)，也就是因子暴露必须在考察期初就能确定
+。与之相对，因子收益率在考察期初是不确定的，只有到考察期末才能获知。一般，我们将因子分为三大类：对外部变化的响应、资产属性的横截面比较类因子和纯粹的内在或统计因
+子。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+对外部变化的响应。响应类因子试图捕获“股票市场和外部经济力量之间可能存在的某种关联”。这些因子包括对以下外部变化的响应：债券市场收益率(债券 beta)、通胀异
+动(unexpected changes in inflation/inflation surprise)、油价变动、汇率变动、工业产量变动...。这些因子有时也被称
+为“宏观因子”。这类因子解释力可能非常强，但是存在三个重要缺陷：变量误差问题、响应系数非静态、宏观数据质量不佳。
+\end_layout
+
+\begin_layout Itemize
+横截面比较类因子。横截面比较类因子比较股票的各种属性，一般有两类：基本面类和市场类。基本面属性包括：分红率(dividend yield)、盈利率(earnin
+gs yield)以及分析师对未来每股盈利的预测；市场类属性包括过去某一时段上的波动率、过去某一时段上的收益率、期权的隐含波动率、换手率...。
+\end_layout
+
+\begin_layout Itemize
+统计因子。“因子生成器(factor ex machina)”。能被用作因子生成器的统计工具的数目多得超乎想象，常见的有主成分分析(PCA)、最大似然分析(ma
+ximum likelihood analysis)和预期最大化分析(expectations maximization analysis)等。可以使用两步法先
+估计因子收益率然后估计暴露度，或者同时估计因子收益率和暴露度，也可以反过来采用(Connor and Korajczyk(1988)的极具创意的方法)。但是一个
+潜在的问题是“伪相关性”
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+选用因子的准则：有区分能力(incisive)、直观(intuitive)、有意义(interesting)。有区分能力的因子能区分收益率特征显著不同的股票群。
+直观的因子与市场的某个易于理解的或者公认的维度相关(即具有直观的经济含义或可信的故事)。有意义的因子能够解释股票表现的某些部分。
+\end_layout
+
+\begin_layout Itemize
+挑选因子的过程同时依赖于统计技术和投资直觉。统计技术帮助选出最有区分能力和解释力的因子；投资直觉帮助选出具有直观含义的因子。我们选取的因子至少具有统计显著性和投
+资显著性中的一种。(在模型的研究中，我们会同时考虑这两种显著性)
+\end_layout
+
+\begin_layout Itemize
+行业因子。行业分类将股票划分为互不重叠的类别(对于跨行业运作的大型公司需要进行比例分割)。行业分类应该满足以下几个原则：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+每个行业都应该包含合理数目的公司。
+\end_layout
+
+\begin_layout Itemize
+每个行业在全市场中都应该占有合理比例的市值比例。
+\end_layout
+
+\begin_layout Itemize
+行业划分应该符合市场共识以及投资者的心理习惯。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+风险指数因子(risk index factor)
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+波动率(近期日收益率波动率、期权隐含波动率、近期价格波幅、beta)
+\end_layout
+
+\begin_layout Itemize
+动量
+\end_layout
+
+\begin_layout Itemize
+规模
+\end_layout
+
+\begin_layout Itemize
+流动性
+\end_layout
+
+\begin_layout Itemize
+成长性
+\end_layout
+
+\begin_layout Itemize
+价值(盈市率earnings-to-price、分红率dividend-to-price、现市率cashflows-to-price、净市率book-to-pr
+ice、销市率sales-to-price)
+\end_layout
+
+\begin_layout Itemize
+盈利波动率
+\end_layout
+
+\begin_layout Itemize
+财务杠杆(债务股本比率)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+每一个风险指数都包含若干个具体度量，我们称之为描述变量(descriptor)。这些描述变量之间通常高度相关，但又有所不同，各自代表该风险指数的若干个描述变量的
+暴露度的加权平均值。【同时考量多个描述变量将增加风险指数的稳健性】
+\end_layout
+
+\begin_layout Itemize
+结构化风险模型协方差。【参看技术附录】
+\end_layout
+
+\begin_layout Itemize
+风险模型的应用。【结合技术附录】
 \end_layout
 
 \begin_layout Chapter

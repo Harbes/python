@@ -52,7 +52,7 @@ t_add=datetime.strptime('2004-12-01','%Y-%m-%d')
 tmp.loc[t_add]=data.groupby(key).first().iloc[0]
 tmp=tmp.sort_index()
 rtn=tmp.pct_change()*100.0
-#rtn.iloc[1:].to_pickle('./five_factor/rtn_monthly')
+rtn.iloc[1:].to_pickle('./five_factor/rtn_monthly')
 
 
 
