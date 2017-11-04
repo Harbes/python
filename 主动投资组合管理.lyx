@@ -160,16 +160,7 @@ Ubuntu：
 
 \begin_deeper
 \begin_layout Itemize
-什么是主动收益率？—主动投资所得到的收益率与基准收益率之间的差值“the difference between the manager’s portfolio’
-s return 
-\begin_inset Formula $r_{P}$
-\end_inset
-
- and the benchmark’s return 
-\begin_inset Formula $r_{B}$
-\end_inset
-
-”
+什么是全额投资组合？
 \end_layout
 
 \end_deeper
@@ -221,9 +212,824 @@ PM时，所得到的结果是残差的简单平均值为0】
 \end_layout
 
 \begin_layout Itemize
-附录中包含关于CAPM实证测试结果的参考文献以及CAPM相关的数学推到【有值得学习的地方】。
+附录中包含关于CAPM实证测试结果的参考文献以及CAPM相关的数学推导【有值得学习的地方】。
 \end_layout
 
+\begin_layout Section*
+附录
+\end_layout
+
+\begin_layout Itemize
+考虑单一投资期，投资期内不尽兴组合再平衡操作。基础假设是：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+存在一个无风险资产
+\end_layout
+
+\begin_layout Itemize
+所有一阶和二阶矩均存在
+\end_layout
+
+\begin_layout Itemize
+不存在零风险的全额投资组合
+\end_layout
+
+\begin_layout Itemize
+组合C(定义为最小方差的全额投资组合)的预期超额收益率是严格正值【后面章节会放松此假设】
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+特征组合。资产有许多属性，例如beta、预期收益率、盈市率、市值、所属经济板块...。令
+\begin_inset Formula $\mathbf{a}^{T}=\{a_{1},a_{2},...,a_{N}\}$
+\end_inset
+
+为一些资产关于某个属性的向量，于是组合
+\begin_inset Formula $\mathbf{h}_{P}$
+\end_inset
+
+对属性
+\begin_inset Formula $\mathbf{a}$
+\end_inset
+
+的风险暴露可以简单表示为
+\begin_inset Formula $a_{P}=\Sigma_{n}a_{n}h_{P,n}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+命题1(特征组合基本是从数学角度出发而得到的结论)：
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+对于任意一个属性向量
+\begin_inset Formula $\mathbf{a}\neq0$
+\end_inset
+
+，在对
+\begin_inset Formula $\mathbf{a}$
+\end_inset
+
+具有
+\series bold
+\color red
+单位暴露度
+\series default
+\color inherit
+的所有投资组合中，唯一存在一个组合
+\begin_inset Formula $\mathbf{h}_{a}$
+\end_inset
+
+具有最小的风险(组合收益率方差最小)，称之为属性
+\begin_inset Formula $\mathbf{a}$
+\end_inset
+
+的特征组合。其中
+\begin_inset Formula $\mathbf{h}_{a}$
+\end_inset
+
+由下式给出：
+\begin_inset Formula 
+\[
+\mathbf{h}_{a}=\frac{\mathbf{V}^{-1}\mathbf{a}}{\mathbf{a}^{T}\mathbf{V}^{-1}\mathbf{a}}
+\]
+
+\end_inset
+
+特征组合并不一定是全额投资组合，它们可以包含多头头寸和空头头寸，并带有相当高的杠杆...
+\end_layout
+
+\begin_layout Enumerate
+特征组合
+\begin_inset Formula $\mathbf{h}_{a}$
+\end_inset
+
+的方差由下式给出：
+\begin_inset Formula 
+\[
+\sigma_{a}^{2}=\mathbf{h}_{a}^{T}\mathbf{V}\mathbf{h}_{a}=\frac{1}{\mathbf{a}^{T}\mathbf{V}^{-1}\mathbf{a}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+所有资产(N个资产)对于组合
+\begin_inset Formula $\mathbf{h}_{a}$
+\end_inset
+
+的beta恰好等于
+\begin_inset Formula $\mathbf{a}$
+\end_inset
+
+：
+\begin_inset Formula 
+\[
+\frac{\mathbf{V}\mathbf{h}_{a}}{\sigma_{a}^{2}}=\mathbf{a}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+考虑两个属性
+\begin_inset Formula $\mathbf{a}$
+\end_inset
+
+和
+\begin_inset Formula $\mathbf{d}$
+\end_inset
+
+，以及它们的特征组合
+\begin_inset Formula $\mathbf{h}_{a}$
+\end_inset
+
+和
+\begin_inset Formula $\mathbf{h}_{d}$
+\end_inset
+
+。令
+\begin_inset Formula $a_{d}$
+\end_inset
+
+和
+\begin_inset Formula $d_{a}$
+\end_inset
+
+分别表示组合 
+\begin_inset Formula $\mathbf{h}_{d}$
+\end_inset
+
+对特征
+\begin_inset Formula $\mathbf{a}$
+\end_inset
+
+的暴露度和组合
+\begin_inset Formula $\mathbf{h}_{a}$
+\end_inset
+
+对特征
+\begin_inset Formula $\mathbf{d}$
+\end_inset
+
+的暴露度。于是这两个特征组合的协方差满足：
+\begin_inset Formula $\sigma_{a,d}=a_{d}\sigma_{a}^{2}=d_{a}\sigma_{d}^{2}$
+\end_inset
+
+【两种属性特征组合之间的关系】
+\end_layout
+
+\begin_layout Enumerate
+如果
+\begin_inset Formula $\kappa$
+\end_inset
+
+是一个正实数，那么属性
+\begin_inset Formula $\kappa\mathbf{a}$
+\end_inset
+
+的特征组合是
+\begin_inset Formula $\mathbf{h}_{a}/\kappa$
+\end_inset
+
+。特征组合对其属性具有单位暴露度，如果我们在一个属性上乘以一个
+\begin_inset Formula $\kappa$
+\end_inset
+
+，那么其特征组合就必须除以
+\begin_inset Formula $\kappa$
+\end_inset
+
+，以保持对属性的单位暴露度。
+\end_layout
+
+\begin_layout Enumerate
+如果特征
+\begin_inset Formula $\mathbf{a}$
+\end_inset
+
+是特征
+\begin_inset Formula $\mathbf{d}$
+\end_inset
+
+和
+\begin_inset Formula $\mathbf{f}$
+\end_inset
+
+的加权线性组合，那么
+\begin_inset Formula $\mathbf{a}$
+\end_inset
+
+的特征组合也是
+\begin_inset Formula $\mathbf{d}$
+\end_inset
+
+和
+\begin_inset Formula $\mathbf{f}$
+\end_inset
+
+的特征组合的加权线性组合。特别地，如果
+\begin_inset Formula $\mathbf{a}=\kappa_{d}\mathbf{d}+\kappa_{f}\mathbf{f}$
+\end_inset
+
+，则有：
+\begin_inset Formula 
+\[
+\mathbf{h}_{a}=(\frac{\kappa_{d}\sigma_{a}^{2}}{\sigma_{d}^{2}})\mathbf{h}_{d}+(\frac{\kappa_{f}\sigma_{a}^{2}}{\sigma_{f}^{2}})\mathbf{h}_{f}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\frac{1}{\sigma_{a}^{2}}=(\frac{\kappa_{d}a_{d}}{\sigma_{d}^{2}})+(\frac{\kappa_{f}a_{f}}{\sigma_{f}^{2}})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+命题1的证明：首先特征组合理应是下述最优化问题的解：
+\begin_inset Formula 
+\[
+min\:\mathbf{h}^{T}\mathbf{V}\mathbf{h}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+s.t.\quad\mathbf{h}^{T}\mathbf{a}=1
+\]
+
+\end_inset
+
+最优化对应的一阶条件为：
+\begin_inset Formula 
+\[
+\mathbf{h}^{T}\mathbf{a}=1
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\mathbf{V}\mathbf{h}-\lambda\mathbf{a}=0
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\lambda$
+\end_inset
+
+是拉格朗日乘子。上面的一阶条件可以解出：
+\begin_inset Formula $\mathbf{h}_{a}=\frac{\mathbf{V}^{-1}\mathbf{a}}{\mathbf{a}^{T}\mathbf{V}^{-1}\mathbf{a}}$
+\end_inset
+
+。得证。紧接着命题1.2也容易证明。关于命题1.3，其中，需要一个知识点：资产针对指定组合P的
+\begin_inset Formula $\beta$
+\end_inset
+
+定义为
+\begin_inset Formula $\beta=\mathbf{V}\mathbf{h}_{P}/\sigma_{P}^{2}$
+\end_inset
+
+。利用命题1.3，很容易得到命题1.4：
+\begin_inset Formula 
+\begin{align*}
+\sigma_{ad}=\mathbf{h}_{a}^{T}\mathbf{V}\mathbf{h}_{d} & =(\mathbf{V}\mathbf{h}_{a})^{T}\mathbf{h}_{d}=\sigma_{a}^{2}\mathbf{a}^{T}\mathbf{h}_{d}=a_{d}\sigma_{a}^{2}\\
+ & =\mathbf{h}_{a}^{T}(\mathbf{V}\mathbf{h}_{d})=\mathbf{h}_{a}^{T}(\sigma_{d}^{2}\mathbf{d})=d_{a}\sigma_{d}^{2}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+组合C【组合C似乎一般用于分析资金投放比例，或者头寸】。假设
+\begin_inset Formula $e^{T}=\{1,1,...,1\}$
+\end_inset
+
+是一个属性。任意组合P对属性
+\begin_inset Formula $e$
+\end_inset
+
+的暴露度(
+\begin_inset Formula $e_{p}=\Sigma_{n}h_{P,n}$
+\end_inset
+
+)衡量它对于风险资产的投资比例。当
+\begin_inset Formula $e_{P}=1$
+\end_inset
+
+时，说明这个组合是全额投资的。属性
+\begin_inset Formula $\mathbf{e}$
+\end_inset
+
+的特征组合C是最小风险全额投资组合：
+\begin_inset Formula 
+\[
+\mathbf{h}_{C}=\frac{\mathbf{V}^{-1}\mathbf{e}}{\mathbf{e}^{T}\mathbf{V}^{-1}\mathbf{e}}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\sigma_{C}^{2}=\mathbf{h}_{C}^{T}\mathbf{V}\mathbf{h}_{C}=\frac{1}{\mathbf{e}^{T}\mathbf{V}^{-1}\mathbf{e}}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\mathbf{e}=\frac{\mathbf{V}\mathbf{h}_{C}}{\sigma_{C}^{2}}
+\]
+
+\end_inset
+
+注意：
+\begin_inset Formula $\mathbf{e}=\frac{\mathbf{V}\mathbf{h}_{C}}{\sigma_{C}^{2}}$
+\end_inset
+
+说明每只资产对组合C的beta都等于1；另外对于任何组合P，有
+\begin_inset Formula $\sigma_{P,C}=e_{p}\sigma_{C}^{2}$
+\end_inset
+
+，也就是说，任何全额投资组合(
+\begin_inset Formula $e_{P}=1$
+\end_inset
+
+)与组合C的协方差恒等于
+\begin_inset Formula $\sigma_{C}^{2}$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+组合B。取
+\begin_inset Formula $\beta$
+\end_inset
+
+作为被研究的属性，这里
+\begin_inset Formula $\beta$
+\end_inset
+
+由某个业绩基准组合B定义：
+\begin_inset Formula 
+\[
+\beta=\frac{\mathbf{V}\mathbf{h}_{B}}{\sigma_{B}^{2}}
+\]
+
+\end_inset
+
+于是，很容易得到业绩基准恰是
+\begin_inset Formula $\beta$
+\end_inset
+
+的特征组合，即：
+\begin_inset Formula 
+\[
+\mathbf{h}_{\beta}=\frac{\mathbf{V}^{-1}\beta}{\beta^{T}\mathbf{V}^{-1}\beta}=\mathbf{h}_{B}
+\]
+
+\end_inset
+
+并且
+\begin_inset Formula 
+\[
+\sigma_{B}^{2}=\mathbf{h}_{B}^{T}\mathbf{V}\mathbf{h}_{B}=\frac{1}{\beta^{T}\mathbf{V}^{-1}\beta}
+\]
+
+\end_inset
+
+因此，业绩基准就是beta等于1的最小风险组合。进一步，利用命题1.4可知：
+\begin_inset Formula 
+\[
+\sigma_{B,C}=e_{B}\sigma_{C}^{2}=\beta_{C}\sigma_{B}^{2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+夏普比率，对于任何风险组合P，夏普比率定义为组合P的预期超额收益率
+\begin_inset Formula $f_{P}$
+\end_inset
+
+和组合P的风险
+\begin_inset Formula $\sigma_{P}$
+\end_inset
+
+之比：
+\begin_inset Formula $SR_{P}=\frac{f_{P}}{\sigma_{P}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+命题2：定义q为预期超额收益率
+\series bold
+
+\begin_inset Formula $\mathbf{f}$
+\end_inset
+
+
+\series default
+的特征组合：
+\begin_inset Formula $\mathbf{h}_{q}=\frac{\mathbf{V}^{-1}\mathbf{f}}{\mathbf{f}^{T}\mathbf{V}^{-1}\mathbf{f}}$
+\end_inset
+
+，那么：
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Formula $SR_{q}=max\{SR_{P}|P\}=(\mathbf{f}^{T}\mathbf{V}^{-1}\mathbf{f})^{\frac{1}{2}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $f_{q}=1$
+\end_inset
+
+【特征组合的必要条件，同时便于寻找最大夏普比率的组合】，
+\begin_inset Formula $\sigma_{q}^{2}=\frac{1}{\mathbf{f}^{T}\mathbf{V}^{-1}\mathbf{f}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\mathbf{f}=\mathbf{V}\mathbf{h}_{q}/\sigma_{q}^{2}=(\frac{\mathbf{V}\mathbf{h}_{q}}{\sigma_{q}})SR_{q}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+如果
+\begin_inset Formula $\rho_{P,q}$
+\end_inset
+
+是组合P与q的相关系数，那么
+\begin_inset Formula $SR_{P}=\rho_{P,q}SR_{q}$
+\end_inset
+
+【左边P是一般性的投资组合，右侧是q是(超额收益率)特征组合】
+\end_layout
+
+\begin_layout Enumerate
+组合q投资于风险资产的权重为：
+\begin_inset Formula $e_{q}=\frac{f_{C}\sigma_{q}^{2}}{\sigma_{C}^{2}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+证明：首先，注意到对任意的
+\begin_inset Formula $\kappa$
+\end_inset
+
+，组合
+\begin_inset Formula $\kappa\mathbf{h}_{P}$
+\end_inset
+
+的夏普比率都等于
+\begin_inset Formula $SR_{P}$
+\end_inset
+
+。因此，在寻找最高的夏普比率时，只需要在预期超额收益率等于1的组合中寻找风险最小的组合即可，这就是寻找特征组合，于是，命题2.1-2.3很容易得到。对于命题2.4，有
+\begin_inset Formula 
+\[
+SR_{P}\equiv\frac{f_{P}}{\sigma_{P}}=\frac{\mathbf{h}_{P}^{T}\mathbf{f}}{\sigma_{P}}=\frac{\sigma_{P,q}}{\sigma_{q}^{2}}\frac{1}{\sigma_{P}}=\frac{\sigma_{P,q}}{\sigma_{P}\sigma_{q}}\frac{f_{q}}{\sigma_{q}}=\rho_{P,q}*SR_{q}
+\]
+
+\end_inset
+
+对于命题2.5有：
+\begin_inset Formula $\sigma_{q,C}=e_{q}\sigma_{C}^{2}=f_{C}\sigma_{q}^{2}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+组合A。定义alpha向量为
+\begin_inset Formula $\alpha=\mathbf{f}-\beta f_{B}$
+\end_inset
+
+，其中
+\begin_inset Formula $f_{B}$
+\end_inset
+
+是组合B的超额收益率，即beta=1的最小方差组合的超额收益率。令
+\begin_inset Formula $\mathbf{h}_{A}$
+\end_inset
+
+为alpha的特征组合，即对alpha有单位暴露度的最小风险组合(组合A通常具有相当高的杠杆)。由命题1.6可知，
+\begin_inset Formula $\mathbf{h_{A}}$
+\end_inset
+
+可以由
+\begin_inset Formula $\mathbf{h}_{B}$
+\end_inset
+
+和
+\begin_inset Formula $\mathbf{h}_{q}$
+\end_inset
+
+表示出来。又
+\begin_inset Formula $\sigma_{B,A}=\alpha_{B}\sigma_{A}^{2}=\beta_{A}\sigma_{B}^{2}$
+\end_inset
+
+，然而，根据alpha的定义可知，
+\begin_inset Formula $\alpha_{B}=0$
+\end_inset
+
+，因此组合A和组合B是不相关的，且
+\begin_inset Formula $\beta_{A}=0$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+命题3。假设
+\begin_inset Formula $f_{C}>0$
+\end_inset
+
+。
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+组合q是净多头：
+\begin_inset Formula $e_{q}>0$
+\end_inset
+
+。令组合Q是属性
+\begin_inset Formula $e_{q}\mathbf{f}$
+\end_inset
+
+对应的特征组合。组合Q头寸为
+\begin_inset Formula $\mathbf{h}_{Q}=\mathbf{h}_{q}/e_{q}$
+\end_inset
+
+，于是，可知组合Q是全额投资组合。另外，
+\begin_inset Formula $SR_{Q}=SR_{q}$
+\end_inset
+
+，并且对任意组合P，若组合P与组合Q的相关系数为
+\begin_inset Formula $\rho_{P,Q}$
+\end_inset
+
+，我们有
+\begin_inset Formula $SR_{P}=\rho_{P,Q}SR_{Q}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\frac{f_{C}}{\sigma_{C}^{2}}=\frac{f_{Q}}{\sigma_{Q}^{2}}$
+\end_inset
+
+，
+\begin_inset Formula $\mathbf{f}=f_{Q}(\frac{\mathbf{V}\mathbf{h}_{Q}}{\sigma_{Q}^{2}})=f_{Q}\beta_{with\,respect\,to\,Q}$
+\end_inset
+
+【此式精确描述了组合Q是怎样“解释”预期超额收益率的】
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\beta_{Q}=\frac{f_{B}\sigma_{Q}^{2}}{f_{Q}\sigma_{B}^{2}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+如果业绩基准是全额投资组合，即
+\begin_inset Formula $e_{B}=1$
+\end_inset
+
+，则
+\begin_inset Formula $\beta_{Q}=\frac{\beta_{C}f_{B}}{f_{C}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+证明：对于命题3.1，注意到
+\begin_inset Formula $e_{q}\sigma_{C}^{2}=f_{C}\sigma_{q}^{2}$
+\end_inset
+
+，并且
+\begin_inset Formula $f_{C}>0$
+\end_inset
+
+，则
+\begin_inset Formula $e_{q}>0$
+\end_inset
+
+，其他易证。关于命题3.2，首先由命题1.3知，
+\begin_inset Formula $\mathbf{f}=\frac{\mathbf{V}\mathbf{h}_{q}}{\sigma_{q}^{2}}$
+\end_inset
+
+，又
+\begin_inset Formula $\frac{1}{\sigma_{q}^{2}}=\frac{f_{C}}{e_{q}\sigma_{C}^{2}}$
+\end_inset
+
+，于是
+\begin_inset Formula $\mathbf{f}=f_{C}\frac{\mathbf{V}\mathbf{h}_{Q}}{\sigma_{C}^{2}}$
+\end_inset
+
+，两边同时左乘
+\begin_inset Formula $\mathbf{h}_{Q}^{T}$
+\end_inset
+
+，整理后可得
+\begin_inset Formula $f_{C}/\sigma_{C}^{2}=f_{Q}/\sigma_{Q}^{2}$
+\end_inset
+
+。进而
+\begin_inset Formula $\mathbf{f}=f_{C}\frac{\mathbf{V}\mathbf{h}_{Q}}{\sigma_{C}^{2}}=f_{Q}(\frac{\mathbf{V}\mathbf{h}_{Q}}{\sigma_{Q}^{2}})=f_{Q}\beta_{with\,respect\,to\,Q}$
+\end_inset
+
+。对于命题3.3，对左式两边同时左乘
+\begin_inset Formula $\mathbf{h}_{B}^{T}$
+\end_inset
+
+，可得：
+\begin_inset Formula $f_{B}=\mathbf{h}_{B}^{T}\mathbf{V}\mathbf{h}_{Q}(\frac{f_{Q}}{\sigma_{Q}^{2}})=\frac{\mathbf{h}_{B}^{T}\mathbf{V}\mathbf{h}_{Q}}{\sigma_{B}^{2}}(\frac{\sigma_{B}^{2}f_{Q}}{\sigma_{Q}^{2}})=\beta_{Q}(\frac{\sigma_{B}^{2}f_{Q}}{\sigma_{Q}^{2}})$
+\end_inset
+
+。对于命题3.4，由
+\begin_inset Formula $\sigma_{B,C}=e_{B}\sigma_{C}^{2}=\beta_{C}\sigma_{B}^{2}$
+\end_inset
+
+得，
+\begin_inset Formula $\beta_{C}=\frac{e_{B}\sigma_{C}^{2}}{\sigma_{B}^{2}}$
+\end_inset
+
+，又
+\begin_inset Formula $\frac{f_{C}}{\sigma_{C}^{2}}=\frac{f_{Q}}{\sigma_{Q}^{2}}$
+\end_inset
+
+以及
+\begin_inset Formula $\beta_{Q}=\frac{f_{B}\sigma_{Q}^{2}}{f_{Q}\sigma_{B}^{2}}$
+\end_inset
+
+，则
+\begin_inset Formula $\beta_{Q}=\beta_{C}\frac{f_{B}}{f_{C}}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+有效前沿【我们将看到所有有效前沿组合都是组合C和组合Q的加权组合，所以有效前沿中的每一个元素都是一个特征组合。有效前沿组合的风险和收益率完全有构成它的组合C和组
+合Q的风险和收益率以及二者之间的配比决定】。定义：在所有具有相同预期收益率的全额投资组合中具有最小风险的组合。他是下述带约束的最优化问题的解：
+\begin_inset Formula 
+\[
+min\:\mathbf{h}^{T}\mathbf{V}\mathbf{h}/2
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+s.t.\quad\mathbf{e}^{T}\mathbf{h}=1
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\mathbf{f}^{T}\mathbf{h}=f_{P}
+\]
+
+\end_inset
+
+求解该最优化问题可以得到
+\begin_inset Formula 
+\[
+\mathbf{h}_{P}=(\frac{f_{Q}-f_{P}}{f_{Q}-f_{C}})\mathbf{h}_{C}+(\frac{f_{P}-f_{C}}{f_{Q}-f_{C}})\mathbf{h}_{Q}
+\]
+
+\end_inset
+
+注意，我们假定
+\begin_inset Formula $\mathbf{f}\neq\mathbf{e}$
+\end_inset
+
+。从上面可以看出有效前沿组合都是组合C和组合Q的加权组合。注意到特征与组合之间是一一对应的关系(双射)，于是我们可以给每个有效前沿组合找一个特征
+\begin_inset Formula $a_{P}$
+\end_inset
+
+与之对应，该特征也恰好是特征
+\begin_inset Formula $\mathbf{e}$
+\end_inset
+
+和特征
+\begin_inset Formula $e_{P}\mathbf{f}$
+\end_inset
+
+的线性组合：
+\begin_inset Formula 
+\[
+\mathbf{a}_{P}=w_{C}\mathbf{e}+w_{Q}e_{q}\mathbf{f}=\frac{1}{\sigma_{P}^{2}(f_{Q}-f_{C})}\{\sigma_{C}^{2}(f_{Q}-f_{P})\mathbf{e}+\sigma_{Q}^{2}(f_{P}-f_{C})e_{P}\mathbf{f}\}
+\]
+
+\end_inset
+
+同时我们还可以计算有效前沿组合的方差：
+\begin_inset Formula $\sigma_{P}^{2}=\sigma_{C}^{2}+\kappa(f_{P}-f_{C})^{2}$
+\end_inset
+
+，其中，
+\begin_inset Formula $\kappa=\frac{\sigma_{Q}^{2}-\sigma_{C}^{2}}{(f_{Q}-f_{C})^{2}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+CAPM。命题3.4告诉我们，资产预期超额收益率向量与资产关于组合Q的beta向量成正比，接下来只要论证组合Q就是市场组合M即可。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+定理：如果满足下列假设，那么组合Q就是组合M，并且
+\begin_inset Formula $f=\mu=\beta\mu_{M}$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+所有投资者都具有均值/方差偏好(即均在均值/方差框架下考虑投资决策)；
+\end_layout
+
+\begin_layout Itemize
+所有资产都被纳入分析
+\end_layout
+
+\begin_layout Itemize
+所有投资者都知道预期超额收益率(即有共同的
+\begin_inset Formula $\mathbf{f}$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+所有投资者对资产的方差和协方差具有一致观点(即有共同的
+\begin_inset Formula $\mathbf{V}$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+没有交易成本和税负
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+证明：...
+\end_layout
+
+\end_deeper
 \begin_layout Chapter
 风险
 \end_layout
@@ -607,6 +1413,564 @@ ice、销市率sales-to-price)
 
 \begin_layout Itemize
 风险模型的应用。【结合技术附录】
+\end_layout
+
+\begin_layout Section*
+附录
+\end_layout
+
+\begin_layout Itemize
+收益率模型：
+\begin_inset Formula $\mathbf{r}=\mathbf{X}\mathbf{b}+\mathbf{u}$
+\end_inset
+
+，其中，
+\begin_inset Formula $\mathbf{r}$
+\end_inset
+
+是超额收益率(N维列向量)，
+\begin_inset Formula $\mathbf{X}$
+\end_inset
+
+是因子暴露度(N*K维矩阵)，
+\begin_inset Formula $\mathbf{b}$
+\end_inset
+
+是因子收益率(K维列向量)，
+\begin_inset Formula $\mathbf{u}$
+\end_inset
+
+是特异收益率(N维列向量)。假设：
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+特异收益率
+\begin_inset Formula $\mathbf{u}$
+\end_inset
+
+与因子收益率
+\begin_inset Formula $\mathbf{b}$
+\end_inset
+
+互不相关，即
+\begin_inset Formula $Cov\{u_{n},b_{k}\}=0$
+\end_inset
+
+对任意n和k成立
+\end_layout
+
+\begin_layout Enumerate
+任意两只不同股票的特异收益率之间互不相关，即
+\begin_inset Formula $Cov\{u_{n},u_{m}\}=0$
+\end_inset
+
+对任意
+\begin_inset Formula $n\neq m$
+\end_inset
+
+成立
+\end_layout
+
+\begin_layout Standard
+基于上述假设，我们可以完成风险模型的定义。我们将N*N维的股票收益率协方差矩阵
+\begin_inset Formula $\mathbf{V}$
+\end_inset
+
+表示为：
+\begin_inset Formula $\mathbf{V}=\mathbf{X}\mathbf{F}\mathbf{X}^{T}+\Delta$
+\end_inset
+
+，其中，
+\begin_inset Formula $\mathbf{F}$
+\end_inset
+
+是K*K维的因子收益率协方差矩阵，
+\begin_inset Formula $\Delta$
+\end_inset
+
+是N*N维的特异收益率协方差矩阵，根据假设2，它是一个对角矩阵。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+模型的估计：给定行业因子和风险指数因子(risk index factor)的暴露度，我们借助Fama-MacBeth(1973)的方法来通过多元回归估计因子收
+益率。为了有效估计因子的收益率，我们采用广义最小二乘回归，为每个收益率观测样本赋予了与其特异方差的倒数成正比的权重。在一些模型中，我们用市值平方根代替特异方差(
+specific variance)的倒数来对每个观测值加权
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+一些研究证明：与市值的其他次方相比，市值平方根是模拟特异方差倒数的合适选择。规模较大的公司通常具有较低的特异方差；当公司规模翻倍时，特异方差大约缩减为原来的0.7
+倍。
+\end_layout
+
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+因子组合。在WLS估计中，因子收益率的估计值表达式为：
+\begin_inset Formula $\mathbf{b}=(\mathbf{X}^{T}\Delta^{-1}\mathbf{X})^{-1}\mathbf{X}^{T}\Delta^{-1}\mathbf{r}$
+\end_inset
+
+。这表明对于每一个因子而言，其收益率就是资产超额收益率的加权和：
+\begin_inset Formula $b_{k}=\Sigma_{n=1}^{N}c_{k,n}r_{n}$
+\end_inset
+
+，于是因子收益率就可以看成一个投资组合的收益率。于是，上述组合就被称为因子k的因子组合。因子组合的头寸是先验获知的。The factor portfolio
+ holdings ensure that the portfolio has 
+\color red
+unit exposure 
+\color inherit
+to the particular factor, 
+\color red
+zero exposure
+\color inherit
+ to every other factor, and 
+\color red
+minimum risk
+\color inherit
+ given those constraints。因子组合的概念与前述的 特征组合相似，唯一区别是因子组合是针对多因子的，换言之，特征组合对其特征具有单位暴露度
+，但不要求对其他因子具有零暴露。
+\end_layout
+
+\begin_layout Itemize
+因子协方差矩阵。因子协方差矩阵是建立有效的风险模型的关键，所以，我们应该根据投资者的时间尺度选择对未来因子方差和协方差的最佳预测。根据因子收益率的历史数据预测因
+子协方差的基本思路：对协方差的历史样本和贝叶斯先验估计进行某种权重下的加权平均。
+\end_layout
+
+\begin_layout Itemize
+特异风险(specific risk)。一般为特异风险建立以下模型：
+\begin_inset Formula $u_{n}^{2}(t)=S(t)[1+v_{n}(t)]$
+\end_inset
+
+，其中，
+\begin_inset Formula $(\frac{1}{N})\Sigma_{n=1}^{N}u_{n}^{2}(t)=S(t)$
+\end_inset
+
+，
+\begin_inset Formula $(\frac{1}{N})\Sigma_{n=1}^{N}v_{n}(t)=0$
+\end_inset
+
+，
+\begin_inset Formula $S(t)$
+\end_inset
+
+衡量了股票空间上特异方差的平均水平，而
+\begin_inset Formula $v_{n}$
+\end_inset
+
+则捕捉了特异方差在横截面上的变化。“To forecast specific risk, we use a time series model
+ for S(t) and a linear multiple-factor model for vn(t).
+ Models for vn(t) typically include some risk index factors, plus factors
+ measuring recent squared specific returns.
+ The time dependence in the model of vn(t) is captured by time variation
+ in the exposures.
+ We estimate model coefficients via one pooled regression over assets and
+ time periods, with outliers trimmed.”【具体如何估计？？？】
+\end_layout
+
+\begin_layout Itemize
+风险分析。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+任何一个投资组合P都可以由一个N维向量
+\begin_inset Formula $\mathbf{h}_{P}$
+\end_inset
+
+来描述，其中
+\begin_inset Formula $\mathbf{h}_{P}$
+\end_inset
+
+是该组合在N只风险资产上的持仓权重。组合P的因子暴露度由下式给出：
+\begin_inset Formula $\mathbf{x}_{P}=\mathbf{X}^{T}\mathbf{h}_{P}$
+\end_inset
+
+。组合P的方差为
+\begin_inset Formula $\sigma_{P}^{2}=\mathbf{x}_{P}^{T}\mathbf{F}\mathbf{x}_{P}+\mathbf{h}_{P}^{T}\Delta\mathbf{h}_{P}=\mathbf{h}_{P}^{T}\Delta\mathbf{h}_{P}$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+类似地，我们可以计算主动风险(或跟踪误差)，如果
+\begin_inset Formula $\mathbf{h}_{B}$
+\end_inset
+
+是业绩基准的持仓权重向量，则可以给出如下定义：
+\begin_inset Formula $\mathbf{h}_{PA}=\mathbf{h}_{P}-\mathbf{h}_{B}$
+\end_inset
+
+，
+\begin_inset Formula $\mathbf{x}_{PA}=\mathbf{X}^{T}\mathbf{h}_{PA}$
+\end_inset
+
+，进而
+\begin_inset Formula $\psi_{P}^{2}=\mathbf{x}_{PA}^{2}\mathbf{F}\mathbf{x}_{PA}+\mathbf{h}_{PA}^{T}\Delta\mathbf{h}_{PA}=\mathbf{h}_{PA}^{T}\mathbf{V}\mathbf{h}_{PA}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+注意到我们将总风险和主动风险都分解为共同因子部分和特异部分，之所以可以这样做，是因为因子风险和特异风险是不相关的。
+\end_layout
+
+\begin_layout Itemize
+将风险分解为市场部分和残差部分更加困难一些。首先，需要定义beta。股票关于业绩基准
+\begin_inset Formula $\mathbf{h}_{B}$
+\end_inset
+
+的beta值(N维列向量)按以下方程定义：
+\begin_inset Formula $\beta=\frac{\mathbf{V}\mathbf{h}_{B}}{\sigma_{B}^{2}}=\frac{\mathbf{X}\mathbf{F}\mathbf{x}_{B}+\Delta\mathbf{h}_{B}}{\sigma_{B}^{2}}$
+\end_inset
+
+。如果定义
+\begin_inset Formula $\mathbf{b}$
+\end_inset
+
+和
+\begin_inset Formula $\mathbf{d}$
+\end_inset
+
+如下：
+\begin_inset Formula $\mathbf{b}=\frac{\mathbf{F}\mathbf{x}_{B}}{\sigma_{B}^{2}}$
+\end_inset
+
+，那么我们可以将beta写成：
+\begin_inset Formula $\beta=\mathbf{X}\mathbf{b}+\mathbf{d}$
+\end_inset
+
+。因此，每只资产的beta 都包含因子部分的贡献和特异部分的贡献。
+\color red
+在大多数情况下，行业因子的贡献主导了资产的beta值
+\color inherit
+。
+\end_layout
+
+\begin_layout Itemize
+组合的beta是
+\begin_inset Formula $\beta_{P}=\mathbf{h}_{P}^{T}\beta=\mathbf{x}_{P}^{T}\mathbf{b}+\mathbf{h}_{P}^{T}\mathbf{d}$
+\end_inset
+
+。(类似地，可以推导出主动beta的表达式)
+\end_layout
+
+\begin_layout Itemize
+组合风险中的系统性部分和残差部分依次是下列右端的两项：
+\begin_inset Formula $\sigma_{P}^{2}=\beta_{P}^{2}\sigma_{B}^{2}+\omega_{P}^{2}$
+\end_inset
+
+，其中
+\begin_inset Formula $\sigma_{P}^{2}=\mathbf{x}_{P}^{T}\mathbf{F}\mathbf{x}_{P}+\mathbf{h}_{P}^{T}\Delta\mathbf{h}_{P}=\mathbf{h}_{P}^{T}\Delta\mathbf{h}_{P}$
+\end_inset
+
+，
+\begin_inset Formula $\beta_{P}=\mathbf{h}_{P}^{T}\beta=\mathbf{x}_{P}^{T}\mathbf{b}+\mathbf{h}_{P}^{T}\mathbf{d}$
+\end_inset
+
+。我们也可以构造出一个残差协方差矩阵：
+\begin_inset Formula $\mathbf{VR}=\mathbf{V}-\beta\sigma_{B}^{2}\beta^{T}=\mathbf{V}-\mathbf{V}\mathbf{h}_{B}\beta^{T}$
+\end_inset
+
+。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+风险归因(attribution of risk)。In some cases, it is possible to attribute a portion
+ of risk to a single cause.
+ We can separate market risk from residual risk, and we can separate common-fact
+or risk from specific risk.
+ In both cases, the two risk components are uncorrelated.
+ When two sources of risk are correlated, then the covariance between them
+ makes it difficult to allocate the risk。这就引出了风险边际贡献。
+\end_layout
+
+\begin_layout Itemize
+资产的边际风险贡献(marginal contribution)。这类敏感性分析使我们看到哪些因子和资产对组合风险具有最大的影响。这种对风险的边际影响是组合风险
+对资产权重的偏导数衡量的(在第5章的技术附录中有：因子或资产对残差风险的边际贡献直接正比于其alpha，而该比例系数恰等于信息率。)风险边际贡献的概念可以应用到
+总风险、残差风险或主动风险上。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+资产对总风险的边际贡献的N维向量为：
+\begin_inset Formula $\boldsymbol{MCTR}=\frac{\partial\sigma_{P}}{\partial\boldsymbol{h}_{P}^{T}}=\frac{\boldsymbol{V}\boldsymbol{h}_{P}}{\sigma_{P}}$
+\end_inset
+
+，我们可以将
+\begin_inset Formula $\boldsymbol{MCTR}(n)$
+\end_inset
+
+理解为资产n权重上1%的变动(风险权重的增减全部与现金头寸相对应)导致的组合风险近似的变动。
+\end_layout
+
+\begin_layout Itemize
+类似地，资产的残差风险边际贡献为：
+\begin_inset Formula $\boldsymbol{MCRR}=\frac{\boldsymbol{VR}*\boldsymbol{h}_{P}}{\omega_{P}}=\frac{\boldsymbol{V}*\boldsymbol{h}_{PR}}{\omega_{P}}$
+\end_inset
+
+，其中，
+\begin_inset Formula $\boldsymbol{h}_{PR}=\boldsymbol{h}_{P}-\beta_{P}\boldsymbol{h}_{B}$
+\end_inset
+
+是组合P的残差头寸，
+\begin_inset Formula $\omega_{P}=\sqrt{\boldsymbol{h}_{P}^{T}*\boldsymbol{VR}*\boldsymbol{h}_{P}}$
+\end_inset
+
+，
+\begin_inset Formula $\boldsymbol{VR}*\boldsymbol{h}_{P}=(\boldsymbol{V}-\boldsymbol{\beta}\sigma_{B}^{2}\boldsymbol{\beta}^{T})\boldsymbol{h}_{P}=\boldsymbol{V}\boldsymbol{h}_{P}-\frac{\boldsymbol{V}\boldsymbol{h}_{B}}{\sigma_{B}^{2}}\sigma_{B}^{2}\beta_{P}=\boldsymbol{V}(\boldsymbol{h}_{P}-\beta_{P}\boldsymbol{h}_{B})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+资产的主动风险边际贡献为：
+\begin_inset Formula $\boldsymbol{MCAR}=\frac{\boldsymbol{V}\boldsymbol{h}_{PA}}{\psi_{P}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+可以进一步将主动风险边际贡献分解为市场部分和残差部分：
+\begin_inset Formula $\boldsymbol{MCAR}=\boldsymbol{\beta}*k_{1}+\boldsymbol{MCRR}*k_{2}$
+\end_inset
+
+，其中，
+\begin_inset Formula $k_{1}=\frac{\beta_{PA}*\sigma_{B}^{2}}{\psi_{P}}$
+\end_inset
+
+，
+\begin_inset Formula $k_{2}=\frac{\omega_{P}}{\psi_{P}}$
+\end_inset
+
+。【
+\begin_inset Formula $\boldsymbol{\beta}*k_{1}=\boldsymbol{\beta}*\sigma_{B}^{2}*\boldsymbol{\beta}^{T}\boldsymbol{h}_{PA}*\frac{1}{\psi_{P}}=(\boldsymbol{V}-\boldsymbol{VR})\frac{\boldsymbol{h}_{PA}}{\psi_{P}}$
+\end_inset
+
+，
+\begin_inset Formula $\boldsymbol{MCRR}*k_{2}=\frac{\boldsymbol{VR}*\boldsymbol{h}_{P}}{\psi_{P}}$
+\end_inset
+
+，
+\begin_inset Formula $\boldsymbol{VR}*\boldsymbol{h}_{B}=\mathbf{0}$
+\end_inset
+
+】。可以看出，
+\begin_inset Formula $0\leq k_{2}\leq1$
+\end_inset
+
+，并且当
+\begin_inset Formula $\beta_{PA}=0$
+\end_inset
+
+时，有
+\begin_inset Formula $k_{1}=0$
+\end_inset
+
+和
+\begin_inset Formula $k_{2}=1$
+\end_inset
+
+。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+因子的风险边际贡献(factor marginal contributions)。calculate sensitivities with respect
+ to factor exposures instead of asset holdings。前面的资产风险边际贡献反映的是当调整一致资产的权重并保持其他资产权
+重不变时，组合风险的变化量。此式，我们考虑的是当调整组合对某个因子的暴露度并保持对其他因子暴露度不变时，组合风险的变化量。为了增加且仅增加组合对因子k的暴露度，
+我们希望在原组合上叠加一个只对因子k有暴露度的组合(该组合对其他因子的暴露度为0)。一个合理的选择就是因子组合(因子组合满足因子暴露方面的要求，并且在具有同样因
+子暴露的组合中风险最小)。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+于是：
+\begin_inset Formula $\boldsymbol{h}_{PA}\rightarrow\boldsymbol{h}_{PA}+[(\boldsymbol{X}^{T}\boldsymbol{\Delta}^{-1}\boldsymbol{X})^{-1}\boldsymbol{X}^{T}\boldsymbol{\Delta}^{-1}]^{T}\mathbf{\boldsymbol{\delta}}_{k}$
+\end_inset
+
+，其中，
+\begin_inset Formula $[(\boldsymbol{X}^{T}\boldsymbol{\Delta}^{-1}\boldsymbol{X})^{-1}\boldsymbol{X}^{T}\boldsymbol{\Delta}^{-1}]$
+\end_inset
+
+是因子的持仓权重，是K*N矩阵；
+\begin_inset Formula $\boldsymbol{\delta}_{k}$
+\end_inset
+
+是一个K*1维向量，其第k个元素等于
+\begin_inset Formula $\delta_{k}$
+\end_inset
+
+，其他元素为0。
+\end_layout
+
+\begin_layout Itemize
+为了计算叠加因子组合后风险的变化量，只要将每只资产的权重变动乘以资产层面的风险边际贡献。例如：
+\begin_inset Formula 
+\begin{align*}
+\Delta\psi_{P} & =[[(\boldsymbol{X}^{T}\boldsymbol{\Delta}^{-1}\boldsymbol{X})^{-1}\boldsymbol{X}^{T}\boldsymbol{\Delta}^{-1}]^{T}\mathbf{\boldsymbol{\delta}}_{k}]^{T}*\boldsymbol{MCAR}\\
+ & =\mathbf{\boldsymbol{\delta}}_{k}^{T}*(\boldsymbol{X}^{T}\boldsymbol{\Delta}^{-1}\boldsymbol{X})^{-1}\boldsymbol{X}^{T}\boldsymbol{\Delta}^{-1}*(\frac{\boldsymbol{V}*\boldsymbol{h}_{PA}}{\psi_{P}})
+\end{align*}
+
+\end_inset
+
+利用协方差矩阵的因子分解将上述结果简化为：
+\begin_inset Formula 
+\[
+\frac{\Delta\psi_{P}}{\mathbf{\boldsymbol{\delta}}_{k}^{T}}=(\frac{\boldsymbol{F}*\boldsymbol{x}_{PA}}{\psi_{P}})+(\frac{(\boldsymbol{X}^{T}\boldsymbol{\Delta}^{-1}\boldsymbol{X})^{-1}*\boldsymbol{x}_{PA}}{\psi_{P}})
+\]
+
+\end_inset
+
+The first term above captures the change in factor risk due to changing
+ the factor exposure.
+ It resembles the form of the marginal contribution to active risk at the
+ asset level .
+ It would be the complete answer if we could change factor exposures while
+ leaving asset holdings unchanged.
+ The second term captures the change in specific risk due to changing the
+ factor exposures using the actual factor portfolio.
+ Remember that the factor portfolios have minimum specific risk among all
+ portfolios with unit exposure to one factor and zero exposure to all other
+ factors.
+ Empirically, we find that the second term is much smaller than the first
+ term
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+存在例外的情况：当行业包含较少的成分股时(≤10)
+\end_layout
+
+\end_inset
+
+.
+ Hence we typically make the reasonable approximation：
+\begin_inset Formula 
+\[
+\frac{\Delta\psi_{P}}{\mathbf{\boldsymbol{\delta}}_{k}^{T}}\approx(\frac{\boldsymbol{F}*\boldsymbol{x}_{PA}}{\psi_{P}})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+板块的风险边际贡献。【？】
+\end_layout
+
+\begin_layout Itemize
+资产的风险贡献。可以使用风险边际贡献来定义风险的分解。以主动风险的分解为例。注意到：
+\begin_inset Formula $\boldsymbol{h}_{PA}^{T}*\boldsymbol{MCAR}=\boldsymbol{h}_{PA}^{T}*(\frac{\boldsymbol{V}*\boldsymbol{h}_{PA}}{\psi_{P}})=\psi_{P}$
+\end_inset
+
+，于是，可以将
+\begin_inset Formula $\boldsymbol{h}_{PA}(n)*\boldsymbol{MCAR}(n)$
+\end_inset
+
+视为
+\begin_inset Formula $\psi_{P}$
+\end_inset
+
+分配到资产n上的部分。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+相对边际贡献。如果我们
+\color red
+仅
+\color inherit
+增加资产n的持仓权重，就有
+\begin_inset Formula $\Delta\psi_{P}\approx\Delta\boldsymbol{h}_{PA}(n)*\boldsymbol{MCAR}(n)=\frac{\Delta\boldsymbol{h}_{PA}(n)}{\boldsymbol{h}_{PA}(n)}\boldsymbol{h}_{PA}(n)*\boldsymbol{MCAR}(n)$
+\end_inset
+
+，所以，主动风险的变动近似等于资产n的主动持仓的相对变动
+\begin_inset Formula $\frac{\Delta\boldsymbol{h}_{PA}(n)}{\boldsymbol{h}_{PA}(n)}$
+\end_inset
+
+乘以主动风险分配到资产n上的部分。于是，我们将分配到资产n上的这部分主动风险理解为一种相对的风险边际攻心啊(relative marginal
+ contribution to active risk)，记为
+\begin_inset Formula $\boldsymbol{RMACR}$
+\end_inset
+
+：
+\begin_inset Formula 
+\[
+\boldsymbol{RMACR}=\left[\begin{array}{c}
+\boldsymbol{h}_{PA}(1)*\boldsymbol{MCAR}(1)\\
+\vdots\\
+\boldsymbol{h}_{PA}(N)*\boldsymbol{MCAR}(N)
+\end{array}\right]
+\]
+
+\end_inset
+
+此时，
+\begin_inset Formula $\Delta\psi_{P}\approx[\frac{\Delta\boldsymbol{h}_{PA}(n)}{\boldsymbol{h}_{PA}(n)}]_{1\times N}*\boldsymbol{RMACR}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+因子的风险贡献。利用因子风险模型，有
+\begin_inset Formula $\psi_{P}^{2}=\boldsymbol{x}_{PA}^{2}\boldsymbol{F}\boldsymbol{x}_{PA}+\boldsymbol{h}_{PA}^{T}\boldsymbol{\Delta}\boldsymbol{h}_{PA}$
+\end_inset
+
+。因此，可以定义因子对主动风险的边际贡献(factor marginal contribution to active risk,FMCAR)为：
+\begin_inset Formula 
+\[
+\boldsymbol{FMCAR}=\frac{\partial\psi_{P}}{\partial\boldsymbol{x}_{PA}^{T}}=\frac{\boldsymbol{F}\boldsymbol{x}_{PA}}{\psi_{P}}
+\]
+
+\end_inset
+
+但是注意到：
+\begin_inset Formula 
+\[
+\boldsymbol{x}_{PA}^{T}*\boldsymbol{FMCAR}=\frac{\boldsymbol{h}_{PA}^{T}\boldsymbol{V}\boldsymbol{h}_{PA}-\boldsymbol{h}_{PA}^{T}\boldsymbol{\Delta}\boldsymbol{h}_{PA}}{\psi_{P}}
+\]
+
+\end_inset
+
+因此，我们将主动风险
+\begin_inset Formula $\psi_{P}$
+\end_inset
+
+归因到因子来源和特异来源上。【？？？】
+\end_layout
+
+\begin_layout Itemize
+相关性和市场波动率。实证中有一个现象：资产之间相关性通常随着市场波动率的增加而增加。根据单因子模型，资产n和资产m之间的相关系数为：
+\begin_inset Formula 
+\[
+\rho_{nm}=\frac{\beta_{n}*\beta_{m}*\sigma_{M}^{2}}{\sqrt{(\beta_{n}^{2}\sigma_{M}^{2}+\omega_{n}^{2})*(\beta_{m}^{2}\sigma_{M}^{2}+\omega_{m}^{2})}}
+\]
+
+\end_inset
+
+假定两个资产的beta均为1，且具有相同的残差风险，则：
+\begin_inset Formula 
+\[
+\rho_{nm}\rightarrow\frac{\sigma_{M}^{2}}{\sigma_{M}^{2}+\omega^{2}}
+\]
+
+\end_inset
+
+于是我们可以立即看到，如果残差风险与市场波动率无关，把呢当市场波动率增加时，资产之间的相关系数会增加；在市场波动率较低的时期，资产之间的相关性也会降低。
 \end_layout
 
 \begin_layout Chapter
