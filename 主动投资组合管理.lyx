@@ -2499,6 +2499,122 @@ f_{P} & =f_{B}+\beta_{PA}f_{B}+\alpha_{P}\\
 残差风险和残差收益率：信息率
 \end_layout
 
+\begin_layout Itemize
+本章要点：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+信息率衡量后验的业绩(向过去看)并意味着先验的机会(向未来看)
+\end_layout
+
+\begin_layout Itemize
+信息率定义了残差前沿(residual frontier)，即主动投资经理的机会集(可行域)
+\end_layout
+
+\begin_layout Itemize
+每位投资经理的信息率以及残差风险厌恶水平决定了他的激进程度(残差风险水平)
+\end_layout
+
+\begin_layout Itemize
+我们可以基于直觉确定信息率和残差风险厌恶系数的合理数值
+\end_layout
+
+\begin_layout Itemize
+附加值VA依赖于投资经理的机会集和激进程度
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+定义alpha。如果
+\begin_inset Formula $r_{P}(t)$
+\end_inset
+
+是投资组合在时间维度上的超额收益率，
+\begin_inset Formula $r_{B}(t)$
+\end_inset
+
+是业绩基准在同样时期上的超额收益率，那么回归模型是：
+\begin_inset Formula 
+\[
+r_{P}(t)=\alpha_{P}+\beta_{P}r_{B}(t)+\varepsilon_{P}(t)
+\]
+
+\end_inset
+
+利用回归分析得到的beta和alpha估计值称为实现的／历史的beta和alpha。组合P的残差收益率为：
+\begin_inset Formula 
+\[
+\theta_{P}(t)=\alpha_{P}+\varepsilon_{P}(t)
+\]
+
+\end_inset
+
+当我们向未来看时，alpha是对残差收益率的预测。令
+\begin_inset Formula $\theta_{n}$
+\end_inset
+
+为股票n的残差收益率，则：
+\begin_inset Formula 
+\[
+\alpha_{n}=E\{\theta_{n}\}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+依据定义，业绩基准组合残差收益率恒等于0。另外，无风险组合的残差收益率也等于0。因此，任何由业绩基准组合和现金资产构成的投资组合的alpha也必然等于0。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+后验信息率：对业绩的衡量。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+信息率(information ratio，IR)是(年化)残差收益率对(年化)残差风险的比值。
+\end_layout
+
+\begin_layout Itemize
+注意，已实现的信息率可能(经常)是负值。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+先验信息率：对机会的衡量。在向未来看时，信息率可以这样理解：在假设信息被有效利用的前提下，它表示每承担一个单位年化残差风险所能获得的预期年化残差收益率。或者，更
+精确地说，投资经理能够获得的最高的年化残差收益率/残差风险的比率。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+一般来说，信息率是一个具有零均值的对称分布(主动投资管理是一个零和游戏)
+\end_layout
+
+\begin_layout Itemize
+投资组合P的信息率定义为：
+\begin_inset Formula $IR_{P}=\frac{\alpha_{P}}{\omega_{P}}$
+\end_inset
+
+。Our personal “information ratio” is the maximum information ratio that
+ we can attain over all possible portfolios：
+\begin_inset Formula $IR=max\{IR_{P}|P\}$
+\end_inset
+
+。So we measure our information ratio based on portfolios optimized to our
+ alphas。
+\end_layout
+
+\begin_layout Itemize
+一个例子说明“信息率不依赖于投资经理的激进程度”【主动头寸同比例变化并不影响信息率】。也就是说，理论上，信息率不依赖于风险水平的。但是在实际应用中，这个关系最终
+可能由于投资约束的限制而不再成立。【例如卖空限制】不过值得注意的是，信息率依赖于时间尺度，所以，一般使用1年作为标准时间尺度。
+\end_layout
+
+\end_deeper
 \begin_layout Chapter
 主动管理基本定律
 \end_layout
