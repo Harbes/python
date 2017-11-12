@@ -4,11 +4,11 @@ from pandas import DataFrame
 
 # 整理数据
 #data=pd.read_pickle('F:/data/xccdata/PV_datetime')[['adj_open','adj_close']]
-data=pd.read_pickle('/Users/harbes/data/xccdata/PV_datetime')[['amount','opnprc','clsprc','adj_open','adj_close','size_tot']]
+data=pd.read_pickle('/Users/harbes/data/xccdata/PV_datetime')[['amount','opnprc','clsprc','adj_open','adj_close','size_tot','size_free']]
 opnprc=data['adj_open'].unstack()
 clsprc=data['adj_close'].unstack()
 amount=data['amount'].unstack()
-amount[amount==0]=np.nan # 检验 np.invert(amount==0).all().all()
+amount[amount==0]=np.nan # 将交易额为0的数据替换成NaN，并检验 np.invert(amount==0).all().all()
 amount /=1e5
 
 key = lambda x: x.year * 100 + x.month
@@ -19,7 +19,8 @@ price1.index = pd.to_datetime(price1.index.values.astype(str),format=('%Y%m'))
 rtn = (price1-price0)/price0 # 月度收益数据
 
 #opnprc=data['opnprc'].unstack();clsprc=data['clsprc'].unstack() # 是否复权，对分组结果影响不大
-illiq=np.abs((clsprc-opnprc)/opnprc/amount)
+illiq=np.abs((clsprc-opnprc)/opnprc/amount) # 事实上也可以使用turnover(其倒数)，如下：
+#illiq=data['size_tot'].unstack()/amount
 illiq_m=illiq.groupby(key).mean()
 illiq_m.index = pd.to_datetime(illiq_m.index.values.astype(str),format=('%Y%m'))
 
@@ -35,7 +36,7 @@ mark_illiq=DataFrame([pd.qcut(illiq_m.iloc[i],q=percentile,labels=label_illiq) f
 illiquidity=DataFrame([[rtn.iloc[i][mark_illiq.iloc[i-1]==k].mean() for k in label_illiq] for i in range(1,len(rtn))],index=rtn.index[1:],columns=label_illiq)
 
 
-(illiquidity+1)[np.arange(1,10)].cumprod().plot()
+(illiquidity+1)[np.arange(1,11)].cumprod().plot()
 zero_cost=illiquidity[9]-illiquidity[1]
 zero_cost.mean()/zero_cost.std()*np.sqrt(len(zero_cost))
 
@@ -77,3 +78,32 @@ j=1;s=1;i=1
 rtn.iloc[j][mark_size.iloc[j-1]==s][mark_illiq.iloc[j-1]==i]#.count()
 
 (s_i_count.max()-s_i_count.min()).max()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
