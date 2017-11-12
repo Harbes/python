@@ -73,15 +73,38 @@ for s in label_size:
 
 # 结果显示
 (size_illiquidity+1).loc[(4,slice(None)),slice(None)].T.cumprod().plot() # 为什么使用axis=1不能得到想要的结果？？？
-
-j=1;s=1;i=1
-rtn.iloc[j][mark_size.iloc[j-1]==s][mark_illiq.iloc[j-1]==i]#.count()
-
-(s_i_count.max()-s_i_count.min()).max()
+s_i_count.max()-s_i_count.min() # 检查分组是否均匀
 
 
 
 
+
+# double-sort,size & illiq sorted independently
+group_num=5
+percentile=np.linspace(0,1,group_num+1)
+label_size=[i+1 for i in range(group_num)] # 1表示流动性较好的组合，另一个极端组合是流动性较差的组合
+label_illiq=[i+1 for i in range(group_num)] # 1表示流动性较好的组合，另一个极端组合是流动性较差的组合
+
+size=data['size_tot'].unstack().groupby(key).mean()
+size.index = pd.to_datetime(size.index.values.astype(str),format=('%Y%m'))
+
+mark_size=DataFrame([pd.qcut(size.iloc[i],q=percentile,labels=label_size) for i in range(len(size))],index=size.index)
+mark_illiq=DataFrame([pd.qcut(illiq_m.iloc[i],q=percentile,labels=label_illiq) for i in range(len(illiq_m))],index=illiq_m.index)
+
+size_illiquidity=DataFrame(np.zeros((25,len(size)-1)),index=pd.MultiIndex.from_product([label_size,label_illiq]))
+s_i_count=DataFrame(np.zeros((25,len(size)-1)),index=pd.MultiIndex.from_product([label_size,label_illiq])) # 用于检查分组是否均匀
+for s in label_size:
+    for i in label_illiq:
+        mark_illiq_tmp=DataFrame
+        size_illiquidity.loc[(s,i),:]= pd.Series([rtn.iloc[j][mark_size.iloc[j-1]==s][mark_illiq.iloc[j-1]==i].mean() for j in range(1,len(rtn))])
+        s_i_count.loc[(s, i), :]=pd.Series([rtn.iloc[j][mark_size.iloc[j-1]==s][mark_illiq.iloc[j-1]==i].count() for j in range(1,len(rtn))])
+
+# 结果的图形显示
+(size_illiquidity+1).loc[(1,[1,2,3,4]),slice(None)].T.cumprod().plot() # 为什么使用axis=1不能得到想要的结果？？？
+
+s_i_count.max()-s_i_count.min()
+s_i_count.min()
+s_i_count.loc[(1,5)]
 
 
 
