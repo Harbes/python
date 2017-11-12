@@ -72,7 +72,8 @@ for s in label_size:
         s_i_count.loc[(s, i), :]=pd.Series([rtn.iloc[j][mark_size.iloc[j-1]==s][mark_illiq.iloc[j-1]==i].count() for j in range(1,len(rtn))])
 
 # 结果显示
-(size_illiquidity+1).loc[(4,slice(None)),slice(None)].T.cumprod().plot() # 为什么使用axis=1不能得到想要的结果？？？
+(size_illiquidity+1).loc[(1,slice(None)),slice(None)].T.cumprod().plot() # 为什么使用axis=1不能得到想要的结果？？？
+(size_illiquidity+1).loc[(1,[1,2,3,4,5]),slice(None)].T.cumprod().plot() # 为什么使用axis=1不能得到想要的结果？？？
 s_i_count.max()-s_i_count.min() # 检查分组是否均匀
 
 
@@ -100,11 +101,12 @@ for s in label_size:
         s_i_count.loc[(s, i), :]=pd.Series([rtn.iloc[j][mark_size.iloc[j-1]==s][mark_illiq.iloc[j-1]==i].count() for j in range(1,len(rtn))])
 
 # 结果的图形显示
-(size_illiquidity+1).loc[(1,[1,2,3,4]),slice(None)].T.cumprod().plot() # 为什么使用axis=1不能得到想要的结果？？？
+(size_illiquidity+1).loc[(1,[2,3,4,5]),slice(None)].T.cumprod().plot() # 为什么使用axis=1不能得到想要的结果？？？
 
 s_i_count.max()-s_i_count.min()
 s_i_count.min()
 s_i_count.loc[(1,5)]
+s_i_count.loc[(1,1)] # 一个非常奇怪的、不符合预期的组合
 
 
 
