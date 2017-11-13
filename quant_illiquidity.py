@@ -7,9 +7,9 @@ from pandas import DataFrame
 data=pd.read_pickle('/Users/harbes/data/xccdata/PV_datetime')[['amount','opnprc','clsprc','adj_open','adj_close','size_tot','size_free']]
 
 amount=data['amount'].unstack()
-amount[amount==0]=np.nan # 将交易额为0的数据替换成NaN，并检验 np.invert(amount==0).all().all()
+#amount[amount==0]=np.nan # 将交易额为0的数据替换成NaN，并检验 np.invert(amount==0).all().all()
 amount_filter=pd.read_pickle('/Users/harbes/data/xccdata/amount_filter') # 1 表示成交量满足要求的股票数据
-#amount=amount[amount_filter==1] # 剔除成交量较小的股票数据；这部分的剔除大约可以将最优组合的累计收益下降60%
+amount=amount[amount_filter==1] # 剔除成交量较小的股票数据；这部分的剔除大约可以将最优组合的累计收益下降60%
 amount /=1e5
 
 opnprc=data['adj_open'].unstack()
@@ -45,7 +45,7 @@ illiquidity=DataFrame([[rtn.iloc[i][mark_illiq.iloc[i-1]==k].mean() for k in lab
 
 
 (illiquidity+1)[np.arange(1,11)].cumprod().plot()
-zero_cost=illiquidity[9]-illiquidity[1]
+zero_cost=illiquidity[10]-illiquidity[1]
 zero_cost.mean()/zero_cost.std()*np.sqrt(len(zero_cost))
 
 # 检查size，结果发现size确实对结果有影响，所以需要double-sort
