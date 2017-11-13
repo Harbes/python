@@ -5,12 +5,20 @@ from pandas import DataFrame
 # 整理数据
 #data=pd.read_pickle('F:/data/xccdata/PV_datetime')[['adj_open','adj_close']]
 data=pd.read_pickle('/Users/harbes/data/xccdata/PV_datetime')[['amount','opnprc','clsprc','adj_open','adj_close','size_tot','size_free']]
-opnprc=data['adj_open'].unstack()
-clsprc=data['adj_close'].unstack()
+
 amount=data['amount'].unstack()
-amount[amount==0]=np.nan # 将交易额为0的数据替换成NaN，并检验 np.invert(amount==0).all().all()
+#amount[amount==0]=np.nan # 将交易额为0的数据替换成NaN，并检验 np.invert(amount==0).all().all()
+amount_filter=pd.read_pickle('/Users/harbes/data/xccdata/amount_filter') # 1 表示成交量满足要求的股票数据
+amount=amount[amount_filter==1] # 剔除成交量较小的股票数据
 amount /=1e5
 
+opnprc=data['adj_open'].unstack()
+clsprc=data['adj_close'].unstack()
+limit_move=pd.read_pickle('/Users/harbes/data/xccdata/limit_move') # True表示涨跌停
+ST=pd.read_pickle('/Users/harbes/data/xccdata/ST_datetime') # N 表示非ST，非新股
+NT=pd.read_pickle('/Users/harbes/data/xccdata/NT_datetime') # 1 表示停牌
+NT_filter=pd.read_pickle('/Users/harbes/data/xccdata/NT_filter_120') # 1 表示停牌超过一定时间的数据点
+clsprc=clsprc[ST=='N'][~limit_move][NT==0][NT_filter==0]
 key = lambda x: x.year * 100 + x.month
 price0 = opnprc.groupby(key).first() # 买入价
 price1 = clsprc.groupby(key).last() # 卖出价
@@ -68,7 +76,8 @@ s_i_count=DataFrame(np.zeros((25,len(size)-1)),index=pd.MultiIndex.from_product(
 for s in label_size:
     for i in label_illiq:
         mark_illiq_tmp=DataFrame
-        size_illiquidity.loc[(s,i),:]= pd.Series([rtn.iloc[j][mark_size.iloc[j-1]==s][mark_illiq.iloc[j-1]==i].mean() for j in range(1,len(rtn))])
+        #size_illiquidity.loc[(s,i),:]= pd.Series([rtn.iloc[j][mark_size.iloc[j-1]==s][mark_illiq.iloc[j-1]==i].mean() for j in range(1,len(rtn))])
+        size_illiquidity.loc[(s,i),:]= pd.Series([rtn.iloc[j][np.logical_and(mark_size.iloc[j-1]==s,mark_illiq.iloc[j-1]==i)].mean() for j in range(1,len(rtn))])
         s_i_count.loc[(s, i), :]=pd.Series([rtn.iloc[j][mark_size.iloc[j-1]==s][mark_illiq.iloc[j-1]==i].count() for j in range(1,len(rtn))])
 size_illiquidity.columns=rtn.index[1:]
 # 结果显示
