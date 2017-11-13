@@ -44,3 +44,11 @@ data=pd.read_pickle('/Users/harbes/data/xccdata/PV_datetime')['amount'].unstack(
 data[data==0]=np.nan
 amount_filter=DataFrame([pd.qcut(data.iloc[i],q=[0.0,0.01,1.0],labels=[0,1]) for i in range(len(data))])
 amount_filter.to_pickle('/Users/harbes/data/xccdata/amount_filter')
+
+
+# 归总筛选
+filter=amount_filter[amount_filter==1][ST=='N'][~limit_move][NT==0][NT_filter==0]
+filter.to_pickle('/Users/harbes/data/xccdata/filter') # 4672606个有效数据点(原来有6140094个数据点)
+
+
+

@@ -7,18 +7,18 @@ from pandas import DataFrame
 data=pd.read_pickle('/Users/harbes/data/xccdata/PV_datetime')[['amount','opnprc','clsprc','adj_open','adj_close','size_tot','size_free']]
 
 amount=data['amount'].unstack()
-#amount[amount==0]=np.nan # 将交易额为0的数据替换成NaN，并检验 np.invert(amount==0).all().all()
+amount[amount==0]=np.nan # 将交易额为0的数据替换成NaN，并检验 np.invert(amount==0).all().all()
 amount_filter=pd.read_pickle('/Users/harbes/data/xccdata/amount_filter') # 1 表示成交量满足要求的股票数据
-amount=amount[amount_filter==1] # 剔除成交量较小的股票数据
+#amount=amount[amount_filter==1] # 剔除成交量较小的股票数据；这部分的剔除大约可以将最优组合的累计收益下降60%
 amount /=1e5
 
 opnprc=data['adj_open'].unstack()
 clsprc=data['adj_close'].unstack()
-limit_move=pd.read_pickle('/Users/harbes/data/xccdata/limit_move') # True表示涨跌停
-ST=pd.read_pickle('/Users/harbes/data/xccdata/ST_datetime') # N 表示非ST，非新股
-NT=pd.read_pickle('/Users/harbes/data/xccdata/NT_datetime') # 1 表示停牌
-NT_filter=pd.read_pickle('/Users/harbes/data/xccdata/NT_filter_120') # 1 表示停牌超过一定时间的数据点
-clsprc=clsprc[ST=='N'][~limit_move][NT==0][NT_filter==0]
+limit_move=pd.read_pickle('/Users/harbes/data/xccdata/limit_move') # True表示涨跌停；剔除涨跌停的影响程度与剔除小额交易相近
+ST=pd.read_pickle('/Users/harbes/data/xccdata/ST_datetime') # N 表示非ST，非新股 ；剔除ST以及新股后，基本与剔除所有因素一致
+NT=pd.read_pickle('/Users/harbes/data/xccdata/NT_datetime') # 1 表示停牌；剔除NT的效果并不很显著
+NT_filter=pd.read_pickle('/Users/harbes/data/xccdata/NT_filter_120') # 1 表示停牌超过一定时间的数据点;
+clsprc=clsprc[NT==0][NT_filter==0][~limit_move][ST=='N'] # NT和ST大概能剔除最优组合的2-3倍涨幅
 key = lambda x: x.year * 100 + x.month
 price0 = opnprc.groupby(key).first() # 买入价
 price1 = clsprc.groupby(key).last() # 卖出价
@@ -62,7 +62,8 @@ percentile=np.linspace(0,1,group_num+1)
 label_size=[i+1 for i in range(group_num)] # 1表示流动性较好的组合，另一个极端组合是流动性较差的组合
 label_illiq=[i+1 for i in range(group_num)] # 1表示流动性较好的组合，另一个极端组合是流动性较差的组合
 
-size=data['size_tot'].unstack().groupby(key).mean()
+filter=pd.read_pickle('/Users/harbes/data/xccdata/filter') # 4672606个有效数据点(原来有6140094个数据点)
+size=data['size_tot'].unstack()[filter==1].groupby(key).mean()
 size.index = pd.to_datetime(size.index.values.astype(str),format=('%Y%m'))
 
 mark_size=DataFrame([pd.qcut(size.iloc[i],q=percentile,labels=label_size) for i in range(len(size))],index=size.index)
