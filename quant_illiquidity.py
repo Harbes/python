@@ -70,10 +70,10 @@ for s in label_size:
         mark_illiq_tmp=DataFrame
         size_illiquidity.loc[(s,i),:]= pd.Series([rtn.iloc[j][mark_size.iloc[j-1]==s][mark_illiq.iloc[j-1]==i].mean() for j in range(1,len(rtn))])
         s_i_count.loc[(s, i), :]=pd.Series([rtn.iloc[j][mark_size.iloc[j-1]==s][mark_illiq.iloc[j-1]==i].count() for j in range(1,len(rtn))])
-
+size_illiquidity.columns=rtn.index[1:]
 # 结果显示
 (size_illiquidity+1).loc[(1,slice(None)),slice(None)].T.cumprod().plot() # 为什么使用axis=1不能得到想要的结果？？？
-(size_illiquidity+1).loc[(1,[1,2,3,4,5]),slice(None)].T.cumprod().plot() # 为什么使用axis=1不能得到想要的结果？？？
+(size_illiquidity+1).loc[(1,[1,2,3,4]),slice(None)].T.cumprod().plot() # 为什么使用axis=1不能得到想要的结果？？？
 s_i_count.max()-s_i_count.min() # 检查分组是否均匀
 
 
