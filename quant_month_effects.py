@@ -48,7 +48,7 @@ tmp=rtn_before_fes.mean(axis=1);tmp.mean()/tmp.std()*np.sqrt(len(rtn_before_fes)
 
 
 
-# 按size进行分组
+# 按size进行分组(每天)
 size=data['size_tot'].unstack()[filter==1]#.groupby(key).mean()
 size.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
 rtn=rtn.loc[size.index]
@@ -68,7 +68,7 @@ plt.plot((rtn_before_fes+1).values.cumprod(axis=0))
 
 
 
-# 按illiq进行分组
+# 按illiq进行分组(每天)【结果是与illiq无关】
 amount=data['amount'].unstack()[filter==1]#.groupby(key).mean()
 opnprc=data['adj_open'].unstack()[filter==1]
 clsprc=data['adj_close'].unstack()[filter==1]
@@ -89,6 +89,99 @@ plt.plot((rtn_after_fes+1).values.cumprod(axis=0))
 # 春节前
 rtn_before_fes=pd.concat([rtn_by_illiq.iloc[rtn_by_illiq.index.get_loc(i[0])-10:rtn_by_illiq.index.get_loc(i[0])-5] for i in after_fes_data])
 plt.plot((rtn_before_fes+1).values.cumprod(axis=0))
+
+
+
+
+# 按过去收益(momentum or contrarian)进行分组(每天)【结果与illiq无关】
+rtn[rtn==0]=np.nan
+num_by_=10
+label_past=[i+1 for i in range(num_by_)] #
+percentile=np.linspace(0,1,num_by_+1)
+mark_past=DataFrame([pd.qcut(rtn.iloc[i],q=percentile,labels=label_past) for i in range(len(rtn))],index=rtn.index,columns=rtn.columns)
+rtn_by_past=DataFrame([[rtn.iloc[i].loc[mark_past.iloc[i-1]==k].mean() for k in label_past] for i in range(1,len(rtn))],index=rtn.index[1:],columns=label_past)
+
+# 春节后
+rtn_after_fes=pd.concat([rtn_by_past.iloc[rtn_by_past.index.get_loc(i[0])-5:rtn_by_past.index.get_loc(i[0])+10] for i in after_fes_data])
+plt.plot((rtn_after_fes+1).values.cumprod(axis=0))
+# 春节前
+rtn_before_fes=pd.concat([rtn_by_past.iloc[rtn_by_past.index.get_loc(i[0])-8:rtn_by_past.index.get_loc(i[0])-5] for i in after_fes_data])
+plt.plot((rtn_before_fes+1).values.cumprod(axis=0))
+
+
+
+
+# 按size分组(前n个交易日数据)
+num_by_=10
+label_=[i+1 for i in range(num_by_)] #
+percentile=np.linspace(0,1,num_by_+1)
+rtn_after_fes=DataFrame(0,index=np.array(after_fes_data)[:,0],columns=label_)
+indi=data['size_tot'].unstack()[filter==1]
+indi.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
+opnprc=opnprc.loc[indi.index]
+clsprc=clsprc.loc[indi.index]
+mark_=DataFrame([pd.qcut(indi.iloc[np.maximum(i-30,0):i].mean(),q=percentile,labels=label_) for i in range(1,len(indi))],index=rtn.index[1:],columns=rtn.columns)
+for k,i in enumerate(after_fes_data):
+    rtn_tmp=(clsprc.iloc[clsprc.index.get_loc(i[0])+10]-opnprc.iloc[opnprc.index.get_loc(i[0])-5])/opnprc.iloc[opnprc.index.get_loc(i[0])-5]
+    for j in range(num_by_):
+        rtn_after_fes.iloc[k,j]=rtn_tmp[mark_.iloc[mark_.index.get_loc(i[0])]==j+1].mean()
+plt.plot((rtn_after_fes+1).values.cumprod(axis=0))
+
+
+
+# 按illiq分组(前n个交易日数据)
+num_by_=10
+label_=[i+1 for i in range(num_by_)] #
+percentile=np.linspace(0,1,num_by_+1)
+rtn_after_fes=DataFrame(0,index=np.array(after_fes_data)[:,0],columns=label_)
+amount=data['amount'].unstack()[filter==1]#.groupby(key).mean()
+opnprc=data['adj_open'].unstack()[filter==1]
+clsprc=data['adj_close'].unstack()[filter==1]
+indi=np.abs((clsprc-opnprc)/opnprc/amount)*1e5
+indi.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
+opnprc=opnprc.loc[indi.index]
+clsprc=clsprc.loc[indi.index]
+mark_=DataFrame([pd.qcut(indi.iloc[np.maximum(i-30,0):i].mean(),q=percentile,labels=label_) for i in range(1,len(indi))],index=rtn.index[1:],columns=rtn.columns)
+for k,i in enumerate(after_fes_data):
+    rtn_tmp=(clsprc.iloc[clsprc.index.get_loc(i[0])+10]-opnprc.iloc[opnprc.index.get_loc(i[0])-5])/opnprc.iloc[opnprc.index.get_loc(i[0])-5]
+    for j in range(num_by_):
+        rtn_after_fes.iloc[k,j]=rtn_tmp[mark_.iloc[mark_.index.get_loc(i[0])]==j+1].mean()
+plt.plot((rtn_after_fes+1).values.cumprod(axis=0))
+
+
+
+
+
+# 按past分组(前n个交易日数据)
+num_by_=10
+label_=[i+1 for i in range(num_by_)] #
+percentile=np.linspace(0,1,num_by_+1)
+rtn_after_fes=DataFrame(0,index=np.array(after_fes_data)[:,0],columns=label_)
+opnprc=data['adj_open'].unstack()[filter==1]
+clsprc=data['adj_close'].unstack()[filter==1]
+indi=(clsprc-opnprc)/opnprc
+indi.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
+opnprc=opnprc.loc[indi.index]
+clsprc=clsprc.loc[indi.index]
+mark_=DataFrame([pd.qcut(indi.iloc[np.maximum(i-30,0):i].mean(),q=percentile,labels=label_) for i in range(1,len(indi))],index=rtn.index[1:],columns=rtn.columns)
+for k,i in enumerate(after_fes_data):
+    rtn_tmp=(clsprc.iloc[clsprc.index.get_loc(i[0])+10]-opnprc.iloc[opnprc.index.get_loc(i[0])-5])/opnprc.iloc[opnprc.index.get_loc(i[0])-5]
+    for j in range(num_by_):
+        rtn_after_fes.iloc[k,j]=rtn_tmp[mark_.iloc[mark_.index.get_loc(i[0])]==j+1].mean()
+plt.plot((rtn_after_fes+1).values.cumprod(axis=0))
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
