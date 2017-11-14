@@ -181,7 +181,7 @@ tmp=rtn_after_fes[10]-rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
 
 
 
-# 按price分组(前n个交易日数据) ; y
+# 按price分组(前n个交易日数据) ; y【low price在中国是不显著的，春节期间却是显著的】
 num_by_=10
 label_=[i+1 for i in range(num_by_)] #
 percentile=np.linspace(0,1,num_by_+1)
