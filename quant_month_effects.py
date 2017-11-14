@@ -181,7 +181,7 @@ tmp=rtn_after_fes[10]-rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
 
 
 
-# 按price分组(前n个交易日数据) ; n
+# 按price分组(前n个交易日数据) ; y
 num_by_=10
 label_=[i+1 for i in range(num_by_)] #
 percentile=np.linspace(0,1,num_by_+1)
@@ -196,9 +196,27 @@ for k,i in enumerate(after_fes_data):
     for j in range(num_by_):
         rtn_after_fes.iloc[k,j]=rtn_tmp[mark_.iloc[mark_.index.get_loc(i[0])]==j+1].mean()
 plt.plot((rtn_after_fes+1).values.cumprod(axis=0))
-tmp=rtn_after_fes[10]-rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
+tmp=rtn_after_fes[10]-rtn_after_fes[2];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) # 注意，此处是第10组减去第2组
 
 
+# 按波动率分组(前n个交易日数据) ; y
+num_by_=10
+label_=[i+1 for i in range(num_by_)] #
+percentile=np.linspace(0,1,num_by_+1)
+rtn_after_fes=DataFrame(0,index=np.array(after_fes_data)[:,0],columns=label_)
+indi=rtn
+indi.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
+opnprc=opnprc.loc[indi.index]
+clsprc=clsprc.loc[indi.index]
+mark_=DataFrame([pd.qcut(rtn.iloc[np.maximum(i-30,0):i].std(),q=percentile,labels=label_) for i in range(5,len(indi))],index=indi.index[5:],columns=indi.columns)
+for k,i in enumerate(after_fes_data):
+    rtn_tmp=(clsprc.iloc[clsprc.index.get_loc(i[0])+10]-opnprc.iloc[opnprc.index.get_loc(i[0])-5])/opnprc.iloc[opnprc.index.get_loc(i[0])-5]
+    for j in range(num_by_):
+        rtn_after_fes.iloc[k,j]=rtn_tmp[mark_.iloc[mark_.index.get_loc(i[0])]==j+1].mean()
+plt.plot((rtn_after_fes+1).values.cumprod(axis=0))
+tmp=rtn_after_fes[9]-rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) #
+tmp=rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) #
+rtn_after_fes.mean()
 
 
 # 按delta_price * size 分组(前n个交易日数据) ; 非线性关系：组合收益先增后减
