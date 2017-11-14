@@ -133,6 +133,7 @@ tmp=rtn_after_fes[10]-rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
 
 
 
+
 # 按illiq分组(前n个交易日数据) ; y
 num_by_=10
 label_=[i+1 for i in range(num_by_)] #
