@@ -7,10 +7,12 @@ import matplotlib.pyplot as plt
 # 整理数据
 #data=pd.read_pickle('F:/data/xccdata/PV_datetime')[['adj_open','adj_close']]
 data=pd.read_pickle('/Users/harbes/data/xccdata/PV_datetime')[['amount','opnprc','clsprc','adj_open','adj_close','size_tot','size_free']]
-filter=pd.read_pickle('/Users/harbes/data/xccdata/filter') # 4672606个有效数据点(原来有6140094个数据点)
-open=data['adj_open'].unstack()
-clsprc=data['adj_close'].unstack()[filter==1]
-rtn=(clsprc-open)/open
+filter_=pd.read_pickle('/Users/harbes/data/xccdata/filter') # 4672606个有效数据点(原来有6140094个数据点)
+opnprc=data['adj_open'].unstack()
+clsprc=data['adj_close'].unstack()
+rtn=((clsprc-opnprc)/opnprc)[filter_==1]
+rtn.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
+
 
 after_fes_data=[
     (datetime(2005, 2, 16), '2005'),
@@ -36,20 +38,21 @@ plt.plot((rtn_feb.mean(axis=1)+1).values.cumprod())
 #rtn_feb.groupby(rtn_feb.index.year).describe()
 #rtn_feb.mean(axis=1).groupby(rtn_feb.index.year).describe()
 
-# 春节后10个有效交易日
-rtn_after_fes=pd.concat([rtn.iloc[rtn.index.get_loc(i[0])-5:rtn_by_size.index.get_loc(i[0])+10] for i in after_fes_data]) # 注意，这种表达式是不包括首尾时间点的
+# 春节后n个有效交易日
+rtn_after_fes=pd.concat([rtn.iloc[rtn.index.get_loc(i[0])-3:rtn.index.get_loc(i[0])+8] for i in after_fes_data])
 plt.plot((rtn_after_fes.mean(axis=1)+1).values.cumprod(axis=0))
-# 春节前10个有效交易日
-rtn_before_fes=pd.concat([rtn.iloc[rtn.index.get_loc(i[0])-16:rtn_by_size.index.get_loc(i[0])-4] for i in after_fes_data])
+plt.show()
+# 春节前n个有效交易日
+rtn_before_fes=pd.concat([rtn.iloc[rtn.index.get_loc(i[0])-18:rtn.index.get_loc(i[0])-3] for i in after_fes_data])
 plt.plot((rtn_before_fes.mean(axis=1)+1).values.cumprod(axis=0))
 
-tmp=rtn_before_fes.mean(axis=1);tmp.mean()/tmp.std()*np.sqrt(len(rtn_before_fes))
+tmp=rtn_after_fes.mean(axis=1);tmp.mean()/tmp.std()*np.sqrt(len(tmp))
 
 
 
 
 # 按size进行分组(每天)
-size=data['size_tot'].unstack()[filter==1]#.groupby(key).mean()
+size=data['size_tot'].unstack()[filter_==1]#.groupby(key).mean()
 size.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
 rtn=rtn.loc[size.index]
 num_by_size=10
@@ -69,9 +72,9 @@ plt.plot((rtn_before_fes+1).values.cumprod(axis=0))
 
 
 # 按illiq进行分组(每天)【结果是与illiq无关】
-amount=data['amount'].unstack()[filter==1]#.groupby(key).mean()
-opnprc=data['adj_open'].unstack()[filter==1]
-clsprc=data['adj_close'].unstack()[filter==1]
+amount=data['amount'].unstack()[filter_==1]#.groupby(key).mean()
+opnprc=data['adj_open'].unstack()[filter_==1]
+clsprc=data['adj_close'].unstack()[filter_==1]
 
 illiq=np.abs((clsprc-opnprc)/opnprc/amount)*1e5
 illiq.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
@@ -111,12 +114,12 @@ plt.plot((rtn_before_fes+1).values.cumprod(axis=0))
 
 
 
-# 按size分组(前n个交易日数据)
+# 按size分组(前n个交易日数据) ; y
 num_by_=10
 label_=[i+1 for i in range(num_by_)] #
 percentile=np.linspace(0,1,num_by_+1)
 rtn_after_fes=DataFrame(0,index=np.array(after_fes_data)[:,0],columns=label_)
-indi=data['size_tot'].unstack()[filter==1]
+indi=data['size_tot'].unstack()[filter_==1]
 indi.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
 opnprc=opnprc.loc[indi.index]
 clsprc=clsprc.loc[indi.index]
@@ -126,17 +129,18 @@ for k,i in enumerate(after_fes_data):
     for j in range(num_by_):
         rtn_after_fes.iloc[k,j]=rtn_tmp[mark_.iloc[mark_.index.get_loc(i[0])]==j+1].mean()
 plt.plot((rtn_after_fes+1).values.cumprod(axis=0))
+tmp=rtn_after_fes[10]-rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
 
 
 
-# 按illiq分组(前n个交易日数据)
+# 按illiq分组(前n个交易日数据) ; y
 num_by_=10
 label_=[i+1 for i in range(num_by_)] #
 percentile=np.linspace(0,1,num_by_+1)
 rtn_after_fes=DataFrame(0,index=np.array(after_fes_data)[:,0],columns=label_)
-amount=data['amount'].unstack()[filter==1]#.groupby(key).mean()
-opnprc=data['adj_open'].unstack()[filter==1]
-clsprc=data['adj_close'].unstack()[filter==1]
+amount=data['amount'].unstack()[filter_==1]#.groupby(key).mean()
+opnprc=data['adj_open'].unstack()[filter_==1]
+clsprc=data['adj_close'].unstack()[filter_==1]
 indi=np.abs((clsprc-opnprc)/opnprc/amount)*1e5
 indi.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
 opnprc=opnprc.loc[indi.index]
@@ -147,18 +151,19 @@ for k,i in enumerate(after_fes_data):
     for j in range(num_by_):
         rtn_after_fes.iloc[k,j]=rtn_tmp[mark_.iloc[mark_.index.get_loc(i[0])]==j+1].mean()
 plt.plot((rtn_after_fes+1).values.cumprod(axis=0))
+tmp=rtn_after_fes[10]-rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
 
 
 
 
 
-# 按past分组(前n个交易日数据)
+# 按past分组(前n个交易日数据) ; y  ; 资本流入 or 流出 ？
 num_by_=10
 label_=[i+1 for i in range(num_by_)] #
 percentile=np.linspace(0,1,num_by_+1)
 rtn_after_fes=DataFrame(0,index=np.array(after_fes_data)[:,0],columns=label_)
-opnprc=data['adj_open'].unstack()[filter==1]
-clsprc=data['adj_close'].unstack()[filter==1]
+opnprc=data['adj_open'].unstack()[filter_==1]
+clsprc=data['adj_close'].unstack()[filter_==1]
 indi=(clsprc-opnprc)/opnprc
 indi.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
 opnprc=opnprc.loc[indi.index]
@@ -169,6 +174,134 @@ for k,i in enumerate(after_fes_data):
     for j in range(num_by_):
         rtn_after_fes.iloc[k,j]=rtn_tmp[mark_.iloc[mark_.index.get_loc(i[0])]==j+1].mean()
 plt.plot((rtn_after_fes+1).values.cumprod(axis=0))
+tmp=rtn_after_fes[10]-rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
+
+
+
+
+
+# 按price分组(前n个交易日数据) ; n
+num_by_=10
+label_=[i+1 for i in range(num_by_)] #
+percentile=np.linspace(0,1,num_by_+1)
+rtn_after_fes=DataFrame(0,index=np.array(after_fes_data)[:,0],columns=label_)
+indi=data['opnprc'].unstack()[filter_==1]
+indi.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
+opnprc=opnprc.loc[indi.index]
+clsprc=clsprc.loc[indi.index]
+mark_=DataFrame([pd.qcut(indi.iloc[np.maximum(i-30,0):i].mean(),q=percentile,labels=label_) for i in range(1,len(indi))],index=rtn.index[1:],columns=rtn.columns)
+for k,i in enumerate(after_fes_data):
+    rtn_tmp=(clsprc.iloc[clsprc.index.get_loc(i[0])+10]-opnprc.iloc[opnprc.index.get_loc(i[0])-5])/opnprc.iloc[opnprc.index.get_loc(i[0])-5]
+    for j in range(num_by_):
+        rtn_after_fes.iloc[k,j]=rtn_tmp[mark_.iloc[mark_.index.get_loc(i[0])]==j+1].mean()
+plt.plot((rtn_after_fes+1).values.cumprod(axis=0))
+tmp=rtn_after_fes[10]-rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
+
+
+
+
+# 按delta_price * size 分组(前n个交易日数据) ; 非线性关系：组合收益先增后减
+num_by_=10
+label_=[i+1 for i in range(num_by_)] #
+percentile=np.linspace(0,1,num_by_+1)
+rtn_after_fes=DataFrame(0,index=np.array(after_fes_data)[:,0],columns=label_)
+opnprc=data['adj_open'].unstack()[filter_==1]
+clsprc=data['adj_close'].unstack()[filter_==1]
+size=data['size_free'].unstack()[filter_==1]
+indi=(clsprc-opnprc)*size # opnprc-clsprc#
+indi.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
+opnprc=opnprc.loc[indi.index]
+clsprc=clsprc.loc[indi.index]
+mark_=DataFrame([pd.qcut(indi.iloc[np.maximum(i-30,0):i].mean(),q=percentile,labels=label_) for i in range(1,len(indi))],index=indi.index[1:],columns=indi.columns)
+for k,i in enumerate(after_fes_data):
+    rtn_tmp=(clsprc.iloc[clsprc.index.get_loc(i[0])+10]-opnprc.iloc[opnprc.index.get_loc(i[0])-5])/opnprc.iloc[opnprc.index.get_loc(i[0])-5]
+    for j in range(num_by_):
+        rtn_after_fes.iloc[k,j]=rtn_tmp[mark_.iloc[mark_.index.get_loc(i[0])]==j+1].mean()
+plt.plot((rtn_after_fes+1).values.cumprod(axis=0))
+tmp=rtn_after_fes[5]-rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
+
+rtn_after_fes.mean(axis=0)
+
+
+
+
+# 按delta_price * 资金净流入 分组(前n个交易日数据) ;
+num_by_=10
+label_=[i+1 for i in range(num_by_)] #
+percentile=np.linspace(0,1,num_by_+1)
+rtn_after_fes=DataFrame(0,index=np.array(after_fes_data)[:,0],columns=label_)
+opnprc=data['adj_open'].unstack()[filter_==1]
+clsprc=data['adj_close'].unstack()[filter_==1]
+amount=data['amount'].unstack()[filter_==1]
+indi=(clsprc-opnprc)*amount/(clsprc+opnprc) # opnprc-clsprc#
+indi.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
+opnprc=opnprc.loc[indi.index]
+clsprc=clsprc.loc[indi.index]
+mark_=DataFrame([pd.qcut(indi.iloc[np.maximum(i-30,0):i].mean(),q=percentile,labels=label_) for i in range(1,len(indi))],index=indi.index[1:],columns=indi.columns)
+for k,i in enumerate(after_fes_data):
+    rtn_tmp=(clsprc.iloc[clsprc.index.get_loc(i[0])+10]-opnprc.iloc[opnprc.index.get_loc(i[0])-5])/opnprc.iloc[opnprc.index.get_loc(i[0])-5]
+    for j in range(num_by_):
+        rtn_after_fes.iloc[k,j]=rtn_tmp[mark_.iloc[mark_.index.get_loc(i[0])]==j+1].mean()
+plt.plot((rtn_after_fes+1).values.cumprod(axis=0))
+tmp=rtn_after_fes[10]-rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
+
+rtn_after_fes.mean(axis=0)
+
+
+
+
+
+# 按 signed-volume 分组(前n个交易日数据) ; y (前10个交易日资金净流入)
+num_by_=10
+label_=[i+1 for i in range(num_by_)] #
+percentile=np.linspace(0,1,num_by_+1)
+rtn_after_fes=DataFrame(0,index=np.array(after_fes_data)[:,0],columns=label_)
+opnprc=data['adj_open'].unstack()[filter_==1]
+clsprc=data['adj_close'].unstack()[filter_==1]
+amount=data['amount'].unstack()[filter_==1]
+indi=np.sign(clsprc-opnprc)*amount/(clsprc+opnprc) # opnprc-clsprc#
+indi.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
+opnprc=opnprc.loc[indi.index]
+clsprc=clsprc.loc[indi.index]
+mark_=DataFrame([pd.qcut(indi.iloc[np.maximum(i-15,0):i].mean(),q=percentile,labels=label_) for i in range(1,len(indi))],index=indi.index[1:],columns=indi.columns)
+for k,i in enumerate(after_fes_data):
+    rtn_tmp=(clsprc.iloc[clsprc.index.get_loc(i[0])+10]-opnprc.iloc[opnprc.index.get_loc(i[0])-5])/opnprc.iloc[opnprc.index.get_loc(i[0])-5]
+    for j in range(num_by_):
+        rtn_after_fes.iloc[k,j]=rtn_tmp[mark_.iloc[mark_.index.get_loc(i[0])]==j+1].mean()
+plt.plot((rtn_after_fes+1).values.cumprod(axis=0))
+tmp=rtn_after_fes[10]-rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
+rtn_after_fes.mean(axis=0)
+
+
+
+
+
+# 按 size_free 分组(前n个交易日数据) ; y (前10个交易日资金净流入)
+num_by_=10
+label_=[i+1 for i in range(num_by_)] #
+percentile=np.linspace(0,1,num_by_+1)
+rtn_after_fes=DataFrame(0,index=np.array(after_fes_data)[:,0],columns=label_)
+opnprc=data['adj_open'].unstack()[filter_==1]
+clsprc=data['adj_close'].unstack()[filter_==1]
+size=data['size_free'].unstack()[filter_==1]
+indi=size-size.shift(1)
+indi.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
+opnprc=opnprc.loc[indi.index]
+clsprc=clsprc.loc[indi.index]
+mark_=DataFrame([pd.qcut(indi.iloc[np.maximum(i-15,0):i].mean(),q=percentile,labels=label_) for i in range(1,len(indi))],index=indi.index[1:],columns=indi.columns)
+for k,i in enumerate(after_fes_data):
+    rtn_tmp=(clsprc.iloc[clsprc.index.get_loc(i[0])+10]-opnprc.iloc[opnprc.index.get_loc(i[0])-5])/opnprc.iloc[opnprc.index.get_loc(i[0])-5]
+    for j in range(num_by_):
+        rtn_after_fes.iloc[k,j]=rtn_tmp[mark_.iloc[mark_.index.get_loc(i[0])]==j+1].mean()
+plt.plot((rtn_after_fes+1).values.cumprod(axis=0))
+tmp=rtn_after_fes[10]-rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
+
+rtn_after_fes.mean(axis=0)
+
+
+
+
+
 
 
 
