@@ -124,8 +124,9 @@ percentile=np.linspace(0,1,num_by_+1)
 rtn_after_fes=DataFrame(0,index=np.array(after_fes_data)[:,0],columns=label_)
 indi=data['size_tot'].unstack()[filter_==1]
 indi.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
-opnprc=opnprc.loc[indi.index]
-clsprc=clsprc.loc[indi.index]
+opnprc=data['adj_open'].unstack()[filter_==1].loc[indi.index]
+clsprc=data['adj_close'].unstack()[filter_==1].loc[indi.index]
+
 mark_=DataFrame([pd.qcut(indi.iloc[np.maximum(i-30,0):i].mean(),q=percentile,labels=label_) for i in range(1,len(indi))],index=indi.index[1:],columns=indi.columns)
 for k,i in enumerate(after_fes_data):
     rtn_tmp=(clsprc.iloc[clsprc.index.get_loc(i[0])+t1]-opnprc.iloc[opnprc.index.get_loc(i[0])+t0])/opnprc.iloc[opnprc.index.get_loc(i[0])+t0]
@@ -439,9 +440,41 @@ tmp=rtn_2_sort.loc[(5,5)]-rtn_2_sort.loc[(5,1)];tmp.mean()/tmp.std()*np.sqrt(len
 
 
 
+# 春节期间，不同size or price 组合的平均订单量的变化
+t0=0
+num_by_=5
+label_=[i+1 for i in range(num_by_)] #
+percentile=np.linspace(0,1,num_by_+1)
+
+indi=data['opnprc'].unstack()[filter_==1]
+indi.drop_duplicates(keep=False,inplace=True)
+
+open_=data['opnprc'].unstack()[filter_==1].loc[indi.index]
+close_=data['clsprc'].unstack()[filter_==1].loc[indi.index]
+amount_=data['amount'].unstack()[filter_==1].loc[indi.index]
+volume_=amount_*2.0/(open_+close_)
+
+volume_after_fes=DataFrame(0,index=range(1,31),columns=label_)
+volume_before_fes=DataFrame(0,index=range(-30,0),columns=label_)
 
 
+mark_=DataFrame([pd.qcut(indi.iloc[np.maximum(i-30,0):i].mean(),q=percentile,labels=label_) for i in range(1,len(indi))],index=indi.index[1:],columns=indi.columns)
+for i in after_fes_data:
+    for d in volume_after_fes.index:
+        for j in range(num_by_):
+            volume_after_fes.loc[d,j+1] +=volume_.iloc[mark_.index.get_loc(i[0])+t0+d-1][mark_.iloc[mark_.index.get_loc(i[0])+t0]==j+1].mean()
+volume_after_fes/=len(after_fes_data)
+for i in after_fes_data:
+    for d in volume_before_fes.index:
+        for j in range(num_by_):
+            volume_before_fes.loc[d,j+1] +=volume_.iloc[mark_.index.get_loc(i[0])+t0+d][mark_.iloc[mark_.index.get_loc(i[0])+t0]==j+1].mean()
+volume_before_fes/=len(after_fes_data)
 
+
+volume_after_fes.plot()
+volume_before_fes.plot()
+volume_fes=pd.concat([volume_before_fes,volume_after_fes])
+volume_fes.plot()
 
 
 
