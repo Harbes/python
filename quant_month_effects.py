@@ -227,7 +227,8 @@ tmp=rtn_after_fes[6]-rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) #
 tmp=rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) #
 rtn_after_fes.mean()
 
-mark_.loc['2005-02-16']
+
+
 
 # 按delta_price * size 分组(前n个交易日数据) ; 非线性关系：组合收益先增后减；但是多空组合显著
 num_by_=10
