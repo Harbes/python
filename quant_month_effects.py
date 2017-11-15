@@ -357,7 +357,7 @@ opnprc=opnprc.loc[indi_1.index]
 clsprc=clsprc.loc[indi_1.index]
 
 indi_2=data['size_tot'].unstack()[filter_==1]
-indi_2=indi_2.loc[indi.index]
+indi_2=indi_2.loc[indi_1.index]
 
 
 mark_1=DataFrame([pd.qcut(indi_1.iloc[np.maximum(i-30,0):i].mean(),q=percentile,labels=label_) for i in range(1,len(indi_1))],index=indi_1.index[1:],columns=indi_1.columns)
@@ -378,14 +378,54 @@ for s in label_:
 
 # 结果显示
 (rtn_2_sort+1).loc[(slice(None),1),slice(None)].T.cumprod().plot() # 为什么使用axis=1不能得到想要的结果？？？
-
 tmp=rtn_2_sort.loc[(5,1)]-rtn_2_sort.loc[(1,1)];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) # 控制了size因素后，low-price依然显著
 
+(rtn_2_sort+1).loc[(1,slice(None)),slice(None)].T.cumprod().plot() # 为什么使用axis=1不能得到想要的结果？？？
+tmp=rtn_2_sort.loc[(1,5)]-rtn_2_sort.loc[(1,1)];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) # 控制了low-price因素后，感觉size也更显著了
 
 
 
 
 
+# 先按volatility分组(前n个交易日数据)，然后，再按其他指标进行分组
+num_by_=5
+label_=[i+1 for i in range(num_by_)] #
+percentile=np.linspace(0,1,num_by_+1)
+
+opnprc=data['adj_open'].unstack()[filter_==1]
+clsprc=data['adj_close'].unstack()[filter_==1]
+
+indi_1=(clsprc-opnprc)/opnprc
+indi_1.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
+
+opnprc=opnprc.loc[indi_1.index]
+clsprc=clsprc.loc[indi_1.index]
+
+indi_2=data['size_tot'].unstack()[filter_==1]
+indi_2=indi_2.loc[indi_1.index]
+
+n_del=5
+mark_1=DataFrame([pd.qcut(indi_1.iloc[np.maximum(i-30,0):i].std(),q=percentile,labels=label_) for i in range(n_del,len(indi_1))],index=indi_1.index[n_del:],columns=indi_1.columns)
+mark_2=DataFrame(np.nan,index=mark_1.index,columns=mark_1.columns)
+for l_ in label_:
+    tmp=DataFrame([pd.qcut(indi_2.iloc[np.maximum(i-30,0):i].mean()[mark_1.iloc[i-n_del]==l_],q=percentile,labels=label_) for i in range(n_del,len(indi_2))],index=indi_2.index[n_del:])
+    mark_2=mark_2.combine_first(tmp)
+
+
+rtn_2_sort=DataFrame(np.zeros((25,len(after_fes_data))),index=pd.MultiIndex.from_product([label_,label_]),columns=np.array(after_fes_data)[:,0])
+
+for s in label_:
+    for i in label_:
+        for j in after_fes_data:
+            rtn_2_sort.loc[(s,i),j[0]]= \
+                ((clsprc.iloc[clsprc.index.get_loc(j[0])+t1]-opnprc.iloc[opnprc.index.get_loc(j[0])+t0])/opnprc.iloc[opnprc.index.get_loc(j[0])+t0])[np.logical_and(mark_1.iloc[mark_1.index.get_loc(j[0])+t0]==s,mark_2.iloc[mark_2.index.get_loc(j[0])+t0]==i)].mean()
+
+# 结果显示
+(rtn_2_sort+1).loc[(slice(None),1),slice(None)].T.cumprod().plot() # 为什么使用axis=1不能得到想要的结果？？？
+tmp=rtn_2_sort.loc[(5,4)]-rtn_2_sort.loc[(1,4)];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) # 控制了size因素后，volatility 不显著了
+
+(rtn_2_sort+1).loc[(1,slice(None)),slice(None)].T.cumprod().plot() # 为什么使用axis=1不能得到想要的结果？？？
+tmp=rtn_2_sort.loc[(5,5)]-rtn_2_sort.loc[(5,1)];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) # 控制了vol因素后，感觉size更显著了
 
 
 
