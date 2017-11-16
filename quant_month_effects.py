@@ -4,7 +4,7 @@ from pandas import DataFrame
 from datetime import datetime
 import matplotlib.pyplot as plt
 
-t1=10
+t1=9
 t0=0
 
 # 整理数据
@@ -117,7 +117,7 @@ plt.plot((rtn_before_fes+1).values.cumprod(axis=0))
 
 
 
-# 按size分组(前n个交易日数据) ; y
+# 按size分组(前n个交易日数据) ; y ；非常显著(-4.45)，且为负向
 num_by_=10
 label_=[i+1 for i in range(num_by_)] #
 percentile=np.linspace(0,1,num_by_+1)
@@ -138,7 +138,7 @@ tmp=rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
 
 
 
-# 按illiq分组(前n个交易日数据) ; y
+# 按illiq分组(前n个交易日数据) ; y；非常显著(4.67)，且正向
 num_by_=10
 label_=[i+1 for i in range(num_by_)] #
 percentile=np.linspace(0,1,num_by_+1)
@@ -162,7 +162,7 @@ tmp=rtn_after_fes[10]-rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
 
 
 
-# 按past分组(前n个交易日数据) ; y  ; 资本流入 or 流出 ？;
+# 按past分组(前n个交易日数据) ; y  ; 显著(-2.12)
 num_by_=10
 label_=[i+1 for i in range(num_by_)] #
 percentile=np.linspace(0,1,num_by_+1)
@@ -185,7 +185,7 @@ tmp=rtn_after_fes[10]-rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
 
 
 
-# 按price分组(前n个交易日数据) ; y【low price在中国是不显著的，春节期间却是显著的(尤其是春节后)，低价收益更高，但是不稳定，对策略构建的日期较为敏感】
+# 按price分组(前n个交易日数据) ; y【low price在中国是不显著的，春节期间却是显著的(尤其是春节后,-2.5)，低价收益更高，但是不稳定，对策略构建的日期较为敏感】
 t0=0
 t1=9
 num_by_=10
@@ -207,7 +207,7 @@ rtn_after_fes.mean()
 
 
 
-# 按波动率分组(前n个交易日数据) ;  不显著，且为正；春节期间有转向低波动组合的趋势
+# 按波动率分组(前n个交易日数据) ;  不显著，且为正；低波动率组合异常？春节期间有转向低波动组合的趋势?
 num_by_=10
 label_=[i+1 for i in range(num_by_)] #
 percentile=np.linspace(0,1,num_by_+1)
@@ -224,7 +224,7 @@ for k,i in enumerate(after_fes_data):
     for j in range(num_by_):
         rtn_after_fes.iloc[k,j]=rtn_tmp[mark_.iloc[mark_.index.get_loc(i[0])+t0]==j+1].mean()
 plt.plot((rtn_after_fes+1).values.cumprod(axis=0))
-tmp=rtn_after_fes[6]-rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) #
+tmp=rtn_after_fes[10]-rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) #
 tmp=rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) #
 rtn_after_fes.mean()
 
@@ -354,15 +354,16 @@ num_by_=5
 label_=[i+1 for i in range(num_by_)] #
 percentile=np.linspace(0,1,num_by_+1)
 
+opnprc=data['adj_open'].unstack()[filter_==1]
+clsprc=data['adj_close'].unstack()[filter_==1]
+
 indi_1=data['opnprc'].unstack()[filter_==1]
 indi_1.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
 
-opnprc=data['adj_open'].unstack()[filter_==1]
-clsprc=data['adj_close'].unstack()[filter_==1]
 opnprc=opnprc.loc[indi_1.index]
 clsprc=clsprc.loc[indi_1.index]
 
-indi_2=data['size_tot'].unstack()[filter_==1]
+#indi_2=data['size_tot'].unstack()[filter_==1]
 amount=data['amount'].unstack()[filter_==1]
 
 indi_2=amount/(clsprc+opnprc)
@@ -436,6 +437,51 @@ tmp=rtn_2_sort.loc[(5,4)]-rtn_2_sort.loc[(1,4)];tmp.mean()/tmp.std()*np.sqrt(len
 (rtn_2_sort+1).loc[(1,slice(None)),slice(None)].T.cumprod().plot() # 为什么使用axis=1不能得到想要的结果？？？
 tmp=rtn_2_sort.loc[(5,5)]-rtn_2_sort.loc[(5,1)];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) # 控制了vol因素后，感觉size更显著了
 
+
+
+
+
+
+# 先按size分组(前n个交易日数据)，然后，再按past、进行分组
+num_by_=5
+label_=[i+1 for i in range(num_by_)] #
+percentile=np.linspace(0,1,num_by_+1)
+
+indi_1=data['size_tot'].unstack()[filter_==1]
+indi_1.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
+
+opnprc=data['adj_open'].unstack()[filter_==1]
+clsprc=data['adj_close'].unstack()[filter_==1]
+opnprc=opnprc.loc[indi_1.index]
+clsprc=clsprc.loc[indi_1.index]
+
+indi_2=(clsprc-opnprc)/opnprc
+indi_2=indi_2.loc[indi_1.index]
+
+n_del=5
+mark_1=DataFrame([pd.qcut(indi_1.iloc[np.maximum(i-18,0):i].std(),q=percentile,labels=label_) for i in range(n_del,len(indi_1))],index=indi_1.index[n_del:],columns=indi_1.columns)
+mark_2=DataFrame(np.nan,index=mark_1.index,columns=mark_1.columns)
+for l_ in label_:
+    tmp=DataFrame([pd.qcut(indi_2.iloc[np.maximum(i-18,0):i].mean()[mark_1.iloc[i-n_del]==l_],q=percentile,labels=label_) for i in range(n_del,len(indi_2))],index=indi_2.index[n_del:])
+    mark_2=mark_2.combine_first(tmp)
+
+
+rtn_2_sort=DataFrame(np.zeros((25,len(after_fes_data))),index=pd.MultiIndex.from_product([label_,label_]),columns=np.array(after_fes_data)[:,0])
+
+for s in label_:
+    for i in label_:
+        for j in after_fes_data:
+            rtn_2_sort.loc[(s,i),j[0]]= \
+                ((clsprc.iloc[clsprc.index.get_loc(j[0])+t1]-opnprc.iloc[opnprc.index.get_loc(j[0])+t0])/opnprc.iloc[opnprc.index.get_loc(j[0])+t0])[np.logical_and(mark_1.iloc[mark_1.index.get_loc(j[0])+t0]==s,mark_2.iloc[mark_2.index.get_loc(j[0])+t0]==i)].mean()
+
+# 结果显示
+(rtn_2_sort+1).loc[(slice(None),1),slice(None)].T.cumprod().plot() #
+tmp=rtn_2_sort.loc[(5,4)]-rtn_2_sort.loc[(1,4)];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) #
+
+(rtn_2_sort+1).loc[(1,slice(None)),slice(None)].T.cumprod().plot() #  最小的组合，其past不再显著【有可能是小散依据过去的收益】
+tmp=rtn_2_sort.loc[(5,5)]-rtn_2_sort.loc[(5,1)];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) #
+
+rtn_2_sort.mean(axis=1)
 
 
 
