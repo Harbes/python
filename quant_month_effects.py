@@ -11,10 +11,10 @@ t0=0
 #data=pd.read_pickle('F:/data/xccdata/PV_datetime')[['adj_open','adj_close']]
 data=pd.read_pickle('/Users/harbes/data/xccdata/PV_datetime')[['amount','opnprc','clsprc','adj_open','adj_close','size_tot','size_free']]
 filter_=pd.read_pickle('/Users/harbes/data/xccdata/filter') # 4672606个有效数据点(原来有6140094个数据点)
-opnprc=data['adj_open'].unstack()
-clsprc=data['adj_close'].unstack()
-rtn=((clsprc-opnprc)/opnprc)[filter_==1]
-rtn.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
+#opnprc=data['adj_open'].unstack()
+#clsprc=data['adj_close'].unstack()
+#rtn=((clsprc-opnprc)/opnprc)[filter_==1]
+#rtn.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
 
 
 after_fes_data=[
@@ -446,15 +446,15 @@ tmp=rtn_2_sort.loc[(n_check,5)]-rtn_2_sort.loc[(n_check,1)];tmp.mean()/tmp.std()
 
 
 
-# 先按volatility or past return 分组(前n个交易日数据)，然后，再按size进行分组
+# 先按 volatility or past return or illiquidity 分组(前n个交易日数据)，然后，再按size进行分组
 num_by_=5
 label_=[i+1 for i in range(num_by_)] #
 percentile=np.linspace(0,1,num_by_+1)
 
 opnprc=data['adj_open'].unstack()
 clsprc=data['adj_close'].unstack()
-
-indi_1=(clsprc-opnprc)/opnprc
+amount=data['amount'].unstack()
+indi_1=(clsprc-opnprc)/opnprc/amount
 indi_1.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
 
 opnprc=opnprc.loc[indi_1.index]
@@ -485,7 +485,7 @@ n_check=5
 (rtn_2_sort+1).loc[(slice(None),n_check),slice(None)].T.cumprod().plot() # 为什么使用axis=1不能得到想要的结果？？？
 tmp=rtn_2_sort.loc[(5,n_check)]-rtn_2_sort.loc[(1,n_check)];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) # 控制了size因素后，low-price依然显著
 
-n_check=5
+n_check=1
 (rtn_2_sort+1).loc[(n_check,slice(None)),slice(None)].T.cumprod().plot() # 为什么使用axis=1不能得到想要的结果？？？
 tmp=rtn_2_sort.loc[(n_check,5)]-rtn_2_sort.loc[(n_check,1)];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) # 控制了low-price因素后，感觉size也更显著了
 
@@ -641,10 +641,16 @@ indi=data['size_tot'].unstack()[filter_==1]
 indi.drop_duplicates(keep=False,inplace=True)
 
 sell_buy=pd.read_pickle('/Users/harbes/data/xccdata/MF_datetime')[['buy_value_small_order','sell_value_small_order','buy_value_exlarge_order']]
-sell_=sell_buy['sell_value_small_order'].unstack()
+insti_buy_=sell_buy['buy_value_exlarge_order'].unstack()
+insti_buy_=insti_buy_[insti_buy_!=0]
+#sell_=sell_buy['sell_value_small_order'].unstack()
 buy_=sell_buy['buy_value_small_order'].unstack()
-sell_=sell_/sell_.mean()
-buy_=buy_/buy_.mean()
+
+#sell_=sell_/sell_.mean()
+buy_=buy_/buy_.mean().mean()
+insti_buy_=insti_buy_/insti_buy_.mean().mean()
+indi2=insti_buy_+buy_
+#indi2=indi2[indi2<30]
 #buy_insti=sell_buy['buy_value_exlarge_order'].unstack()
 #amount=data['amount'].unstack()
 
@@ -652,17 +658,18 @@ buy_=buy_/buy_.mean()
 sell_buy_after_fes=DataFrame(0,index=range(1,31),columns=label_)
 sell_buy_before_fes=DataFrame(0,index=range(-30,0),columns=label_)
 
+indi=indi[buy_.columns]
 
 mark_=DataFrame([pd.qcut(indi.iloc[np.maximum(i-18,0):i].mean(),q=percentile,labels=label_) for i in range(1,len(indi))],index=indi.index[1:],columns=indi.columns)
 for i in after_fes_data[5:]:
     for d in sell_buy_after_fes.index:
         for j in range(num_by_):
-            sell_buy_after_fes.loc[d,j+1] +=buy_.iloc[mark_.index.get_loc(i[0])+t0+d-1][mark_.iloc[mark_.index.get_loc(i[0])+t0]==j+1].mean()
+            sell_buy_after_fes.loc[d,j+1] +=indi2.iloc[indi2.index.get_loc(i[0])+t0+d-1][mark_.iloc[mark_.index.get_loc(i[0])+t0]==j+1].mean()
 sell_buy_after_fes/=len(after_fes_data[5:])
 for i in after_fes_data[5:]:
     for d in sell_buy_before_fes.index:
         for j in range(num_by_):
-            sell_buy_before_fes.loc[d,j+1] +=buy_.iloc[mark_.index.get_loc(i[0])+t0+d][mark_.iloc[mark_.index.get_loc(i[0])+t0]==j+1].mean()
+            sell_buy_before_fes.loc[d,j+1] +=indi2.iloc[indi2.index.get_loc(i[0])+t0+d][mark_.iloc[mark_.index.get_loc(i[0])+t0]==j+1].mean()
 sell_buy_before_fes/=len(after_fes_data[5:])
 
 
@@ -670,7 +677,7 @@ sell_buy_after_fes.plot()
 sell_buy_before_fes.plot()
 sell_buy_fes=pd.concat([sell_buy_before_fes,sell_buy_after_fes])
 sell_buy_fes.plot()
-
+sell_buy_fes
 
 
 

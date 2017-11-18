@@ -63,7 +63,7 @@ percentile=np.linspace(0,1,group_num+1)
 label_size=[i+1 for i in range(group_num)] # 1表示流动性较好的组合，另一个极端组合是流动性较差的组合
 label_illiq=[i+1 for i in range(group_num)] # 1表示流动性较好的组合，另一个极端组合是流动性较差的组合
 
-filter=pd.read_pickle('/Users/harbes/data/xccdata/filter') # 4672606个有效数据点(原来有6140094个数据点)
+filter_=pd.read_pickle('/Users/harbes/data/xccdata/filter') # 4672606个有效数据点(原来有6140094个数据点)
 size=data['size_tot'].unstack()[filter==1].groupby(key).mean()
 size.index = pd.to_datetime(size.index.values.astype(str),format=('%Y%m'))
 
