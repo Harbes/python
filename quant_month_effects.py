@@ -454,7 +454,11 @@ percentile=np.linspace(0,1,num_by_+1)
 opnprc=data['adj_open'].unstack()
 clsprc=data['adj_close'].unstack()
 amount=data['amount'].unstack()
-indi_1=(clsprc-opnprc)/opnprc/amount
+amount_filter=pd.read_pickle('/Users/harbes/data/xccdata/amount_filter')
+amount=amount[amount_filter==1]
+open_=data['opnprc'].unstack()
+close_=data['clsprc'].unstack()
+indi_1=np.abs(clsprc-opnprc)/opnprc/amount
 indi_1.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
 
 opnprc=opnprc.loc[indi_1.index]
@@ -592,33 +596,37 @@ rtn_2_sort.mean(axis=1)
 
 
 # 春节期间，不同size or price 组合的平均订单量的变化
-t0=0
 num_by_=5
 label_=[i+1 for i in range(num_by_)] #
 percentile=np.linspace(0,1,num_by_+1)
 
-indi=data['opnprc'].unstack()[filter_==1]
+indi=data['size_tot'].unstack()[filter_==1]
 indi.drop_duplicates(keep=False,inplace=True)
 
 open_=data['opnprc'].unstack()[filter_==1].loc[indi.index]
 close_=data['clsprc'].unstack()[filter_==1].loc[indi.index]
 amount_=data['amount'].unstack()[filter_==1].loc[indi.index]
-volume_=amount_*2.0/(open_+close_)
+#volume_=amount_*2.0/(open_+close_)
+#volume_=amount_/indi # 换手率
+opnprc=data['adj_open'].unstack()[filter_==1].loc[indi.index]
+clsprc=data['adj_close'].unstack()[filter_==1].loc[indi.index]
+volume_=(clsprc-opnprc)/opnprc
 
-volume_after_fes=DataFrame(0,index=range(1,31),columns=label_)
-volume_before_fes=DataFrame(0,index=range(-30,0),columns=label_)
+
+volume_after_fes=DataFrame(0,index=range(1,61),columns=label_)
+volume_before_fes=DataFrame(0,index=range(-60,0),columns=label_)
 
 
 mark_=DataFrame([pd.qcut(indi.iloc[np.maximum(i-18,0):i].mean(),q=percentile,labels=label_) for i in range(1,len(indi))],index=indi.index[1:],columns=indi.columns)
 for i in after_fes_data:
     for d in volume_after_fes.index:
         for j in range(num_by_):
-            volume_after_fes.loc[d,j+1] +=volume_.iloc[mark_.index.get_loc(i[0])+t0+d-1][mark_.iloc[mark_.index.get_loc(i[0])+t0]==j+1].mean()
+            volume_after_fes.loc[d,j+1] +=volume_.iloc[volume_.index.get_loc(i[0])+t0+d-1][mark_.iloc[mark_.index.get_loc(i[0])+t0]==j+1].mean()
 volume_after_fes/=len(after_fes_data)
 for i in after_fes_data:
     for d in volume_before_fes.index:
         for j in range(num_by_):
-            volume_before_fes.loc[d,j+1] +=volume_.iloc[mark_.index.get_loc(i[0])+t0+d][mark_.iloc[mark_.index.get_loc(i[0])+t0]==j+1].mean()
+            volume_before_fes.loc[d,j+1] +=volume_.iloc[volume_.index.get_loc(i[0])+t0+d][mark_.iloc[mark_.index.get_loc(i[0])+t0]==j+1].mean()
 volume_before_fes/=len(after_fes_data)
 
 
@@ -626,8 +634,8 @@ volume_after_fes.plot()
 volume_before_fes.plot()
 volume_fes=pd.concat([volume_before_fes,volume_after_fes])
 volume_fes.plot()
-
-
+tmp=volume_fes[1]/volume_fes[5];tmp.plot()
+volume_fes
 
 
 
@@ -647,18 +655,23 @@ insti_buy_=insti_buy_[insti_buy_!=0]
 buy_=sell_buy['buy_value_small_order'].unstack()
 
 #sell_=sell_/sell_.mean()
-buy_=buy_/buy_.mean().mean()
-insti_buy_=insti_buy_/insti_buy_.mean().mean()
-indi2=insti_buy_+buy_
+#buy_=buy_/buy_.mean().mean()
+#insti_buy_=insti_buy_/insti_buy_.mean().mean()
+#indi2=insti_buy_+buy_
 #indi2=indi2[indi2<30]
 #buy_insti=sell_buy['buy_value_exlarge_order'].unstack()
-#amount=data['amount'].unstack()
+amount=data['amount'].unstack()
+amount_filter=pd.read_pickle('/Users/harbes/data/xccdata/amount_filter')
+amount=amount[amount_filter==1]
+opnprc=data['opnprc'].unstack()
+clsprc=data['clsprc'].unstack()
+indi2=np.abs(clsprc-opnprc)/amount
 
 
-sell_buy_after_fes=DataFrame(0,index=range(1,31),columns=label_)
-sell_buy_before_fes=DataFrame(0,index=range(-30,0),columns=label_)
+sell_buy_after_fes=DataFrame(0,index=range(1,61),columns=label_)
+sell_buy_before_fes=DataFrame(0,index=range(-60,0),columns=label_)
 
-indi=indi[buy_.columns]
+indi=indi[indi2.columns]
 
 mark_=DataFrame([pd.qcut(indi.iloc[np.maximum(i-18,0):i].mean(),q=percentile,labels=label_) for i in range(1,len(indi))],index=indi.index[1:],columns=indi.columns)
 for i in after_fes_data[5:]:
