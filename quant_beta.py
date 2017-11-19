@@ -32,7 +32,8 @@ rtn=(clsprc-opnprc)/opnprc
 rtn_port=DataFrame([[rtn.loc[m][mark_.loc[m]==l_].mean() for l_ in label_] for m in mark_.index],index=mark_.index,columns=label_)
 
 # market portfolio
-rtn_port['M']=(size*rtn).mean(axis=1)/(size[~np.isnan(size*rtn)]).mean(axis=1)
+#rtn_port['M']=(size*rtn).mean(axis=1)/(size[~np.isnan(size*rtn)]).mean(axis=1) # value-weighted
+rtn_port['M']=rtn.mean(axis=1) # equally-weighted
 
 # 设置第二index
 rtn_port['index']=(rtn_port.index.year-2005)*12+rtn_port.index.month-1
@@ -40,8 +41,8 @@ max_month=rtn_port['index'][-1]
 rtn_port['trddt']=rtn_port.index
 rtn_port=rtn_port.set_index(['trddt','index'])
 
-# 计算 beta (以前12个月数据滚动计算，每月计算一次)
-rtn_port.loc[(slice(None),range(0,12)),slice(None)]#.cov().loc['M',label_]
+# 计算 beta (前12个月数据滚动计算，每月计算一次)
+#rtn_port.loc[(slice(None),range(0,12)),slice(None)]#.cov().loc['M',label_]
 beta_=DataFrame([rtn_port.loc[(slice(None),range(np.maximum(0,i-12),i)),slice(None)].cov().loc['M',label_]/rtn_port.loc[(slice(None),range(np.maximum(0,i-12),i)),slice(None)].cov().loc['M','M'] for i in range(1,len(size_month))],index=size_month.index[1:],columns=label_)
 
 
