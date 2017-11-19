@@ -4,7 +4,7 @@ from pandas import DataFrame
 from datetime import datetime
 import matplotlib.pyplot as plt
 
-t1=9
+t1=8
 t0=0
 
 # 整理数据
@@ -32,6 +32,16 @@ after_fes_data=[
     (datetime(2016, 2, 15), '2016'),
     (datetime(2017, 2, 3), '2017'),
 ]
+
+price=data['opnprc'].unstack()
+price.min().min() # 0.469
+price.min().max() # 106.4
+price.max().min() # 0.91
+price.max().max() # 560.97
+
+
+
+
 
 
 
@@ -186,23 +196,28 @@ rtn_after_fes.mean()
 
 
 # 按price分组(前n个交易日数据) ; y【low price在中国是不显著的，春节期间却是显著的(尤其是春节后,-2+)，低价收益更高，但是不稳定，对策略构建的日期较为敏感】
-num_by_=10
+num_by_=5
 label_=[i+1 for i in range(num_by_)] #
 percentile=np.linspace(0,1,num_by_+1)
-rtn_after_fes=DataFrame(0,index=np.array(after_fes_data)[:,0],columns=label_)
 indi=data['opnprc'].unstack()[filter_==1]
 indi.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
+opnprc=data['adj_open'].unstack()[filter_==1]
+clsprc=data['adj_close'].unstack()[filter_==1]
 opnprc=opnprc.loc[indi.index]
 clsprc=clsprc.loc[indi.index]
-mark_=DataFrame([pd.qcut(indi.iloc[np.maximum(i-18,0):i].mean(),q=percentile,labels=label_) for i in range(1,len(indi))],index=indi.index[1:],columns=indi.columns)
-for k,i in enumerate(after_fes_data):
+
+rtn_after_fes=DataFrame(0,index=np.array(after_fes_data)[2:,0],columns=label_)
+#mark_=DataFrame([pd.qcut(indi.iloc[np.maximum(i-18,0):i].mean(),q=percentile,labels=label_) for i in range(1,len(indi))],index=indi.index[1:],columns=indi.columns)
+mark_=DataFrame([pd.cut(indi.iloc[np.maximum(i-18,0):i].mean(),bins=[0,10,20,30,40,1000],labels=label_) for i in range(1,len(indi))],index=indi.index[1:],columns=indi.columns)
+for k,i in enumerate(after_fes_data[2:]):
     rtn_tmp=(clsprc.iloc[clsprc.index.get_loc(i[0])+t1]-opnprc.iloc[opnprc.index.get_loc(i[0])+t0])/opnprc.iloc[opnprc.index.get_loc(i[0])+t0]
     for j in range(num_by_):
         rtn_after_fes.iloc[k,j]=rtn_tmp[mark_.iloc[mark_.index.get_loc(i[0])+t0]==j+1].mean()
-plt.plot((rtn_after_fes+1).values.cumprod(axis=0))
-tmp=rtn_after_fes[10]-rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) #
+(rtn_after_fes+1).cumprod(axis=0).plot()
+rtn_after_fes
+tmp=rtn_after_fes[5]-rtn_after_fes[1];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) #
 rtn_after_fes.mean()
-
+rtn_tmp[mark_.iloc[mark_.index.get_loc(i[0])+t0]==5].count()
 
 
 # 按波动率分组(前n个交易日数据) ;  不显著，且为正；低波动率组合异常？春节期间有转向低波动组合的趋势?
