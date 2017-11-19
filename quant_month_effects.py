@@ -459,6 +459,57 @@ tmp=rtn_2_sort.loc[(n_check,5)]-rtn_2_sort.loc[(n_check,1)];tmp.mean()/tmp.std()
 
 
 
+# 先按price(pre-specified price)分组(前n个交易日数据)，然后，再按size进行分组
+num_by_=5
+label_=[i+1 for i in range(num_by_)] #
+percentile=np.linspace(0,1,num_by_+1)
+
+opnprc=data['adj_open'].unstack()[filter_==1]
+clsprc=data['adj_close'].unstack()[filter_==1]
+
+indi_1=data['opnprc'].unstack()[filter_==1]
+indi_1.drop_duplicates(keep=False,inplace=True) # 有一些日期全是nan，需要剔除
+indi_1=indi_1[414:] # 剔除05和06数据
+
+opnprc=opnprc.loc[indi_1.index]
+clsprc=clsprc.loc[indi_1.index]
+
+indi_2=data['size_tot'].unstack()[filter_==1]#(clsprc-opnprc)/opnprc
+indi_2=indi_2.loc[indi_1.index]
+
+n_del=5
+#mark_1=DataFrame([pd.qcut(indi_1.iloc[np.maximum(i-18,0):i].mean(),q=percentile,labels=label_) for i in range(n_del,len(indi_1))],index=indi_1.index[n_del:],columns=indi_1.columns)
+mark_1=DataFrame([pd.cut(indi_1.iloc[np.maximum(i-18,0):i].mean(),bins=[0,7.5,10,15,30,1000],labels=label_) for i in range(n_del,len(indi_1))],index=indi_1.index[n_del:],columns=indi_1.columns)
+
+#i=1;mark_1[mark_1==i].sum(axis=1)/i
+mark_2=DataFrame(np.nan,index=mark_1.index,columns=mark_1.columns)
+for l_ in label_:
+    tmp=DataFrame([pd.qcut(indi_2.iloc[np.maximum(i-18,0):i].mean()[mark_1.iloc[i-n_del]==l_],q=percentile,labels=label_) for i in range(n_del,len(indi_2))],index=indi_2.index[n_del:])
+    mark_2=mark_2.combine_first(tmp)
+
+
+
+rtn_2_sort=DataFrame(np.zeros((25,len(after_fes_data[2:]))),index=pd.MultiIndex.from_product([label_,label_]),columns=np.array(after_fes_data)[2:,0])
+
+for s in label_:
+    for i in label_:
+        for j in after_fes_data[2:]:
+            rtn_2_sort.loc[(s,i),j[0]]= \
+                ((clsprc.iloc[clsprc.index.get_loc(j[0])+t1]-opnprc.iloc[opnprc.index.get_loc(j[0])+t0])/opnprc.iloc[opnprc.index.get_loc(j[0])+t0])[np.logical_and(mark_1.iloc[mark_1.index.get_loc(j[0])+t0]==s,mark_2.iloc[mark_2.index.get_loc(j[0])+t0]==i)].mean()
+
+# 结果显示
+n_check=5
+(rtn_2_sort+1).loc[(slice(None),n_check),slice(None)].T.cumprod().plot() # 为什么使用axis=1不能得到想要的结果？？？
+tmp=rtn_2_sort.loc[(5,n_check)]-rtn_2_sort.loc[(1,n_check)];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) # 控制了size因素后，low-price依然显著
+
+n_check=3
+(rtn_2_sort+1).loc[(n_check,slice(None)),slice(None)].T.cumprod().plot() # 为什么使用axis=1不能得到想要的结果？？？
+tmp=rtn_2_sort.loc[(n_check,5)]-rtn_2_sort.loc[(n_check,1)];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) # 控制了low-price因素后，感觉size也更显著了
+
+
+
+
+
 
 
 # 先按 volatility or past return or illiquidity 分组(前n个交易日数据)，然后，再按size进行分组
@@ -615,7 +666,7 @@ num_by_=5
 label_=[i+1 for i in range(num_by_)] #
 percentile=np.linspace(0,1,num_by_+1)
 
-indi=data['size_tot'].unstack()[filter_==1]
+indi=data['opnprc'].unstack()[filter_==1]
 indi.drop_duplicates(keep=False,inplace=True)
 
 open_=data['opnprc'].unstack()[filter_==1].loc[indi.index]
@@ -623,9 +674,9 @@ close_=data['clsprc'].unstack()[filter_==1].loc[indi.index]
 amount_=data['amount'].unstack()[filter_==1].loc[indi.index]
 #volume_=amount_*2.0/(open_+close_)
 #volume_=amount_/indi # 换手率
-opnprc=data['adj_open'].unstack()[filter_==1].loc[indi.index]
-clsprc=data['adj_close'].unstack()[filter_==1].loc[indi.index]
-volume_=(clsprc-opnprc)/opnprc
+#opnprc=data['adj_open'].unstack()[filter_==1].loc[indi.index]#
+#clsprc=data['adj_close'].unstack()[filter_==1].loc[indi.index]
+volume_=amount_*2.0/(open_+close_)
 
 
 volume_after_fes=DataFrame(0,index=range(1,61),columns=label_)
