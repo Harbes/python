@@ -480,5 +480,125 @@ RIM将企业价值分为两个关键要素—投入资本与未来剩余价值�
 学术界的证据
 \end_layout
 
+\begin_layout Itemize
+廉价(只是纯粹的被低估，还是意味着某种风险？)
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+市账比率
+\end_layout
+
+\begin_layout Itemize
+盈利价格比
+\end_layout
+
+\begin_layout Itemize
+现金流与价格比
+\end_layout
+
+\begin_layout Itemize
+销售额与企业价值之比
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+质量(尚无统一认识，不过本书认为是反应公司未来盈利能力和增长的因素)
+\end_layout
+
+\begin_layout Itemize
+盈利能力和增长
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+ROA
+\end_layout
+
+\begin_layout Itemize
+经营现金流
+\end_layout
+
+\begin_layout Itemize
+利润率
+\end_layout
+
+\begin_layout Itemize
+资产周转率
+\end_layout
+
+\begin_layout Itemize
+...
+\end_layout
+
+\begin_layout Itemize
+值得一提的是Piotroski and So(2013) 论述了价值效应可归因于市场对未来基本面的错误期望。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+盈余质量。Beneish et al.(2013)利用M-score可以在欺诈披露前正确识别71%的会计欺诈。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+盈余的现金流部分比应计部分更具有持续性
+\end_layout
+
+\begin_layout Itemize
+毛利(销售收入-销售成本)比净利润更好的衡量盈利能力
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+安全性
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+波动率
+\end_layout
+
+\begin_layout Itemize
+beta
+\end_layout
+
+\begin_layout Itemize
+杠杆
+\end_layout
+
+\begin_layout Itemize
+财务风险
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+股息率
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Asness的QMJ(quality minus junk)投资组合。将21个指标分为4个维度：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+盈利性指标：投资回报率(ROE、ROA)，毛利(GPOA、GMAR)，经营性现金流(CFOA、ACC)
+\end_layout
+
+\begin_layout Itemize
+成长性指标：毛利、收入或现金流在过去5年的增长情况
+\end_layout
+
+\begin_layout Itemize
+安全性指标：beta、股价波动、盈利波动、杠杆率、财务风险(O-score，Z-score)
+\end_layout
+
+\begin_layout Itemize
+派息率指标：净股票发行量、净债务发行量、股利支付率
+\end_layout
+
+\end_deeper
+\end_deeper
 \end_body
 \end_document
