@@ -1,0 +1,604 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass book
+\begin_preamble
+%不显示日期
+\date{}
+
+%自动换行
+\XeTeXlinebreaklocale "zh" 
+\XeTeXlinebreakskip = 0pt plus 1pt
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language chinese-simplified
+\language_package default
+\inputencoding utf8-plain
+\fontencoding global
+\font_roman "default" "Songti SC"
+\font_sans "default" "STFangsong"
+\font_typewriter "default" "Songti SC"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts true
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered true
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2.5page%
+\topmargin 5pheight%
+\rightmargin 2.5page%
+\bottommargin 5pheight%
+\headheight 2.5pheight%
+\headsep 2.5pheight%
+\footskip 2.5pheight%
+\secnumdepth 3
+\tocdepth 1
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+基本面量化投资(笔记由Harbes整理)
+\end_layout
+
+\begin_layout Author
+张然 许荣飞
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+字体设置
+\end_layout
+
+\begin_layout Itemize
+Windows：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+衬线字体：微软雅黑
+\end_layout
+
+\begin_layout Itemize
+无衬线字体：微软雅黑、楷体
+\end_layout
+
+\begin_layout Itemize
+等宽字体：微软雅黑、楷体、新宋体
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Ubuntu：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+衬线字体：Noto Sans CJK SC
+\end_layout
+
+\begin_layout Itemize
+无衬线字体：Noto Sans CJK SC
+\end_layout
+
+\begin_layout Itemize
+等宽字体：Noto Sans Mono CJK SC
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+敬告：姑且看看，不一定有效！价值投资的目标：寻找“廉价”且“高质量”的股票
+\end_layout
+
+\begin_layout Chapter
+基本面量化投资综述
+\end_layout
+
+\begin_layout Section
+价值投资的基本思路
+\end_layout
+
+\begin_layout Itemize
+首先，股票市场的价格波动带有很强的投机色彩，但是从长期看必将回归“基本价值”，谨慎的投资者不应该追随短期价格波动，而应该集中精力寻找价格低于基本价值的股票；
+\end_layout
+
+\begin_layout Itemize
+其次，为了保证投资安全，最值得青睐的股票是那些被严重低估的股票，即市场价格明显低于基本价值的股票。
+\end_layout
+
+\begin_layout Section
+有效资本市场假说和噪声投资者模型
+\end_layout
+
+\begin_layout Itemize
+假定一个理想化的证券交易市场：没有佣金、买卖价差(bid-ask spread)等交易成本；同时，也不存在证券持有成本【？】，如卖空股票(short-sell)
+有关的成本；所有投资者的信息是完全一致的，对信息的理解也是一致且充分的。总之，这是一个没有证券交易成本（trading costs）、持有成本（holding
+ costs）和信息成本（information costs）的高效率市场。—》在有效资本市场上，证券的价格等于它的价值（有效资本市场假说，efficient
+ market hypothesis，EMH）；并且一旦与证券价值相关的信息披露，市场就会迅速做出调整，使其价格重新等于价值，没有任何人或交易策略可以提前利用公
+开信息赚取超额回报。
+\end_layout
+
+\begin_layout Itemize
+在EMH，股票的价格在任何时点应该等于投资者在所拥有的信息的基础上该股票预期带来的未来各期现金流的折现值：
+\begin_inset Formula 
+\[
+P_{t}=V_{t}=\Sigma_{i=1}^{\infty}\frac{E_{t}(D_{t+i}|\delta)}{(1+r)^{i}}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $V_{t}$
+\end_inset
+
+理解为股票在时间
+\begin_inset Formula $t$
+\end_inset
+
+的内在价值。
+\end_layout
+
+\begin_layout Itemize
+然而，Shiller(1991)注意到股价存在过度波动的现象，并发现这种现象不能从基本面因素的变化得到解释。Shiller认为股价易受社会潮流(social
+ movements)影响的关键原因在于没有一个被广泛接受的、可以洞察其价值的理论。噪声投资者(Shiller所称的普通投资者)面对的是“不确定”困境，他们对未
+来出现的各种情形的概率分布并不知晓，不知道某一事件发生后的确切后果是什么，因为，他们的观点很容易受到社会的影响。
+\end_layout
+
+\begin_layout Itemize
+Shiller(1984)提出一个简单的噪声投资者模型。该模型具有两类投资者：精明投资者和噪声投资者。精明投资者基于基本面信息进行交易，这些投资者能够以五片的行
+为快速回应关于基本价值的信息；而噪声投资者不是依据基本面信息进行交易。具体如下：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+精明投资者：在t期对股票的需求为总流通股的一部分
+\begin_inset Formula $Q_{t}=\frac{E_{t}(R_{t}-\rho)}{\phi}$
+\end_inset
+
+。其中，
+\begin_inset Formula $\rho$
+\end_inset
+
+为精明投资者对股票无需求时的预期实际回报率【？】，
+\begin_inset Formula $\phi$
+\end_inset
+
+是精明投资者持有所有股票时的风险溢价（the risk premium that would induce smart money investors
+ to hold all the shares）。
+\end_layout
+
+\begin_layout Itemize
+噪声投资者：其需求无法依据预期收益模型进行预测，他们的需求被表示为
+\begin_inset Formula $Y_{t}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+均衡下，股票需求等于股票供给，市场达到出清：
+\begin_inset Formula $Q_{t}+\frac{Y_{t}}{P_{t}}=1$
+\end_inset
+
+，于是得到理性预期下的市场出清价格：
+\begin_inset Formula 
+\[
+P_{t}=\Sigma_{k=0}^{\infty}\frac{E_{t}(D_{t+k})+\phi E_{t}(Y_{t+k})}{(1+\rho+\phi)^{k+1}}
+\]
+
+\end_inset
+
+换句话说，股票价格由基本面价值和其他多变的因素(影响噪声投资者未来的需求的因素)共同决定的，这两个因素的相对重要性由
+\begin_inset Formula $\phi$
+\end_inset
+
+决定，
+\begin_inset Formula $\phi$
+\end_inset
+
+可以理解为套利成本。
+\end_layout
+
+\begin_layout Itemize
+影响
+\begin_inset Formula $\phi$
+\end_inset
+
+的因素，主要在于套利成本，具体：（1）交易成本，与建仓、平仓相关的成本，包括经纪人佣金、价滑、买卖价差等；（2）持有成本，与持有头寸相关的成本，受到注入套利头寸
+的持续时间和卖空成本等因素的影响；（3）信息成本，与获得、分析和监督信息相关的成本。最重要的还是信息成本。当套利成本低时，价格就会接近基本面。例如，在股票期权、
+指数期货和封闭式基金的市场中，交易和信息成本呈现相对较低的特征。在这些市场中，估值相对直接、交易成本极低，而且交易资产往往拥有类似的替代品。
+\end_layout
+
+\end_deeper
+\begin_layout Section
+基于基本面分析的量化投资
+\end_layout
+
+\begin_layout Subsection
+格雷厄姆的投资方法
+\end_layout
+
+\begin_layout Itemize
+在《证券分析》中，格雷厄姆提出了一种选股方法。他认为同时拥有以下特点的股票都是值得投资的：
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+市盈率是AAA债券收益率的2倍；
+\end_layout
+
+\begin_layout Enumerate
+股票的P/E(市盈率)低于最近5年内所有股票平均P/E的40%；
+\end_layout
+
+\begin_layout Enumerate
+股息率大于AAA公司债券收益率的2/3；
+\end_layout
+
+\begin_layout Enumerate
+价格低于有形账面价值的2/3；
+\end_layout
+
+\begin_layout Enumerate
+价格低于净流动资产价值(NCAV)的2/3，净流动资产价值定义为流动资产(每股)减去流动负债；
+\end_layout
+
+\begin_layout Enumerate
+债务权益比率(账面价值)必须小于1；
+\end_layout
+
+\begin_layout Enumerate
+流动资产大于2倍流动负债；
+\end_layout
+
+\begin_layout Enumerate
+负债小于2倍净流动资产；
+\end_layout
+
+\begin_layout Enumerate
+EPS历史增长(至少过去10年)大于7%；
+\end_layout
+
+\begin_layout Enumerate
+在过去10年中，盈利的下降不超过两年。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+粗略的说，上述前五个是衡量股票“廉价”程度的，后五个是关于公司质量的。Charles Lee(2014)在优化更新部分指标化，对美国市场尽心了回测。
+\end_layout
+
+\begin_layout Subsection
+剩余收益模型(Residual Income Model)的理论基础
+\end_layout
+
+\begin_layout Itemize
+根据RIM，一家公司的价值等于其当前账面价值和未来预期剩余收益现值之和：
+\begin_inset Formula 
+\begin{align*}
+P_{t}^{*} & =B_{t}+\Sigma_{i=1}^{\infty}\frac{E_{t}[NI_{t+i}-r_{e}\times B_{t+i-1}]}{(1+r_{e})^{i}}\\
+ & =B_{t}+\Sigma_{i=1}^{\infty}\frac{E_{t}[(ROE_{t+i}-r_{e})\times B_{t+i-1}]}{(1+r_{e})^{i}}
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula $B_{t}$
+\end_inset
+
+为公司在时间t的账面价值，
+\begin_inset Formula $NI_{t+i}$
+\end_inset
+
+为第
+\begin_inset Formula $t+i$
+\end_inset
+
+期的净收入，
+\begin_inset Formula $r_{e}$
+\end_inset
+
+为权益资本成本，
+\begin_inset Formula $ROE_{t+i}$
+\end_inset
+
+为第
+\begin_inset Formula $t+i$
+\end_inset
+
+期账面资产税后收益率，t时期的剩余收益RI定义为t时期的收益减去基于资本成本的正常收益，即
+\begin_inset Formula $RI_{t}=NI_{t}-rB_{t-1}$
+\end_inset
+
+。进一步，我们还可以把上式分解为：
+\begin_inset Formula 
+\[
+Firm\,Value_{t}=Capital_{t}+PVRI_{t}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $Capital_{t}$
+\end_inset
+
+为原始资本或初始资本，
+\begin_inset Formula $PVRI_{t}$
+\end_inset
+
+为未来剩余收益的现值。有文献证明了初始资本(Capital)对于公司价值的计算并不重要(Penman,1996、1998)（随后的研究提出除账面价值外，还可以使
+用其他的替代之便作为初始资本，例如资本化的1年盈利预测或者当年的销售收入），于是，上面的分解是可行的。RIM告诉我们，对于每个选定的初始资本，我们可以计算与之相
+匹配的
+\begin_inset Formula $PVRI_{t}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+根据上面的公式，有：
+\begin_inset Formula 
+\[
+\frac{P_{t}^{*}}{B_{t}}=1+\Sigma_{i=1}^{\infty}\frac{E_{t}[(ROE_{t+i}-r_{e})\times B_{t+i-1}]}{(1+r_{e})^{i}\times B_{t}}
+\]
+
+\end_inset
+
+于是，溢价公司的市净率是由预期ROE、资本成本(
+\begin_inset Formula $r_{e}$
+\end_inset
+
+)及其未来的账面价值增长率(取决于未来ROE和股息支付率k)的函数决定的。
+\end_layout
+
+\begin_layout Itemize
+同样，可以得出企业价值与销售比(EV/S)。根据Bhojraj and Lee(2002)，如果假定企业在初始期间(n年)高增长，后续为更稳定的永续增长，企业的
+EV/S可以表示为：
+\begin_inset Formula 
+\[
+\frac{EV_{t}^{*}}{S_{t}}=E_{t}[PM\times k\times(\frac{(1+g_{1})(1-\frac{(1+g_{1})^{n}}{(1+r)^{n}})}{r-g_{1}}+\frac{(1+g_{1})^{n}(1+g_{2})}{(1+r)^{n}(r-g_{2})})]
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $EV_{t}$
+\end_inset
+
+表示公司的总资产价值，
+\begin_inset Formula $S_{t}$
+\end_inset
+
+为t期的总销售额，
+\begin_inset Formula $PM$
+\end_inset
+
+为营业利润率，k为恒定支付比率(派息等)，r为资本成本，
+\begin_inset Formula $g_{1}$
+\end_inset
+
+为初始盈利增长率(适用于n年)，
+\begin_inset Formula $g_{2}$
+\end_inset
+
+为
+\begin_inset Formula $n+1$
+\end_inset
+
+年以后的永续增长率。
+\end_layout
+
+\begin_layout Subsection
+价值投资的两个关键因素
+\end_layout
+
+\begin_layout Itemize
+RIM将企业价值分为两个关键要素—投入资本与未来剩余价值的现值(增长机会)。而一般用于衡量股票是否廉价的指标只比较了股票价格与其投入资本，没有重点关注股票的增长
+机会。
+\end_layout
+
+\begin_layout Itemize
+最成功的投资者始终把价值视为两个关键因素的组合—寻找质量好的公司，并以“合理的价格”买入，即：价值投资=廉价+质量。一般用市盈率等指标就可以比较好的衡量股票是否
+便宜；而评估企业的质量就要求使用当前可用的各种衡量指标预测未来剩余收益的现值(PVRI)。
+\end_layout
+
+\begin_layout Subsection
+业界的实践
+\end_layout
+
+\begin_layout Itemize
+格林布拉特的例子。《The Little Book that still Beats the Market》。
+\end_layout
+
+\begin_layout Subsection
+学术界的证据
+\end_layout
+
+\begin_layout Itemize
+廉价(只是纯粹的被低估，还是意味着某种风险？)
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+市账比率
+\end_layout
+
+\begin_layout Itemize
+盈利价格比
+\end_layout
+
+\begin_layout Itemize
+现金流与价格比
+\end_layout
+
+\begin_layout Itemize
+销售额与企业价值之比
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+质量(尚无统一认识，不过本书认为是反应公司未来盈利能力和增长的因素)
+\end_layout
+
+\begin_layout Itemize
+盈利能力和增长
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+ROA
+\end_layout
+
+\begin_layout Itemize
+经营现金流
+\end_layout
+
+\begin_layout Itemize
+利润率
+\end_layout
+
+\begin_layout Itemize
+资产周转率
+\end_layout
+
+\begin_layout Itemize
+...
+\end_layout
+
+\begin_layout Itemize
+值得一提的是Piotroski and So(2013) 论述了价值效应可归因于市场对未来基本面的错误期望。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+盈余质量。Beneish et al.(2013)利用M-score可以在欺诈披露前正确识别71%的会计欺诈。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+盈余的现金流部分比应计部分更具有持续性
+\end_layout
+
+\begin_layout Itemize
+毛利(销售收入-销售成本)比净利润更好的衡量盈利能力
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+安全性
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+波动率
+\end_layout
+
+\begin_layout Itemize
+beta
+\end_layout
+
+\begin_layout Itemize
+杠杆
+\end_layout
+
+\begin_layout Itemize
+财务风险
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+股息率
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Asness的QMJ(quality minus junk)投资组合。将21个指标分为4个维度：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+盈利性指标：投资回报率(ROE、ROA)，毛利(GPOA、GMAR)，经营性现金流(CFOA、ACC)
+\end_layout
+
+\begin_layout Itemize
+成长性指标：毛利、收入或现金流在过去5年的增长情况
+\end_layout
+
+\begin_layout Itemize
+安全性指标：beta、股价波动、盈利波动、杠杆率、财务风险(O-score，Z-score)
+\end_layout
+
+\begin_layout Itemize
+派息率指标：净股票发行量、净债务发行量、股利支付率
+\end_layout
+
+\end_deeper
+\end_deeper
+\end_body
+\end_document

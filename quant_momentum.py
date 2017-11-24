@@ -3,7 +3,8 @@ import numpy as np
 from pandas import DataFrame
 
 # 整理数据
-data=pd.read_pickle('F:/data/xccdata/PV_datetime')[['adj_open','adj_close']]
+#data=pd.read_pickle('F:/data/xccdata/PV_datetime')[['adj_open','adj_close']]
+data=pd.read_pickle('/Users/harbes/data/xccdata/PV_datetime')[['adj_open','adj_close']]
 #open=data['adj_open'].unstack()
 clsprc=data['adj_close'].unstack()
 key = lambda x: x.year * 100 + x.month
@@ -29,6 +30,15 @@ momentum /= K
 f_momen=momentum[10]-momentum[1]
 f_momen.mean()/f_momen.std()*np.sqrt(len(f_momen))
 momentum.mean()/momentum.std()*np.sqrt(len(momentum))
+
+
+
+## 输入市场回报数据
+#rtn_index=pd.read_pickle('/Users/harbes/data/xccdata/essay/index_hs300_monthly')[f_momen.index] #直接用市场的数据似乎并不能说明 cov(Rm_t,Rm_t_1)正比于 cov(f_t,f_t_1)
+rtn_index=rtn.mean(axis=1)[f_momen.index]
+np.cov(rtn_index[1:],rtn_index[:-1])
+np.cov(f_momen[1:],f_momen[:-1])
+
 
 
 
