@@ -12,10 +12,11 @@ price1 = clsprc.groupby(key).last() # 卖出价
 price0.index = pd.to_datetime(price0.index.values.astype(str),format=('%Y%m'))
 price1.index = pd.to_datetime(price1.index.values.astype(str),format=('%Y%m'))
 
-J=3
-K=3
+
 percentile=np.linspace(0,1,11)
 label_momentum=[i+1 for i in range(10)] # 1表示过去收益较差的组合，10表示过去收益较好的组合
+J=2
+K=1
 mark_momentum=DataFrame([pd.qcut((price1.iloc[i-1]-price0.iloc[i-J])/price0.iloc[i-J],q=percentile,labels=label_momentum) for i in range(J,len(price0))],index=price0.index[J:])
 rtn=((price1-price0)/price0).iloc[J:]
 momentum=DataFrame([[rtn.iloc[i][mark_momentum.iloc[i]==k].mean() for k in label_momentum] for i in range(K-1,len(rtn))],index=rtn.index[K-1:],columns=label_momentum)
@@ -27,5 +28,7 @@ momentum /= K
 
 f_momen=momentum[10]-momentum[1]
 f_momen.mean()/f_momen.std()*np.sqrt(len(f_momen))
+momentum.mean()/momentum.std()*np.sqrt(len(momentum))
+
 
 
