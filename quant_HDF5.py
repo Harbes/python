@@ -6,7 +6,7 @@ data=pd.read_hdf('F:/data/xccdata/20150105',key='stk',columns='000001')
 # 报错：TypeError: cannot create a storer if the object is not existing nor a value are passed
 
 
-store=pd.HDFStore('F:/data/xccdata/20150105')
+store=pd.HDFStore('/Users/harbes/data/xccdata/bid_ask/20150225')
 store.keys()
 # 结果是：[]
 store.root
@@ -19,11 +19,46 @@ store.close()
 
 
 import h5py
-filename = 'F:/data/xccdata/20150105'
+filename = '/Users/harbes/data/xccdata/bid_ask/20150225'
 f = h5py.File(filename, 'r')
-a_group_key = list(f.keys())[0];a_group_key
-list(f[a_group_key]['002666'])
-data = pd.DataFrame(f[a_group_key]['002666'][['volume',
+#f.name
+#list(f.keys())
+a_group_key = list(f.keys())[0] ;a_group_key
+stkcd=list(f[a_group_key])
+stkcd[:10]
+data = pd.DataFrame(list(f['stk']['002666']['servertime']),columns=['servertime'])#
+data
+data=pd.DataFrame(f[a_group_key])
+# 报错：ValueError: DataFrame constructor not properly called!
+f.close()
+
+
+
+import os
+import h5py
+from time import time
+#rootdir = '/Users/harbes/data/xccdata/bid_ask'
+rootdir = 'F:/data/xccdata/bid_ask'
+
+li_ = os.listdir(rootdir) #列出文件夹下所有的目录与文件
+#li_
+
+now0=time()
+for i in li_[:1]: # li_[1:2]: #
+    path = os.path.join(rootdir,i)
+    #if os.path.isfile(path):
+    f = h5py.File(path, 'r')
+    for stock in list(f['stk'])[0:10]:
+        for indi in list(f['stk'][stock])[0:1]:
+            data=np.array(list(f['stk'][stock][indi]))
+print(time()-now0)
+
+
+
+
+
+
+indi_=['volume',
  'askVol_4',
  'askPrc_2',
  'bidPrc_1',
@@ -51,8 +86,31 @@ data = pd.DataFrame(f[a_group_key]['002666'][['volume',
  'bidPrc_2',
  'askVol_1',
  'lastPrc']
-])#['bidPrc_1'])#
-data
-data=pd.DataFrame(f[a_group_key])
-# 报错：ValueError: DataFrame constructor not properly called!
-f.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
