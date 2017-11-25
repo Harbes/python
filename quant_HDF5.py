@@ -33,31 +33,41 @@ data=pd.DataFrame(f[a_group_key])
 f.close()
 
 
-
+import numpy as np
+import pandas as pd
 import os
 import h5py
 from time import time
 #rootdir = '/Users/harbes/data/xccdata/bid_ask'
 rootdir = 'F:/data/xccdata/bid_ask'
-
 li_ = os.listdir(rootdir) #列出文件夹下所有的目录与文件
-#li_
-
+n_stock=4000
+n_obs=20
+n_indi=30
 now0=time()
-for i in li_[:1]: # li_[1:2]: #
+for i in li_: # li_[1:]: #
     path = os.path.join(rootdir,i)
     #if os.path.isfile(path):
     f = h5py.File(path, 'r')
-    for stock in list(f['stk'])[0:10]:
-        for indi in list(f['stk'][stock])[0:1]:
-            data=np.array(list(f['stk'][stock][indi]))
+    os.mkdir(rootdir + '/' + i + '_')
+    for stock in list(f['stk'])[0:n_stock]:
+        data=pd.DataFrame((list(f['stk'][stock][indi][-n_obs:]) for indi in list(f['stk'][stock])[:n_indi]),index=list(f['stk'][stock])[:n_indi])
+        data.to_pickle(rootdir + '/' + i +'_'+ '/' +stock)
+    f.close()
 print(time()-now0)
 
 
+a=[1,2,3]
+b=[4,5,6]
+c=np.stack((a,b),axis=-1)
+np.stack((c,b),axis=-1)
+%timeit pd.DataFrame(np.stack((a,b),axis=-1))
 
 
-
-
+a=pd.DataFrame([1,2,3],columns=['a'])
+b=pd.DataFrame([],columns=['b'])
+%timeit pd.concat([a,b],axis=1)
+pd.concat([a,b],axis=1)
 indi_=['volume',
  'askVol_4',
  'askPrc_2',
