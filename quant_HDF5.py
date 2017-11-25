@@ -38,8 +38,9 @@ import pandas as pd
 import os
 import h5py
 from time import time
-#rootdir = '/Users/harbes/data/xccdata/bid_ask'
-rootdir = 'F:/data/xccdata/bid_ask'
+
+rootdir = '/Users/harbes/data/xccdata/bid_ask'
+# rootdir = 'F:/data/xccdata/bid_ask'
 li_ = os.listdir(rootdir) #列出文件夹下所有的目录与文件
 n_stock=4000
 n_obs=20
