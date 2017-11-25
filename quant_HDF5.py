@@ -57,17 +57,6 @@ for i in li_: # li_[1:]: #
 print(time()-now0)
 
 
-a=[1,2,3]
-b=[4,5,6]
-c=np.stack((a,b),axis=-1)
-np.stack((c,b),axis=-1)
-%timeit pd.DataFrame(np.stack((a,b),axis=-1))
-
-
-a=pd.DataFrame([1,2,3],columns=['a'])
-b=pd.DataFrame([],columns=['b'])
-%timeit pd.concat([a,b],axis=1)
-pd.concat([a,b],axis=1)
 indi_=['volume',
  'askVol_4',
  'askPrc_2',
