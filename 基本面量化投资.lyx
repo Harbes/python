@@ -600,5 +600,203 @@ Asness的QMJ(quality minus junk)投资组合。将21个指标分为4个维度：
 
 \end_deeper
 \end_deeper
+\begin_layout Chapter
+快速理解财务报表
+\end_layout
+
+\begin_layout Chapter
+个股分析应用：以新华医疗为例
+\end_layout
+
+\begin_layout Section
+衡量公司各项能力的指标
+\end_layout
+
+\begin_layout Subsection
+财务分析整体框架
+\end_layout
+
+\begin_layout Itemize
+盈利能力
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+ROE=税后净利润/平均所有者权益。利润表和资产负债表
+\end_layout
+
+\begin_layout Itemize
+ROA=税后净利润/平均总资产。利润表和资产负债表
+\end_layout
+
+\begin_layout Itemize
+销售毛利率=(销售收入-销售成本)/销售收入。利润表
+\end_layout
+
+\begin_layout Itemize
+主营业务利润率=(销售毛利-各种经营费用)/销售收入。利润表
+\end_layout
+
+\begin_layout Itemize
+净利率=净利润/销售收入。利润表
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+短期偿债能力(流动性水平)
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+流动比率=流动资产／流动负债。资产负债表
+\end_layout
+
+\begin_layout Itemize
+速动比率=(流动资产-存活-其他流动资产)／流动负债。资产负债表
+\end_layout
+
+\begin_layout Itemize
+现金比率=(现金及现金等价物+短期可交易证券)／流动负债。资产负债表
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+清偿能力(偿还长期负债的能力)
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+负债比率(资产负债率)=总负债／总资产。资产负债表
+\end_layout
+
+\begin_layout Itemize
+产权比率=总负债／(普通股)所有者权益。资产负债表
+\end_layout
+
+\begin_layout Itemize
+利息保障倍数=息税前利润(EBIT)／利息费用。利润表
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+营运能力(企业将总资产转化为销售额或者现金的效率)
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+存活周转率=销售成本／平均存货。利润表和资产负债表
+\end_layout
+
+\begin_layout Itemize
+应收账款周转率=销售收入／平均应收账款。利润表和资产负债表
+\end_layout
+
+\begin_layout Itemize
+总资产周转率=销售收入／平均总资产。利润表和资产负债表
+\end_layout
+
+\begin_layout Itemize
+固定资产周转率=销售收入／平均固定资产净值。利润表和资产负债表
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+成长能力(预测公司扩张经营能力、未来发展趋势和发展速度，包括公司规模的扩大以及利润和所有者权益的增加)
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+销售收入同比增长率=本年度销售收入／上一年销售收入-1。利润表
+\end_layout
+
+\begin_layout Itemize
+净利润增长率。利润表
+\end_layout
+
+\begin_layout Itemize
+总资产增长率。资产负债表
+\end_layout
+
+\begin_layout Itemize
+固定资产占比=本年年末固定资产／本年年末总资产。资产负债表
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+现金流情况
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+单位销售现金净流入=经营活动产生的净现金流／销售收入。现金流量表和利润表
+\end_layout
+
+\begin_layout Itemize
+债务保障率=经营活动产生的净现金流／(流动负债+长期负债)。现金流量表和资产负债表
+\end_layout
+
+\begin_layout Itemize
+自由现金流与经营活动净现金流比值=(经营活动净现金流-资本支出)／经营活动净现金流。现金流量表
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+市场表现
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+每股收益(EPS)=归属于普通股股东的净利润／对外发行的普通股股数。利润表和市场数据
+\end_layout
+
+\begin_layout Itemize
+市盈率(P/E)=普通股每股市价／每股收益。利润表和市场数据
+\end_layout
+
+\begin_layout Itemize
+市净率(price-to-book，P/B)=普通股每股市价／每股账面价值。资产负债表和市场数据
+\end_layout
+
+\begin_layout Itemize
+市销率(price-to-sales，P/S)=普通股每股市价／每股销售收入。利润表和市场数据
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+各指标的具体含义及评价
+\end_layout
+
+\begin_layout Subsection
+财务指标的分析方法与实际应用
+\end_layout
+
+\begin_layout Itemize
+横向分析(行业比较)
+\end_layout
+
+\begin_layout Itemize
+纵向分析(时间比较)
+\end_layout
+
+\begin_layout Section
+相对估值模型【待】
+\end_layout
+
+\begin_layout Section
+绝对估值模型【待】
+\end_layout
+
+\begin_layout Itemize
+重点学习“剩余收益模型”，结合RIMvalue.cn
+\end_layout
+
+\begin_layout Section
+资本运作
+\end_layout
+
+\begin_layout Chapter
+打开量化投资的“黑匣子”
+\end_layout
+
 \end_body
 \end_document
