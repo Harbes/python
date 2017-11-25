@@ -65,11 +65,6 @@ print(time()-now0)
 
 
 
-data=pd.read_hdf(rootdir+'/20150225.h5','000001')
-
-
-
-
 
 
 
