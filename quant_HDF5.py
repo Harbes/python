@@ -43,14 +43,14 @@ from time import time
 import warnings
 warnings.filterwarnings("ignore")
 
-#rootdir = '/Users/harbes/data/xccdata/bid_ask'
-rootdir = 'F:/data/xccdata/bid_ask'
+rootdir = '/Users/harbes/data/xccdata/bid_ask'
+# rootdir = 'F:/data/xccdata/bid_ask'
 li_ = [i for i in os.listdir(rootdir) if not i.endswith('_') and not i.endswith('.h5')] #列出文件夹下所有的目录与文件
 n_stock=4000
 n_obs=20
 n_indi=30
 now0=time()
-for i in li_[:1]: # li_[1:]: #
+for i in li_[1:2]:  # li_[1:]: #
     path = rootdir+'/'+i
     #if os.path.isfile(path):
     f = h5py.File(path, 'r')
@@ -62,8 +62,8 @@ for i in li_[:1]: # li_[1:]: #
     f.close()
 print(time()-now0)
 
-
-
+data = pd.read_pickle('/Users/harbes/data/xccdata/bid_ask/20150225_/000017')
+data.loc[['bidPrc_1', 'bidVol_1', 'bidPrc_2', 'bidVol_2', 'askPrc_1', 'askVol_1', 'askPrc_2', 'askVol_2']]
 
 
 
