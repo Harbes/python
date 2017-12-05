@@ -65,24 +65,73 @@ data = pd.read_pickle('/Users/harbes/data/xccdata/bid_ask/' + li_[-1] + '_/00001
 data.loc[['bidPrc_1', 'bidVol_1', 'bidPrc_2', 'bidVol_2', 'askPrc_1', 'askVol_1', 'askPrc_2', 'askVol_2']]
 
 indi_s = [['bidPrc_1', 'askPrc_1'], ['bidPrc_2', 'askPrc_2'], ['bidPrc_3', 'askPrc_3'], ['bidPrc_4', 'askPrc_4']]
+# 运行之前需要删除已存在的
 now0 = time()
 for i in li_[-1:]:  # li_[1:]: #
     path = rootdir + '/' + i
-    # if os.path.isfile(path):
     f = h5py.File(path, 'r')
     os.mkdir(rootdir + '/' + i + '_')
     data = 2.0 * pd.DataFrame([[((np.array(f['stk'][stock][indi[1]]) - np.array(f['stk'][stock][indi[0]])) / (
     np.array(f['stk'][stock][indi[1]]) + np.array(f['stk'][stock][indi[0]]))).mean()
                                 for indi in indi_s] for stock in list(f['stk'])[0:n_stock]],
                               index=list(f['stk'])[0:n_stock], columns=[str(i) for i in range(1, len(indi_s) + 1)])
+    data = data[data > 0]
     data.to_pickle(rootdir + '/' + i + '_' + '/bid_ask_mean')
     f.close()
 print(time() - now0)
 
-data = pd.read_pickle('/Users/harbes/data/xccdata/bid_ask/' + li_[-1] + '_/000017')
-data.loc[['bidPrc_1', 'bidVol_1', 'bidPrc_2', 'bidVol_2', 'askPrc_1', 'askVol_1', 'askPrc_2', 'askVol_2']]
+price = pd.read_pickle('/Users/harbes/data/xccdata/PV_datetime')['clsprc'].unstack()
+group = pd.cut(price.loc['2015-2-17'], bins=[0, 7.5, 20, 30, 40, 1000], labels=range(1, 6))
 
-(data['askPrc_1'] - data['bidPrc_1']) * 2.0 / (data['askPrc_1'] + data['bidPrc_1'])
+size = pd.read_pickle('/Users/harbes/data/xccdata/PV_datetime')['size_tot'].unstack()
+group = pd.qcut(size.loc['2015-2-17'], q=np.linspace(0, 1, 6), labels=range(1, 6))
+data.loc[group[group == 1].index.str.slice(0, 6)].median()
+
+price = pd.read_pickle('/Users/harbes/data/xccdata/PV_datetime')['clsprc'].unstack()
+price.columns = price.columns.str.slice(0, 6)
+rootdir = '/Users/harbes/data/xccdata/bid_ask'
+# rootdir = 'F:/data/xccdata/bid_ask'
+li_ = [i for i in os.listdir(rootdir) if not i.endswith('_') and not i.endswith('.h5')]  # 列出文件夹下所有的目录与文件
+n_stock = 4000
+n_obs = 20
+n_indi = 30
+indi_s = ['bidPrc_1', 'askPrc_1']
+now0 = time()
+for i in li_[1:]:  # Mac要额外注意
+    path = rootdir + '/' + i
+    # if os.path.isfile(path):
+    f = h5py.File(path, 'r')
+    # os.mkdir(rootdir + '/' + i + '_')
+    data = pd.DataFrame(
+        [[f['stk'][stock]['bidPrc_1'][-1], f['stk'][stock]['askPrc_1'][-1]] for stock in list(f['stk'])[0:n_stock]],
+        index=list(f['stk'])[0:n_stock], columns=indi_s)
+    # data.to_pickle(rootdir + '/' + i +'_'+ '/' +stock)
+    f.close()
+
+    tmp = price.loc[pd.to_datetime(i, format='%Y%m%d')]
+    tmp = tmp[tmp < 7.5]
+    print(i + 'bid:', (tmp[data.index & tmp.index] <= data['bidPrc_1'][data.index & tmp.index]).sum() / len(
+        data['bidPrc_1'][data.index & tmp.index]))
+    print(i + 'ask:', (tmp[data.index & tmp.index] >= data['askPrc_1'][data.index & tmp.index]).sum() / len(
+        data['bidPrc_1'][data.index & tmp.index]))
+
+print(time() - now0)
+
+tmp = price.loc[pd.to_datetime(i, format='%Y%m%d')]
+tmp = tmp[tmp < 10]
+(tmp[data.index & tmp.index] <= data['bidPrc_1'][data.index & tmp.index]).sum() / len(
+    data['bidPrc_1'][data.index & tmp.index])
+(tmp[data.index & tmp.index] >= data['askPrc_1'][data.index & tmp.index]).sum() / len(
+    data['bidPrc_1'][data.index & tmp.index])
+
+
+
+
+
+
+
+
+
 
 
 
