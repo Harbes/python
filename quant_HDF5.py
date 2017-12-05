@@ -46,11 +46,11 @@ warnings.filterwarnings("ignore")
 rootdir = '/Users/harbes/data/xccdata/bid_ask'
 # rootdir = 'F:/data/xccdata/bid_ask'
 li_ = [i for i in os.listdir(rootdir) if not i.endswith('_') and not i.endswith('.h5')] #列出文件夹下所有的目录与文件
-n_stock=4000
+n_stock = 40
 n_obs=20
 n_indi=30
 now0=time()
-for i in li_[1:2]:  # li_[1:]: #
+for i in li_[-1:]:  # li_[1:]: #
     path = rootdir+'/'+i
     #if os.path.isfile(path):
     f = h5py.File(path, 'r')
@@ -61,21 +61,28 @@ for i in li_[1:2]:  # li_[1:]: #
         #data.to_hdf(rootdir + '/' + i +'.h5',stock,format='table',append=True) # 速度慢，体积大
     f.close()
 print(time()-now0)
-
-data = pd.read_pickle('/Users/harbes/data/xccdata/bid_ask/20150225_/000017')
+data = pd.read_pickle('/Users/harbes/data/xccdata/bid_ask/' + li_[-1] + '_/000017')
 data.loc[['bidPrc_1', 'bidVol_1', 'bidPrc_2', 'bidVol_2', 'askPrc_1', 'askVol_1', 'askPrc_2', 'askVol_2']]
 
+indi_s = [['bidPrc_1', 'askPrc_1'], ['bidPrc_2', 'askPrc_2'], ['bidPrc_3', 'askPrc_3'], ['bidPrc_4', 'askPrc_4']]
+now0 = time()
+for i in li_[-1:]:  # li_[1:]: #
+    path = rootdir + '/' + i
+    # if os.path.isfile(path):
+    f = h5py.File(path, 'r')
+    os.mkdir(rootdir + '/' + i + '_')
+    data = 2.0 * pd.DataFrame([[((np.array(f['stk'][stock][indi[1]]) - np.array(f['stk'][stock][indi[0]])) / (
+    np.array(f['stk'][stock][indi[1]]) + np.array(f['stk'][stock][indi[0]]))).mean()
+                                for indi in indi_s] for stock in list(f['stk'])[0:n_stock]],
+                              index=list(f['stk'])[0:n_stock], columns=[str(i) for i in range(1, len(indi_s) + 1)])
+    data.to_pickle(rootdir + '/' + i + '_' + '/bid_ask_mean')
+    f.close()
+print(time() - now0)
 
+data = pd.read_pickle('/Users/harbes/data/xccdata/bid_ask/' + li_[-1] + '_/000017')
+data.loc[['bidPrc_1', 'bidVol_1', 'bidPrc_2', 'bidVol_2', 'askPrc_1', 'askVol_1', 'askPrc_2', 'askVol_2']]
 
-
-
-
-
-
-
-
-
-
+(data['askPrc_1'] - data['bidPrc_1']) * 2.0 / (data['askPrc_1'] + data['bidPrc_1'])
 
 
 
