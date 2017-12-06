@@ -43,8 +43,8 @@ import time
 import warnings
 warnings.filterwarnings("ignore")
 
-rootdir = '/Users/harbes/data/xccdata/bid_ask'
-# rootdir = 'F:/data/xccdata/bid_ask'
+#rootdir = '/Users/harbes/data/xccdata/bid_ask'
+ rootdir = 'F:/data/xccdata/bid_ask'
 li_ = [i for i in os.listdir(rootdir) if not i.endswith('_') and not i.endswith('.h5')] #列出文件夹下所有的目录与文件
 n_stock = 40
 n_obs=20
@@ -169,5 +169,42 @@ indi_=['volume',
 
 import tushare as ts
 
-df = ts.get_tick_data('600848', date='2005-01-10');
-df.head()
+price = pd.read_pickle('F:/data/xccdata/PV_datetime')['clsprc'].unstack()
+price.name='close'
+price.columns=price.columns.str.slice(0,6)
+price.index=price.index.astype(str)
+
+inti_time=time.time()
+trade_price=pd.DataFrame(np.nan,index=price.index,columns=price.columns)
+trade_type=pd.DataFrame(np.nan,index=price.index,columns=price.columns)
+for d in price.index[:10]:
+    for stk in price.columns:
+        trade_price.loc[d,stk],trade_type.loc[d,stk]=ts.get_tick_data(stk, date=d).iloc[0][['price','type']]
+#trade_price.to_pickle('F:/data/xccdata/trade_price')
+#trade_type.to_pickle('F:/data/xccdata/trade_type')
+delta_time=time.time()-inti_time
+#trade_price.loc[price.index[0],'600848'],trade_type.loc[price.index[0],'600848']=ts.get_tick_data('600848', date=price.index[0]).loc[0][['price','type']]
+
+
+ts.get_tick_data(stk, date=d)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ts.get_tick_data('600848',date='2014-01-09')
