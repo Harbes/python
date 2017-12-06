@@ -167,9 +167,17 @@ indi_=['volume',
  'askVol_1',
  'lastPrc']
 
+import numpy as np
+import pandas as pd
+import os
+import h5py
+import time
+import warnings
+
+warnings.filterwarnings("ignore")
 import tushare as ts
 
-price = pd.read_pickle('F:/data/xccdata/PV_datetime')['clsprc'].unstack()
+price = pd.read_pickle('/Users/harbes/data/xccdata/PV_datetime')['clsprc'].unstack()
 price.name='close'
 price.columns=price.columns.str.slice(0,6)
 price.index=price.index.astype(str)
@@ -179,21 +187,24 @@ trade_price=pd.DataFrame(np.nan,index=price.index,columns=price.columns)
 trade_type=pd.DataFrame(np.nan,index=price.index,columns=price.columns)
 for d in price.index[:10]:
     for stk in price.columns:
-        trade_price.loc[d,stk],trade_type.loc[d,stk]=ts.get_tick_data(stk, date=d).iloc[0][['price','type']]
+        trade_price.loc[d, stk], trade_type.loc[d, stk] = ts.tick(stk, date=d, conn=ts.get_apis()).iloc[0][
+            ['price', 'type']]
 #trade_price.to_pickle('F:/data/xccdata/trade_price')
 #trade_type.to_pickle('F:/data/xccdata/trade_type')
 delta_time=time.time()-inti_time
-#trade_price.loc[price.index[0],'600848'],trade_type.loc[price.index[0],'600848']=ts.get_tick_data('600848', date=price.index[0]).loc[0][['price','type']]
+
+# trade_price.loc[price.index[0],'600848'],trade_type.loc[price.index[0],'600848']=ts.tick('600848', date=price.index[0],conn=ts.get_apis()).loc[0][['price','type']]
 
 
 ts.get_tick_data(stk, date=d)
 
+tmp = ts.tick('600848', date=price.index[0], conn=ts.get_apis());
+tmp
+ts.tick()
 
+ts.xpi()
 
-
-
-
-
+ts.get_markets()
 
 
 
