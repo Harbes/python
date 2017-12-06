@@ -104,7 +104,7 @@ for i in li_[1:]:  # Mac要额外注意
     f = h5py.File(path, 'r')
     # os.mkdir(rootdir + '/' + i + '_')
     data = pd.DataFrame(
-        [[np.array(f['stk'][stock]['bidPrc_1'][-3:]).mean(), np.array(f['stk'][stock]['askPrc_1'][-3:]).mean()] for
+        [[np.array(f['stk'][stock]['bidPrc_1'][-20:]).mean(), np.array(f['stk'][stock]['askPrc_1'][-20:]).mean()] for
          stock in list(f['stk'])[0:n_stock]],
         index=list(f['stk'])[0:n_stock], columns=indi_s)
     data = data[data['bidPrc_1'] < data['askPrc_1']]
@@ -132,7 +132,7 @@ rtn[data.index & tmp.index].loc['2015-2']
 
 import time
 
-time.localtime(np.array(f['stk'][list(f['stk'])[0:n_stock][0]]['localtime'])[0] / 44553)
+time.localtime(np.array(f['stk'][list(f['stk'])[0]]['localtime'])[0] / 100000)
 
 
 
@@ -167,30 +167,7 @@ indi_=['volume',
  'askVol_1',
  'lastPrc']
 
+import tushare as ts
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+df = ts.get_tick_data('600848', date='2005-01-10');
+df.head()
