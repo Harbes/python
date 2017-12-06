@@ -39,7 +39,7 @@ import numpy as np
 import pandas as pd
 import os
 import h5py
-from time import time
+import time
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -96,44 +96,43 @@ n_stock = 4000
 n_obs = 20
 n_indi = 30
 indi_s = ['bidPrc_1', 'askPrc_1']
-now0 = time()
+now0 = time.time()
+bid_ask_bias = [[], []]
 for i in li_[1:]:  # Mac要额外注意
     path = rootdir + '/' + i
     # if os.path.isfile(path):
     f = h5py.File(path, 'r')
     # os.mkdir(rootdir + '/' + i + '_')
     data = pd.DataFrame(
-        [[f['stk'][stock]['bidPrc_1'][-1], f['stk'][stock]['askPrc_1'][-1]] for stock in list(f['stk'])[0:n_stock]],
+        [[np.array(f['stk'][stock]['bidPrc_1'][-3:]).mean(), np.array(f['stk'][stock]['askPrc_1'][-3:]).mean()] for
+         stock in list(f['stk'])[0:n_stock]],
         index=list(f['stk'])[0:n_stock], columns=indi_s)
+    data = data[data['bidPrc_1'] < data['askPrc_1']]
     # data.to_pickle(rootdir + '/' + i +'_'+ '/' +stock)
-    f.close()
-
+    # f.close()
     tmp = price.loc[pd.to_datetime(i, format='%Y%m%d')]
     tmp = tmp[tmp < 7.5]
-    print(i + 'bid:', (tmp[data.index & tmp.index] <= data['bidPrc_1'][data.index & tmp.index]).sum() / len(
-        data['bidPrc_1'][data.index & tmp.index]))
-    print(i + 'ask:', (tmp[data.index & tmp.index] >= data['askPrc_1'][data.index & tmp.index]).sum() / len(
-        data['bidPrc_1'][data.index & tmp.index]))
+    bid_ask_bias[0].append((tmp[data.index & tmp.index] <= data['bidPrc_1'][data.index & tmp.index]).sum() / len(
+        tmp[data.index & tmp.index]))
+    bid_ask_bias[1].append((tmp[data.index & tmp.index] >= data['askPrc_1'][data.index & tmp.index]).sum() / len(
+        tmp[data.index & tmp.index]))
 
-print(time() - now0)
+print(time.time() - now0)
 
-tmp = price.loc[pd.to_datetime(i, format='%Y%m%d')]
-tmp = tmp[tmp < 10]
-(tmp[data.index & tmp.index] <= data['bidPrc_1'][data.index & tmp.index]).sum() / len(
-    data['bidPrc_1'][data.index & tmp.index])
-(tmp[data.index & tmp.index] >= data['askPrc_1'][data.index & tmp.index]).sum() / len(
-    data['bidPrc_1'][data.index & tmp.index])
+bid_ask_bias = pd.DataFrame(bid_ask_bias, index=['bid', 'ask'], columns=li_[1:]).T
+(bid_ask_bias['ask'] - bid_ask_bias['bid']).plot()
+bid_ask_bias.plot()
+bid_ask_bias
 
+close_ = pd.read_pickle('/Users/harbes/data/xccdata/PV_datetime')['adj_close'].unstack()
+open_ = pd.read_pickle('/Users/harbes/data/xccdata/PV_datetime')['adj_open'].unstack()
+rtn = (close_ - open_) / open_ * 100.0
+rtn.columns = rtn.columns.str.slice(0, 6)
+rtn[data.index & tmp.index].loc['2015-2']
 
+import time
 
-
-
-
-
-
-
-
-
+time.localtime(np.array(f['stk'][list(f['stk'])[0:n_stock][0]]['localtime'])[0] / 44553)
 
 
 
