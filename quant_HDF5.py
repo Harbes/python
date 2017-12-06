@@ -181,17 +181,22 @@ price = pd.read_pickle('/Users/harbes/data/xccdata/PV_datetime')['clsprc'].unsta
 price.name='close'
 price.columns=price.columns.str.slice(0,6)
 price.index=price.index.astype(str)
+price_nan = np.isnan(price)
 
 inti_time=time.time()
 trade_price=pd.DataFrame(np.nan,index=price.index,columns=price.columns)
 trade_type=pd.DataFrame(np.nan,index=price.index,columns=price.columns)
-for d in price.index[:10]:
-    for stk in price.columns:
-        trade_price.loc[d, stk], trade_type.loc[d, stk] = ts.tick(stk, date=d, conn=ts.get_apis()).iloc[0][
-            ['price', 'type']]
+for d in price.index[:1]:
+    for stk in price.columns[:50]:
+        if price_nan.loc[d, stk]:
+            tmp = ts.tick(stk, date=d, conn=ts.get_apis())
+            if tmp is not None:
+                trade_price.loc[d, stk], trade_type.loc[d, stk] = ts.tick(stk, date=d, conn=ts.get_apis()).iloc[-1][
+                    ['price', 'type']]
 #trade_price.to_pickle('F:/data/xccdata/trade_price')
 #trade_type.to_pickle('F:/data/xccdata/trade_type')
-delta_time=time.time()-inti_time
+delta_time = time.time() - inti_time;
+delta_time
 
 # trade_price.loc[price.index[0],'600848'],trade_type.loc[price.index[0],'600848']=ts.tick('600848', date=price.index[0],conn=ts.get_apis()).loc[0][['price','type']]
 
@@ -200,6 +205,7 @@ ts.get_tick_data(stk, date=d)
 
 tmp = ts.tick('600848', date=price.index[0], conn=ts.get_apis());
 tmp
+
 ts.tick()
 
 ts.xpi()
