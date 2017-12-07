@@ -4,7 +4,7 @@ from pandas import DataFrame
 from datetime import datetime
 import matplotlib.pyplot as plt
 
-t1=8
+t1 = 0
 t0=0
 
 # 整理数据
@@ -478,13 +478,16 @@ indi_2=data['size_tot'].unstack()[filter_==1]#(clsprc-opnprc)/opnprc
 indi_2=indi_2.loc[indi_1.index]
 
 n_del=5
-#mark_1=DataFrame([pd.qcut(indi_1.iloc[np.maximum(i-18,0):i].mean(),q=percentile,labels=label_) for i in range(n_del,len(indi_1))],index=indi_1.index[n_del:],columns=indi_1.columns)
-mark_1=DataFrame([pd.cut(indi_1.iloc[np.maximum(i-18,0):i].mean(),bins=[0,7.5,10,15,30,1000],labels=label_) for i in range(n_del,len(indi_1))],index=indi_1.index[n_del:],columns=indi_1.columns)
+mark_1 = DataFrame([pd.qcut(indi_1.iloc[np.maximum(i - 1, 0):i].mean(), q=percentile, labels=label_) for i in
+                    range(n_del, len(indi_1))], index=indi_1.index[n_del:], columns=indi_1.columns)
+# mark_1=DataFrame([pd.cut(indi_1.iloc[np.maximum(i-18,0):i].mean(),bins=[0,7.5,10,15,30,1000],labels=label_) for i in range(n_del,len(indi_1))],index=indi_1.index[n_del:],columns=indi_1.columns)
 
 #i=1;mark_1[mark_1==i].sum(axis=1)/i
 mark_2=DataFrame(np.nan,index=mark_1.index,columns=mark_1.columns)
 for l_ in label_:
-    tmp=DataFrame([pd.qcut(indi_2.iloc[np.maximum(i-18,0):i].mean()[mark_1.iloc[i-n_del]==l_],q=percentile,labels=label_) for i in range(n_del,len(indi_2))],index=indi_2.index[n_del:])
+    tmp = DataFrame(
+        [pd.qcut(indi_2.iloc[np.maximum(i - 1, 0):i].mean()[mark_1.iloc[i - n_del] == l_], q=percentile, labels=label_)
+         for i in range(n_del, len(indi_2))], index=indi_2.index[n_del:])
     mark_2=mark_2.combine_first(tmp)
 
 
@@ -498,11 +501,11 @@ for s in label_:
                 ((clsprc.iloc[clsprc.index.get_loc(j[0])+t1]-opnprc.iloc[opnprc.index.get_loc(j[0])+t0])/opnprc.iloc[opnprc.index.get_loc(j[0])+t0])[np.logical_and(mark_1.iloc[mark_1.index.get_loc(j[0])+t0]==s,mark_2.iloc[mark_2.index.get_loc(j[0])+t0]==i)].mean()
 
 # 结果显示
-n_check=5
+n_check =1
 (rtn_2_sort+1).loc[(slice(None),n_check),slice(None)].T.cumprod().plot() # 为什么使用axis=1不能得到想要的结果？？？
 tmp=rtn_2_sort.loc[(5,n_check)]-rtn_2_sort.loc[(1,n_check)];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) # 控制了size因素后，low-price依然显著
 
-n_check=3
+n_check =1
 (rtn_2_sort+1).loc[(n_check,slice(None)),slice(None)].T.cumprod().plot() # 为什么使用axis=1不能得到想要的结果？？？
 tmp=rtn_2_sort.loc[(n_check,5)]-rtn_2_sort.loc[(n_check,1)];tmp.mean()/tmp.std()*np.sqrt(len(tmp)) # 控制了low-price因素后，感觉size也更显著了
 

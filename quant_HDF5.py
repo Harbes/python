@@ -221,7 +221,4 @@ ts.get_markets()
 
 
 
-
-
-
 ts.get_tick_data('600848',date='2014-01-09')
