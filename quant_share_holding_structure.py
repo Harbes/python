@@ -188,6 +188,8 @@ for i in label_1:
                  / adj_open.iloc[adj_open.index.get_loc(d) + t0])[(mark_1.iloc[mark_1.index.get_loc(d) + t0] == i) & (
                 mark_2.iloc[mark_2.index.get_loc(d) + t0] == j)].mean()
 average_return.mean(axis=1)
+# (average_return.mean(axis=1)-average_return['2015-02-25'])/average_return['2015-02-25']
+
 n = 1;
 tmp = average_return.loc[n, 1] - average_return.loc[n, 5];
 tmp.mean() / tmp.std() * np.sqrt(len(tmp))

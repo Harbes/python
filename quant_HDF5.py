@@ -19,16 +19,17 @@ store.close()
 
 
 import h5py
-#filename = '/Users/harbes/data/xccdata/bid_ask/20150225.h5'
-filename = 'F:/data/xccdata/bid_ask/20150225.h5'
+
+filename = '/Users/harbes/data/xccdata/bid_ask/20150225'
+# filename = 'F:/data/xccdata/bid_ask/20150225.h5'
 
 f = h5py.File(filename, 'r')
 #f.name
 #list(f.keys())
-a_group_key = list(f.keys())[0] ;a_group_key
-stkcd=list(f[a_group_key])
-stkcd[:10]
-data = pd.DataFrame(list(f['stk']['002666']['servertime']),columns=['servertime'])#
+data = pd.DataFrame([list(f['stk']['002666']['numTrades']), list(f['stk']['002666']['volume'])]).T  #
+data[1] = (data[1] - data[1].shift(1)) / data[0];
+data
+data[1] = data[1] - data[1].shift(1);
 data
 data=pd.DataFrame(f[a_group_key])
 # 报错：ValueError: DataFrame constructor not properly called!
