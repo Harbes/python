@@ -86,8 +86,9 @@ select_stock = {}
 for i in label_size:
     for j in (1, 3):
         for d in np.array(after_fes_data)[1:-1, 0]:
-            # average_institution_holding.loc[(i,j),d]=institution.loc[d][(mark_1.loc[d] == i)&(mark_2.loc[d] == j)].mean()
-            # average_size.loc[(i, j), d] = size.loc[d][(mark_1.loc[d] == i)&(mark_2.loc[d] == j)].mean()
+            average_institution_holding.loc[(i, j), d] = institution.loc[d][
+                (mark_1.loc[d] == i) & (mark_2.loc[d] == j)].mean()
+            average_size.loc[(i, j), d] = size.loc[d][(mark_1.loc[d] == i) & (mark_2.loc[d] == j)].mean()
             select_stock[((i, j), d)] = np.sort(
                 np.random.choice(size.loc[d][(mark_1.loc[d] == i) & (mark_2.loc[d])].index, 25))
 
