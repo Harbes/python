@@ -76,6 +76,7 @@ for l_ in label_size:
         index=indicator2.index)
     mark_2 = mark_2.combine_first(tmp)
 
+# 计算不同组合institution holding、size的平均值
 institution = institution[size.columns & institution.columns]
 size = size[size.columns & institution.columns]
 average_institution_holding = DataFrame(np.zeros((10, 11)), index=pd.MultiIndex.from_product([label_size, (1, 3)]),
