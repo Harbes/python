@@ -26,11 +26,14 @@ filename = '/Users/harbes/data/xccdata/bid_ask/20150225'
 f = h5py.File(filename, 'r')
 #f.name
 #list(f.keys())
-data = pd.DataFrame([list(f['stk']['002666']['numTrades']), list(f['stk']['002666']['volume'])]).T  #
+data = pd.DataFrame(
+    [list(f['stk']['002666']['numTrades']), list(f['stk']['002666']['volume']), list(f['stk']['002666']['trend'])]).T  #
+data = pd.DataFrame(
+    [list(f['stk']['002666']['numTrades']), list(f['stk']['002666']['volume']), list(f['stk']['002666']['trend'])]).T  #
+data[1] = data[1] - data[1].shift(1);
 data[1] = (data[1] - data[1].shift(1)) / data[0];
 data
-data[1] = data[1] - data[1].shift(1);
-data
+
 data=pd.DataFrame(f[a_group_key])
 # 报错：ValueError: DataFrame constructor not properly called!
 f.close()
