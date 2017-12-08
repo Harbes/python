@@ -82,17 +82,17 @@ average_institution_holding = DataFrame(np.zeros((10, 11)), index=pd.MultiIndex.
                                         columns=np.array(after_fes_data)[1:-1, 0])
 average_size = DataFrame(np.zeros((10, 11)), index=pd.MultiIndex.from_product([label_size, (1, 3)]),
                          columns=np.array(after_fes_data)[1:-1, 0])
-select_stock = DataFrame(np.zeros((10, 11)), index=pd.MultiIndex.from_product([label_size, (1, 3)]),
-                         columns=np.array(after_fes_data)[1:-1, 0])
+select_stock = {}
 for i in label_size:
     for j in (1, 3):
         for d in np.array(after_fes_data)[1:-1, 0]:
             # average_institution_holding.loc[(i,j),d]=institution.loc[d][(mark_1.loc[d] == i)&(mark_2.loc[d] == j)].mean()
             # average_size.loc[(i, j), d] = size.loc[d][(mark_1.loc[d] == i)&(mark_2.loc[d] == j)].mean()
-            select_stock.loc[(i, j), d] = {
-                d: np.sort(np.random.choice(size.loc[d][(mark_1.loc[d] == i) & (mark_2.loc[d])].index, 25))}
+            select_stock[((i, j), d)] = np.sort(
+                np.random.choice(size.loc[d][(mark_1.loc[d] == i) & (mark_2.loc[d])].index, 25))
 
 average_institution_holding.mean(axis=1)
 average_size.mean(axis=1)
 
 np.random.choice(size.loc[d][(mark_1.loc[d] == i) & (mark_2.loc[d])].index,25)
+DataFrame(select_stock)
