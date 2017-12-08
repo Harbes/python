@@ -190,8 +190,7 @@ for d in price.index[50:51]:
         if price_nan.loc[d, stk] is not False:
             tmp = ts.tick(stk, date=d, conn=ts.get_apis())
             if tmp is not None:
-                trade_price.loc[d, stk], trade_type.loc[d, stk] = ts.tick(stk, date=d, conn=ts.get_apis()).iloc[-1][
-                    ['price', 'type']]
+
 #trade_price.to_pickle('F:/data/xccdata/trade_price')
 #trade_type.to_pickle('F:/data/xccdata/trade_type')
 delta_time = time.time() - inti_time;
@@ -204,16 +203,7 @@ delta_time  # 50只股票需要60s左右
 ts.get_tick_data(stk, date=d)
 
 tmp = ts.tick('000009', date=price.index[50], conn=ts.get_apis());
-tmp.iloc[-1][['price', 'type']]
 tmp
-ts.tick()
-
-ts.xpi()
-
-ts.get_markets()
-
-
-
 
 
 

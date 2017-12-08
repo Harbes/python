@@ -60,7 +60,7 @@ rtn.iloc[1:].to_pickle('./five_factor/rtn_monthly')
 size=pd.read_pickle('./five_factor/size_monthly')
 oper=pd.read_pickle('./five_factor/oper_profit_monthly')
 stock_selected=oper.columns & size.columns
-### 均匀分组 or 分开分组 ###
+### 均匀分组  ###
 num_by_size=2
 label_size=[i+1 for i in range(num_by_size)] # 1表示小市值，2表示大市值
 percentile=np.linspace(0,1,num_by_size+1)
