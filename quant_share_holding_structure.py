@@ -257,27 +257,27 @@ for d in li_[:1]:
                 [list(f['stk'][stk]['volume']), list(f['stk'][stk]['trend']), list(f['stk'][stk]['lastPrc'])],
                 index=['v', 't', 'p']).T  #
             data['v'] = data['v'] - data['v'].shift(1)
-            trade_type.loc[(d, 'indi', 'buy')] = data['v'][(data['v'] < individual_standard / data['p']) & (
+            trade_type.loc[(d, 'indi', 'buy'), stk] = data['v'][(data['v'] < individual_standard / data['p']) & (
             data['t'] > 0)].iloc[3:-3].sum()
-            trade_type.loc[(d, 'indi', 'sell')] = data['v'][(data['v'] < individual_standard / data['p']) & (
+            trade_type.loc[(d, 'indi', 'sell'), stk] = data['v'][(data['v'] < individual_standard / data['p']) & (
             data['t'] < 0)].iloc[3:-3].sum()
-            trade_type.loc[(d, 'M', 'buy')] = data['v'][
+            trade_type.loc[(d, 'M', 'buy'), stk] = data['v'][
                                                   (data['v'] >= individual_standard / data['p']) & (
                                                   data['v'] < institution_standard / data['p']) & (data['t'] > 0)].iloc[
-                                              3:-3].sum()
-            trade_type.loc[(d, 'M', 'sell')] = data['v'][
+                                                   3:-3].sum()
+            trade_type.loc[(d, 'M', 'sell'), stk] = data['v'][
                                                    (data['v'] >= individual_standard / data['p']) & (
                                                    data['v'] < institution_standard / data['p']) & (
                                                    data['t'] < 0)].iloc[
-                                               3:-3].sum()
-            trade_type.loc[(d, 'insti', 'buy')] = data['v'][
+                                                    3:-3].sum()
+            trade_type.loc[(d, 'insti', 'buy'), stk] = data['v'][
                                                       (data['v'] >= institution_standard / data['p']) & (
                                                       data['t'] > 0)].iloc[
-                                                  3:-3].sum()
-            trade_type.loc[(d, 'insti', 'sell')] = data['v'][
+                                                       3:-3].sum()
+            trade_type.loc[(d, 'insti', 'sell'), stk] = data['v'][
                                                        (data['v'] >= institution_standard / data['p']) & (
                                                        data['t'] < 0)].iloc[
-                                                   3:-3].sum()
+                                                        3:-3].sum()
         except KeyError:
             pass
         else:
