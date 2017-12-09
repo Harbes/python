@@ -246,12 +246,12 @@ rootdir = '/Users/harbes/data/xccdata/bid_ask'
 li_ = [i for i in os.listdir(rootdir) if not i.endswith('_') and not i.endswith('.h5')][1:]  # 列出文件夹下所有的目录与文件
 trade_type = DataFrame(np.nan, index=pd.MultiIndex.from_product([li_, ['indi', 'M', 'insti'], ['buy', 'sell']]),
                        columns=stocks)
-institution_standard = 1e6
+institution_standard = 5e5
 individual_standard = 1e5
 for d in li_[:1]:
     filename = rootdir + '/' + d
     f = h5py.File(filename, 'r')
-    for stk in stocks:
+    for stk in stocks[:2]:
         try:
             data = DataFrame(
                 [list(f['stk'][stk]['volume']), list(f['stk'][stk]['trend']), list(f['stk'][stk]['lastPrc'])],
@@ -283,6 +283,9 @@ for d in li_[:1]:
         else:
             pass
 print(time.time() - t0)
+trade_type.head()
+
+
 
 data = DataFrame(
     [list(f['stk']['002666']['numTrades']), list(f['stk']['002666']['volume']), list(f['stk']['002666']['trend'])]).T  #
