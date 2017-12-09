@@ -4,6 +4,8 @@ import numpy as np
 from pandas.tseries.offsets import YearEnd
 from datetime import datetime
 
+#data_path='/Users/harbes/data/xccdata'
+data_path='F:/data/xccdata'
 after_fes_data = [
     (datetime(2005, 2, 16), '2005'),
     (datetime(2006, 2, 6), '2006'),
@@ -20,7 +22,7 @@ after_fes_data = [
     (datetime(2017, 2, 3), '2017'),
 ]
 
-institution = pd.read_csv('/Users/harbes/data/xccdata/insti_holding.csv').iloc[1:]
+institution = pd.read_csv(data_path+'/insti_holding.csv').iloc[1:]
 institution['Date'] = pd.to_datetime(institution['Date'])
 institution = institution.set_index(['Date', 'SCode'])
 institution.index.names = ['trddt', 'stkcd']
@@ -32,7 +34,7 @@ institution[institution > 100] = 100
 # (institution==0).sum(axis=1) # 机构不持股
 # (institution==100).sum(axis=1) # 完全由机构持股
 
-government = pd.read_csv('/Users/harbes/data/xccdata/govern_holding.csv').iloc[1:]
+government = pd.read_csv(data_path+'/govern_holding.csv').iloc[1:]
 government['Year'] = pd.to_datetime(government['Year']) + YearEnd()
 government = government.set_index(['Year', 'SCode'])
 government = government.unstack()
@@ -48,8 +50,9 @@ government = government.astype(np.float64)
 individual = 100 - institution
 # (individual==100).sum(axis=1) # 完全由个人持股
 
-PV_datetime = pd.read_pickle('/Users/harbes/data/xccdata/PV_datetime')[['size_tot', 'adj_close', 'adj_open', 'clsprc']]
-filter_ = pd.read_pickle('/Users/harbes/data/xccdata/filter')
+
+PV_datetime = pd.read_pickle(data_path+'/PV_datetime')[['size_tot', 'adj_close', 'adj_open', 'clsprc']]
+filter_ = pd.read_pickle(data_path+'/filter')
 size = PV_datetime['size_tot'].unstack()
 size.columns = size.columns.str.slice(0, 6)
 adj_open = PV_datetime['adj_open'].unstack()
@@ -59,7 +62,7 @@ adj_close.columns = adj_close.columns.str.slice(0, 6)
 clsprc = PV_datetime['clsprc'].unstack()
 clsprc.columns = clsprc.columns.str.slice(0, 6)
 
-book = pd.read_pickle('/Users/harbes/data/xccdata/BS')[['ann_dt', 'stkcd', 'tot_assets', 'tot_liab']]  #
+book = pd.read_pickle(data_path+'/BS')[['ann_dt', 'stkcd', 'tot_assets', 'tot_liab']]  #
 book['stkcd'] = book['stkcd'].str.slice(0, 6)
 book = book[~np.isnan(book['ann_dt'])]
 book.drop_duplicates(book[['ann_dt', 'stkcd']], inplace=True)
@@ -218,16 +221,30 @@ n = 1;
 tmp = average_return.loc[n, 1] - average_return.loc[n, 5];
 tmp.mean() / tmp.std() * np.sqrt(len(tmp))
 
+
+
+
 # 观察不同 size-holding 股票的四种类型占比
 ## 选择股票
 num_by_ = 5;
 num_selected_per = 30
 label_1 = [i + 1 for i in range(num_by_)];
 percentile_1 = np.linspace(0, 1, num_by_ + 1)
-label_2 = [i + 1 for i in range(num_by_)];  # label_2 = [1, 2, 3]; #
-percentile_2 = np.linspace(0, 1, num_by_ + 1)  # percentile_2 = (0.0, 0.3, 0.7, 1.0) #
+label_2 = [1, 2, 3];
+percentile_2 = (0.0, 0.3, 0.7, 1.0)
 holding = institution[size.columns & institution.columns]
 size = size[size.columns & institution.columns]
+indicator1 = size.shift(1).loc['2006':'2016'][size.columns & institution.columns];  # 可以改为其他指标，例如BM
+indicator2 = holding.loc['2006':'2016']
+mark_1 = DataFrame([pd.qcut(indicator1.loc[i], q=percentile_1, labels=label_1) for i in
+                    indicator1.index])  # ,index=indicator1.index,columns=indicator1.columns)
+mark_2 = DataFrame(np.nan, index=mark_1.index, columns=mark_1.columns)
+# mark_2[institution==0]=1
+for l_ in label_1:
+    tmp = DataFrame(
+        [pd.qcut(indicator2.loc[i][mark_1.loc[i] == l_], q=percentile_2, labels=label_2) for i in indicator2.index],
+        index=indicator2.index)
+    mark_2 = mark_2.combine_first(tmp)
 select_stock = {}
 for i in label_1:
     for j in label_2:
@@ -236,22 +253,24 @@ for i in label_1:
                 np.sort(np.random.choice(size.loc[d][(mark_1.loc[d] == i) & (mark_2.loc[d])].index, num_selected_per)))
 stocks = np.array([select_stock[i] for i in select_stock.keys()])
 stocks = stocks.reshape((stocks.size,))
+#DataFrame(stocks).to_pickle(data_path+'/selected_stocks_by_size_institution')
 
 import h5py
 import os
 import time
 
+#stocks=pd.read_pickle(data_path+'/selected_stocks_by_size_institution')
 t0 = time.time()
-rootdir = '/Users/harbes/data/xccdata/bid_ask'
-li_ = [i for i in os.listdir(rootdir) if not i.endswith('_') and not i.endswith('.h5')][1:]  # 列出文件夹下所有的目录与文件
+rootdir = data_path+'/bid_ask'
+li_ = [i for i in os.listdir(rootdir) if not i.endswith('_') and not i.endswith('.h5')]#[1:]  # 列出文件夹下所有的目录与文件
 trade_type = DataFrame(np.nan, index=pd.MultiIndex.from_product([li_, ['indi', 'M', 'insti'], ['buy', 'sell']]),
                        columns=stocks)
 institution_standard = 5e5
 individual_standard = 1e5
-for d in li_[:1]:
+for d in li_:
     filename = rootdir + '/' + d
     f = h5py.File(filename, 'r')
-    for stk in stocks[:2]:
+    for stk in stocks:
         try:
             data = DataFrame(
                 [list(f['stk'][stk]['volume']), list(f['stk'][stk]['trend']), list(f['stk'][stk]['lastPrc'])],
@@ -282,8 +301,9 @@ for d in li_[:1]:
             pass
         else:
             pass
+    #f.close()
 print(time.time() - t0)
-trade_type.head()
+trade_type.head(20).iloc[:,:5]
 
 
 
