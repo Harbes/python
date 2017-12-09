@@ -253,7 +253,7 @@ for i in label_1:
                 np.sort(np.random.choice(size.loc[d][(mark_1.loc[d] == i) & (mark_2.loc[d])].index, num_selected_per)))
 stocks = np.array([select_stock[i] for i in select_stock.keys()])
 stocks = stocks.reshape((stocks.size,))
-#DataFrame(stocks).to_pickle(data_path+'/selected_stocks_by_size_institution')
+#DataFrame(select_stock).to_pickle(data_path+'/selected_stocks_by_size_institution')
 
 import h5py
 import os
@@ -265,9 +265,9 @@ rootdir = data_path+'/bid_ask'
 li_ = [i for i in os.listdir(rootdir) if not i.endswith('_') and not i.endswith('.h5')]#[1:]  # 列出文件夹下所有的目录与文件
 trade_type = DataFrame(np.nan, index=pd.MultiIndex.from_product([li_, ['indi', 'M', 'insti'], ['buy', 'sell']]),
                        columns=stocks)
-institution_standard = 5e5
-individual_standard = 1e5
-for d in li_:
+institution_standard = 5e3
+individual_standard = 1e3
+for d in li_[5:20]:
     filename = rootdir + '/' + d
     f = h5py.File(filename, 'r')
     for stk in stocks:
@@ -304,7 +304,7 @@ for d in li_:
     #f.close()
 print(time.time() - t0)
 trade_type.head(20).iloc[:,:5]
-
+trade_type.loc['20150128':'20150217'].to_pickle(data_path+'/trade_type_before')
 
 
 data = DataFrame(
