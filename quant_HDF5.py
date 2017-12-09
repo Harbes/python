@@ -19,25 +19,25 @@ store.close()
 
 
 import h5py
-
 filename = '/Users/harbes/data/xccdata/bid_ask/20150225'
 # filename = 'F:/data/xccdata/bid_ask/20150225.h5'
-
 f = h5py.File(filename, 'r')
-#f.name
-#list(f.keys())
-data = pd.DataFrame(
+
+# 筛选股票
+try:
+    list(f['stk']['000000'])
+except KeyError:
+    pass
+else:
+    pass
+
+data = DataFrame(
     [list(f['stk']['002666']['numTrades']), list(f['stk']['002666']['volume']), list(f['stk']['002666']['trend'])]).T  #
-data = pd.DataFrame(
-    [list(f['stk']['002666']['numTrades']), list(f['stk']['002666']['volume']), list(f['stk']['002666']['trend'])]).T  #
+data = DataFrame(
+    [list(f['stk']['000001']['numTrades']), list(f['stk']['000001']['volume']), list(f['stk']['000001']['trend'])]).T  #
 data[1] = data[1] - data[1].shift(1);
 data[1] = (data[1] - data[1].shift(1)) / data[0];
 data
-
-data=pd.DataFrame(f[a_group_key])
-# 报错：ValueError: DataFrame constructor not properly called!
-f.close()
-
 
 import numpy as np
 import pandas as pd

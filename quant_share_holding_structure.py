@@ -217,3 +217,82 @@ average_return.mean(axis=1)
 n = 1;
 tmp = average_return.loc[n, 1] - average_return.loc[n, 5];
 tmp.mean() / tmp.std() * np.sqrt(len(tmp))
+
+# 观察不同 size-holding 股票的四种类型占比
+## 选择股票
+num_by_ = 5;
+num_selected_per = 30
+label_1 = [i + 1 for i in range(num_by_)];
+percentile_1 = np.linspace(0, 1, num_by_ + 1)
+label_2 = [i + 1 for i in range(num_by_)];  # label_2 = [1, 2, 3]; #
+percentile_2 = np.linspace(0, 1, num_by_ + 1)  # percentile_2 = (0.0, 0.3, 0.7, 1.0) #
+holding = institution[size.columns & institution.columns]
+size = size[size.columns & institution.columns]
+select_stock = {}
+for i in label_1:
+    for j in label_2:
+        for d in np.array(after_fes_data)[-3:-2, 0]:
+            select_stock[((i, j), d)] = tuple(
+                np.sort(np.random.choice(size.loc[d][(mark_1.loc[d] == i) & (mark_2.loc[d])].index, num_selected_per)))
+stocks = np.array([select_stock[i] for i in select_stock.keys()])
+stocks = stocks.reshape((stocks.size,))
+
+import h5py
+import os
+import time
+
+t0 = time.time()
+rootdir = '/Users/harbes/data/xccdata/bid_ask'
+li_ = [i for i in os.listdir(rootdir) if not i.endswith('_') and not i.endswith('.h5')][1:]  # 列出文件夹下所有的目录与文件
+trade_type = DataFrame(np.nan, index=pd.MultiIndex.from_product([li_, ['indi', 'M', 'insti'], ['buy', 'sell']]),
+                       columns=stocks)
+institution_standard = 1e6
+individual_standard = 1e5
+for d in li_[:1]:
+    filename = rootdir + '/' + d
+    f = h5py.File(filename, 'r')
+    for stk in stocks:
+        try:
+            data = DataFrame(
+                [list(f['stk'][stk]['volume']), list(f['stk'][stk]['trend']), list(f['stk'][stk]['lastPrc'])],
+                index=['v', 't', 'p']).T  #
+            data['v'] = data['v'] - data['v'].shift(1)
+            trade_type.loc[(d, 'indi', 'buy')] = data['v'][(data['v'] < individual_standard / data['p']) & (
+            data['t'] > 0)].iloc[3:-3].sum()
+            trade_type.loc[(d, 'indi', 'sell')] = data['v'][(data['v'] < individual_standard / data['p']) & (
+            data['t'] < 0)].iloc[3:-3].sum()
+            trade_type.loc[(d, 'M', 'buy')] = data['v'][
+                                                  (data['v'] >= individual_standard / data['p']) & (
+                                                  data['v'] < institution_standard / data['p']) & (data['t'] > 0)].iloc[
+                                              3:-3].sum()
+            trade_type.loc[(d, 'M', 'sell')] = data['v'][
+                                                   (data['v'] >= individual_standard / data['p']) & (
+                                                   data['v'] < institution_standard / data['p']) & (
+                                                   data['t'] < 0)].iloc[
+                                               3:-3].sum()
+            trade_type.loc[(d, 'insti', 'buy')] = data['v'][
+                                                      (data['v'] >= institution_standard / data['p']) & (
+                                                      data['t'] > 0)].iloc[
+                                                  3:-3].sum()
+            trade_type.loc[(d, 'insti', 'sell')] = data['v'][
+                                                       (data['v'] >= institution_standard / data['p']) & (
+                                                       data['t'] < 0)].iloc[
+                                                   3:-3].sum()
+        except KeyError:
+            pass
+        else:
+            pass
+print(time.time() - t0)
+
+data = DataFrame(
+    [list(f['stk']['002666']['numTrades']), list(f['stk']['002666']['volume']), list(f['stk']['002666']['trend'])]).T  #
+data = DataFrame(
+    [list(f['stk']['000001']['numTrades']), list(f['stk']['000001']['volume']), list(f['stk']['000001']['trend'])]).T  #
+data[1] = data[1] - data[1].shift(1);
+data[1] = (data[1] - data[1].shift(1)) / data[0];
+data
+
+from dateutil.parser import parse
+
+parse(li_[1:])
+pd.to_datetime(li_[1:])
