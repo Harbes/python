@@ -384,7 +384,7 @@ for d in li_:
             data1 = pd.Series(f['stk'][stk]['volume']);
             data2 = pd.Series(f['stk'][stk]['trend']);
             data3 = pd.Series(f['stk'][stk]['lastPrc'])
-            data1 = (data1- data1.shift(1))[3:-3]
+            data1 = data.diff(1)[3:-3]
             trade_type.loc[(d, 'indi', 'buy'), stk] =data1[(data1 < individual_standard / data3[3:-3]) & (data2[3:-3]> 0)].sum()
             trade_type.loc[(d, 'indi', 'sell'), stk] = data1[(data1 < individual_standard / data3[3:-3]) & (data2[3:-3]< 0)].sum()
             trade_type.loc[(d, 'M', 'buy'), stk] = data1[(data1 >= individual_standard / data3[3:-3]) & (data1< institution_standard / data3[3:-3]) & (data2[3:-3]> 0)].sum()
@@ -414,5 +414,12 @@ data1[(data1>= individual_standard / data3[3:-3]) & (data1 < institution_standar
 data1[(data1 >= institution_standard / data3[3:-3]) & (data2[3:-3] > 0)].sum()
 data1[(data1 >= institution_standard / data3[3:-3]) & (data2[3:-3] < 0)].sum()
 print(time.time()-t0)
+
+
+
+
+
+
+
 
 
