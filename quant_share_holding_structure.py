@@ -255,6 +255,7 @@ stocks = np.array([select_stock[i] for i in select_stock.keys()])
 stocks = stocks.reshape((stocks.size,))
 #DataFrame(select_stock).to_pickle(data_path+'/selected_stocks_by_size_institution')
 
+# 从日度数据中提取交易量数据
 import h5py
 import os
 import time
@@ -262,12 +263,12 @@ import time
 #stocks=pd.read_pickle(data_path+'/selected_stocks_by_size_institution')
 t0 = time.time()
 rootdir = data_path+'/bid_ask'
-li_ = [i for i in os.listdir(rootdir) if not i.endswith('_') and not i.endswith('.h5')]#[1:]  # 列出文件夹下所有的目录与文件
+li_ = [i for i in os.listdir(rootdir) if not i.endswith('_') and not i.endswith('.h5')][5:]  # 列出文件夹下所有的目录与文件
 trade_type = DataFrame(np.nan, index=pd.MultiIndex.from_product([li_, ['indi', 'M', 'insti'], ['buy', 'sell']]),
                        columns=stocks)
-institution_standard = 5e3
-individual_standard = 1e3
-for d in li_[5:20]:
+institution_standard = 1e4
+individual_standard = 1.6e3
+for d in li_:
     filename = rootdir + '/' + d
     f = h5py.File(filename, 'r')
     for stk in stocks:
@@ -303,19 +304,115 @@ for d in li_[5:20]:
             pass
     #f.close()
 print(time.time() - t0)
-trade_type.head(20).iloc[:,:5]
-trade_type.loc['20150128':'20150217'].to_pickle(data_path+'/trade_type_before')
+trade_type.to_pickle(data_path+'/trade_type_16_100w')
+#trade_type.head(20).iloc[:,:5]
+
+#trade_type=pd.read_pickle(data_path+'/trade_type_16_100w')
+tmp=trade_type.copy()
+tmp.index.names=['trddt','trader','action']
+#tmp=tmp.groupby(by='trddt').apply(lambda x:x/x.sum());tmp
+#tmp.index.names=['stkcd']
+select_stock=DataFrame(select_stock)
+select_stock.columns.get_level_values(0)#iloc[:,0].name[0]
+Group_By=DataFrame(np.nan,index=tmp.index,columns=select_stock.columns.get_level_values(0)) #
+for c in Group_By.columns:
+    Group_By[c]=tmp[select_stock[(c,'2015-02-25')]].mean(axis=1)
+
+G1=Group_By.sort_index().loc(axis=0)[:'20150217',:,:];G1
+G2=Group_By.sort_index().loc(axis=0)['20150225':,:,:];G2
+G1.groupby(by=['trader','action']).mean().loc(axis=0)[:,'buy']
+G2.groupby(by=['trader','action']).mean().loc(axis=0)[:,'buy']
+G2.groupby(by=['trader','action']).mean().loc(axis=0)[:,'buy']-G1.groupby(by=['trader','action']).mean().loc(axis=0)[:,'buy']
+(G2.groupby(by=['trader','action']).mean().loc(axis=0)[:,'buy']-G1.groupby(by=['trader','action']).mean().loc(axis=0)[:,'buy'])/G1.groupby(by=['trader','action']).mean().loc(axis=0)[:,'buy']
+
+G1.groupby(by=['trader','action']).mean().loc(axis=0)[:,'buy'].reset_index(level=1,drop=True)-G1.groupby(by=['trader','action']).mean().loc(axis=0)[:,'sell'].reset_index(level=1,drop=True)
+G1.groupby(by=['trader']).head()#apply(lambda x:x['buy']-x['sell'])#.loc(axis=0)[:,'sell']
 
 
-data = DataFrame(
-    [list(f['stk']['002666']['numTrades']), list(f['stk']['002666']['volume']), list(f['stk']['002666']['trend'])]).T  #
-data = DataFrame(
-    [list(f['stk']['000001']['numTrades']), list(f['stk']['000001']['volume']), list(f['stk']['000001']['trend'])]).T  #
-data[1] = data[1] - data[1].shift(1);
-data[1] = (data[1] - data[1].shift(1)) / data[0];
-data
 
-from dateutil.parser import parse
 
-parse(li_[1:])
-pd.to_datetime(li_[1:])
+
+
+
+### 统计交易数据，以区分散户、中户和机构
+
+t0 = time.time()
+rootdir = data_path+'/bid_ask'
+amount=[]
+for d in ['20150121']:
+    filename = rootdir + '/' + d
+    f = h5py.File(filename, 'r')
+    for stk in select_stock.iloc[[17, 16, 10, 15]].values.reshape((60,)):
+        try:
+            data = DataFrame(
+                [list(f['stk'][stk]['volume']),list(f['stk'][stk]['lastPrc'])],index=['v', 'p']).T  #
+            data['v'] = data['v'] - data['v'].shift(1)
+            amount.extend(list((data['v']*data['p']).values[3:-3]))
+        except KeyError:
+            pass
+        else:
+            pass
+    #f.close()
+print(time.time() - t0) # 21s左右
+from scipy.stats import cumfreq
+import matplotlib.pyplot as plt
+a=np.array(amount);
+pd.Series(np.log(a[a>0])+np.log(100)).hist(cumulative=True,bins=200,normed=1)
+plt.plot(b)
+
+
+
+
+
+import h5py
+import os
+import time
+
+#stocks=pd.read_pickle(data_path+'/selected_stocks_by_size_institution')
+t0 = time.time()
+rootdir = data_path+'/bid_ask'
+li_ = [i for i in os.listdir(rootdir) if not i.endswith('_') and not i.endswith('.h5')][5:]  # 列出文件夹下所有的目录与文件
+trade_type = DataFrame(np.nan, index=pd.MultiIndex.from_product([li_, ['indi', 'M', 'insti'], ['buy', 'sell']]),
+                       columns=stocks)
+institution_standard = 1e4
+individual_standard = 1.6e3
+for d in li_:
+    filename = rootdir + '/' + d
+    f = h5py.File(filename, 'r')
+    for stk in stocks:
+        try:
+            data1 = pd.Series(f['stk'][stk]['volume']);
+            data2 = pd.Series(f['stk'][stk]['trend']);
+            data3 = pd.Series(f['stk'][stk]['lastPrc'])
+            data1 = (data1- data1.shift(1))[3:-3]
+            trade_type.loc[(d, 'indi', 'buy'), stk] =data1[(data1 < individual_standard / data3[3:-3]) & (data2[3:-3]> 0)].sum()
+            trade_type.loc[(d, 'indi', 'sell'), stk] = data1[(data1 < individual_standard / data3[3:-3]) & (data2[3:-3]< 0)].sum()
+            trade_type.loc[(d, 'M', 'buy'), stk] = data1[(data1 >= individual_standard / data3[3:-3]) & (data1< institution_standard / data3[3:-3]) & (data2[3:-3]> 0)].sum()
+            trade_type.loc[(d, 'M', 'sell'), stk] = data1[(data1>= individual_standard / data3[3:-3]) & (data1 < institution_standard / data3[3:-3]) & (data2[3:-3] < 0)].sum()
+            trade_type.loc[(d, 'insti', 'buy'), stk] = data1[(data1 >= institution_standard / data3[3:-3]) & (data2[3:-3] > 0)].sum()
+            trade_type.loc[(d, 'insti', 'sell'), stk] = data1[(data1 >= institution_standard / data3[3:-3]) & (data2[3:-3] < 0)].sum()
+        except KeyError:
+            pass
+        else:
+            pass
+    #f.close()
+print(time.time() - t0)  # 从1.5h到105s
+
+trade_type0=pd.read_pickle(data_path+'/trade_type_16_100w')
+(trade_type.sort_index()==trade_type0).sum().sum()
+trade_type=trade_type.sort_index()
+
+
+
+t0=time.time()
+data1=pd.Series(f['stk'][stk]['volume']);data2=pd.Series(f['stk'][stk]['trend']);data3=pd.Series(f['stk'][stk]['lastPrc'])
+data1 = (data1- data1.shift(1))[3:-3];data1
+data1[(data1 < individual_standard / data3[3:-3]) & (data2[3:-3]> 0)].sum()
+data1[(data1 < individual_standard / data3[3:-3]) & (data2[3:-3]< 0)].sum()
+data1[(data1 >= individual_standard / data3[3:-3]) & (data1< institution_standard / data3[3:-3]) & (data2[3:-3]> 0)].sum()
+data1[(data1>= individual_standard / data3[3:-3]) & (data1 < institution_standard / data3[3:-3]) & (data2[3:-3] < 0)].sum()
+data1[(data1 >= institution_standard / data3[3:-3]) & (data2[3:-3] > 0)].sum()
+data1[(data1 >= institution_standard / data3[3:-3]) & (data2[3:-3] < 0)].sum()
+print(time.time()-t0)
+
+
