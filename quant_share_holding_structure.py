@@ -4,8 +4,8 @@ import numpy as np
 from pandas.tseries.offsets import YearEnd
 from datetime import datetime
 
-#data_path='/Users/harbes/data/xccdata'
-data_path='F:/data/xccdata'
+data_path = '/Users/harbes/data/xccdata'
+# data_path='F:/data/xccdata'
 after_fes_data = [
     (datetime(2005, 2, 16), '2005'),
     (datetime(2006, 2, 6), '2006'),
@@ -105,6 +105,10 @@ for l_ in label_1:
 
 
 # 计算不同组合institution holding、size的平均值
+inflow = pd.read_pickle(data_path + '/MF')[['stkcd', 'trddt', 'small_buy', 'buy_value_small_order']].set_index(
+    ['trddt', 'stkcd'])
+inflow = inflow['buy_value_small_order'].unstack();
+inflow.index = inflow.index.astype(str).to_datetime()
 holding = institution[size.columns & institution.columns]
 size = size[size.columns & institution.columns]
 average_holding = DataFrame(np.zeros((len(label_1) * len(label_2), 11)),
@@ -415,11 +419,31 @@ data1[(data1 >= institution_standard / data3[3:-3]) & (data2[3:-3] > 0)].sum()
 data1[(data1 >= institution_standard / data3[3:-3]) & (data2[3:-3] < 0)].sum()
 print(time.time()-t0)
 
+# 比较机构或散户在春节前后买入金额的对比
+data = pd.read_pickle(data_path + '/MF')[
+    ['stkcd', 'trddt', 'small_buy', 'buy_value_small_order', 'buy_value_exlarge_order']].set_index(['trddt', 'stkcd'])
+inflow = data['buy_value_exlarge_order'].unstack();
+inflow.index = pd.to_datetime(inflow.index.astype(str));
+inflow.columns = inflow.columns.str.slice(0, 6)
+inflow = inflow[size.columns & inflow.columns & institution.columns]
+size = size[size.columns & inflow.columns & institution.columns]
+average_inflow_after = DataFrame(np.zeros((len(label_1) * len(label_2), 10)),
+                                 index=pd.MultiIndex.from_product([label_1, label_2]),
+                                 columns=np.array(after_fes_data)[2:-1, 0])
+average_inflow_before = DataFrame(np.zeros((len(label_1) * len(label_2), 10)),
+                                  index=pd.MultiIndex.from_product([label_1, label_2]),
+                                  columns=np.array(after_fes_data)[2:-1, 0])
+for i in label_1:
+    for j in label_2:
+        for d in np.array(after_fes_data)[2:-1, 0]:
+            for t in range(10):
+                average_inflow_after.loc[(i, j), d] += inflow.iloc[inflow.index.get_loc(d) + t][
+                    (mark_1.loc[d] == i) & (mark_2.loc[d] == j)].mean()
+            for t in range(-15, 0):
+                average_inflow_before.loc[(i, j), d] += inflow.iloc[inflow.index.get_loc(d) + t][
+                    (mark_1.loc[d] == i) & (mark_2.loc[d] == j)].mean()
+average_inflow_after = average_inflow_after / 9
+average_inflow_before = average_inflow_before / 15
+((average_inflow_after - average_inflow_before) / average_inflow_before).mean(axis=1)
 
-
-
-
-
-
-
-
+(average_inflow_after - average_inflow_before)
