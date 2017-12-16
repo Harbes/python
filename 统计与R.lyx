@@ -437,5 +437,163 @@ cor(x,sin(x/20))
 \end_layout
 
 \end_deeper
+\begin_layout Itemize
+实践6：简单图形
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+x=rnorm(200)
+\end_layout
+
+\begin_layout Itemize
+hist(x,col="light blue") 
+\end_layout
+
+\begin_layout Itemize
+rug(x) # 在上面直方图的下面加上实际点大小
+\end_layout
+
+\begin_layout Itemize
+stem(x) # 茎叶图 
+\end_layout
+
+\begin_layout Itemize
+x<-rnorm(500);y<-x+rnorm(500) # 构造一个线性关系 
+\end_layout
+
+\begin_layout Itemize
+plot(y~x) 
+\end_layout
+
+\begin_layout Itemize
+a=lm(y~x) 
+\end_layout
+
+\begin_layout Itemize
+abline(a,col="red")
+\end_layout
+
+\begin_layout Itemize
+print('Hello World') 
+\end_layout
+
+\begin_layout Itemize
+paste('x的最小值=',min(x)) #也是一种打印 
+\end_layout
+
+\begin_layout Itemize
+demo(graphics) #查看R内置的画图教程
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践7：复数运算和求函数极值
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+(2+4i)^-3.5+(2i+4.5)*(-1.7-2.3i)/((2.6-7i)*(-4+5.1i))
+\end_layout
+
+\begin_layout Itemize
+(z<-complex(real=rnorm(10),imaginary=rnorm(10))) 
+\end_layout
+
+\begin_layout Itemize
+complex(re=rnorm(3),im=rnorm(3)) 
+\end_layout
+
+\begin_layout Itemize
+Re(z)
+\end_layout
+
+\begin_layout Itemize
+Im(z)
+\end_layout
+
+\begin_layout Itemize
+Mod(z) # 模 
+\end_layout
+
+\begin_layout Itemize
+Arg(z) # 辐角 
+\end_layout
+
+\begin_layout Itemize
+choose(6,2) # 组合数
+\end_layout
+
+\begin_layout Itemize
+factorial(6) # 阶乘 
+\end_layout
+
+\begin_layout Itemize
+f=function(x) x^3-2*x-1 
+\end_layout
+
+\begin_layout Itemize
+uniroot(f,c(0,2)) # 迭代求根 
+\end_layout
+
+\begin_layout Itemize
+f=function(x) x^2+2*x+1
+\end_layout
+
+\begin_layout Itemize
+optimize(f,c(-2,2)) # 最小值 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践8：字符型向量和因子型向量
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+a=factor(letters[1:10]);a # letters小写字母向量，LETTERS：大写 
+\end_layout
+
+\begin_layout Itemize
+a[3]='W' #报错 
+\end_layout
+
+\begin_layout Itemize
+a=as.character(a) #需要先转换成字符型
+\end_layout
+
+\begin_layout Itemize
+a[3]='W';a 
+\end_layout
+
+\begin_layout Itemize
+a;factor(a) # 这是两种不同的类型 
+\end_layout
+
+\begin_layout Itemize
+levels(factor(a)) 
+\end_layout
+
+\begin_layout Itemize
+sex=sample(0:1,10,r=T); sex=factor(sex);sex
+\end_layout
+
+\begin_layout Itemize
+levels(sex) # '0' '1' , 定性变量的level
+\end_layout
+
+\begin_layout Itemize
+levels(sex)=c("Male","Female");levels(sex);sex # 改变因子的水平 
+\end_layout
+
+\begin_layout Itemize
+sex=ordered(sex,c("Female","Male"));sex # 确定level次序 levels(sex)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践9：数据输入输出
+\end_layout
+
 \end_body
 \end_document
