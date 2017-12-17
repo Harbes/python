@@ -595,5 +595,245 @@ sex=ordered(sex,c("Female","Male"));sex # 确定level次序 levels(sex)
 实践9：数据输入输出
 \end_layout
 
+\begin_deeper
+\begin_layout Itemize
+x=scan() # 然后通过手动输入或者粘贴的方式 
+\end_layout
+
+\begin_layout Itemize
+w=read.table(file.choose(),header=T) # 通过 file.choose() 弹出窗口，选择数据 
+\end_layout
+
+\begin_layout Itemize
+setwd('/Users/harbes/data') # 建立工作路径 
+\end_layout
+
+\begin_layout Itemize
+(x=rnorm(20));write(x,'test.txt') 
+\end_layout
+
+\begin_layout Itemize
+y=scan('test.txt');y 
+\end_layout
+
+\begin_layout Itemize
+y=iris;y[1:5];str(y) # y[1:5]指的是y的1:5列 
+\end_layout
+
+\begin_layout Itemize
+write.table(y,'test.txt',row.names=F) 
+\end_layout
+
+\begin_layout Itemize
+w=read.table('test.txt',header=T);head(w);str(w) 
+\end_layout
+
+\begin_layout Itemize
+write.csv(y,'test.csv') v=read.csv('test.csv');str(v) 
+\end_layout
+
+\begin_layout Itemize
+data=read.table('clipboard') # 读入剪贴板的数据
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践10:序列等
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+(z=seq(-1,10,length=100)) # 从-1到10的等间隔的100个数组成的序列
+\end_layout
+
+\begin_layout Itemize
+(z=seq(10,-1,-0.1)) # 从10到-1间隔为-0.1的序列 
+\end_layout
+
+\begin_layout Itemize
+(x=rep(1:3,3)) # 重复1:3序列3次
+\end_layout
+
+\begin_layout Itemize
+(x=rep(3:5,1:3)) # 3:5序列，而1:3给出了对应数值重复的次数——》3 4 4 5 5 5 
+\end_layout
+
+\begin_layout Itemize
+(x=rep(c(1,10),c(4,5)))
+\end_layout
+
+\begin_layout Itemize
+(w=c(1,3,x,z));length(w) # 把数值、序列(向量)combine成一个向量,length(w)=122 #
+\end_layout
+
+\begin_layout Itemize
+x=rep(0,10);z=1:3;x+z # 长度不匹配，会同时给出警告和结果
+\end_layout
+
+\begin_layout Itemize
+x=seq(1,10);z=seq(10,1);x*z # 对应元素相乘
+\end_layout
+
+\begin_layout Itemize
+rev(x) # 颠倒次序（逆序）
+\end_layout
+
+\begin_layout Itemize
+z=c("no cat",'has ','nine','tails');z[1]=="no cat" 
+\end_layout
+
+\begin_layout Itemize
+z=1:5;z[7]=8;z # z[6]=NA
+\end_layout
+
+\begin_layout Itemize
+z=NULL;z[c(1,3,5)]=1:3;z # z[2]和z[4]都是NA 
+\end_layout
+
+\begin_layout Itemize
+z[-c(1,3)];z # z[-c(1,3)]表示去掉第1、3个元素，但是返回的是copy，z本身是不发生变化的
+\end_layout
+
+\begin_layout Itemize
+rnorm(10)[c(2,5)]
+\end_layout
+
+\begin_layout Itemize
+z=sample(1:100,10);which(z==max(z)) # 给出最大值的下标
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践11：矩阵
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+x=sample(1:100,12);x 
+\end_layout
+
+\begin_layout Itemize
+all(x>0);all(x!=0);any(x>0);(1:10)[x>0] 
+\end_layout
+
+\begin_layout Itemize
+diff(x) # 相邻作差，因而length少了1 
+\end_layout
+
+\begin_layout Itemize
+diff(x,lag=2) # 滞后2阶进行差分 
+\end_layout
+
+\begin_layout Itemize
+x=matrix(1:20,4,5);x # 矩阵的构造，默认按列排列
+\end_layout
+
+\begin_layout Itemize
+x=matrix(1:20,4,5,byrow=T);x # 按行排列 
+\end_layout
+
+\begin_layout Itemize
+t(x) # 矩阵的转置 
+\end_layout
+
+\begin_layout Itemize
+x=matrix(sample(1:100,20),4,5);x;2*x;x+5
+\end_layout
+
+\begin_layout Itemize
+y=matrix(sample(1:100,20),5,4);x+t(y)
+\end_layout
+
+\begin_layout Itemize
+(z=x%*%y) # 矩阵乘法 "%*%" 
+\end_layout
+
+\begin_layout Itemize
+z1=solve(z); # 逆（也可以z1^-1，不过结果可能有差距，可能是因为算法不同） ，另外，用solve(a,b)可以解方程 ax=b
+\end_layout
+
+\begin_layout Itemize
+z1%*%z # 应该是单位矩阵
+\end_layout
+
+\begin_layout Itemize
+round(z1%*%z) b=solve(z,1:4);b
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践12:矩阵（续）
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+x=matrix(rnorm(24),4,6);x 
+\end_layout
+
+\begin_layout Itemize
+nrow(x);ncol(x);dim(x) 
+\end_layout
+
+\begin_layout Itemize
+x[c(2,1),] # 第二行和第一行 
+\end_layout
+
+\begin_layout Itemize
+x[,c(1,3)] x[2,1] # 第二行、第一列元素
+\end_layout
+
+\begin_layout Itemize
+x[x[,1]>0,] # 第一列大于0所在的行
+\end_layout
+
+\begin_layout Itemize
+x[x[,1]>0,2] # 第一列大于0所在行的第二列 
+\end_layout
+
+\begin_layout Itemize
+sum(x[,1]>0) # 第一列大于0的元素的个数 
+\end_layout
+
+\begin_layout Itemize
+x[,-c(1,3)] # 排除第1、3列的x 
+\end_layout
+
+\begin_layout Itemize
+diag(x) # x的对角线 
+\end_layout
+
+\begin_layout Itemize
+diag(1:5);diag(diag(x));diag(5) 
+\end_layout
+
+\begin_layout Itemize
+x[x[,1]>0&x[,3]<=1,1] 
+\end_layout
+
+\begin_layout Itemize
+x[x[,2]>0|x[,1]<0.51,1] 
+\end_layout
+
+\begin_layout Itemize
+x[!x[,2]<.51,1] 
+\end_layout
+
+\begin_layout Itemize
+apply(x,1,mean) # 按行求均值 ；python与此相反：python是沿行或者列求函数值 
+\end_layout
+
+\begin_layout Itemize
+apply(x,2,sum) # 按列求和 
+\end_layout
+
+\begin_layout Itemize
+x=matrix(rnorm(24),4,6)
+\end_layout
+
+\begin_layout Itemize
+x[lower.tri(x)]=0;x # 得到上三角，或者，x[upper.tri(x)]=0 得到下三角
+\end_layout
+
+\end_deeper
 \end_body
 \end_document
