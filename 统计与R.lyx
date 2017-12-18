@@ -835,5 +835,343 @@ x[lower.tri(x)]=0;x # 得到上三角，或者，x[upper.tri(x)]=0 得到下三�
 \end_layout
 
 \end_deeper
+\begin_layout Itemize
+实践13:高维数组
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+x=array(runif(24),c(4,3,2));x # 构造4*3*2的三维数组 
+\end_layout
+
+\begin_layout Itemize
+is.matrix(x) # FALSE 
+\end_layout
+
+\begin_layout Itemize
+dim(x) 
+\end_layout
+
+\begin_layout Itemize
+is.matrix(x[1,,]) # TRUE 
+\end_layout
+
+\begin_layout Itemize
+x=array(1:24,c(4,3,2));x 
+\end_layout
+
+\begin_layout Itemize
+x[c(1,3),,]
+\end_layout
+
+\begin_layout Itemize
+apply(x,1,mean)
+\end_layout
+
+\begin_layout Itemize
+apply(x,1:2,sum) # 第二个参数可以简单看成需要被保留的维度 
+\end_layout
+
+\begin_layout Itemize
+apply(x,c(1,3),prod)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践14:矩阵与向量之间的运算
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+x=matrix(1:20,5,4);x 
+\end_layout
+
+\begin_layout Itemize
+sweep(x,1,2:6,"*") # 将 序列 2:6 的每个元素与x的相应行相乘 
+\end_layout
+
+\begin_layout Itemize
+x*2:6 # 同上 
+\end_layout
+
+\begin_layout Itemize
+sweep(x,2,2:5,"+") # 将序列 2:5 的每个元素与x的相应列相加 
+\end_layout
+
+\begin_layout Itemize
+x+2:5 # 同上 
+\end_layout
+
+\begin_layout Itemize
+x=matrix(sample(1:100,24),6,4);x1=scale(x);x;x1 # scale是对每列进行标准化处理 
+\end_layout
+
+\begin_layout Itemize
+x2=scale(x,scale=F);x2 # 只是将每列减去相应均值 
+\end_layout
+
+\begin_layout Itemize
+x3=scale(x,center=F);x3 # 不进行中心化处理，只是除以对应的标准差 
+\end_layout
+
+\begin_layout Itemize
+round(apply(x1,2,mean),14) 
+\end_layout
+
+\begin_layout Itemize
+apply(x1,2,sd)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践15:缺失值以及数据的合并
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+airquality # 含有缺失值NA的R自带数据 
+\end_layout
+
+\begin_layout Itemize
+complete.cases(airquality) # 判断每行是否有缺失值 
+\end_layout
+
+\begin_layout Itemize
+which(complete.cases(airquality)==F) # 有缺失值的行号
+\end_layout
+
+\begin_layout Itemize
+sum(complete.cases(airquality)) # 完整观测值的个数 
+\end_layout
+
+\begin_layout Itemize
+na.omit(airquality) # 删去缺失值的数据 
+\end_layout
+
+\begin_layout Itemize
+x=11:20;x[12]=3 
+\end_layout
+
+\begin_layout Itemize
+x1=append(x,77,after=5);x1 # 在第五个数之后添加一个77
+\end_layout
+
+\begin_layout Itemize
+cbind(1:5,rnorm(5)) # 列拼接
+\end_layout
+
+\begin_layout Itemize
+rbind(1:5,rnorm(5)) # 行拼接 
+\end_layout
+
+\begin_layout Itemize
+cbind(1:3,4:6);rbind(1:3,4:6) 
+\end_layout
+
+\begin_layout Itemize
+x=rbind(1:5,runif(5),runif(5),1:5,7:11);x[!duplicated(x)] #去掉重复的行（保留第一个），或者使用uni
+que函数
+\end_layout
+
+\begin_layout Itemize
+unique(x)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践16:list
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+z=list(1:3,Tom=c(1:2,a=list("R",letters[1:5]),w="hi!"));z # list可以是任何对象(包括list)的
+集合 
+\end_layout
+
+\begin_layout Itemize
+str(z) # 如果Tom处用的不是c()，而是list()的话，那z的结构是不一样的
+\end_layout
+
+\begin_layout Itemize
+z[[1]];z[[2]] 
+\end_layout
+
+\begin_layout Itemize
+z$T 
+\end_layout
+
+\begin_layout Itemize
+z$T$a2 
+\end_layout
+
+\begin_layout Itemize
+z$T[[3]]
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践17:条形图和表
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+x=c(3,3,3,4,1,4,2,1,3,2,5,3,1,2,5,2,3,4,2,4,5,2,3,1,1) 
+\end_layout
+
+\begin_layout Itemize
+barplot(x) # 不是我们想要的直方图 
+\end_layout
+
+\begin_layout Itemize
+table(x)
+\end_layout
+
+\begin_layout Itemize
+barplot(table(x)) # 正确的图 
+\end_layout
+
+\begin_layout Itemize
+barplot(table(x)/length(x)) # 比例图
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践18:形成表格
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+library(MASS) 
+\end_layout
+
+\begin_layout Itemize
+quine # MASS自带数据 
+\end_layout
+
+\begin_layout Itemize
+attach(quine) # 把数据变量名放入内存 
+\end_layout
+
+\begin_layout Itemize
+table(Age) 
+\end_layout
+
+\begin_layout Itemize
+table(Sex,Age);
+\end_layout
+
+\begin_layout Itemize
+tab=xtabs(~Sex+Age,quine);unclass(tab) 
+\end_layout
+
+\begin_layout Itemize
+tapply(Days,Age,mean)
+\end_layout
+
+\begin_layout Itemize
+tapply(Days,list(Sex,Age),mean) 
+\end_layout
+
+\begin_layout Itemize
+detach(quine) # attach的逆运行
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践19:如何写函数
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+ss=function(n=100){z=2;for (i in 2:n)if (any(i%%2:(i-1)==0)==F)z=c(z,i);return(z
+)} # 注意，函数可以不写return，这时最后一个值就是return的值
+\end_layout
+
+\begin_layout Itemize
+#fix(ss) # 弹出窗口，修改函数
+\end_layout
+
+\begin_layout Itemize
+t1=Sys.time();ss();Sys.time()-t1
+\end_layout
+
+\begin_layout Itemize
+system.time(ss(1000)) 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践20:画图
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+x=seq(-3,3,len=20);y=dnorm(x);y # 产生数据 
+\end_layout
+
+\begin_layout Itemize
+w=data.frame(x,y) 
+\end_layout
+
+\begin_layout Itemize
+par(mfcol=c(2,2)) # 准备话四个图的地方 
+\end_layout
+
+\begin_layout Itemize
+plot(y~x,w,main="正态密度函数")
+\end_layout
+
+\begin_layout Itemize
+plot(y~x,w,type='l',main="正态密度函数") 
+\end_layout
+
+\begin_layout Itemize
+plot(y~x,w,type='o',main="正态密度函数") 
+\end_layout
+
+\begin_layout Itemize
+plot(y~x,w,type='b',main="正态密度函数")
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践21:色彩和符号等的调整
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+plot(1,1,xlim=c(1,7.5),ylim=c(0,5),type="n") # 画出框架 
+\end_layout
+
+\begin_layout Itemize
+points(1:7,rep(4.5,7),cex=seq(1,4,l=7),col=1:7,pch=0:6) # 在plot命令后追加点 
+\end_layout
+
+\begin_layout Itemize
+text(1:7,rep(3.5,7),labels=paste(0:6,letters[1:7]),cex=seq(1,4,l=7),col=1:7)
+ #在指定位置加上文字 
+\end_layout
+
+\begin_layout Itemize
+points(1:7,rep(2,7),pch=(0:6)+7) # 点出符号7:13 
+\end_layout
+
+\begin_layout Itemize
+text((1:7)+0.25,rep(2,7),paste((0:6)+7)) # 加符号号码
+\end_layout
+
+\begin_layout Itemize
+points(1:7,rep(1,7),pch=(0:6)+14) #点出符号14:20 
+\end_layout
+
+\begin_layout Itemize
+text((1:7)+0.25,rep(1,7),paste((0:6)+14)) 
+\end_layout
+
+\begin_layout Itemize
+# 更多——》 ?par
+\end_layout
+
+\end_deeper
 \end_body
 \end_document
