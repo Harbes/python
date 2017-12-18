@@ -159,6 +159,10 @@ Ubuntu：
 
 \end_deeper
 \begin_layout Chapter
+引言
+\end_layout
+
+\begin_layout Section
 简单的使用R
 \end_layout
 
@@ -1170,6 +1174,123 @@ text((1:7)+0.25,rep(1,7),paste((0:6)+14))
 
 \begin_layout Itemize
 # 更多——》 ?par
+\end_layout
+
+\end_deeper
+\begin_layout Section
+国内统计教材的若干误区
+\end_layout
+
+\begin_layout Itemize
+假设检验的误区：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+正确的说法“目前没有足够证据拒绝零假设”，错误的说法“接受零假设”。下面是一个例子用以说明：一种是对1到50的自然数列做Shapiro-Wilk正态性检验；另一
+种是对1到500的自然数列做Kolmogorov-Smirnov正态性检验，相应的p值分别为0.05809和0.00667，结果是两种正态性检验在0.05的显著性水平
+下都无法拒绝(正态性的)零假设，但是我们不能说“接受/承认这两个数列服从正态分布”【一般情况下，只要样本量小，就往往会得到不能拒绝原假设的结论。例如，做x=[-
+2000,-5000]和y=[20000,50000]的两样本均值的双边t检验，原假设是两个样本均值相同，R-code：t.test(x,y)】
+\end_layout
+
+\begin_layout Itemize
+p值小于0.05就显著，这是错的。“p值是多少才算小概率”取决于显著性水平的取值，即当给定显著性水平alpha，当p<alpha时应当拒绝零假设。而alpha的选
+取完全依赖于问题本身。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+置信区间的误区。如果从数据根据公式
+\begin_inset Formula $\overline{x}\pm t_{\alpha/2}\frac{s}{\sqrt{n}}$
+\end_inset
+
+算出来的均值
+\begin_inset Formula $\mu$
+\end_inset
+
+的置信区间为(2.3,4.5)，那么能不能说区间(2.3,4.5)以概率
+\begin_inset Formula $1-\alpha$
+\end_inset
+
+覆盖
+\begin_inset Formula $\mu$
+\end_inset
+
+？答案是不能！因为
+\begin_inset Formula $\mu$
+\end_inset
+
+和(2.3,4.5)都是固定的数，没有随机性可言，不能出现任何概率。人们只能说“对于无穷多个不同样本(样本均值均为
+\begin_inset Formula $\mu$
+\end_inset
+
+)，依据公式
+\begin_inset Formula $\overline{x}\pm t_{\alpha/2}\frac{s}{\sqrt{n}}$
+\end_inset
+
+算出来的无穷个区间中，大约有
+\begin_inset Formula $1-\alpha$
+\end_inset
+
+比例的置信区间覆盖
+\begin_inset Formula $\mu$
+\end_inset
+
+”
+\end_layout
+
+\begin_layout Itemize
+最小二乘回归中的误区
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+大多是主观的假定。对于OLS，
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+假定了模型的线性形式——》解决思路：机器学习
+\end_layout
+
+\begin_layout Itemize
+假定样本点是独立同分布的
+\end_layout
+
+\begin_layout Itemize
+假定样本点有正态分布或者样本量“足够大”。然而，现实是没有任何人能够证明某一实际数据来源于任何分布。
+\end_layout
+
+\begin_layout Itemize
+OLS本身意味着选择的损失函数(最优化问题的目标函数？)是对称的二次函数形式。无论是对称还是二次都在一定程度上是不合理的
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+对回归结果缺乏根据的“解释”
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+误区：“当其他变量不变时，某变量系数的大小是改变辆增加以单位时因变量所增加的部分(对因变量的贡献)”。事实上，这种说法仅仅在变量独立以及模型的许多假定约束下才是
+正确的【但是似乎目前没有更好的解释说辞】
+\end_layout
+
+\begin_layout Itemize
+误区：“进行t检验或F检验时，p值较小的变量就较显著”。前提是独立同分布、线性关系以及大样本，但是这些实际上都是不够明确的
+\end_layout
+
+\begin_layout Itemize
+误区：“
+\begin_inset Formula $R^{2}$
+\end_inset
+
+越接近1，说明模型越合适”。这可能是过拟合的无意义的回归。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
 \end_layout
 
 \end_deeper
