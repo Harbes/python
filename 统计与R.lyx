@@ -1290,7 +1290,151 @@ OLS本身意味着选择的损失函数(最优化问题的目标函数？)是对
 
 \end_deeper
 \begin_layout Itemize
+增加无关的（“错误的”）自变量对预测会不会有影响。下面的R-code是一个例子，结果发现：增加与因变量无关的自变量不会对回归结果有多大影响
+\end_layout
 
+\begin_deeper
+\begin_layout Itemize
+set.seed(10);x1=rnorm(2000) 
+\end_layout
+
+\begin_layout Itemize
+y=3+5*x1+rnorm(2000)
+\end_layout
+
+\begin_layout Itemize
+a=lm(y~x1);summary(a) 
+\end_layout
+
+\begin_layout Itemize
+x2=sin(rnorm(2000,10)) # 一个无关的周期变量
+\end_layout
+
+\begin_layout Itemize
+a2=lm(y~x1+x2);summary(a2)
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+多大才算大样本？说样本量为30就是大样本是有误导性的。一个例子。没有人愿意说多大样本才算是大样本！！！
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+set.seed(10);y=NULL;for(i in 1:5000){y=c(y,mean(rt(10000,2)))}; shapiro.test(y)
+ # p-value<2.2e-16，拒绝原假设，即认为原样本不是正态分布
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+用31个省、直辖市、自治区数据能做什么？
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+31个省、直辖市、自治区数据仅仅是一些汇总数据，根本不是样本。（回忆一下什么是样本？）
+\end_layout
+
+\begin_layout Itemize
+而且它们之间很可能是不独立的
+\end_layout
+
+\begin_layout Itemize
+不是任何总体的样本，更谈不上分布与正态性
+\end_layout
+
+\begin_layout Itemize
+对于这种数据，使用任何超出描述性统计方法的做法都值得怀疑
+\end_layout
+
+\begin_layout Itemize
+即使做空间自回归也是非常不妥的。因为除了它不是一个样本之外，做空间统计的单位太大，比如内蒙古既和沿海省份相连，又和最落后的省份相连，任何空间距离的描述痘痕片面，
+而且边境省份也没有和周边国家/地区相关，似乎中国完全处于空间中自我封闭的状态。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+汇总数据(aggregate data？；比如部分均值)和原始观测值的区别。一个例子
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+set.seed(999);n=600 
+\end_layout
+
+\begin_layout Itemize
+w=data.frame(x=rnorm(n),y=rnorm(n)) 
+\end_layout
+
+\begin_layout Itemize
+I=c(4,12,30);par(mfrow=c(2,2)) 
+\end_layout
+
+\begin_layout Itemize
+plot(w,main=paste('n=',n,'r=',round(cor(w)[1,2],2))) 
+\end_layout
+
+\begin_layout Itemize
+for (j in 1:length(I)){z=NULL;u=I[j];for (i in 1:u) z=rbind(z,apply(w[((i-1)*n/u
++1):(i*n/u),],2,mean)); plot(z,main=paste('n=',u,'r=',round(cor(z)[1,2],2)))}
+\end_layout
+
+\end_deeper
+\begin_layout Chapter
+横截面数据回归：经典方法
+\end_layout
+
+\begin_layout Section
+简单回归回顾
+\end_layout
+
+\begin_layout Section*
+一个例子：公路 一氧化碳数据（COfreewy）
+\end_layout
+
+\begin_layout Enumerate
+对数据的简单拟合
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+w=read.table('COfreewy.txt',header=T); 
+\end_layout
+
+\begin_layout Standard
+a=lm(CO~.,w) # 利用全部自变量做线性回归 
+\end_layout
+
+\begin_layout Standard
+summary(a) 
+\end_layout
+
+\begin_layout Standard
+b=step(a,direction='backward') # a回归的逐步进行 
+\end_layout
+
+\begin_layout Standard
+summary(b) # 展示逐步回归结果 
+\end_layout
+
+\begin_layout Standard
+shapiro.test(b$res) # 残差的正态性检验
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+数据的进一步分析
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+qqnorm(b$res);qqline(b$res) # 残差很难说是正态的（前面的shapiro检验在5%显著性水平下无法拒绝的原因很可能是因为数据量太小了
+，从而造成不易拒绝原假设） 
+\end_layout
+
+\begin_layout Standard
+plot(w) # 或者 pairs(w)
 \end_layout
 
 \end_deeper
