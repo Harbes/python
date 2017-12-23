@@ -29,7 +29,7 @@ def import_data():
 if __name__ is '__main__':
     import_data()
     spread = 2 * np.sqrt(
-        (np.log(close) - np.log(high * low) * 0.5) * (np.log(close) - np.log((high * low).shift(-1)) * 0.5))
+        (np.log(close) - np.log(high * low) * 0.5) * (np.log(close) - np.log((high * low).shift(-1)) * 0.5)) / close
     illiquidity = np.abs((adj_close - adj_open) / adj_open) * 10000 / amount
     turnover = amount / size_free
     spread.corrwith(illiquidity).mean()
