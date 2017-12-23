@@ -64,7 +64,7 @@ def mark_group(indicator1, indicator2=None):
             mark_2 = mark_2.combine_first(tmp)
 
 
-def var_by_groups(var):
+def var_by_groups(var, weights=None):
     return DataFrame([[var.loc[i][mark_1.loc[i] == l_].mean() for l_ in labels1] for i in var.index], index=var.index,
                      columns=labels1)
 
@@ -74,8 +74,9 @@ if __name__ is "__main__":
     size_tot.loc[pd.to_datetime('2004-12-30')] = size_tot.iloc[0];
     size_tot = size_tot.sort_index()
     resample_data()
-    mark_group(size_tot)
+    mark_group(size_tot_m)
     rtn_m = (adj_close_m - adj_open_m) / adj_open_m
-    rtn_by_TurnOver = var_by_groups(rtn_m)
-
-
+    rtn_by_size = var_by_groups(rtn_m)
+    TurnOver_by_size = var_by_groups(turn_over_m)
+    tmp = TurnOver_by_size[1] - TurnOver_by_size[5];
+    tmp.mean() / tmp.std() * np.sqrt(len(tmp))
