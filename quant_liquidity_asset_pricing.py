@@ -19,7 +19,7 @@ def import_data():
     data_set = 'PV_datetime'
     Vars = ['size_tot', 'size_free', 'adj_close', 'adj_open', 'amount']
     data = pd.read_pickle(data_path + '/' + data_set)[Vars]
-    amount = data['amount'].unstack() * 0.1
+    amount = data['amount'].unstack() * 0.1  # 保持单位与size一致
     size_free = data['size_free'].unstack()
     size_tot = data['size_tot'].unstack()
     adj_open = data['adj_open'].unstack()
