@@ -33,8 +33,11 @@ if __name__ is '__main__':
     illiquidity = np.abs((adj_close - adj_open) / adj_open) * 10000 / amount
     turnover = amount / size_free
     spread.corrwith(illiquidity).mean()
-    spread.corrwith(turnover).mean()  # spread与turnover正相关？？？
+    spread.corrwith(turnover).mean()  # spread与turnover正相关？？？是不是不能简单的用一个数据进行点估计
     turnover.corrwith(illiquidity).mean()
     spread.T.corrwith(illiquidity.T).mean()
     spread.T.corrwith(turnover.T).mean()
     turnover.T.corrwith(illiquidity.T).mean()
+    spread.corrwith(1 / close).mean()
+    spread.T.corrwith(
+        1 / close.T).mean()  # estimated-spread has a higher cross-sectional correlation with the reciprocal of close pric
