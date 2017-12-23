@@ -13,13 +13,13 @@ def import_data():
     :param Vars: str or list of str
     :return:
     '''
+    global data_path, amount, size_free, size_tot, adj_open, adj_close
     data_path = '/Users/harbes/data/xccdata'
     # data_path='F:/data/xccdata'
     data_set = 'PV_datetime'
     Vars = ['size_tot', 'size_free', 'adj_close', 'adj_open', 'amount']
     data = pd.read_pickle(data_path + '/' + data_set)[Vars]
-    global amount, size_free, size_tot, adj_open, adj_close
-    amount = data['amount'].unstack()
+    amount = data['amount'].unstack() * 0.1
     size_free = data['size_free'].unstack()
     size_tot = data['size_tot'].unstack()
     adj_open = data['adj_open'].unstack()
@@ -40,7 +40,7 @@ def resample_data():
     global adj_open_m, adj_close_m, size_tot_m, turn_over_m
     adj_open_m = adj_open.groupby(key).first()
     adj_close_m = adj_close.groupby(key).last()
-    size_tot_m = size_tot.groupby(key).last().shift(1).iloc[1:]
+    size_tot_m = size_tot.groupby(key).last()
     turn_over_m = (amount / size_free).groupby(key).sum()
     # adj_open_m,adj_close_m,size_tot_m,turn_over_m
 
@@ -65,8 +65,15 @@ def mark_group(indicator1, indicator2=None):
 
 
 def var_by_groups(var, weights=None):
-    return DataFrame([[var.loc[i][mark_1.loc[i] == l_].mean() for l_ in labels1] for i in var.index], index=var.index,
+    if weights is None:
+        return DataFrame([[var.loc[i][mark_1.loc[i] == l_].mean() for l_ in labels1] for i in var.index],
+                         index=var.index,
                      columns=labels1)
+    else:
+        return DataFrame([[((var.loc[i] * weights.loc[i])[mark_1.loc[i] == l_].sum()) / (
+        weights.loc[i][mark_1.loc[i] == l_].sum()) for l_ in labels1] for i in var.index], index=var.index,
+                         columns=labels1)
+
 
 
 if __name__ is "__main__":
@@ -74,9 +81,15 @@ if __name__ is "__main__":
     size_tot.loc[pd.to_datetime('2004-12-30')] = size_tot.iloc[0];
     size_tot = size_tot.sort_index()
     resample_data()
-    mark_group(size_tot_m)
+    mark_group(size_tot_m.shift(1).iloc[1:])
     rtn_m = (adj_close_m - adj_open_m) / adj_open_m
-    rtn_by_size = var_by_groups(rtn_m)
-    TurnOver_by_size = var_by_groups(turn_over_m)
-    tmp = TurnOver_by_size[1] - TurnOver_by_size[5];
-    tmp.mean() / tmp.std() * np.sqrt(len(tmp))
+    # rtn_by_size = var_by_groups(rtn_m)
+    TurnOver_by_size = var_by_groups(turn_over_m, weights=size_tot_m)
+    TurnOver_by_size
+    key = lambda x: np.round(x * 0.01);
+    TurnOver_by_size.groupby(key).sum()
+    # tmp = TurnOver_by_size[1] - TurnOver_by_size[5];tmp.mean() / tmp.std() * np.sqrt(len(tmp))
+key = lambda x: x.year
+(amount / size_free).groupby(key).sum()
+
+tmp = pd.read_excel(data_path + '/stock daily return.xlsx').set_index(['Scode', 'Trddt'])
