@@ -77,3 +77,5 @@ if __name__ is "__main__":
     mark_group(size_tot)
     rtn_m = (adj_close_m - adj_open_m) / adj_open_m
     rtn_by_TurnOver = var_by_groups(rtn_m)
+
+
