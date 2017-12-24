@@ -48,7 +48,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 #rootdir = '/Users/harbes/data/xccdata/bid_ask'
- rootdir = 'F:/data/xccdata/bid_ask'
+rootdir = 'F:/data/xccdata/bid_ask'
 li_ = [i for i in os.listdir(rootdir) if not i.endswith('_') and not i.endswith('.h5')] #列出文件夹下所有的目录与文件
 n_stock = 40
 n_obs=20
