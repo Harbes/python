@@ -33,14 +33,16 @@ def import_data():
 
 
 def import_bid_ask_data():
-    rootdir = '/Users/harbes/data/xccdata/bid_ask'
+    rootdir='I:/tickhdf_stk'
+    savedir='F:/data/xccdata/bid_ask'
+    #rootdir = '/Users/harbes/data/xccdata/bid_ask'
     # rootdir = 'F:/data/xccdata/bid_ask'
     li_ = [i for i in os.listdir(rootdir) if not i.endswith('_') and not i.endswith('.h5')]  # 列出文件夹下所有的目录与文件
-    os.mkdir(rootdir + '/effective_spread_')  # 生成文件夹
+    os.mkdir(savedir + '/effective_spread_')  # 生成文件夹
     now0 = time.time()
-    for i in li_[1:2]:  # Mac要额外注意 # Series&np.array 一天数据大约需要12s
+    for i in li_[5:150]:  # Mac要额外注意 # Series&np.array 一天数据大约需要12s
         # path = rootdir + '/' + i
-        f = h5py.File(rootdir + '/' + i, 'r')
+        f = h5py.File(rootdir+ '/' + i, 'r')
         effective_spread = Series(np.nan, index=np.array(f['stk']))
         for stk in f['stk']:  # ['603611']:#['000031']:# ['000504']
             bid = np.array(f['stk'][stk]['bidPrc_1'])  # Series(f['stk'][stk]['bidPrc_1']) #
@@ -53,9 +55,8 @@ def import_bid_ask_data():
             effective_spread[stk] = 0 if tmp == 0 else 2 * np.sum(
                 (np.abs(2 * prc / (bid + ask) - 1) * volume * prc)[(bid > 0) & (ask > 0)]) / tmp
         # effective_spread[effective_spread <= 0] = np.nan # 也可以把所有数据归总后再设置
-        effective_spread.to_pickle(rootdir + '/effective_spread_/' + i)
-        # f.close()
-        print(time.time() - now0)
+        effective_spread.to_pickle(savedir + '/effective_spread_/' + i)
+    print(time.time() - now0)
 
 
 
