@@ -48,15 +48,11 @@ def import_bid_ask_data():
             prc = np.array(f['stk'][stk]['lastPrc'])  # Series(f['stk'][stk]['lastPrc']) #
             volume = Series(f['stk'][stk]['volume'])  # np.array(f['stk'][stk]['volume'])[(bid>0) & (ask>0)] #
             volume = volume.diff(1).fillna(volume[0])
-            # tmp = DataFrame({'bid': bid[(bid > 0) & (ask > 0)], 'ask': ask[(bid > 0) & (ask > 0)], 'prc': prc, 'volume': volume})
-
-            # trend=Series(f['stk'][stk]['trend']) #np.array(f['stk'][stk]['trend']) #
-            # tmp =
             # DataFrame({'bid': bid, 'ask': ask, 'prc': prc, 'volume': volume})#, 'trend':trend})
             tmp = np.sum((volume * prc)[(bid > 0) & (ask > 0)])
             effective_spread[stk] = 0 if tmp == 0 else 2 * np.sum(
                 (np.abs(2 * prc / (bid + ask) - 1) * volume * prc)[(bid > 0) & (ask > 0)]) / tmp
-        effective_spread[effective_spread <= 0] = np.nan
+        # effective_spread[effective_spread <= 0] = np.nan # 也可以把所有数据归总后再设置
         effective_spread.to_pickle(rootdir + '/effective_spread_/' + i)
         # f.close()
         print(time.time() - now0)
