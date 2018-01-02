@@ -1,6 +1,6 @@
 # 中国市场似乎只存在短期反转效应：Monthly: J/M=1,1或者J/M=2,0 等
 #                            daily:  J/M=5,1
-# 总的结果是short-term reversal，但是似乎也存在momentum，例如 第10组比第9组更高(equally-weighted)
+# 总的结果是short-term reversal，但是似乎也存在momentum，例如 第10组比第9组更高(equally-weighted)——》rtn.quantile(0.95,axis=1).mean()；
 import pandas as pd
 import numpy as np
 from pandas import DataFrame
@@ -27,13 +27,14 @@ def rtn_monthly():
     price1.index = pd.to_datetime(price1.index.values.astype(str), format=('%Y%m'))
     size.index = pd.to_datetime(size.index.values.astype(str), format=('%Y%m'))
     rtn = ((price1 - price0) / price0).iloc[J + M:]
-
+    rtn[rtn == 0] = np.nan
 
 def rtn_daily():
     global price0, price1, rtn
     price0 = adj_open
     price1 = adj_close
     rtn = ((price1 - price0) / price0).iloc[J + M:]
+    rtn[rtn == 0] = np.nan
 
 def rtn_EW_by_mom_JegadeeshTitman1993():
     percentile = np.linspace(0, 1, group_num + 1)
@@ -90,7 +91,7 @@ if __name__ == "__main__":
     rtn_EW = rtn_EW_by_mom();
     # rtn_VW = rtn_VW_by_mom();
     # tmp1 = rtn_JT1993[10] - rtn_JT1993[1];print('JT1993:', '\n', rtn_JT1993.mean(), tmp1.mean(), '({})'.format(tmp1.mean() / tmp1.std() * np.sqrt(len(tmp1))),'\n')
-    tmp2 = rtn_EW[20] - rtn_EW[19];
+    tmp2 = rtn_EW[group_num] - rtn_EW[1];
     print('Equal_weighted:', '\n', rtn_EW.mean(), tmp2.mean(),
           '({})'.format(tmp2.mean() / tmp2.std() * np.sqrt(len(tmp2))), '\n')
     #tmp3 = rtn_VW[10] - rtn_VW[1];print('Value_weighted:', '\n', rtn_VW.mean(), tmp3.mean(),'({})'.format(tmp3.mean() / tmp3.std() * np.sqrt(len(tmp3))), '\n')
