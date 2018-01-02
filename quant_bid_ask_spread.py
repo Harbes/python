@@ -40,7 +40,7 @@ def import_bid_ask_data():
     li_ = [i for i in os.listdir(rootdir) if not i.endswith('_') and not i.endswith('.h5')]  # 列出文件夹下所有的目录与文件
     os.mkdir(savedir + '/effective_spread_')  # 生成文件夹
     now0 = time.time()
-    for i in li_[5:150]:  # Mac要额外注意 # Series&np.array 一天数据大约需要12s
+    for i in li_[150:]:  # Mac要额外注意 # Series&np.array 一天数据大约需要12s
         # path = rootdir + '/' + i
         f = h5py.File(rootdir+ '/' + i, 'r')
         effective_spread = Series(np.nan, index=np.array(f['stk']))
