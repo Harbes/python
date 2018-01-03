@@ -8,7 +8,7 @@ import time
 
 
 def import_data():
-    global price0, price1, adj_open, adj_close, size
+    global data, price0, price1, size
     # data_path='F:/data/xccdata'
     data_path = '/Users/harbes/data/xccdata'
     # data=pd.read_pickle(data_path+'/PV_datetime')[['adj_open','adj_close']]
@@ -32,8 +32,6 @@ def rtn_monthly():
 
 def rtn_daily():
     global price0, price1, rtn
-    price0 = adj_open
-    price1 = adj_close
     rtn = ((price1 - price0) / price0).iloc[J + M:]
     rtn[rtn == 0] = np.nan
 
@@ -90,7 +88,7 @@ if __name__ == "__main__":
     M = 0  # time lapse
     K = 3  # periods of overlapping ( JEGADEESH and TITMAN,1993)
     import_data()
-    rtn_monthly()  # rtn_daily()  #
+    rtn_daily()  # rtn_monthly()  #
     group_by_mom()
     # rtn_JT1993 = rtn_EW_by_mom_JegadeeshTitman1993();
     rtn_EW = rtn_EW_by_mom();
