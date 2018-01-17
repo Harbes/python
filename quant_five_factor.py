@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from datetime import datetime
-
+from pandas.tseries.offsets import MonthBegin
 ################# 数据准备 #####################
 ## 营业利润 Profit
 data=pd.read_pickle('/Users/harbes/data/xccdata/IS')[['stkcd','fin_year','oper_profit']].set_index(['fin_year','stkcd']).sort_index().unstack()

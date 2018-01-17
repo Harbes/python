@@ -1,0 +1,1442 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass book
+\begin_preamble
+%不显示日期
+\date{}
+
+%自动换行
+\XeTeXlinebreaklocale "zh" 
+\XeTeXlinebreakskip = 0pt plus 1pt
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language chinese-simplified
+\language_package default
+\inputencoding utf8-plain
+\fontencoding global
+\font_roman "default" "Songti SC"
+\font_sans "default" "STFangsong"
+\font_typewriter "default" "Songti SC"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts true
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered true
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2.5page%
+\topmargin 5pheight%
+\rightmargin 2.5page%
+\bottommargin 5pheight%
+\headheight 2.5pheight%
+\headsep 2.5pheight%
+\footskip 2.5pheight%
+\secnumdepth 3
+\tocdepth 1
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+统计与R(笔记由Harbes整理)
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+字体设置
+\end_layout
+
+\begin_layout Itemize
+Windows：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+衬线字体：微软雅黑
+\end_layout
+
+\begin_layout Itemize
+无衬线字体：微软雅黑、楷体
+\end_layout
+
+\begin_layout Itemize
+等宽字体：微软雅黑、楷体、新宋体
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Ubuntu：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+衬线字体：Noto Sans CJK SC
+\end_layout
+
+\begin_layout Itemize
+无衬线字体：Noto Sans CJK SC
+\end_layout
+
+\begin_layout Itemize
+等宽字体：Noto Sans Mono CJK SC
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+参考教材：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+复杂数据统计方法——基于R的应用，吴喜之
+\end_layout
+
+\end_deeper
+\begin_layout Chapter
+引言
+\end_layout
+
+\begin_layout Section
+简单的使用R
+\end_layout
+
+\begin_layout Itemize
+实践1
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+x=1:100 # 或者 
+\end_layout
+
+\begin_layout Standard
+(x=1:100) # 会显示出来
+\end_layout
+
+\begin_layout Standard
+sample(x,20)
+\end_layout
+
+\begin_layout Itemize
+set.seed(0);sample(1:10,3) # 先设置随机种子，再抽样
+\end_layout
+
+\begin_layout Itemize
+z=sample(1:200000,10000);z[1:10]
+\end_layout
+
+\begin_layout Itemize
+y=c(1,3,7,3,4,2);z[y]
+\end_layout
+
+\begin_layout Itemize
+(z=sample(x,100,rep=T))
+\end_layout
+
+\begin_layout Itemize
+(z1=unique(z))
+\end_layout
+
+\begin_layout Itemize
+length(z1)
+\end_layout
+
+\begin_layout Itemize
+xz=setdiff(x,z) # 集合差，属于x但不属于z 
+\end_layout
+
+\begin_layout Itemize
+sort(union(x,xz)) # 元素从小到大排序 
+\end_layout
+
+\begin_layout Itemize
+setequal(union(xz,z),x) # 判断元素是否相同 
+\end_layout
+
+\begin_layout Itemize
+intersect(1:10,6:15) 
+\end_layout
+
+\begin_layout Itemize
+sample(1:100,20,prob=1:100) # 非等概率抽样，其概率为prob参数
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践2:一些简单的运算
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+pi*10^2 "*"(pi,'^'(10,2)) # 与上面一致 
+\end_layout
+
+\begin_layout Itemize
+x=pi*10^2;x; # 或者 print(x) 
+\end_layout
+
+\begin_layout Itemize
+(x=pi*10^2) # 赋值，同时打印结果 
+\end_layout
+
+\begin_layout Itemize
+pi*(1:10)^-2.3 # 对向量求指数幂
+\end_layout
+
+\begin_layout Itemize
+pi^(1:5) 
+\end_layout
+
+\begin_layout Itemize
+print(x,digits=12)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践3:关于R对象的类型等
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+x=pi*10^2 class(x) # x的class: 'numeric' 
+\end_layout
+
+\begin_layout Itemize
+typeof(x) # x的type：'double' 
+\end_layout
+
+\begin_layout Itemize
+class(cars) # 'data.frame' ，其中 cars是R自带的数据
+\end_layout
+
+\begin_layout Itemize
+typeof(cars) # 'list' names(cars) # 数据集cars中的变量名：'speed' 'dist' 
+\end_layout
+
+\begin_layout Itemize
+summary(cars) str(cars) # 数据集cars的结构与内容(简略版) 
+\end_layout
+
+\begin_layout Itemize
+head(cars) 
+\end_layout
+
+\begin_layout Itemize
+tail(cars) 
+\end_layout
+
+\begin_layout Itemize
+row.names(cars) # names()返回的是列名
+\end_layout
+
+\begin_layout Itemize
+attributes(cars) # 返回 names，row.names，class 
+\end_layout
+
+\begin_layout Itemize
+class(dist~speed) # 'formula' ，"~"左边是因变量，右边是自变量 
+\end_layout
+
+\begin_layout Itemize
+plot(dist~speed,cars) # 两个变量的散点图 p
+\end_layout
+
+\begin_layout Itemize
+lot(cars$dist,cars$speed) # 同上，只是x、y轴的标签不同
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践4:包括简单自变量为定量变量以及定型变量的回归
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+nrow(cars);ncol(cars); 
+\end_layout
+
+\begin_layout Itemize
+dim(cars) # 与上类似 
+\end_layout
+
+\begin_layout Itemize
+lm(dist~speed,data=cars) #OLS回归 
+\end_layout
+
+\begin_layout Itemize
+cars$qspeed=cut(cars$speed,breaks=quantile(cars$speed),include.lowest=TRUE)
+ # 增加定型变量qspeed，四分位点为分割点 
+\end_layout
+
+\begin_layout Itemize
+names(cars) # 发现多了一个变量 ‘qspeed' 
+\end_layout
+
+\begin_layout Itemize
+cars[3] # 第三个变量的值，和 cars[,3]类似，只是后者纯粹只是返回值序列 
+\end_layout
+
+\begin_layout Itemize
+cars[,3] 
+\end_layout
+
+\begin_layout Itemize
+table(cars[3]) # 列表（简单归总） 
+\end_layout
+
+\begin_layout Itemize
+is.factor(cars$qspeed) 
+\end_layout
+
+\begin_layout Itemize
+plot(dist~qspeed,data=cars) # 画出箱线图 
+\end_layout
+
+\begin_layout Itemize
+(a=lm(dist~qspeed,data=cars)) 
+\end_layout
+
+\begin_layout Itemize
+summary(a)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践5:简单样本描述统计量
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+x<- round(runif(20,0,30),digits=2);length(x) 
+\end_layout
+
+\begin_layout Itemize
+summary(x) 
+\end_layout
+
+\begin_layout Itemize
+min(x);max(x);median(x);mean(x);var(x);sd(x);sqrt(var(x)) 
+\end_layout
+
+\begin_layout Itemize
+rank(x) # 秩 
+\end_layout
+
+\begin_layout Itemize
+order(x) # 升幂排列的x的下标 
+\end_layout
+
+\begin_layout Itemize
+order(x,decreasing=T) # 为什么升幂排列的下标和降幂排列的下标不是互补？？？ rank与order的区别是什么 
+\end_layout
+
+\begin_layout Itemize
+sort(x) 
+\end_layout
+
+\begin_layout Itemize
+x[order(x)] # 与上面相同 
+\end_layout
+
+\begin_layout Itemize
+sort(x,decreasing=T) # 或者sort(x,dec=T) 
+\end_layout
+
+\begin_layout Itemize
+round(x,5) # 保留到小数点后5位。round(x)与round(x,0)效果一致 
+\end_layout
+
+\begin_layout Itemize
+fivenum(x) # 五数汇总，与summary类似 
+\end_layout
+
+\begin_layout Itemize
+quantile(x) # 也是五数 
+\end_layout
+
+\begin_layout Itemize
+mad(x) # median average distance 
+\end_layout
+
+\begin_layout Itemize
+cummax(x)
+\end_layout
+
+\begin_layout Itemize
+cummin(x)
+\end_layout
+
+\begin_layout Itemize
+cumprod(x)
+\end_layout
+
+\begin_layout Itemize
+cor(x,sin(x/20))
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践6：简单图形
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+x=rnorm(200)
+\end_layout
+
+\begin_layout Itemize
+hist(x,col="light blue") 
+\end_layout
+
+\begin_layout Itemize
+rug(x) # 在上面直方图的下面加上实际点大小
+\end_layout
+
+\begin_layout Itemize
+stem(x) # 茎叶图 
+\end_layout
+
+\begin_layout Itemize
+x<-rnorm(500);y<-x+rnorm(500) # 构造一个线性关系 
+\end_layout
+
+\begin_layout Itemize
+plot(y~x) 
+\end_layout
+
+\begin_layout Itemize
+a=lm(y~x) 
+\end_layout
+
+\begin_layout Itemize
+abline(a,col="red")
+\end_layout
+
+\begin_layout Itemize
+print('Hello World') 
+\end_layout
+
+\begin_layout Itemize
+paste('x的最小值=',min(x)) #也是一种打印 
+\end_layout
+
+\begin_layout Itemize
+demo(graphics) #查看R内置的画图教程
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践7：复数运算和求函数极值
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+(2+4i)^-3.5+(2i+4.5)*(-1.7-2.3i)/((2.6-7i)*(-4+5.1i))
+\end_layout
+
+\begin_layout Itemize
+(z<-complex(real=rnorm(10),imaginary=rnorm(10))) 
+\end_layout
+
+\begin_layout Itemize
+complex(re=rnorm(3),im=rnorm(3)) 
+\end_layout
+
+\begin_layout Itemize
+Re(z)
+\end_layout
+
+\begin_layout Itemize
+Im(z)
+\end_layout
+
+\begin_layout Itemize
+Mod(z) # 模 
+\end_layout
+
+\begin_layout Itemize
+Arg(z) # 辐角 
+\end_layout
+
+\begin_layout Itemize
+choose(6,2) # 组合数
+\end_layout
+
+\begin_layout Itemize
+factorial(6) # 阶乘 
+\end_layout
+
+\begin_layout Itemize
+f=function(x) x^3-2*x-1 
+\end_layout
+
+\begin_layout Itemize
+uniroot(f,c(0,2)) # 迭代求根 
+\end_layout
+
+\begin_layout Itemize
+f=function(x) x^2+2*x+1
+\end_layout
+
+\begin_layout Itemize
+optimize(f,c(-2,2)) # 最小值 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践8：字符型向量和因子型向量
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+a=factor(letters[1:10]);a # letters小写字母向量，LETTERS：大写 
+\end_layout
+
+\begin_layout Itemize
+a[3]='W' #报错 
+\end_layout
+
+\begin_layout Itemize
+a=as.character(a) #需要先转换成字符型
+\end_layout
+
+\begin_layout Itemize
+a[3]='W';a 
+\end_layout
+
+\begin_layout Itemize
+a;factor(a) # 这是两种不同的类型 
+\end_layout
+
+\begin_layout Itemize
+levels(factor(a)) 
+\end_layout
+
+\begin_layout Itemize
+sex=sample(0:1,10,r=T); sex=factor(sex);sex
+\end_layout
+
+\begin_layout Itemize
+levels(sex) # '0' '1' , 定性变量的level
+\end_layout
+
+\begin_layout Itemize
+levels(sex)=c("Male","Female");levels(sex);sex # 改变因子的水平 
+\end_layout
+
+\begin_layout Itemize
+sex=ordered(sex,c("Female","Male"));sex # 确定level次序 levels(sex)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践9：数据输入输出
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+x=scan() # 然后通过手动输入或者粘贴的方式 
+\end_layout
+
+\begin_layout Itemize
+w=read.table(file.choose(),header=T) # 通过 file.choose() 弹出窗口，选择数据 
+\end_layout
+
+\begin_layout Itemize
+setwd('/Users/harbes/data') # 建立工作路径 
+\end_layout
+
+\begin_layout Itemize
+(x=rnorm(20));write(x,'test.txt') 
+\end_layout
+
+\begin_layout Itemize
+y=scan('test.txt');y 
+\end_layout
+
+\begin_layout Itemize
+y=iris;y[1:5];str(y) # y[1:5]指的是y的1:5列 
+\end_layout
+
+\begin_layout Itemize
+write.table(y,'test.txt',row.names=F) 
+\end_layout
+
+\begin_layout Itemize
+w=read.table('test.txt',header=T);head(w);str(w) 
+\end_layout
+
+\begin_layout Itemize
+write.csv(y,'test.csv') v=read.csv('test.csv');str(v) 
+\end_layout
+
+\begin_layout Itemize
+data=read.table('clipboard') # 读入剪贴板的数据
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践10:序列等
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+(z=seq(-1,10,length=100)) # 从-1到10的等间隔的100个数组成的序列
+\end_layout
+
+\begin_layout Itemize
+(z=seq(10,-1,-0.1)) # 从10到-1间隔为-0.1的序列 
+\end_layout
+
+\begin_layout Itemize
+(x=rep(1:3,3)) # 重复1:3序列3次
+\end_layout
+
+\begin_layout Itemize
+(x=rep(3:5,1:3)) # 3:5序列，而1:3给出了对应数值重复的次数——》3 4 4 5 5 5 
+\end_layout
+
+\begin_layout Itemize
+(x=rep(c(1,10),c(4,5)))
+\end_layout
+
+\begin_layout Itemize
+(w=c(1,3,x,z));length(w) # 把数值、序列(向量)combine成一个向量,length(w)=122 #
+\end_layout
+
+\begin_layout Itemize
+x=rep(0,10);z=1:3;x+z # 长度不匹配，会同时给出警告和结果
+\end_layout
+
+\begin_layout Itemize
+x=seq(1,10);z=seq(10,1);x*z # 对应元素相乘
+\end_layout
+
+\begin_layout Itemize
+rev(x) # 颠倒次序（逆序）
+\end_layout
+
+\begin_layout Itemize
+z=c("no cat",'has ','nine','tails');z[1]=="no cat" 
+\end_layout
+
+\begin_layout Itemize
+z=1:5;z[7]=8;z # z[6]=NA
+\end_layout
+
+\begin_layout Itemize
+z=NULL;z[c(1,3,5)]=1:3;z # z[2]和z[4]都是NA 
+\end_layout
+
+\begin_layout Itemize
+z[-c(1,3)];z # z[-c(1,3)]表示去掉第1、3个元素，但是返回的是copy，z本身是不发生变化的
+\end_layout
+
+\begin_layout Itemize
+rnorm(10)[c(2,5)]
+\end_layout
+
+\begin_layout Itemize
+z=sample(1:100,10);which(z==max(z)) # 给出最大值的下标
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践11：矩阵
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+x=sample(1:100,12);x 
+\end_layout
+
+\begin_layout Itemize
+all(x>0);all(x!=0);any(x>0);(1:10)[x>0] 
+\end_layout
+
+\begin_layout Itemize
+diff(x) # 相邻作差，因而length少了1 
+\end_layout
+
+\begin_layout Itemize
+diff(x,lag=2) # 滞后2阶进行差分 
+\end_layout
+
+\begin_layout Itemize
+x=matrix(1:20,4,5);x # 矩阵的构造，默认按列排列
+\end_layout
+
+\begin_layout Itemize
+x=matrix(1:20,4,5,byrow=T);x # 按行排列 
+\end_layout
+
+\begin_layout Itemize
+t(x) # 矩阵的转置 
+\end_layout
+
+\begin_layout Itemize
+x=matrix(sample(1:100,20),4,5);x;2*x;x+5
+\end_layout
+
+\begin_layout Itemize
+y=matrix(sample(1:100,20),5,4);x+t(y)
+\end_layout
+
+\begin_layout Itemize
+(z=x%*%y) # 矩阵乘法 "%*%" 
+\end_layout
+
+\begin_layout Itemize
+z1=solve(z); # 逆（也可以z1^-1，不过结果可能有差距，可能是因为算法不同） ，另外，用solve(a,b)可以解方程 ax=b
+\end_layout
+
+\begin_layout Itemize
+z1%*%z # 应该是单位矩阵
+\end_layout
+
+\begin_layout Itemize
+round(z1%*%z) b=solve(z,1:4);b
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践12:矩阵（续）
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+x=matrix(rnorm(24),4,6);x 
+\end_layout
+
+\begin_layout Itemize
+nrow(x);ncol(x);dim(x) 
+\end_layout
+
+\begin_layout Itemize
+x[c(2,1),] # 第二行和第一行 
+\end_layout
+
+\begin_layout Itemize
+x[,c(1,3)] x[2,1] # 第二行、第一列元素
+\end_layout
+
+\begin_layout Itemize
+x[x[,1]>0,] # 第一列大于0所在的行
+\end_layout
+
+\begin_layout Itemize
+x[x[,1]>0,2] # 第一列大于0所在行的第二列 
+\end_layout
+
+\begin_layout Itemize
+sum(x[,1]>0) # 第一列大于0的元素的个数 
+\end_layout
+
+\begin_layout Itemize
+x[,-c(1,3)] # 排除第1、3列的x 
+\end_layout
+
+\begin_layout Itemize
+diag(x) # x的对角线 
+\end_layout
+
+\begin_layout Itemize
+diag(1:5);diag(diag(x));diag(5) 
+\end_layout
+
+\begin_layout Itemize
+x[x[,1]>0&x[,3]<=1,1] 
+\end_layout
+
+\begin_layout Itemize
+x[x[,2]>0|x[,1]<0.51,1] 
+\end_layout
+
+\begin_layout Itemize
+x[!x[,2]<.51,1] 
+\end_layout
+
+\begin_layout Itemize
+apply(x,1,mean) # 按行求均值 ；python与此相反：python是沿行或者列求函数值 
+\end_layout
+
+\begin_layout Itemize
+apply(x,2,sum) # 按列求和 
+\end_layout
+
+\begin_layout Itemize
+x=matrix(rnorm(24),4,6)
+\end_layout
+
+\begin_layout Itemize
+x[lower.tri(x)]=0;x # 得到上三角，或者，x[upper.tri(x)]=0 得到下三角
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践13:高维数组
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+x=array(runif(24),c(4,3,2));x # 构造4*3*2的三维数组 
+\end_layout
+
+\begin_layout Itemize
+is.matrix(x) # FALSE 
+\end_layout
+
+\begin_layout Itemize
+dim(x) 
+\end_layout
+
+\begin_layout Itemize
+is.matrix(x[1,,]) # TRUE 
+\end_layout
+
+\begin_layout Itemize
+x=array(1:24,c(4,3,2));x 
+\end_layout
+
+\begin_layout Itemize
+x[c(1,3),,]
+\end_layout
+
+\begin_layout Itemize
+apply(x,1,mean)
+\end_layout
+
+\begin_layout Itemize
+apply(x,1:2,sum) # 第二个参数可以简单看成需要被保留的维度 
+\end_layout
+
+\begin_layout Itemize
+apply(x,c(1,3),prod)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践14:矩阵与向量之间的运算
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+x=matrix(1:20,5,4);x 
+\end_layout
+
+\begin_layout Itemize
+sweep(x,1,2:6,"*") # 将 序列 2:6 的每个元素与x的相应行相乘 
+\end_layout
+
+\begin_layout Itemize
+x*2:6 # 同上 
+\end_layout
+
+\begin_layout Itemize
+sweep(x,2,2:5,"+") # 将序列 2:5 的每个元素与x的相应列相加 
+\end_layout
+
+\begin_layout Itemize
+x+2:5 # 同上 
+\end_layout
+
+\begin_layout Itemize
+x=matrix(sample(1:100,24),6,4);x1=scale(x);x;x1 # scale是对每列进行标准化处理 
+\end_layout
+
+\begin_layout Itemize
+x2=scale(x,scale=F);x2 # 只是将每列减去相应均值 
+\end_layout
+
+\begin_layout Itemize
+x3=scale(x,center=F);x3 # 不进行中心化处理，只是除以对应的标准差 
+\end_layout
+
+\begin_layout Itemize
+round(apply(x1,2,mean),14) 
+\end_layout
+
+\begin_layout Itemize
+apply(x1,2,sd)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践15:缺失值以及数据的合并
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+airquality # 含有缺失值NA的R自带数据 
+\end_layout
+
+\begin_layout Itemize
+complete.cases(airquality) # 判断每行是否有缺失值 
+\end_layout
+
+\begin_layout Itemize
+which(complete.cases(airquality)==F) # 有缺失值的行号
+\end_layout
+
+\begin_layout Itemize
+sum(complete.cases(airquality)) # 完整观测值的个数 
+\end_layout
+
+\begin_layout Itemize
+na.omit(airquality) # 删去缺失值的数据 
+\end_layout
+
+\begin_layout Itemize
+x=11:20;x[12]=3 
+\end_layout
+
+\begin_layout Itemize
+x1=append(x,77,after=5);x1 # 在第五个数之后添加一个77
+\end_layout
+
+\begin_layout Itemize
+cbind(1:5,rnorm(5)) # 列拼接
+\end_layout
+
+\begin_layout Itemize
+rbind(1:5,rnorm(5)) # 行拼接 
+\end_layout
+
+\begin_layout Itemize
+cbind(1:3,4:6);rbind(1:3,4:6) 
+\end_layout
+
+\begin_layout Itemize
+x=rbind(1:5,runif(5),runif(5),1:5,7:11);x[!duplicated(x)] #去掉重复的行（保留第一个），或者使用uni
+que函数
+\end_layout
+
+\begin_layout Itemize
+unique(x)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践16:list
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+z=list(1:3,Tom=c(1:2,a=list("R",letters[1:5]),w="hi!"));z # list可以是任何对象(包括list)的
+集合 
+\end_layout
+
+\begin_layout Itemize
+str(z) # 如果Tom处用的不是c()，而是list()的话，那z的结构是不一样的
+\end_layout
+
+\begin_layout Itemize
+z[[1]];z[[2]] 
+\end_layout
+
+\begin_layout Itemize
+z$T 
+\end_layout
+
+\begin_layout Itemize
+z$T$a2 
+\end_layout
+
+\begin_layout Itemize
+z$T[[3]]
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践17:条形图和表
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+x=c(3,3,3,4,1,4,2,1,3,2,5,3,1,2,5,2,3,4,2,4,5,2,3,1,1) 
+\end_layout
+
+\begin_layout Itemize
+barplot(x) # 不是我们想要的直方图 
+\end_layout
+
+\begin_layout Itemize
+table(x)
+\end_layout
+
+\begin_layout Itemize
+barplot(table(x)) # 正确的图 
+\end_layout
+
+\begin_layout Itemize
+barplot(table(x)/length(x)) # 比例图
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践18:形成表格
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+library(MASS) 
+\end_layout
+
+\begin_layout Itemize
+quine # MASS自带数据 
+\end_layout
+
+\begin_layout Itemize
+attach(quine) # 把数据变量名放入内存 
+\end_layout
+
+\begin_layout Itemize
+table(Age) 
+\end_layout
+
+\begin_layout Itemize
+table(Sex,Age);
+\end_layout
+
+\begin_layout Itemize
+tab=xtabs(~Sex+Age,quine);unclass(tab) 
+\end_layout
+
+\begin_layout Itemize
+tapply(Days,Age,mean)
+\end_layout
+
+\begin_layout Itemize
+tapply(Days,list(Sex,Age),mean) 
+\end_layout
+
+\begin_layout Itemize
+detach(quine) # attach的逆运行
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践19:如何写函数
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+ss=function(n=100){z=2;for (i in 2:n)if (any(i%%2:(i-1)==0)==F)z=c(z,i);return(z
+)} # 注意，函数可以不写return，这时最后一个值就是return的值
+\end_layout
+
+\begin_layout Itemize
+#fix(ss) # 弹出窗口，修改函数
+\end_layout
+
+\begin_layout Itemize
+t1=Sys.time();ss();Sys.time()-t1
+\end_layout
+
+\begin_layout Itemize
+system.time(ss(1000)) 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践20:画图
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+x=seq(-3,3,len=20);y=dnorm(x);y # 产生数据 
+\end_layout
+
+\begin_layout Itemize
+w=data.frame(x,y) 
+\end_layout
+
+\begin_layout Itemize
+par(mfcol=c(2,2)) # 准备话四个图的地方 
+\end_layout
+
+\begin_layout Itemize
+plot(y~x,w,main="正态密度函数")
+\end_layout
+
+\begin_layout Itemize
+plot(y~x,w,type='l',main="正态密度函数") 
+\end_layout
+
+\begin_layout Itemize
+plot(y~x,w,type='o',main="正态密度函数") 
+\end_layout
+
+\begin_layout Itemize
+plot(y~x,w,type='b',main="正态密度函数")
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+实践21:色彩和符号等的调整
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+plot(1,1,xlim=c(1,7.5),ylim=c(0,5),type="n") # 画出框架 
+\end_layout
+
+\begin_layout Itemize
+points(1:7,rep(4.5,7),cex=seq(1,4,l=7),col=1:7,pch=0:6) # 在plot命令后追加点 
+\end_layout
+
+\begin_layout Itemize
+text(1:7,rep(3.5,7),labels=paste(0:6,letters[1:7]),cex=seq(1,4,l=7),col=1:7)
+ #在指定位置加上文字 
+\end_layout
+
+\begin_layout Itemize
+points(1:7,rep(2,7),pch=(0:6)+7) # 点出符号7:13 
+\end_layout
+
+\begin_layout Itemize
+text((1:7)+0.25,rep(2,7),paste((0:6)+7)) # 加符号号码
+\end_layout
+
+\begin_layout Itemize
+points(1:7,rep(1,7),pch=(0:6)+14) #点出符号14:20 
+\end_layout
+
+\begin_layout Itemize
+text((1:7)+0.25,rep(1,7),paste((0:6)+14)) 
+\end_layout
+
+\begin_layout Itemize
+# 更多——》 ?par
+\end_layout
+
+\end_deeper
+\begin_layout Section
+国内统计教材的若干误区
+\end_layout
+
+\begin_layout Itemize
+假设检验的误区：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+正确的说法“目前没有足够证据拒绝零假设”，错误的说法“接受零假设”。下面是一个例子用以说明：一种是对1到50的自然数列做Shapiro-Wilk正态性检验；另一
+种是对1到500的自然数列做Kolmogorov-Smirnov正态性检验，相应的p值分别为0.05809和0.00667，结果是两种正态性检验在0.05的显著性水平
+下都无法拒绝(正态性的)零假设，但是我们不能说“接受/承认这两个数列服从正态分布”【一般情况下，只要样本量小，就往往会得到不能拒绝原假设的结论。例如，做x=[-
+2000,-5000]和y=[20000,50000]的两样本均值的双边t检验，原假设是两个样本均值相同，R-code：t.test(x,y)】
+\end_layout
+
+\begin_layout Itemize
+p值小于0.05就显著，这是错的。“p值是多少才算小概率”取决于显著性水平的取值，即当给定显著性水平alpha，当p<alpha时应当拒绝零假设。而alpha的选
+取完全依赖于问题本身。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+置信区间的误区。如果从数据根据公式
+\begin_inset Formula $\overline{x}\pm t_{\alpha/2}\frac{s}{\sqrt{n}}$
+\end_inset
+
+算出来的均值
+\begin_inset Formula $\mu$
+\end_inset
+
+的置信区间为(2.3,4.5)，那么能不能说区间(2.3,4.5)以概率
+\begin_inset Formula $1-\alpha$
+\end_inset
+
+覆盖
+\begin_inset Formula $\mu$
+\end_inset
+
+？答案是不能！因为
+\begin_inset Formula $\mu$
+\end_inset
+
+和(2.3,4.5)都是固定的数，没有随机性可言，不能出现任何概率。人们只能说“对于无穷多个不同样本(样本均值均为
+\begin_inset Formula $\mu$
+\end_inset
+
+)，依据公式
+\begin_inset Formula $\overline{x}\pm t_{\alpha/2}\frac{s}{\sqrt{n}}$
+\end_inset
+
+算出来的无穷个区间中，大约有
+\begin_inset Formula $1-\alpha$
+\end_inset
+
+比例的置信区间覆盖
+\begin_inset Formula $\mu$
+\end_inset
+
+”
+\end_layout
+
+\begin_layout Itemize
+最小二乘回归中的误区
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+大多是主观的假定。对于OLS，
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+假定了模型的线性形式——》解决思路：机器学习
+\end_layout
+
+\begin_layout Itemize
+假定样本点是独立同分布的
+\end_layout
+
+\begin_layout Itemize
+假定样本点有正态分布或者样本量“足够大”。然而，现实是没有任何人能够证明某一实际数据来源于任何分布。
+\end_layout
+
+\begin_layout Itemize
+OLS本身意味着选择的损失函数(最优化问题的目标函数？)是对称的二次函数形式。无论是对称还是二次都在一定程度上是不合理的
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+对回归结果缺乏根据的“解释”
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+误区：“当其他变量不变时，某变量系数的大小是改变辆增加以单位时因变量所增加的部分(对因变量的贡献)”。事实上，这种说法仅仅在变量独立以及模型的许多假定约束下才是
+正确的【但是似乎目前没有更好的解释说辞】
+\end_layout
+
+\begin_layout Itemize
+误区：“进行t检验或F检验时，p值较小的变量就较显著”。前提是独立同分布、线性关系以及大样本，但是这些实际上都是不够明确的
+\end_layout
+
+\begin_layout Itemize
+误区：“
+\begin_inset Formula $R^{2}$
+\end_inset
+
+越接近1，说明模型越合适”。这可能是过拟合的无意义的回归。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+增加无关的（“错误的”）自变量对预测会不会有影响。下面的R-code是一个例子，结果发现：增加与因变量无关的自变量不会对回归结果有多大影响
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+set.seed(10);x1=rnorm(2000) 
+\end_layout
+
+\begin_layout Itemize
+y=3+5*x1+rnorm(2000)
+\end_layout
+
+\begin_layout Itemize
+a=lm(y~x1);summary(a) 
+\end_layout
+
+\begin_layout Itemize
+x2=sin(rnorm(2000,10)) # 一个无关的周期变量
+\end_layout
+
+\begin_layout Itemize
+a2=lm(y~x1+x2);summary(a2)
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+多大才算大样本？说样本量为30就是大样本是有误导性的。一个例子。没有人愿意说多大样本才算是大样本！！！
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+set.seed(10);y=NULL;for(i in 1:5000){y=c(y,mean(rt(10000,2)))}; shapiro.test(y)
+ # p-value<2.2e-16，拒绝原假设，即认为原样本不是正态分布
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+用31个省、直辖市、自治区数据能做什么？
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+31个省、直辖市、自治区数据仅仅是一些汇总数据，根本不是样本。（回忆一下什么是样本？）
+\end_layout
+
+\begin_layout Itemize
+而且它们之间很可能是不独立的
+\end_layout
+
+\begin_layout Itemize
+不是任何总体的样本，更谈不上分布与正态性
+\end_layout
+
+\begin_layout Itemize
+对于这种数据，使用任何超出描述性统计方法的做法都值得怀疑
+\end_layout
+
+\begin_layout Itemize
+即使做空间自回归也是非常不妥的。因为除了它不是一个样本之外，做空间统计的单位太大，比如内蒙古既和沿海省份相连，又和最落后的省份相连，任何空间距离的描述痘痕片面，
+而且边境省份也没有和周边国家/地区相关，似乎中国完全处于空间中自我封闭的状态。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+汇总数据(aggregate data？；比如部分均值)和原始观测值的区别。一个例子
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+set.seed(999);n=600 
+\end_layout
+
+\begin_layout Itemize
+w=data.frame(x=rnorm(n),y=rnorm(n)) 
+\end_layout
+
+\begin_layout Itemize
+I=c(4,12,30);par(mfrow=c(2,2)) 
+\end_layout
+
+\begin_layout Itemize
+plot(w,main=paste('n=',n,'r=',round(cor(w)[1,2],2))) 
+\end_layout
+
+\begin_layout Itemize
+for (j in 1:length(I)){z=NULL;u=I[j];for (i in 1:u) z=rbind(z,apply(w[((i-1)*n/u
++1):(i*n/u),],2,mean)); plot(z,main=paste('n=',u,'r=',round(cor(z)[1,2],2)))}
+\end_layout
+
+\end_deeper
+\begin_layout Chapter
+横截面数据回归：经典方法
+\end_layout
+
+\begin_layout Section
+简单回归回顾
+\end_layout
+
+\begin_layout Section*
+一个例子：公路 一氧化碳数据（COfreewy）
+\end_layout
+
+\begin_layout Enumerate
+对数据的简单拟合
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+w=read.table('COfreewy.txt',header=T); 
+\end_layout
+
+\begin_layout Standard
+a=lm(CO~.,w) # 利用全部自变量做线性回归 
+\end_layout
+
+\begin_layout Standard
+summary(a) 
+\end_layout
+
+\begin_layout Standard
+b=step(a,direction='backward') # a回归的逐步进行 
+\end_layout
+
+\begin_layout Standard
+summary(b) # 展示逐步回归结果 
+\end_layout
+
+\begin_layout Standard
+shapiro.test(b$res) # 残差的正态性检验
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+数据的进一步分析
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+qqnorm(b$res);qqline(b$res) # 残差很难说是正态的（前面的shapiro检验在5%显著性水平下无法拒绝的原因很可能是因为数据量太小了
+，从而造成不易拒绝原假设） 
+\end_layout
+
+\begin_layout Standard
+plot(w) # 或者 pairs(w)
+\end_layout
+
+\end_deeper
+\end_body
+\end_document
