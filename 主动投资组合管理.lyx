@@ -19,9 +19,9 @@
 \language_package default
 \inputencoding utf8-plain
 \fontencoding global
-\font_roman "default" "Songti SC"
-\font_sans "default" "STFangsong"
-\font_typewriter "default" "Songti SC"
+\font_roman "default" "微软雅黑"
+\font_sans "default" "楷体"
+\font_typewriter "default" "楷体"
 \font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts true
