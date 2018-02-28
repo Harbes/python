@@ -2,12 +2,13 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <excludeFolder url="file://$MODULE_DIR$/.idea" />
       <excludeFolder url="file://$MODULE_DIR$/JAQS-example" />
-      <excludeFolder url="file://$MODULE_DIR$/R-project" />
+      <excludeFolder url="file://$MODULE_DIR$/Python Quant Book" />
+      <excludeFolder url="file://$MODULE_DIR$/PythonANS" />
+      <excludeFolder url="file://$MODULE_DIR$/R Quant" />
       <excludeFolder url="file://$MODULE_DIR$/TSA_MATLAB" />
+      <excludeFolder url="file://$MODULE_DIR$/five_factor" />
       <excludeFolder url="file://$MODULE_DIR$/julia-project" />
-      <excludeFolder url="file://$MODULE_DIR$/modules" />
       <excludeFolder url="file://$MODULE_DIR$/output" />
     </content>
     <orderEntry type="inheritedJdk" />

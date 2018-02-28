@@ -1,0 +1,372 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass book
+\begin_preamble
+%不显示日期
+\date{}
+
+%自动换行
+\XeTeXlinebreaklocale "zh" 
+\XeTeXlinebreakskip = 0pt plus 1pt
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language chinese-simplified
+\language_package default
+\inputencoding utf8-plain
+\fontencoding global
+\font_roman "default" "Songti SC"
+\font_sans "default" "STSong"
+\font_typewriter "default" "Lantinghei SC"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts true
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered true
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2.5page%
+\topmargin 5pheight%
+\rightmargin 2.5page%
+\bottommargin 5pheight%
+\headheight 2.5pheight%
+\headsep 2.5pheight%
+\footskip 2.5pheight%
+\secnumdepth 3
+\tocdepth 1
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+论文整理(笔记由Harbes整理)
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+字体设置
+\end_layout
+
+\begin_layout Itemize
+Windows：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+衬线字体：微软雅黑
+\end_layout
+
+\begin_layout Itemize
+无衬线字体：微软雅黑、楷体
+\end_layout
+
+\begin_layout Itemize
+等宽字体：微软雅黑、楷体、新宋体
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Ubuntu：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+衬线字体：Noto Sans CJK SC
+\end_layout
+
+\begin_layout Itemize
+无衬线字体：Noto Sans CJK SC
+\end_layout
+
+\begin_layout Itemize
+等宽字体：Noto Sans Mono CJK SC
+\end_layout
+
+\end_deeper
+\begin_layout Part
+AQR推荐
+\end_layout
+
+\begin_layout Chapter
+Trend Following Bibliograpy
+\end_layout
+
+\begin_layout Section
+【paper.1990】The Noise Trader Approach to Finance
+\end_layout
+
+\begin_layout Itemize
+作者：Andrei Shleifer，Lawrence H.
+ Summers
+\end_layout
+
+\begin_layout Paragraph
+introduction
+\end_layout
+
+\begin_layout Itemize
+This paper reviews an alternative to the efficient markets approach that
+ we and others have recently pursued，the approach rests on two assumptions：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+First, some investors are not fully rational and their demand for risky
+ assets is affected by their beliefs or sentiments that are not fully justified
+ by fundamental news.
+\end_layout
+
+\begin_layout Itemize
+Second, arbitrage — defined as trading by fully rational investors not subject
+ to such sentiment — is risky and therefore limited.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Our case for the noise trader approach is threefold.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+First, theoretical models with limited arbitrage are both tractable and
+ more plausible than models with perfect arbitrage.
+ The efficient markets hypothesis obtains only as an extreme case of perfect
+ riskless arbitrage that is unlikely to apply in practice.
+ 
+\end_layout
+
+\begin_layout Itemize
+Second, the investor sentiment/limited arbitrage approach yields a more
+ accurate description of financial markets than the efficient markets paradigm.
+ The approach not only explains the available anomalies, but also readily
+ explains broad features of financial markets such as trading volume and
+ actual investment strategies.
+ 
+\end_layout
+
+\begin_layout Itemize
+Third, and most importantly, this approach yields new and testable implications
+ about asset prices, some of which have been proved to be consistent with
+ the data.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Paragraph
+the limits of arbitrage
+\end_layout
+
+\begin_layout Itemize
+将市场投资者划分成两类：一类是“arbitageur”：“smart money” and “ rational speculators”；另一类是other
+ investor：“noise traders” and “liquidity traders”
+\end_layout
+
+\begin_layout Itemize
+由于市场不完全(证券种类不够丰富、卖空限制等)，无法做到无风险套利，退而求其次，只能选择进行风险套利。例如，卖空限制使得无法卖出价格被高估的资产。风险套利中，两
+种风险的存在限制了套利的进行：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+fundamental risk：初始被认为高估的股票，可能在后期出现分红或其他利好消息【也可以视为一种估计错误】
+\end_layout
+
+\begin_layout Itemize
+unpredictability of the future resale price(De Long, Shleifer, Summers and
+ Waldmann, 1990a)：在被认为mispriced的股票价格回归基本面之前，由于未预期的原因而需要提前平仓，平仓时的价格可能出现更严重的mispri
+ce—》这种 resale price risk根源在于 the arbitrageur having a finite horizon （例如，资金或证券是借
+来的，有时间和费用约束；基金经理绩效评估周期的约束等）
+\end_layout
+
+\begin_layout Itemize
+Japanese equities in the 1980s illustrate the limits of arbitrage.【
+\color red
+中国呢？
+\color inherit
+】
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+substantial evidence shows that arbitrage does not completely counter response
+ of prices to fluctuations in uninformed demand[套利不一定是“反价格而行之”]，因为可能真的是均衡的价格变化了。
+例如，“股票入指”引致的价格上升(正回报)不一定是市场的overvalue，Harris and Gurel(1986)以及 Shleifer(1986)发现，
+这种价格上升很可能只是由指数投资者的需求引起的price pressure；另一个例子就是美国股市的January effect，至少机构投资者都知道这种现象的
+存在，但是却不能通过有效套利予以消除（因为现象还存在。事实上，投资者需要ride on this pattern才能利用它，结果就是可能存在对这种pattern
+的强化）【中国股市的春节异常收益，机构投资者是否在套利？】
+\end_layout
+
+\begin_layout Itemize
+一些不太直接的证据表明： news is not the only force driving asset prices，主要体现在两中实证结果：多数个股的波动
+无法被新息解释【会不会是模型错误，例如不同特征组合的投资者反应系数不同？】；在没有新息的时期，股票依然有较大的波动
+\end_layout
+
+\begin_layout Paragraph
+investor sentiment
+\end_layout
+
+\begin_layout Itemize
+投资者对证券需求的变化(shifts in demand for securities)可能是完全理性的：reactions to public
+ announcements that affect future growth rate of dividends, risk, or risk
+ aversion；adjustment to news conveyed through the trading process itself；tax
+ trading or trading done for institutional reasons of the types discussed
+ above.
+\end_layout
+
+\begin_layout Itemize
+但不是所有变化都是理性的，也可能是投资者对伪信息(pseudo-signals)的反应；或者是投资者使用了一些非弹性交易策略or所谓的“popular
+ model”(从而出现了羊群效应？？？)。不过值得注意的是These demand shifts will only matter if they
+ are correlated across noise traders，否则可能出现相互抵消从而整体行为表现出“理性”。many trading
+ strategies based on pseudo-signals, noise, and popular models are correlated,
+ leading to aggregate demand shifts.
+\end_layout
+
+\begin_layout Itemize
+Many of these persistent mistakes are relevant for financial markets.
+ 例如 overconfident (Alpert and Raiffa, 1982)导致 take on more risk；extrapolate
+ past time series导致 chase trends (Andreassen and Kraus, 1988)；put too little
+ weight on base rates and too much weight on new information (Tversky and
+ Kahneman, 1982)导致 overreact to news.
+\end_layout
+
+\begin_layout Itemize
+尽管如此，the argument that noise traders lose money and eventually disappear
+ is not self-evident；Learning and imitation may not adversely affect noise
+ traders either。
+\end_layout
+
+\begin_layout Paragraph
+explaining the puzzles
+\end_layout
+
+\begin_layout Itemize
+除了基本面，arbitrage limit+investor sentiment—》股价的波动
+\end_layout
+
+\begin_layout Subparagraph
+implications of unpredictability of investor sentiment
+\end_layout
+
+\begin_layout Itemize
+对投资者情绪的unpredictability—》 resale risk —》risk premia。assets subject to unpredicta
+ble swings in investor sentiment must be underpriced in the market relative
+ to their fundamental values。De Long, Shleifer, Summers and Waldmann (1990a)
+ describe two applications of this argument.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+First, stocks are probably subject to larger fluctuations of investor sentiment
+ than bonds —》the difference between average returns on stocks and on bonds—the
+ risk premium—must be higher than is warranted by fundamentals.【Mehra-Prescott
+ (1985) puzzle。中国股票与债券的比较(例如波动率的比值)能否反应投资者情绪？或者作为市场信心的指示器？】
+\end_layout
+
+\begin_layout Itemize
+The second application we examined involves the pricing of closed-end mutual
+ funds.
+ Closed-end funds present one of the most interesting puzzles in finance,
+ because their fundamental value-the value of the assets in their portfolios-is
+ observed, and tends to be systematically higher than the price at which
+ these funds trade。【liquidity risk是否就是resale risk，那么是否可以通过封闭式基金来研究liuqidity
+ risk？？？】—》封闭式基金折价作为投资者sentiment的指示器【Lee, Shleifer and Thaler (1989)】
+\end_layout
+
+\end_deeper
+\begin_layout Subparagraph
+implications of Positive Feedback Trading
+\end_layout
+
+\begin_layout Subsection
+【JPE.1988】Permanent and Temporary Components of Stock Market Prices,
+\end_layout
+
+\begin_layout Section
+【paper.1991】Speculative Dynamics
+\end_layout
+
+\begin_layout Section
+【paper.2002】A Century of Stock Market Liquidity and Trading Costs
+\end_layout
+
+\begin_layout Section
+【RFS.2001】The Risk in Hedge Fund Strategies_ Theory and Evidence From Trend
+ Followers
+\end_layout
+
+\begin_layout Section
+【JF.2006】The Disposition Effect and Underreaction to News
+\end_layout
+
+\begin_layout Section
+【JFE.2012】Time Series Momentum
+\end_layout
+
+\end_body
+\end_document
