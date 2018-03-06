@@ -8,6 +8,7 @@
       <excludeFolder url="file://$MODULE_DIR$/R Quant" />
       <excludeFolder url="file://$MODULE_DIR$/TSA_MATLAB" />
       <excludeFolder url="file://$MODULE_DIR$/five_factor" />
+      <excludeFolder url="file://$MODULE_DIR$/itchat-progs-master/demo" />
       <excludeFolder url="file://$MODULE_DIR$/julia-project" />
       <excludeFolder url="file://$MODULE_DIR$/output" />
     </content>
