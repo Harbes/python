@@ -141,11 +141,88 @@ def cal_coskew(periods,save_data=False):
     else:
         return coskew
 def cal_iskew():
+    #cal_SMB
+    #cal_HML
     pass
-def cal_vol():
-    pass
+def cal_vol(periods,save_data=False):
+    t_vol=pd.DataFrame(index=pd.date_range('20050101','20180301',freq='M'),columns=rtn.columns[:-2])
+    for i in range(periods,159):
+        t_vol.iloc[i-1]=rtn[(rtn['month'] >= i - periods + 1) & (rtn['month'] <= i)].iloc[:, :-2].std()
+    t_vol *= np.sqrt(12/periods)
+    if save_data:
+        t_vol.to_pickle(data_path+'TotVol_'+str(periods)+'M')
+    else:
+        return t_vol
 def cal_vol_ss():
-    pass
+    vol_ss=pd.DataFrame(index=pd.date_range('20050101','20180301',freq='M'),columns=rtn.columns[:-2])
+    rtn2=rtn**2
+    for i in range(periods,159):
+        vol_ss.iloc[i-1]=rtn2[(rtn2['month'] >= i - periods + 1) & (rtn2['month'] <= i)].iloc[:, :-2].mean()
+    vol_ss *= np.sqrt(12 / periods)
+    if save_data:
+        vol_ss.to_pickle(data_path + 'Vol_SS' + str(periods) + 'M')
+    else:
+        return vol_ss
 def cal_ivol():
     pass
-tmp=cal_skew(10);tmp.head(10)
+def GroupBySingleFactor():
+    pass
+def cal_SMB():
+    group_num=5
+    percentile = np.linspace(0, 1, group_num + 1)
+    label_ = [i + 1 for i in range(len(percentile)-1)]
+    mark_ = DataFrame([pd.qcut(past_rtn.iloc[i],
+                                       q=percentile, labels=label_momentum) for i in range(J + M, len(price0))],
+                              index=price0.index[J + M:])
+def cal_HML():
+    pass
+
+def cal_mimick_port(indi,rtn,weights):
+    '''
+    注意：输入indi时，一定要保证是从非NA数据开始的
+    :param indi:
+    :return:
+    '''
+    percentile = np.linspace(0, 1, group_num + 1)
+    label_ = [i + 1 for i in range(len(percentile) - 1)]
+    mark_ = pd.DataFrame([pd.qcut(indi.iloc[i],q=percentile, labels=label_) for i in range(len(indi)-1)],
+                      index=indi.index[1:]) # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+    valid_=~(np.isnan(indi.shift(1)) | np.isnan(rtn))
+    if weights is None:
+        df = pd.DataFrame()
+        df['rtn'] = rtn[valid_].stack()
+        df['ref'] = mark_.stack()
+        tmp=df.groupby(level=0).apply(lambda g: g.groupby('ref').mean()).unstack()
+        tmp.columns = tmp.columns.get_level_values(1)
+    else:
+        df1=pd.DataFrame()
+        df2=pd.DataFrame()
+        df1['rtn_w'] = (rtn*weights)[valid_].stack()
+        df1['ref'] = mark_.stack()
+        df2['rtn_w'] = weights[valid_].stack()
+        df2['ref'] = mark_.stack()
+        tmp1=df1.groupby(level=0).apply(lambda g: g.groupby('ref').sum())
+        tmp2 = df2.groupby(level=0).apply(lambda g: g.groupby('ref').sum())
+        tmp=(tmp1/tmp2).unstack()
+        tmp.columns = tmp.columns.get_level_values(1)
+    return tmp
+BM=cal_BM()
+size=cal_size()
+BM=BM[BM.columns&size.columns]
+size=size[BM.columns&size.columns]
+a=cal_mimick_port(BM['2005':'2017'],rtn['2005':'2017'],None)#,size['2005':'2017'])
+tmp=a[1]-a[5]
+tmp.mean()/tmp.std()*np.sqrt(len(tmp))
+
+
+
+
+
+
+
+
+
+
+
+
+
