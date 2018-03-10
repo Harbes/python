@@ -187,7 +187,7 @@ def cal_mimick_port(indi,rtn,weights):
     label_ = [i + 1 for i in range(len(percentile) - 1)]
     mark_ = pd.DataFrame([pd.qcut(indi.iloc[i],q=percentile, labels=label_) for i in range(len(indi)-1)],
                       index=indi.index[1:]) # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
-    valid_=~(np.isnan(indi.shift(1)) | np.isnan(rtn))
+    valid_=~(np.isnan(indi.shift(1)) | np.isnan(rtn)) # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
     if weights is None:
         df = pd.DataFrame()
         df['rtn'] = rtn[valid_].stack()
@@ -206,7 +206,7 @@ def cal_mimick_port(indi,rtn,weights):
         tmp=(tmp1/tmp2).unstack()
         tmp.columns = tmp.columns.get_level_values(1)
     return tmp
-BM=cal_BM()
+BM=cal_rev()
 size=cal_size()
 BM=BM[BM.columns&size.columns]
 size=size[BM.columns&size.columns]
