@@ -28,4 +28,4 @@ def process_and_calculate():
 if __name__ == '__main__':
     import data
 
-    ()
+
