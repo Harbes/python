@@ -47,7 +47,7 @@
 \pdf_backref false
 \pdf_pdfusetitle true
 \papersize default
-\use_geometry true
+\use_geometry false
 \use_package amsmath 1
 \use_package amssymb 1
 \use_package cancel 1
@@ -152,6 +152,10 @@ Ubuntu：
 \end_layout
 
 \end_deeper
+\begin_layout Part
+理论部分
+\end_layout
+
 \begin_layout Chapter
 差分方程
 \end_layout
@@ -14706,7 +14710,43 @@ Park的典则协整回归
 概率和统计
 \end_layout
 
+\begin_layout Part
+在程序上的实现
+\end_layout
+
 \begin_layout Standard
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status collapsed
+
+\begin_layout Plain Layout
+# python
+\end_layout
+
+\begin_layout Plain Layout
+import numpa as np
+\end_layout
+
+\begin_layout Plain Layout
+import pandas as pd
+\end_layout
+
+\end_inset
+
 
 \end_layout
 

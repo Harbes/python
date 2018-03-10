@@ -227,14 +227,7 @@ class uni_tsa:
         theta_estimate=fmin(func=neg_log_likelihood,x0=beta_init)
         #theta_estimate = fmin_cobyla(neg_log_likelihood, x0=beta_init,cons=[constraint,])
 
-        return theta_estimate
-
-
-
-
-
-
-
+        return theta_estimateS
 class simulation:
     def __init__(self,ar_params=None,ma_params=None,const=0,y_init=None,dist='normal',dist_sigma=1,M=1000,seed=None):
         self.phi=ar_params
@@ -273,7 +266,6 @@ class simulation:
             return self.const + (self.theta * e_array).sum(axis=1) + epsilon[self.pq:]
         else:
             return self.const+ epsilon[self.pq:]
-
     @property
     def AR(self):
         epsilon = self.generate_random
