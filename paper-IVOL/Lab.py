@@ -56,6 +56,7 @@ def cal_beta(periods,save_data=False):
     beta = pd.DataFrame(index=pd.date_range('20050101', '20180301', freq='M'), columns=rtn.columns)
     t0 = time()
     for i in range(periods, 159):
+        # 也可以通过去均值的矩阵相乘
         beta.iloc[i - 1] = rtn.iloc[:, :-1][(i - periods+1 <= rtn['month']) & (rtn['month'] <= i)].cov(min_periods=20).iloc[-1,
                            :-1] / \
                            np.var(index_ret['pctchange'][(index_ret['month'] >= i - periods+1) & (index_ret['month'] <= i)])
@@ -121,15 +122,24 @@ def cal_illiq(periods,save_data=False):
     else:
         return illiq
 def cal_skew(periods,save_data=False):
-    t_skew=pd.DataFrame(index=pd.date_range('20050101','20180301',freq='M'),columns=rtn.columns)
+    t_skew=pd.DataFrame(index=pd.date_range('20050101','20180301',freq='M'),columns=rtn.columns[:-2])
     for i in range(periods,159):
         t_skew.iloc[i-1]=rtn[(rtn['month']>=i-periods+1)&(rtn['month']<=i)].iloc[:,:-2].skew()
     if save_data:
         t_skew.to_pickle(data_path+'skew_'+str(periods)+'M')
     else:
         return t_skew
-def cal_coskew():
-    pass
+def cal_coskew(periods,save_data=False):
+    coskew=pd.DataFrame(index=pd.date_range('20050101','20180301',freq='M'),columns=rtn.columns[:-2])
+    rtn.insert(len(rtn.columns)-1,'index^2',rtn['index']**2);rtn.iloc[:5,-5:]
+    for i in range(periods,159):
+        tmp=rtn[(rtn['month'] >= i - periods + 1) & (rtn['month'] <= i)].iloc[:, :-1].cov()
+        coskew.iloc[i-1]=(np.linalg.pinv(tmp.iloc[-2:,-2:])@tmp.iloc[-2:,:-2])[1]
+    rtn.drop('index^2', axis=1, inplace=True)
+    if save_data:
+        coskew.to_pickle(data_path+'coskew_'+str(periods)+'M')
+    else:
+        return coskew
 def cal_iskew():
     pass
 def cal_vol():
