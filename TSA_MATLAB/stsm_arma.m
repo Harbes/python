@@ -31,7 +31,7 @@ function stsm_arma( )
     bstart = 0.1*ones(3,1);
     options = optimset('LargeScale','off','Display','iter');
     
-    [ theta,fval,~,~,~,H ]  = fminunc( @(b) neglogl(b,y),bstart,options );   
+    [ theta,fval,~,~,~,H ]  = fminunc( @(b) neglogl(b,y),bstart,options );  % H  «Hessianæÿ’Û 
     
     lnl1 = -fval;
     vc   = (1/(t-1))*inv(H);

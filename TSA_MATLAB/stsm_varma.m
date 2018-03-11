@@ -8,7 +8,7 @@ function stsm_varma( )
     clear all
     clc
 
-    RandStream.setDefaultStream( RandStream('mt19937ar','seed',1234567) );
+    %RandStream.setDefaultStream( RandStream('mt19937ar','seed',1234567) );
 
     % Generate the data
     nobs = 1000;                 

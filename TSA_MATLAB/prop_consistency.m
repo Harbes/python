@@ -7,7 +7,7 @@
 clear all
 clc
 
-RandStream.setDefaultStream( RandStream('mt19937ar','seed',66) )
+%RandStream.setDefaultStream( RandStream('mt19937ar','seed',66) )
 
 mu   = 0:0.1:20;
 sig  = 4.0;

@@ -6,7 +6,7 @@
 clear all;
 clc;
 
-RandStream.setDefaultStream( RandStream('mt19937ar','seed',12345) );
+%RandStream.setDefaultStream( RandStream('mt19937ar','seed',12345) );
 
 % Alternative starting values
 theta = [0.2 ; 0.2 ; 0.2 ];       

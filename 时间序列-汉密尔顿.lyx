@@ -47,7 +47,7 @@
 \pdf_backref false
 \pdf_pdfusetitle true
 \papersize default
-\use_geometry false
+\use_geometry true
 \use_package amsmath 1
 \use_package amssymb 1
 \use_package cancel 1
@@ -73,7 +73,7 @@
 \end_index
 \leftmargin 2.5page%
 \topmargin 5pheight%
-\rightmargin 2.5page%
+\rightmargin 5page%
 \bottommargin 5pheight%
 \headheight 2.5pheight%
 \headsep 2.5pheight%
@@ -14714,36 +14714,457 @@ Park的典则协整回归
 在程序上的实现
 \end_layout
 
-\begin_layout Standard
-\begin_inset Box Boxed
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "100col%"
-special "none"
-height "1in"
-height_special "totalheight"
-thickness "0.4pt"
-separation "3pt"
-shadowsize "4pt"
-framecolor "black"
-backgroundcolor "none"
+\begin_layout Chapter
+数值估计方法（Numerical Estimation Methods）
+\end_layout
+
+\begin_layout Section
+Numerical Estimation Methods
+\end_layout
+
+\begin_layout Itemize
+ML估计的关键在于：寻找合适的参数，使得 the gradient of the log-likelihood function
+\begin_inset Foot
 status collapsed
 
 \begin_layout Plain Layout
-# python
+似然函数简单的说就是某样本的联合概率密度的几何平均（因为对数似然函数中会乘以
+\begin_inset Formula $\frac{1}{T}$
+\end_inset
+
+），即所有样本点无条件密度函数的乘积或者条件密度函数的乘积。
 \end_layout
 
-\begin_layout Plain Layout
-import numpa as np
+\end_inset
+
+ 等于0。由于常见的情况下没有解析解，因此经常使用迭代算法获取最优解。前提是算法一定要收敛。
 \end_layout
 
-\begin_layout Plain Layout
-import pandas as pd
+\begin_deeper
+\begin_layout Itemize
+Newton methods（三种方法的共同点都是迭代，而不同点在于Hessian矩阵的估计）
 \end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Newton-Raphson
+\end_layout
+
+\begin_layout Itemize
+method of scoring
+\end_layout
+
+\begin_layout Itemize
+BHHH algorithm
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Quasi-Newton methods
+\end_layout
+
+\begin_layout Itemize
+Line searching
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Quasi-Newton和Line searching是对Newton法的改进，适用于Newtong-Raphson、Method of scoring和BHH
+H
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+Newton methods
+\end_layout
+
+\begin_layout Itemize
+已知对数似然函数的gradient和Hessian如下：
+\begin_inset Formula 
+\[
+G_{T}(\theta)=\frac{\partial lnL_{T}(\theta)}{\partial\theta}={\color{red}\frac{1}{T}}\sum_{t=1}^{T}g_{t}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+H_{T}(\theta)=\frac{\partial^{2}lnL_{T}(\theta)}{\partial\theta\partial\theta'}={\color{red}\frac{1}{T}}\sum_{t=1}^{T}h_{t}
+\]
+
+\end_inset
+
+通过对
+\begin_inset Formula $G_{T}(\theta)=0$
+\end_inset
+
+进行一阶泰勒展开可得：
+\begin_inset Formula 
+\[
+G_{T}(\theta)\simeq G_{T}(\theta_{0})+H_{T}(\theta_{0})(\theta-\theta_{0})\tag{1}
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\[
+G_{T}(\hat{\theta})=0=G_{T}(\theta_{0})+H_{T}(\theta_{0})(\hat{\theta}-\theta_{0})\tag{2}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\hat{\theta}=\theta_{0}-H_{T}^{-1}(\theta_{0})G_{T}(\theta_{0})\tag{3}
+\]
+
+\end_inset
+
+然而
+\begin_inset Formula $\theta_{0}$
+\end_inset
+
+是不知道的，于是，需要利用某个
+\begin_inset Formula $\theta$
+\end_inset
+
+的初始值进行迭代
+\end_layout
+
+\begin_layout Itemize
+Newton-Raphson
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+当远离最优解时，此法中的Hessian矩阵可能不是负定的，导致算法不稳定
+\end_layout
+
+\end_inset
+
+。此方法利用下面的方程进行迭代：
+\begin_inset Formula 
+\[
+\theta_{(k+1)}=\theta_{(k)}-H_{(k)}^{-1}G_{(k)}\tag{4}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $G_{(k)}=\frac{\partial lnL_{T}(\theta)}{\partial\theta}|_{\theta=\theta_{(k)}}$
+\end_inset
+
+，
+\begin_inset Formula $H_{(k)}=\frac{\partial^{2}lnL_{T}(\theta)}{\partial\theta\partial\theta'}|_{\theta=\theta_{(k)}}$
+\end_inset
+
+。计算时，先设定某个tolerance，当
+\begin_inset Formula $\theta_{(k+1)}-\theta_{(k)}=-H_{(k)}^{-1}G_{(k)}$
+\end_inset
+
+小于tolerance时，就停止迭代。
+\end_layout
+
+\begin_layout Itemize
+Method of scoring。此方法利用负的信息矩阵
+\begin_inset Formula $-I(\theta)$
+\end_inset
+
+来替代Hessian矩阵
+\begin_inset Formula $H(\theta)$
+\end_inset
+
+。其中
+\begin_inset Formula 
+\begin{align*}
+I(\theta) & =-E(h_{t}(\theta))\\
+ & =-E(\frac{1}{T}\sum_{t=1}^{T}h_{t}(\theta))\\
+ & =-E(H(\theta))
+\end{align*}
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\begin{align*}
+\theta_{(k+1)} & =\theta_{(k)}+I_{(k)}^{-1}G_{(k)}\\
+ & =\theta_{(k)}+(\frac{1}{T}\sum_{t=1}^{T}E[h_{t,(k)}])^{-1}G_{(k)}\tag{5}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+BHHH algorithm。此算法也是用信息矩阵替代Hessian矩阵，但估计信息矩阵时是用gradient
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+因而BHHH算法只要知道gradient
+\end_layout
+
+\end_inset
+
+：
+\begin_inset Formula 
+\begin{align*}
+I(\theta)=J(\theta) & =E[g_{t}(\theta)g_{t}'(\theta)]\tag{6}\\
+ & =\frac{1}{T}\sum_{t=1}^{Y}g_{t}(\theta)g_{t}'(\theta)\tag{7}
+\end{align*}
+
+\end_inset
+
+于是，
+\begin_inset Formula 
+\[
+\theta_{(k+1)}=\theta_{(k)}+J_{(k)}^{-1}G_{(k)}
+\]
+
+\end_inset
+
+事实上，BHHH算法还可以写成：
+\begin_inset Formula 
+\begin{align*}
+\theta_{(k+1)} & =\theta_{(k)}+J_{(k)}^{-1}G_{(k)}\\
+ & =\theta_{(k)}+(\frac{1}{T}X'_{(k)}X_{(k)})^{-1}\frac{1}{T}X_{(k)}'Y
+\end{align*}
+
+\end_inset
+
+其中
+\begin_inset Formula 
+\[
+X=\left[\begin{array}{cccc}
+\frac{\partial lnl_{1}(\theta)}{\partial\theta_{1}} & \frac{\partial lnl_{1}(\theta)}{\partial\theta_{2}} & \cdots & \frac{\partial lnl_{1}(\theta)}{\partial\theta_{K}}\\
+\frac{\partial lnl_{2}(\theta)}{\partial\theta_{1}} & \frac{\partial lnl_{2}(\theta)}{\partial\theta_{2}} & \cdots & \frac{\partial lnl_{2}(\theta)}{\partial\theta_{K}}\\
+\vdots & \vdots & \ddots & \vdots\\
+\frac{\partial lnl_{T}(\theta)}{\partial\theta_{1}} & \frac{\partial lnl_{T}(\theta)}{\partial\theta_{2}} & \cdots & \frac{\partial lnl_{T}(\theta)}{\partial\theta_{K}}
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+Y=\left[\begin{array}{c}
+1\\
+1\\
+\vdots\\
+1
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Quasi-Newton methods
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+一个疑问：Quasi-Newton法是如何解决Hessian矩阵的初始值问题？因为从scipy.optimize.minimize的BFGS算法中并没有要求输入He
+ssian矩阵，是利用
+\begin_inset Formula $J(\theta)=\frac{1}{T}\sum_{t=1}^{Y}g_{t}(\theta)g_{t}'(\theta)$
+\end_inset
+
+吗？python中的BFGS是基于BHHH算法？似乎真是这样的
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+BFGS
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+常用的方法之一，比较稳健
+\end_layout
+
+\end_inset
+
+。Newton-Raphson方法直接计算Hessian矩阵，事实上，也可以在每次迭代时对Hessian矩阵进行估计来提升迭代速度。
+\begin_inset Formula 
+\[
+H_{(k+1)}=H_{(k)}+U_{(k)}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $U_{(k)}$
+\end_inset
+
+是一个更新矩阵，定义为：
+\begin_inset Formula 
+\[
+U_{(k)}=-\frac{H_{(k)}\Delta_{\theta}\Delta_{G}'+\Delta_{G}\Delta_{\theta}'H_{(k)}}{\Delta_{G}'\Delta_{\theta}}+(1+\frac{\Delta_{\theta}'H_{(k)}\Delta_{\theta}}{\Delta_{G}'\Delta_{\theta}})\frac{\Delta_{G}\Delta_{G}'}{\Delta_{G}'\Delta_{\theta}}
+\]
+
+\end_inset
+
+其中
+\begin_inset Formula $\Delta_{\theta}=\theta_{(k+1)}-\theta_{(k)}$
+\end_inset
+
+，
+\begin_inset Formula $\Delta_{G}=G_{(k+1)}-G_{(k)}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Line Searching
+\end_layout
+
+\begin_layout Itemize
+有时候，利用Newton法迭代时某些节点并没有提高log-likelihood的值。为保证每次迭代都可以改进对数似然函数，可以引入一个参数
+\begin_inset Formula $\lambda$
+\end_inset
+
+：
+\begin_inset Formula 
+\[
+\theta_{(k+1)}=\theta_{(k)}-\lambda H_{(k)}^{-1}G_{(k)},\quad0\leq\lambda\leq1
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+其他算法
+\end_layout
+
+\begin_layout Subsubsection
+无约束最优化
+\end_layout
+
+\begin_layout Itemize
+Nelder-Mead。最简单，不要求输入gradient和Hessian矩阵，但是速度慢、迭代次数多，要求目标函数well-behaved。类似的powell
+算法也仅需要目标函数
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+类似的，grid-searching
+\end_layout
+
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+BFGS。见上。
+\end_layout
+
+\begin_layout Itemize
+当变量较多时：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Newton-CG。Newton-Conjugate-Gradient algorithm uses a conjugate gradient
+ algorithm to (approximately) invert the local Hessian。此法不需要输入完整的Hessian矩阵，而只要输入
+Hessian矩阵与另外任意一个向量P的乘积
+\begin_inset Formula $H(\theta)*P$
+\end_inset
+
+即可【此方法不如下面的trust-ncg方法稳定】。example见scipy中Optimization部分。
+\end_layout
+
+\begin_layout Itemize
+trust-ncg。Trust-Region Newton-Conjugate-Gradient Algorithm。此方法既可以使用Hessian矩阵进行最优
+化，又可以直接使用
+\begin_inset Formula $H(\theta)P$
+\end_inset
+
+进行最优化。
+\end_layout
+
+\begin_layout Itemize
+trust-krylov。Trust-Region Truncated Generalized Lanczos / Conjugate Gradient
+ Algorithm 。类似trust-ncg
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+当变量中等时（medium-size problems），使用下面的方法可以减少迭代步数：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+trust-exact。要求输入Hessian矩阵
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection
+约束最优化
+\end_layout
+
+\begin_layout Itemize
+SLSQP。需要输入gradient和constraint以及constraint的gradient
+\end_layout
+
+\begin_layout Itemize
+Least-squares minimization。solving robustiﬁed bound constrained nonlinear
+ least-squares problems。
+\end_layout
+
+\begin_layout Section
+Computing Standard Errors
+\end_layout
+
+\begin_layout Itemize
+MLE的渐进分布：
+\begin_inset Formula 
+\[
+\sqrt{T}(\hat{\theta}-\theta_{0})\stackrel{d}{\rightarrow}N(0,I^{-1}(\theta_{0}))
+\]
+
+\end_inset
+
+其中信息矩阵要么使用Hessian矩阵估计，要么使用gradient的外积来进行估计：
+\begin_inset Formula 
+\[
+I^{-1}(\hat{\theta})=-H^{-1}(\hat{\theta})
+\]
+
+\end_inset
+
+或
+\begin_inset Formula 
+\[
+I^{-1}(\theta_{0})=J^{-1}(\hat{\theta})
+\]
+
+\end_inset
+
+于是：
+\begin_inset Formula 
+\[
+Var(\hat{\theta})=-\frac{1}{T}H^{-1}(\hat{\theta})=\frac{1}{T}J^{-1}(\hat{\theta})
+\]
 
 \end_inset
 

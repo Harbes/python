@@ -40,7 +40,7 @@ function stsm_granger( )
     [theta1,fval,~,~,~,H] = fminunc(@(b) neglog( b,y ),theta0,ops);                                        
 
     cov1 = (1/t)*inv(H);
-    
+%%    
     % Wald test of no causality from money to interest rates
 
     r      = zeros(2,36);

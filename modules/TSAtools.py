@@ -2,148 +2,138 @@ import numpy as np
 from scipy.stats import norm, chi2
 from scipy.linalg import toeplitz
 from math import sqrt
-import statsmodels.tsa.stattools as tsa_tools
+import statsmodels.tsa.api as tsa
+import statsmodels.api as sm
 import matplotlib.pyplot as plt
 from modules import simulation as sim
 
 
-
-def autoCov(arr,lag):
+def acovfs(arr):
     '''
-    支持 1-D和2-D
+    计算auto-cov；
+    :param arr: 1-D array
+    :return: lag=0~len(arr)
+    '''
+    return tsa.stattools.acovf(arr)
+def acovf(arr,lag):
+    '''
+    支持 1-D和2-D；unbiased
     :param arr:
     :param lag:
     :return:
     '''
-    if lag >= arr.shape[0] | lag<0:
-        raise ValueError("Not enough observations to compute autocovariance, or lag<0")
+    return (arr[lag:len(arr)] - np.mean(arr)) @ (arr[0:len(arr)-lag] - np.mean(arr))/(len(arr)-lag)
+def acfs(arr,lags,LBq=False,alpha=None):
+    return tsa.stattools.acf(arr,nlags=lags,qstat=LBq,alpha=alpha)
+def pacfs(arr,lags,alpha=None):
+    return tsa.stattools.pacf(arr,nlags=lags,method='ols',alpha=alpha)
+def plot_acfs_pacfs(arr,lags,method='statsmodels'):
+    if method=='statsmodels':
+        fig = plt.figure(figsize=(12, 8))
+        ax1 = fig.add_subplot(211)
+        fig = sm.graphics.tsa.plot_acf(arr, lags=lags, ax=ax1)
+        ax2 = fig.add_subplot(212)
+        fig = sm.graphics.tsa.plot_pacf(arr, lags=lags, ax=ax2)
+        plt.show()
     else:
-        x1 = arr[lag:len(arr)]
-        len_x1=len(x1)
-        return np.sum((x1 - np.mean(arr)) * (arr[0:len_x1] - np.mean(arr))) / len_x1
-def acf(arr,lag):
-    return autoCov(arr,lag)/autoCov(arr,0)
-def acfs(arr, max_lag):
+        acf_, conf_acf = acfs(arr, lags, alpha=0.05)
+        pacf_, conf_pacf = pacfs(arr, lags, alpha=0.05)
+        conf_acf -=acf_[:,None]
+        conf_pacf -=pacf_[:,None]
+        fig = plt.figure(figsize=(15, 5))
+        ax1 = fig.add_subplot(211)
+        ax1.stem(range(1, len(acf_)), acf_[1:])
+        plt.ylabel("ACF")
+        plt.plot(range(1, len(acf_)), conf_acf[1:, 1], linestyle="-.", color="red")
+        plt.axhline(0, linestyle='-', color='black')
+        plt.plot(range(1, len(acf_)), conf_acf[1:, 0], linestyle="-.", color="red")
+
+        ax2 = fig.add_subplot(212)
+        ax2.stem(range(1, len(pacf_)), pacf_[1:])
+        plt.xlabel("Lag")
+        plt.ylabel("PACF")
+        plt.plot(range(1, len(pacf_)), conf_pacf[1:, 1], linestyle="-.", color="red")
+        plt.axhline(0, linestyle='-', color='black')
+        plt.plot(range(1, len(pacf_)), conf_pacf[1:, 0], linestyle="-.", color="red")
+        plt.show()
+
+def ccovfs(x,y):
     '''
-    用于计算lag=1：max_lag的acf，同时计算置信区间？（没有用到置信水平，如何算出置信区间？？？）
-    :param arr:
-    :param max_lag:
+    计算交叉协方差
+    :param x:
+    :param y:
     :return:
     '''
-    acfs_ = np.array([acf(arr,lag) for lag in range(1, max_lag + 1)])
-    acf_interval = np.ones(max_lag)
-    acf_interval[1:] = 2 * acfs_[:-1] ** 2
-    acf_interval = np.sqrt(np.cumsum(acf_interval) / len(arr))
-    return np.r_[1, acfs_], np.r_[0, acf_interval]
-def acfs_plot(arr, max_lag, alpha=0.05):
+    return tsa.stattools.ccovf(x,y)
+def ccfs(x,y):
     '''
-    画出给定最大滞后阶数的acf图形，包括置信区间
-    :param arr:
-    :param max_lag:
-    :param alpha:
+    cross correlation
+    :param x:
+    :param y:
     :return:
     '''
-    s = norm.ppf(1 - alpha / 2)
-    acfs_, acf_interval = acfs(arr,max_lag)
-    plt.figure(figsize=(15, 5))
-    ax = plt.subplot(111)
-    plt.stem(range(max_lag + 1), acfs_)
-    plt.xlabel("Lag")
-    plt.ylabel("Autocorrelation")
-    plt.title("ACF")
-    plt.plot(range(max_lag + 1), s * acf_interval, linestyle="-.", color="red")
-    plt.axhline(0, linestyle='-', color='black')
-    plt.plot(range(max_lag + 1), -s * acf_interval, linestyle="-.", color="red")
-    plt.show()
-def acf_test(arr,lag,test_type='individual'):
+    return tsa.stattools.ccf(x,y)
+def periodogram():
+    # TODO 待学习 periodogram
+    pass
+def adfuller(x):
     '''
-    test the acf 保持怀疑
-    :param lag:
-        lag=lag if test_type='individual'
-        lag=max_lag(a list or tuple) if test_type='portmanteau'/'joint'
-    :param test_type:
-        'individual' or 'portmanteau/joint'
+    Augmented Dickey-Fuller unit root test
+    :param x:
     :return:
-        the test result
+    '''
+    adf,pvalue,usedlag,nobs,cvalues,_=tsa.stattools.adfuller(x) # 可以改变 maxlag参数
+    print('            adf:',adf)
+    print('         pvalue:', pvalue)
+    print('critical values:','\n',
+           '               ',' 1%:', cvalues['1%'])
+    print('                ',' 5%:',cvalues['5%'])
+    print('                ','10%:', cvalues['10%'])
+    print('        usedlag:', usedlag)
+    print('           nobs:', nobs)
+def GrangerCausalityTests(arr2,maxlag):
     '''
 
-    if test_type == 'individual':
-        if lag<=0:
-            raise ValueError('lag must be greater than zero')
-        t_ratio=acf(arr,lag)/sqrt((1+2*np.sum([acf(arr,i)**2 for i in range(lag-1)]))/len(arr)) #?
-        p_value=2*norm(0,1).cdf(-np.abs(t_ratio))
-        print('===========================')
-        print('Null hypotheses is rho_l=0 ')
-        print('===========================')
-        print('   t statistics is %12.3f' %t_ratio)
-        print('   p-value is %17.3f' %p_value)
-    else:
-        if lag is None:
-            max_lags=[5,10]
-        elif (np.array(lag)<=0).any():
-            raise ValueError('lag must be greater than zero')
-        else:
-            max_lags=lag
-        T=len(self.arr)
-        print('=============================================')
-        print('Test for autocorrelation: Ljung and Box(1978)')
-        print('Null hypotheses is rho_1=rho_2=...=0')
-        print('=============================================')
-        for m in range(len(max_lags)):
-            Q = T * (T + 2) * np.sum([self.acf(lag=i) ** 2 / (T - i) for i in range(1, max_lags[m])])
-            p_value = 1-chi2.cdf(Q, max_lags[m])
-            print('Q({}):'.format(max_lags[m]))
-            print('   chi_square statistics is %12.3f' % Q)
-            print('   p-value is %26.3f' % p_value)
+    :param arr2: 2D-array(nobs.2)
+    :param maxlag:
+    :return:
+    '''
+    return tsa.stattools.grangercausalitytests(arr2,maxlag)
+def levinson_durbin(arr,nlags=10):
+    # TODO
+    return tsa.stattools.levinson_durbin(arr,nlags=nlags)
+def arma_order_select_ic():
+    # TODO
+    pass
+def ARMA_fit(endogenous,order,exog=None,trend='c'):
+    '''
+    例如：ARMA_fit(y,[3,0,1])
+    使用results.summary()打印结果，或者使用results.params或者 .resid/.pvalues
+    :param endogenous:
+    :param order:
+    :param trend:
+    :return:
+    '''
+    return tsa.ARMA(endogenous,order,exog=exog).fit(trend=trend)
+def ARIMA_fit(endog,order,exog=None,trend='c',method='css-mle'):
+    return tsa.ARIMA(endog,order,exog=exog).fit(trend=trend,method=method)
+def KalmanFilter():
+    # TODO
+    pass
+def VecAutoReg_fit(endog,maxlag=None,method='ols',trend='c'):
+    return tsa.VAR(endog).fit(maxlags=maxlag,method=method,trend=trend)
+def DynamicVAR():
+    #TODO
+    pass
+def SVAR():
+    #TODO
+    pass
 
-def pacfs(arr,max_lag,method='ols'):
-    if method=='Yule-Walker':
-        pacfs = [1]
-        for j in range(1,max_lag+1):
-            gamma_=[autoCov(arr,i) for i in range(j+1)]
-            R=toeplitz(gamma_[:-1])
-            pacfs.append(np.linalg.solve(R,gamma_[1:])[-1])
-        return np.array(pacfs)
-    else:
-        return  np.r_[1,[pacf_ols(arr,i) for i in range(1,max_lag+1)]]
-def pacf_ols(arr,lag):
-    if lag<=0:
-        raise ValueError('lag不能小于1')
-    tmp=np.array([arr[lag-i:-i] for i in range(1,lag+1)])
-    y=arr[lag:]
-    x=np.append([np.ones(len(y))],tmp,axis=0)
-    return y@x.T@np.linalg.pinv(x@x.T)[lag]
-def pacf_plot(arr,max_lag,alpha=0.05,method='ols'):
-    s = norm.ppf(1 - alpha / 2)
-    pacfs_=pacfs(arr,max_lag,method=method)
-    plt.figure(figsize=(15, 5))
-    ax = plt.subplot(111)
-    plt.stem(range(max_lag+1), pacfs_)
-    plt.xlabel("Lag")
-    plt.ylabel("Partial Autocorrelation")
-    plt.title("PACF")
-    plt.axhline(s / np.sqrt(len(arr)), linestyle="-.", color="red")
-    plt.axhline(0, linestyle='-', color='black')
-    plt.axhline(- s / np.sqrt(len(arr)), linestyle="-.", color="red")
-    plt.show()
-def acf_pacf_plot(arr,max_lag,alpha=0.05,pacf_method='ols'):
-    s = norm.ppf(1 - alpha / 2)
-    acfs_, acf_interval = acfs(arr,max_lag)
-    pacfs_=pacfs(arr,max_lag,method=pacf_method)
-    fig=plt.figure(figsize=(15, 5))
-    ax1= fig.add_subplot(211)
-    ax1.stem(range(max_lag+1), acfs_)
-    plt.ylabel("ACF")
-    plt.plot(range( max_lag+1),s *acf_interval, linestyle="-.", color="red")
-    plt.axhline(0,linestyle='-',color='black')
-    plt.plot(range(max_lag+1),-s*acf_interval, linestyle="-.", color="red")
 
-    ax2 = fig.add_subplot(212)
-    ax2.stem(range(max_lag+1), pacfs_)
-    plt.xlabel("Lag")
-    plt.ylabel("PACF")
-    plt.axhline(s / np.sqrt(len(arr)), linestyle="-.", color="red")
-    plt.axhline(0, linestyle='-', color='black')
-    plt.axhline(- s / np.sqrt(len(arr)), linestyle="-.", color="red")
-    plt.show()
-acf_pacf_plot(a,30)
+
+matfn = 'E:/pythonD/TSA_MATLAB/sims_data.mat'  # the path of .mat data
+data = sio.loadmat(matfn)
+r=data['ytdata'][:,0]
+mpo=np.log(data['ytdata'][:,[3,4,5]])
+y=np.c_[r[12:],(mpo[12:]-mpo[:-12])*100]
+VecAutoReg_fit(y,maxlag=2).summary()

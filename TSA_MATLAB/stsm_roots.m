@@ -7,7 +7,7 @@ function stsm_roots( )
 
     clear all
     clc
-
+%%
     % Read the data: quarterly US data from Jan-1959 to Dec-1998
     load simsdata.mat
  
@@ -32,7 +32,7 @@ function stsm_roots( )
     
     c  = [-theta(5); -theta(4); -theta(3); -theta(2); 1 ];
     rt = roots( c );
-    
+ %%   
     format short
     disp('AR(4) model for interest rates')
     disp('------------------------------')

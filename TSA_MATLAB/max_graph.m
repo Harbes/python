@@ -8,7 +8,7 @@
 clear all;
 clc;
 
-RandStream.setDefaultStream( RandStream('mt19937ar','seed',123) )
+%RandStream.setDefaultStream( RandStream('mt19937ar','seed',123) )
 
 
 % Simulate the model   
