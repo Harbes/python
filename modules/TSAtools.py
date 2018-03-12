@@ -1,11 +1,8 @@
 import numpy as np
-from scipy.stats import norm, chi2
-from scipy.linalg import toeplitz
-from math import sqrt
 import statsmodels.tsa.api as tsa
 import statsmodels.api as sm
 import matplotlib.pyplot as plt
-from modules import simulation as sim
+from arch import arch_model
 
 
 def acovfs(arr):
@@ -132,3 +129,16 @@ def SVAR():
 def Coint():
     # TODO
     pass
+
+def ARCH_model(arr,mean='Constant',p=1,o=0,q=1,dist='Normal'):
+    '''
+    例如：result.simulation(1000).mean
+    :param arr:
+    :param mean:
+    :param p:
+    :param o:
+    :param q:
+    :param dist:
+    :return:  ARCHModelResults
+    '''
+    return arch_model(arr,mean=mean,p=p,o=o,q=q,dist=dist).fit()
