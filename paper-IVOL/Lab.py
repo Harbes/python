@@ -17,6 +17,7 @@ def import_pv_index():
     open_price = pv['adj_open'].unstack()
     # open_price.index=pd.to_datetime(open_price.index.astype(int).astype(str),format='%Y%m%d')
     rtn = (close_price - open_price) / open_price * 100
+    rtn[rtn==0]=np.nan
     stock_pool=rtn.columns.values
 
     index_ret = pd.read_pickle(data_path + 'index_ret').set_index(['index_code', 'trddt'])['pctchange'].loc['000016.SH']
@@ -61,11 +62,11 @@ def cal_beta(periods,save_data=False):
         # 也可以通过cov/var，但是速度较慢
         tmp1=index_ret['pctchange'][(index_ret['month'] >= i - periods+1) & (index_ret['month'] <= i)]
         tmp2=rtn.iloc[:, :-1][(i - periods+1 <= rtn['month']) & (rtn['month'] <= i)]
-        beta.iloc[i - 1] = ((tmp1-tmp1.mean())@(tmp2-tmp2.mean()).values)/((tmp1-tmp1.mean())**2).sum()
+        beta.iloc[i - 1] = ((tmp1-tmp1.mean()).values[:,None]*(tmp2-tmp2.mean())).sum()/((tmp1-tmp1.mean())**2).sum()
     if save_data:
-        beta.to_pickle(data_path + 'beta_daily_'+str(periods)+'M')
+        beta[beta!=0].to_pickle(data_path + 'beta_daily_'+str(periods)+'M')
     else:
-        return beta
+        return beta[beta!=0]
 def cal_size(save_data=False):
     '''
     monthly
@@ -189,16 +190,16 @@ def cal_mimick_port1(indi,rtn,weights):
     '''
     用法：cal_mimick_port(BM['2005':'2017'],rtn['2005':'2017'],None)或者
          cal_mimick_port(BM['2005':'2017'],rtn['2005':'2017'],size['2005':'2017'])
-    注意：输入indi时，一定要保证是从非NA数据开始的
+    注意：输入indi时，一定要保证是从非NA数据开始的;而且数据一定要对齐！！！
     :param indi:
     :return:
     '''
     group_num=5
-    percentile = np.linspace(0, 1, group_num + 1) # 也可以自定义percentile，例如 [0.0,0.3,0.7,1.0]
+    percentile = [0.0,0.3,0.7,1.0]#np.linspace(0, 1, group_num + 1) # 也可以自定义percentile，例如 [0.0,0.3,0.7,1.0]
     label_ = [i + 1 for i in range(len(percentile) - 1)]
     mark_ = pd.DataFrame([pd.qcut(indi.iloc[i],q=percentile, labels=label_) for i in range(len(indi)-1)],
                       index=indi.index[1:]) # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
-    valid_=~(np.isnan(indi.shift(1)) | np.isnan(rtn)) # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
+    valid_=~(pd.isnull(indi.shift(1)[1:]) | pd.isnull(rtn)) # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
     if weights is None:
         df = pd.DataFrame()
         df['rtn'] = rtn[valid_].stack()
@@ -234,6 +235,20 @@ if __name__ == '__main__':
 import_pv_index()
 import_book()
 t0=time()
+beta=cal_coskew(12)
+time()-t0
+size=cal_size()
+rev=cal_rev()
+(~pd.isnull(beta)).sum(axis=1)
+port=cal_mimick_port1(beta['200512':].iloc[:,:-1],rev['2006':'201802'],size['2006':'201802'])
+tmp=port.iloc[:,0]-port.iloc[:,-1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
+
+
+t0=time()
+
+
+
+
 for periods in [1,3,6,16]:
     cal_beta(periods,save_data=True)
     cal_mom(periods,save_data=True)
@@ -250,3 +265,11 @@ cs.head(15)
 size=cal_size()
 beta.head(15)
 
+((tmp1-tmp1.mean()).values@(tmp2-tmp2.mean()))/(((tmp1-tmp1.mean())**2).sum())
+((tmp1-tmp1.mean())[None,:len(tmp1)]@(tmp2-tmp2.mean()))/((tmp1-tmp1.mean())**2).sum()
+(tmp1-tmp1.mean())[None,:len(tmp1)]
+(tmp1-tmp1.mean()).values@(tmp2-tmp2.mean()).iloc[:,0].values
+a=tmp1-tmp1.mean();a
+b=(tmp2-tmp2.mean()).iloc[:,:2];b
+(a.multiply(b,fill_value=0)).sum()
+(a.values[:,None]*b).sum()
