@@ -77,15 +77,15 @@ def cal_size(save_data=False):
     size.index = pd.to_datetime(size.index.astype(str), format='%Y%m') + MonthEnd()
     if save_data:
         size.to_pickle(data_path+'size_monthly')
-    return size
+    return size[size>0]
 def cal_BM(save_data=False):
     import_book()
     size=cal_size()
     BM=book/size
     if save_data:
-        BM.to_pickle(data_path+'BM_monthly')
+        BM[BM>0].to_pickle(data_path+'BM_monthly')
     else:
-        return BM
+        return BM[BM>0]
 def cal_mom(periods,save_data=False):
     GroupBy = lambda x: x.year * 100 + x.month
     cls=close_price.groupby(GroupBy).nth(-1)
@@ -103,9 +103,9 @@ def cal_rev(save_data=False):
     rev = (cls - opn) / opn*100
     rev.index = pd.to_datetime(rev.index.astype(str), format='%Y%m') + MonthEnd()
     if save_data:
-        rev.to_pickle(data_path+'Reversal_M')
+        rev[rev!=0].to_pickle(data_path+'Reversal_M')
     else:
-        return rev
+        return rev[rev!=0]
 def cal_illiq(periods,save_data=False):
     GroupBy = lambda x: x.year * 100 + x.month
     amount=pv['amount'].unstack()
@@ -137,12 +137,14 @@ def cal_coskew(periods,save_data=False):
     for i in range(periods,159):
         tmp1=rtn[(rtn['month'] >= i - periods + 1) & (rtn['month'] <= i)].iloc[:, :-1]
         tmp2=index_ret[(rtn['month'] >= i - periods + 1) & (rtn['month'] <= i)][['pctchange','index^2']]
-        coskew.iloc[i-1]=(np.linalg.pinv(tmp2.values.T@tmp2)@(tmp2-tmp2.mean()).T@(tmp1-tmp1.mean()).values)[1]
+        tmp3=np.linalg.pinv((tmp2-tmp2.mean()).values.T@(tmp2-tmp2.mean()))[1]
+        coskew.iloc[i-1]=tmp3[0]*((tmp2 - tmp2.mean()).values[:,0][:,None] * (tmp1 - tmp1.mean())).sum()\
+                         +tmp3[1]*((tmp2 - tmp2.mean()).values[:,1][:,None] * (tmp1 - tmp1.mean())).sum()
     index_ret.drop('index^2', axis=1, inplace=True)
     if save_data:
-        coskew.to_pickle(data_path+'coskew_'+str(periods)+'M')
+        coskew[coskew!=0].to_pickle(data_path+'coskew_'+str(periods)+'M')
     else:
-        return coskew
+        return coskew[coskew!=0]
 def cal_iskew():
     # TODO
     #cal_SMB
@@ -170,9 +172,9 @@ def cal_vol_ss(periods,save_data=False):
 def cal_ivol():
     # TODO
     pass
-def cal_SMB():
+def cal_SMB(weight=False):
     size = cal_size()
-    size = size['2005':'2017']
+    size = size['2005':'201802']
     if weight:
         return cal_mimick_port1(BM, rtn.iloc[:, :-2], size)
     else:
@@ -195,7 +197,7 @@ def cal_mimick_port1(indi,rtn,weights):
     :return:
     '''
     group_num=5
-    percentile = [0.0,0.3,0.7,1.0]#np.linspace(0, 1, group_num + 1) # 也可以自定义percentile，例如 [0.0,0.3,0.7,1.0]
+    percentile = [0.0,0.3,0.7,1.0]#np.linspace(0, 1, group_num + 1) # 也可以自定义percentile，例如
     label_ = [i + 1 for i in range(len(percentile) - 1)]
     mark_ = pd.DataFrame([pd.qcut(indi.iloc[i],q=percentile, labels=label_) for i in range(len(indi)-1)],
                       index=indi.index[1:]) # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
@@ -218,9 +220,50 @@ def cal_mimick_port1(indi,rtn,weights):
         tmp=(tmp1/tmp2).unstack()
         tmp.columns = tmp.columns.get_level_values(1)
     return tmp
-def cal_mimick_port2(indi,rtn,weights,independent=True):
-    # TODO
-    pass
+def cal_mimick_port2(indi1,indi2,rtn,weights,independent=True):
+
+    group_num = 5
+    percentile = np.linspace(0, 1, group_num + 1)  # 也可以自定义percentile，例如 [0.0,0.3,0.7,1.0]#
+    label_ = [i + 1 for i in range(len(percentile) - 1)]
+    if independent:
+        mark_1 = pd.DataFrame([pd.qcut(indi1.iloc[i], q=percentile, labels=label_) for i in range(len(indi1) - 1)],
+                              index=indi1.index[1:])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+        mark_2 = pd.DataFrame([pd.qcut(indi2.iloc[i], q=percentile, labels=label_) for i in range(len(indi2) - 1)],
+                              index=indi2.index[1:])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+    else:
+        mark_1 = pd.DataFrame([pd.qcut(indi1.iloc[i], q=percentile, labels=label_) for i in range(len(indi1) - 1)],
+                              index=indi1.index[1:])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+        mark_2=pd.DataFrame(index=mark_1.index,columns=mark_1.columns)
+        for l_ in label_:
+            tmp=pd.DataFrame([pd.qcut(indi2.iloc[i][mark_1.iloc[i]==l_],q=percentile,labels=label_) for i in range(len(indi2)-1)])
+            mark_2 = mark_2.combine_first(tmp)
+    valid_ = ~(pd.isnull(mark_1+mark_2) | pd.isnull(rtn))  # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
+    if weights is None:
+        df = pd.DataFrame()
+        df['rtn'] = rtn[valid_].stack()
+        df['ref1'] = mark_1.stack()
+        df['ref2'] = mark_2.stack()
+        tmp = df.groupby(level=0).apply(lambda g: g.groupby(['ref1','ref2']).mean()).unstack()
+        tmp.columns = tmp.columns.get_level_values(1)
+    else:
+        df1 = pd.DataFrame()
+        df2 = pd.DataFrame()
+        df1['rtn_w'] = (rtn * weights)[valid_].stack()
+        df1['ref1'] = mark_1.stack()
+        df1['ref2'] = mark_2.stack()
+        df2['rtn_w'] = weights[valid_].stack()
+        df2['ref1'] = mark_1.stack()
+        df2['ref2'] = mark_2.stack()
+        tmp1 = df1.groupby(level=0).apply(lambda g: g.groupby(['ref1','ref2']).sum())
+        tmp2 = df2.groupby(level=0).apply(lambda g: g.groupby(['ref1','ref2']).sum())
+        tmp = (tmp1 / tmp2).unstack()
+        tmp.columns = tmp.columns.get_level_values(1)
+    return tmp
+
+
+
+
+
 BM=cal_rev()
 size=cal_size()
 BM=BM[BM.columns&size.columns]
@@ -235,20 +278,21 @@ if __name__ == '__main__':
 import_pv_index()
 import_book()
 t0=time()
-beta=cal_coskew(12)
+coskew=cal_coskew(12)
+beta=cal_beta(12)
 time()-t0
 size=cal_size()
 rev=cal_rev()
+rev=rev[rev!=0]
+(~pd.isnull(coskew)).sum(axis=1)
 (~pd.isnull(beta)).sum(axis=1)
-port=cal_mimick_port1(beta['200512':].iloc[:,:-1],rev['2006':'201802'],size['2006':'201802'])
+port=cal_mimick_port1(beta['200512':].iloc[:,:-1],rev['2006':'201802'],None)#,size['2006':'201802'])
+port=cal_mimick_port2(coskew['200512':].iloc[:,:-1],rev['2006':'201802'],rev['2006':'201802'],size['2006':'201802'],independent=False)#)
+port
 tmp=port.iloc[:,0]-port.iloc[:,-1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
 
 
 t0=time()
-
-
-
-
 for periods in [1,3,6,16]:
     cal_beta(periods,save_data=True)
     cal_mom(periods,save_data=True)
@@ -261,15 +305,6 @@ cal_size(save_data=True)
 cal_BM(save_data=True)
 cal_rev(save_data=True)
 time()-t0;
-cs.head(15)
-size=cal_size()
-beta.head(15)
 
-((tmp1-tmp1.mean()).values@(tmp2-tmp2.mean()))/(((tmp1-tmp1.mean())**2).sum())
-((tmp1-tmp1.mean())[None,:len(tmp1)]@(tmp2-tmp2.mean()))/((tmp1-tmp1.mean())**2).sum()
-(tmp1-tmp1.mean())[None,:len(tmp1)]
-(tmp1-tmp1.mean()).values@(tmp2-tmp2.mean()).iloc[:,0].values
-a=tmp1-tmp1.mean();a
-b=(tmp2-tmp2.mean()).iloc[:,:2];b
-(a.multiply(b,fill_value=0)).sum()
-(a.values[:,None]*b).sum()
+
+
