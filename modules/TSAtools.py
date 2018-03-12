@@ -129,11 +129,6 @@ def SVAR():
     #TODO
     pass
 
-
-
-matfn = 'E:/pythonD/TSA_MATLAB/sims_data.mat'  # the path of .mat data
-data = sio.loadmat(matfn)
-r=data['ytdata'][:,0]
-mpo=np.log(data['ytdata'][:,[3,4,5]])
-y=np.c_[r[12:],(mpo[12:]-mpo[:-12])*100]
-VecAutoReg_fit(y,maxlag=2).summary()
+def Coint():
+    # TODO
+    pass
