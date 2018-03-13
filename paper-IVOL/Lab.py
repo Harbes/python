@@ -76,7 +76,7 @@ def cal_size(save_data=False):
     size = pv['size_tot'].unstack().groupby(GroupBy).last()*1e-4
     size.index = pd.to_datetime(size.index.astype(str), format='%Y%m') + MonthEnd()
     if save_data:
-        size.to_pickle(data_path+'size_monthly')
+        size[size > 0].to_pickle(data_path+'size_monthly')
     return size[size>0]
 def cal_BM(save_data=False):
     import_book()
@@ -201,7 +201,7 @@ def cal_mimick_port1(indi,rtn,weights):
     label_ = [i + 1 for i in range(len(percentile) - 1)]
     mark_ = pd.DataFrame([pd.qcut(indi.iloc[i],q=percentile, labels=label_) for i in range(len(indi)-1)],
                       index=indi.index[1:]) # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
-    valid_=~(pd.isnull(indi.shift(1)[1:]) | pd.isnull(rtn)) # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
+    valid_=~(pd.isnull(mark_) | pd.isnull(rtn)) # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
     if weights is None:
         df = pd.DataFrame()
         df['rtn'] = rtn[valid_].stack()
