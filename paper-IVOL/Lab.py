@@ -10,7 +10,7 @@ from pandas.tseries.offsets import MonthEnd
 
 def import_pv_index():
     global data_path,pv,open_price,close_price,index_ret,rtn,stock_pool
-    data_path = 'E:/data/NewData/'  # '/Users/harbes/data/NewData/' #
+    data_path = '/Users/harbes/data/NewData/' #'E:/data/NewData/'  #
     pv = pd.read_pickle(data_path + 'PV_datetime')#[['adj_close', 'adj_open', 'size_tot']]
     close_price = pv['adj_close'].unstack()
     # close_price.index=pd.to_datetime(close_price.index.astype(int).astype(str),format='%Y%m%d')
@@ -156,15 +156,14 @@ def cal_vol(periods,save_data=False):
         t_vol.iloc[i-1]=rtn[(rtn['month'] >= i - periods + 1) & (rtn['month'] <= i)].iloc[:, :-2].std()
     t_vol *= np.sqrt(12/periods)
     if save_data:
-        t_vol.to_pickle(data_path+'TotVol_'+str(periods)+'M')
+        t_vol.astype(float).to_pickle(data_path+'TotVol_'+str(periods)+'M')
     else:
-        return t_vol
+        return t_vol.astype(float)
 def cal_vol_ss(periods,save_data=False):
     vol_ss=pd.DataFrame(index=pd.date_range('20050101','20180301',freq='M'),columns=rtn.columns[:-2])
-    rtn2=rtn**2
     for i in range(periods,159):
-        vol_ss.iloc[i-1]=rtn2[(rtn2['month'] >= i - periods + 1) & (rtn2['month'] <= i)].iloc[:, :-2].mean()
-    vol_ss *= np.sqrt(12 / periods)
+        vol_ss.iloc[i-1]=(rtn[(rtn['month'] >= i - periods + 1) & (rtn['month'] <= i)].iloc[:, :-2]**2).mean()
+    vol_ss = np.sqrt(12 / periods)*np.sqrt(vol_ss.astype(float))
     if save_data:
         vol_ss.to_pickle(data_path + 'Vol_SS' + str(periods) + 'M')
     else:
@@ -261,50 +260,8 @@ def cal_mimick_port2(indi1,indi2,rtn,weights,independent=True):
     return tmp
 
 
-
-
-
-BM=cal_rev()
-size=cal_size()
-BM=BM[BM.columns&size.columns]
-size=size[BM.columns&size.columns]
-a=cal_mimick_port(BM['2005':'2017'],rtn['2005':'2017'],None)#,size['2005':'2017'])
-tmp=a[1]-a[5]
-tmp.mean()/tmp.std()*np.sqrt(len(tmp))
-
 if __name__ == '__main__':
     pass
 
 import_pv_index()
 import_book()
-t0=time()
-coskew=cal_coskew(12)
-beta=cal_beta(12)
-time()-t0
-size=cal_size()
-rev=cal_rev()
-rev=rev[rev!=0]
-(~pd.isnull(coskew)).sum(axis=1)
-(~pd.isnull(beta)).sum(axis=1)
-port=cal_mimick_port1(beta['200512':].iloc[:,:-1],rev['2006':'201802'],None)#,size['2006':'201802'])
-port=cal_mimick_port2(coskew['200512':].iloc[:,:-1],rev['2006':'201802'],rev['2006':'201802'],size['2006':'201802'],independent=False)#)
-port
-tmp=port.iloc[:,0]-port.iloc[:,-1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
-
-
-t0=time()
-for periods in [1,3,6,16]:
-    cal_beta(periods,save_data=True)
-    cal_mom(periods,save_data=True)
-    cal_illiq(periods,save_data=True)
-    cal_skew(periods,save_data=True)
-    cal_coskew(periods,save_data=True)
-    cal_vol(periods,save_data=True)
-    cal_vol_ss(periods,save_data=True)
-cal_size(save_data=True)
-cal_BM(save_data=True)
-cal_rev(save_data=True)
-time()-t0;
-
-
-
