@@ -51,3 +51,5 @@ filter_=amount_filter[amount_filter>0][ST=='N'][~limit_move][(NT+NT50)==0.0];fil
 (filter_==1.0).sum(axis=1)
 
 
+
+
