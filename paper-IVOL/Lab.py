@@ -7,12 +7,13 @@ import numpy as np
 from time import time
 from pandas.tseries.offsets import MonthEnd
 #import matplotlib.pyplot as plt
-
+data_path = 'E:/data/NewData/'  # '/Users/harbes/data/NewData/'#
 def import_pv_index():
-    global data_path,pv,open_price,close_price,index_ret,rtn,stock_pool
-    data_path = '/Users/harbes/data/NewData/' #'E:/data/NewData/'  #
+    global pv,open_price,close_price,index_ret,rtn,stock_pool
     pv = pd.read_pickle(data_path + 'PV_datetime')#[['adj_close', 'adj_open', 'size_tot']]
     close_price = pv['adj_close'].unstack()
+    filter_ = pd.read_pickle(data_path + 'filtered_data')
+    close_price=close_price[filter_]
     # close_price.index=pd.to_datetime(close_price.index.astype(int).astype(str),format='%Y%m%d')
     open_price = pv['adj_open'].unstack()
     # open_price.index=pd.to_datetime(open_price.index.astype(int).astype(str),format='%Y%m%d')
@@ -28,25 +29,31 @@ def import_pv_index():
     # 注意，rtn的最后两列是index return 和 月份序号
     rtn['index'] = index_ret['pctchange']#目的是通过cov计算beta，同时通过market_beta是否为1检验code是否正确
     rtn['month'] = (rtn.index.year - rtn.index[0].year) * 12 + rtn.index.month
-def import_book():
+
+def cal_book(freq='M'):
     '''
     注意：book是由assets-liability得来的，数据中有负数存在
     monthly
     :return:
     '''
-    global book
-    BS = pd.read_pickle(data_path + '/BS')[['fin_year', 'stkcd', 'tot_assets', 'tot_liab']].set_index(
-        ['fin_year', 'stkcd']).sort_index()
+    BS = pd.read_pickle(data_path + '/BS')[['fin_year','ann_dt', 'stkcd', 'tot_assets', 'tot_liab']]#
+    BS=BS[~(BS['ann_dt'].isnull())].set_index(['ann_dt', 'stkcd']).sort_index()
     book = BS['tot_assets'] - BS['tot_liab']
     book = book.drop(book.index[book.index.duplicated(keep='last')]).unstack() * 1e-8
-    book.index = pd.to_datetime(book.index.astype(str), format='%Y%m%d')
+    book.index = pd.to_datetime(book.index.astype(int).astype(str), format='%Y%m%d')
     book.index.name = 'trddt'
-    book = book.resample('M').first().ffill()
-    # 下面这一小段代码似乎不需要，只是为了防止日期不是月末
-    By=lambda x:x.year*100+x.month
-    book=book.groupby(By).nth(0)
-    book.index= pd.to_datetime(book.index.astype(str), format='%Y%m')+MonthEnd()
-    book= book[book>0][stock_pool]
+    book.loc[pd.to_datetime('20180228',format='%Y%m%d')]=np.nan # 为了resample时，将最后时间定在2018-2-28
+    if freq=='M':
+        book = book.resample('M').first().ffill()
+        # 下面这一小段代码似乎不需要，只是为了防止日期不是月末
+        By = lambda x: x.year * 100 + x.month
+        book = book.groupby(By).nth(0)
+        book.index = pd.to_datetime(book.index.astype(str), format='%Y%m') + MonthEnd()
+    else:
+        book = book.resample('D').first().ffill()
+        book = book.reindex(rtn.index)
+    return book[book > 0]
+
 def check_match_index_columns():
     # TODO
     pass
@@ -67,23 +74,25 @@ def cal_beta(periods,save_data=False):
         beta[beta!=0].to_pickle(data_path + 'beta_daily_'+str(periods)+'M')
     else:
         return beta[beta!=0]
-def cal_size(save_data=False):
+def cal_size(freq='M',save_data=False):
     '''
-    monthly
     :return:
     '''
-    GroupBy = lambda x: x.year * 100 + x.month
-    size = pv['size_tot'].unstack().groupby(GroupBy).last()*1e-4
-    size.index = pd.to_datetime(size.index.astype(str), format='%Y%m') + MonthEnd()
+    if freq=='M':
+        GroupBy = lambda x: x.year * 100 + x.month
+        size = pv['size_tot'].unstack().groupby(GroupBy).last() * 1e-4
+        size.index = pd.to_datetime(size.index.astype(str), format='%Y%m') + MonthEnd()
+    else:
+        size = pv['size_tot'].unstack() * 1e-4
     if save_data:
-        size[size > 0].to_pickle(data_path+'size_monthly')
+        size[size > 0].to_pickle(data_path+'size_'+freq)
     return size[size>0]
-def cal_BM(save_data=False):
-    import_book()
-    size=cal_size()
+def cal_BM(size,freq='M',save_data=False):
+    book=cal_book(freq=freq)
+    #size=cal_size(freq=freq)
     BM=book/size
     if save_data:
-        BM[BM>0].to_pickle(data_path+'BM_monthly')
+        BM[BM>0].to_pickle(data_path+'BM_'+freq)
     else:
         return BM[BM>0]
 def cal_mom(periods,save_data=False):
@@ -168,25 +177,47 @@ def cal_vol_ss(periods,save_data=False):
         vol_ss.to_pickle(data_path + 'Vol_SS' + str(periods) + 'M')
     else:
         return vol_ss
-def cal_ivol():
-    # TODO
-    pass
-def cal_SMB(weight=False):
-    size = cal_size()
-    size = size['2005':'201802']
-    if weight:
-        return cal_mimick_port1(BM, rtn.iloc[:, :-2], size)
-    else:
-        return cal_mimick_port1(BM, rtn.iloc[:, :-2], None)
-def cal_HML(weight=False):
-    BM=cal_BM()
-    size=cal_size()
+def cal_ivol(periods,method='CAPM'):
+    ivol = pd.DataFrame(index=pd.date_range('20050101', '20180301', freq='M'), columns=rtn.columns[:-2])
+    if method =='CAPM':
+        for i in range(periods, 159):
+            # 也可以通过cov/var，但是速度较慢
+            tmp1 = index_ret['pctchange'][(index_ret['month'] >= i - periods + 1) & (index_ret['month'] <= i)]
+            tmp2 = rtn.iloc[:, :-2][(i - periods + 1 <= rtn['month']) & (rtn['month'] <= i)]
+            beta_tmp = ((tmp1 - tmp1.mean()).values[:, None] * (tmp2 - tmp2.mean())).sum() / (
+                        (tmp1 - tmp1.mean()) ** 2).sum()
+            ivol.iloc[i-1]=(tmp2-tmp1[:,None]@beta_tmp.values[None,:]).std(axis=0)
+    elif method=='FF':
+        fSMB=SMB.iloc[:,0]-SMB.iloc[:,-1]
+        fHML=HML.iloc[:,0]-HML.iloc[:,-1]
+        X=pd.DataFrame({'pctchange':index_ret['pctchange'],'SMB':fSMB,'HML':fHML,'month':index_ret['month']})
+        for i in range(periods, 159):
+            # 也可以通过cov/var，但是速度较慢
+            tmp1 = X[(X['month'] >= i - periods + 1) & (X['month'] <= i)][['pctchange', 'SMB', 'HML']]
+            tmp2 = rtn.iloc[:, :-2][(i - periods + 1 <= rtn['month']) & (rtn['month'] <= i)]
+            XY=pd.DataFrame({'MKT':(tmp1['pctchange'].values[:,None]*tmp2).mean(),
+                             'SMB':(tmp1['SMB'].values[:,None]*tmp2).mean(),
+                             'HML':(tmp1['HML'].values[:, None] * tmp2).mean()}).T
+            beta_tmp=np.linalg.pinv((tmp1-tmp1.mean()).cov())@(XY.loc[['MKT','SMB','HML']])
+            ivol.iloc[i-1]=(tmp2-tmp1@beta_tmp).std(axis=0)
+    ivol=ivol.astype(float)*np.sqrt(12/periods)
+    return ivol
 
-    if weight:
-        return cal_mimick_port1(BM,rtn.iloc[:,:-2],size)
+def cal_SMB_HML(freq='M',weight=False):
+    size = cal_size(freq=freq)
+    BM = cal_BM(size,freq=freq)
+    stock_pool=BM.columns&size.columns
+    size=size[stock_pool]
+    BM=BM[stock_pool]
+    if freq=='M':
+        ret = cal_rev()
+        ret = ret[ret!=0][stock_pool]
     else:
-        return cal_mimick_port1(BM,rtn.iloc[:,:-2],None)
-
+        ret = rtn[rtn!=0].iloc[:,:-2][stock_pool]
+    if weight:
+        return cal_mimick_port1(size['2005':'2018-02'], ret['2005':'2018-02'], size),cal_mimick_port1(BM['2005':'2018-02'],ret['2005':'2018-02'],size)
+    else:
+        return cal_mimick_port1(size['2005':'2018-02'], ret['2005':'2018-02'], None),cal_mimick_port1(BM['2005':'2018-02'],ret['2005':'2018-02'],None)
 def cal_mimick_port1(indi,rtn,weights):
     '''
     用法：cal_mimick_port(BM['2005':'2017'],rtn['2005':'2017'],None)或者
@@ -196,15 +227,15 @@ def cal_mimick_port1(indi,rtn,weights):
     :return:
     '''
     group_num=5
-    percentile = [0.0,0.3,0.7,1.0]#np.linspace(0, 1, group_num + 1) # 也可以自定义percentile，例如
+    percentile = np.linspace(0, 1, group_num + 1) #[0.0,0.3,0.7,1.0]# 也可以自定义percentile，例如
     label_ = [i + 1 for i in range(len(percentile) - 1)]
     mark_ = pd.DataFrame([pd.qcut(indi.iloc[i],q=percentile, labels=label_) for i in range(len(indi)-1)],
                       index=indi.index[1:]) # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
-    valid_=~(pd.isnull(mark_) | pd.isnull(rtn)) # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
+    valid_=~(pd.isnull(mark_) | pd.isnull(rtn.iloc[1:])) # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
     if weights is None:
         df = pd.DataFrame()
         df['rtn'] = rtn[valid_].stack()
-        df['ref'] = mark_.stack()
+        df['ref'] = mark_[valid_].stack()
         tmp=df.groupby(level=0).apply(lambda g: g.groupby('ref').mean()).unstack()
         tmp.columns = tmp.columns.get_level_values(1)
     else:
@@ -236,7 +267,7 @@ def cal_mimick_port2(indi1,indi2,rtn,weights,independent=True):
         for l_ in label_:
             tmp=pd.DataFrame([pd.qcut(indi2.iloc[i][mark_1.iloc[i]==l_],q=percentile,labels=label_) for i in range(len(indi2)-1)])
             mark_2 = mark_2.combine_first(tmp)
-    valid_ = ~(pd.isnull(mark_1+mark_2) | pd.isnull(rtn))  # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
+    valid_ = ~(pd.isnull(mark_1+mark_2) | pd.isnull(rtn[1:]))  # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
     if weights is None:
         df = pd.DataFrame()
         df['rtn'] = rtn[valid_].stack()
@@ -259,9 +290,32 @@ def cal_mimick_port2(indi1,indi2,rtn,weights,independent=True):
         tmp.columns = tmp.columns.get_level_values(1)
     return tmp
 
-
+def describe(df,stats):
+    d=df.describe(percentiles=[0.05,0.25,0.5,0.75,0.95])
+    return d.append(df.reindex(d.columns, axis=1).agg(stats))
+def func_percentile(n):
+    # TODO 速度比较慢，慎用
+    def percentile_(x):
+        return np.percentile(x, n)
+    percentile_.__name__ = '%s' % n
+    return percentile_
+def summary_vol_ivol():
+    measure_periods=(1,3,6,12)
+    vol=pd.DataFrame(index=measure_periods,columns=['count','mean','std','min','5%','25%','50%','75%','95%','max','skew','kurt'])
+    vol_ss=pd.DataFrame(index=measure_periods,columns=['count','mean','std','min','5%','25%','50%','75%','95%','max','skew','kurt'])
+    ivol_CAPM=pd.DataFrame(index=measure_periods,columns=['count','mean','std','min','5%','25%','50%','75%','95%','max','skew','kurt'])
+    ivol_FF=pd.DataFrame(index=measure_periods,columns=['count','mean','std','min','5%','25%','50%','75%','95%','max','skew','kurt'])
+    for i in measure_periods:
+        vol.loc[i]=describe(cal_vol(i).T,['skew','kurt']).mean(axis=1)
+        vol_ss.loc[i] = describe(cal_vol_ss(i).T, ['skew', 'kurt']).mean(axis=1)
+        ivol_CAPM.loc[i]=describe(cal_ivol(i).T, ['skew', 'kurt']).mean(axis=1)
+        ivol_FF.loc[i] = describe(cal_ivol(i,method='FF').T, ['skew', 'kurt']).mean(axis=1)
+    return vol,vol_ss,ivol_CAPM,ivol_FF
 if __name__ == '__main__':
-    pass
-
-import_pv_index()
-import_book()
+    import_pv_index()
+    #import_book(freq='D')
+    vol, vol_ss, ivol_CAPM, ivol_FF=summary_vol_ivol() # 不同测度期限相差较大（这点与美国不同）
+    vol
+    vol_ss
+    ivol_CAPM
+    ivol_FF

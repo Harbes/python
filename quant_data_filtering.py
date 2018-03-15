@@ -46,9 +46,9 @@ amount_filter.to_pickle(data_path+'FilterSmallVolume')
 
 
 # 归总筛选
-filter_=amount_filter[amount_filter>0][ST=='N'][~limit_move][(NT+NT50)==0.0];filter_.head()
-(filter_==1.0).to_pickle(data_path+'filter') # 4672606个有效数据点(原来有6140094个数据点)
-(filter_==1.0).sum(axis=1)
+filter_=amount_filter[amount_filter>0][ST=='N'][~limit_move][NT==0.0];filter_.head()
+(filter_==1.0).to_pickle(data_path+'filtered_data') # 4672606个有效数据点(原来有6140094个数据点)
+(filter_==1.0).sum(axis=1).sum()
 
 
 
