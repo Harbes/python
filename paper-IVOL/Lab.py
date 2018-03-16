@@ -21,11 +21,12 @@ def import_pv_index():
     # open_price.index=pd.to_datetime(open_price.index.astype(int).astype(str),format='%Y%m%d')
     rtn = (close_price - open_price) / open_price * 100
     rtn[rtn==0]=np.nan
-    rtn=rtn.sub(rf['Nrrdaydt'][rtn.index].astype(float) * 100.0, axis=0)
+    rtn=rtn.sub(rf['Nrrdaydt'][rtn.index].astype(float), axis=0)
     stock_pool=rtn.columns.values
 
     index_ret = pd.read_pickle(data_path + 'index_ret').set_index(['index_code', 'trddt'])['pctchange'].loc['000016.SH']
     index_ret.index = pd.to_datetime(index_ret.index.astype(int).astype(str), format='%Y%m%d')
+    index_ret = index_ret.sub(rf['Nrrdaydt'][index_ret.index].astype(float), axis=0)
     index_ret = pd.DataFrame({'pctchange': index_ret,
                               'month': (index_ret.index.year - index_ret.index[0].year) * 12 + index_ret.index.month})
     index_ret.drop(index_ret.loc['20160907'].name,inplace=True)
@@ -40,6 +41,7 @@ def cal_index_ret(freq='M'):
     index_opn=index_ret['opnprc'].groupby(By).first()
     index_ret = (index_cls - index_opn) / index_opn * 100.0
     index_ret.index = pd.to_datetime(index_ret.index.astype(int).astype(str), format='%Y%m')+MonthEnd()
+    index_ret = index_ret.sub(rf['Nrrmtdt'][index_ret.index].astype(float), axis=0)
     return index_ret
 
 def cal_book(freq='M'):
@@ -117,16 +119,18 @@ def cal_mom(periods,save_data=False):
         mom.to_pickle(data_path+'Mom_'+str(periods)+'M')
     else:
         return mom
-def cal_rev(save_data=False):
+def cal_rev(del_rf=False,save_data=False):
     GroupBy = lambda x: x.year * 100 + x.month
     cls = close_price.groupby(GroupBy).nth(-1)
     opn = open_price.groupby(GroupBy).nth(0)
     rev = (cls - opn) / opn*100
     rev.index = pd.to_datetime(rev.index.astype(str), format='%Y%m') + MonthEnd()
+    if del_rf:
+        rev=rev.sub(rf['Nrrmtdt'][rev.index].astype(float), axis=0)
     if save_data:
         rev[rev!=0].to_pickle(data_path+'Reversal_M')
     else:
-        return rev[rev!=0]
+        return rev#[rev!=0]
 def cal_illiq(periods,save_data=False):
     GroupBy = lambda x: x.year * 100 + x.month
     amount=pv['amount'].unstack()
@@ -299,11 +303,12 @@ def cal_mimick_port1(indi,rtn,weights):
     :param indi:
     :return:
     '''
+    #indi=vol.loc['200512':'201802']
+    #rtn=ret.loc['200512':'201802']
     group_num=5
     percentile = np.linspace(0, 1, group_num + 1) #[0.0,0.3,0.7,1.0]# 也可以自定义percentile，例如
     label_ = [i + 1 for i in range(len(percentile) - 1)]
-    mark_ = pd.DataFrame([pd.qcut(indi.iloc[i],q=percentile, labels=label_) for i in range(len(indi)-1)],
-                      index=indi.index[1:]) # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+    mark_ = pd.DataFrame([pd.qcut(indi.iloc[i],q=percentile, labels=label_) for i in range(len(indi)-1)],index=indi.index[1:]) # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
     valid_=~(pd.isnull(mark_) | pd.isnull(rtn.iloc[1:])) # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
     if weights is None:
         df = pd.DataFrame()
@@ -439,10 +444,14 @@ if __name__ == '__main__':
     vol_ss_y
     ivol_CAPM_y
     ivol_FF_y
-    skew, coskew, iskew_CAPM, iskew_FF=summary_skew_coskew_iskew()
-    skew
-    coskew
-    iskew_CAPM
-    iskew_FF
-    SMB, HML = cal_SMB_HML()
-rf.columns
+
+    import_pv_index()
+    ivol_FF=cal_ivol(12,method='FF')
+    vol=cal_vol(12)
+    vol_ss=cal_vol_ss(12)
+    ret=cal_rev(del_rf=True)
+
+    size=cal_size(freq='M')
+    ivol_mimick=cal_mimick_port1(ivol_FF.loc['200512':'201802'],ret.loc['200512':'201802'],None)#size.loc['200502':'201802'].shift(1))
+    tmp=ivol_mimick.iloc[:,0]-ivol_mimick.iloc[:,-1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
+    tmp = tmp.iloc[:13, 0] - tmp.iloc[:, -1];tmp.mean() / tmp.std() * np.sqrt(len(tmp))
