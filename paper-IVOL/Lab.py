@@ -9,7 +9,9 @@ from pandas.tseries.offsets import MonthEnd
 #import matplotlib.pyplot as plt
 data_path = 'E:/data/NewData/'  # '/Users/harbes/data/NewData/'#
 def import_pv_index():
-    global pv,open_price,close_price,index_ret,rtn,stock_pool
+    global pv,open_price,close_price,index_ret,rtn,stock_pool,rf
+    rf = pd.read_excel(data_path + 'risk_free.xlsx')[2:].set_index(['Clsdt'])
+    rf.index = pd.to_datetime(rf.index, format='%Y-%m-%d')
     pv = pd.read_pickle(data_path + 'PV_datetime')#[['adj_close', 'adj_open', 'size_tot']]
     close_price = pv['adj_close'].unstack()
     filter_ = pd.read_pickle(data_path + 'filtered_data')
@@ -19,6 +21,7 @@ def import_pv_index():
     # open_price.index=pd.to_datetime(open_price.index.astype(int).astype(str),format='%Y%m%d')
     rtn = (close_price - open_price) / open_price * 100
     rtn[rtn==0]=np.nan
+    rtn=rtn.sub(rf['Nrrdaydt'][rtn.index].astype(float) * 100.0, axis=0)
     stock_pool=rtn.columns.values
 
     index_ret = pd.read_pickle(data_path + 'index_ret').set_index(['index_code', 'trddt'])['pctchange'].loc['000016.SH']
@@ -29,6 +32,7 @@ def import_pv_index():
     # 注意，rtn的最后两列是index return 和 月份序号
     rtn['index'] = index_ret['pctchange']#目的是通过cov计算beta，同时通过market_beta是否为1检验code是否正确
     rtn['month'] = (rtn.index.year - rtn.index[0].year) * 12 + rtn.index.month
+
 def cal_index_ret(freq='M'):
     index_ret = pd.read_pickle(data_path + 'index_ret').set_index(['index_code', 'trddt'])[['opnprc','clsprc']].loc['000016.SH']
     By=lambda x:x//100.0
@@ -280,9 +284,9 @@ def cal_SMB_HML(freq='M',weight=False):
     BM=BM[stock_pool]
     if freq=='M':
         ret = cal_rev()
-        ret = ret[ret!=0][stock_pool]
+        ret = ret[ret!=0][stock_pool].sub(rf['Nrrmtdt'][ret.index], axis=0).astype(float)
     else:
-        ret = rtn[rtn!=0].iloc[:,:-2][stock_pool]
+        ret = rtn.iloc[:,:-2][stock_pool]
     if weight:
         return cal_mimick_port1(size['2005':'2018-02'], ret['2005':'2018-02'], size),cal_mimick_port1(BM['2005':'2018-02'],ret['2005':'2018-02'],size)
     else:
@@ -423,7 +427,9 @@ def summary_skew_coskew_iskew():
 if __name__ == '__main__':
     import_pv_index()
     #import_book(freq='D')
+    SMB,HML=cal_SMB_HML(freq='D')
     vol, vol_ss, ivol_CAPM, ivol_FF=summary_vol_ivol() # 不同测度期限相差较大（这点与美国不同）;FF3-ivol存在更大的偏度，这是为什么，反映了什么
+    SMB, HML = cal_SMB_HML(freq='M')
     vol_y, vol_ss_y, ivol_CAPM_y, ivol_FF_y = summary_vol_ivol_year()
     vol
     vol_ss
@@ -439,3 +445,4 @@ if __name__ == '__main__':
     iskew_CAPM
     iskew_FF
     SMB, HML = cal_SMB_HML()
+rf.columns
