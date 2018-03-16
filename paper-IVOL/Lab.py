@@ -29,6 +29,14 @@ def import_pv_index():
     # 注意，rtn的最后两列是index return 和 月份序号
     rtn['index'] = index_ret['pctchange']#目的是通过cov计算beta，同时通过market_beta是否为1检验code是否正确
     rtn['month'] = (rtn.index.year - rtn.index[0].year) * 12 + rtn.index.month
+def cal_index_ret(freq='M'):
+    index_ret = pd.read_pickle(data_path + 'index_ret').set_index(['index_code', 'trddt'])[['opnprc','clsprc']].loc['000016.SH']
+    By=lambda x:x//100.0
+    index_cls=index_ret['clsprc'].groupby(By).last()
+    index_opn=index_ret['opnprc'].groupby(By).first()
+    index_ret = (index_cls - index_opn) / index_opn * 100.0
+    index_ret.index = pd.to_datetime(index_ret.index.astype(int).astype(str), format='%Y%m')+MonthEnd()
+    return index_ret
 
 def cal_book(freq='M'):
     '''
@@ -137,9 +145,9 @@ def cal_skew(periods,save_data=False):
     for i in range(periods,159):
         t_skew.iloc[i-1]=rtn[(rtn['month']>=i-periods+1)&(rtn['month']<=i)].iloc[:,:-2].skew()
     if save_data:
-        t_skew.to_pickle(data_path+'skew_'+str(periods)+'M')
+        t_skew.astype(float).to_pickle(data_path+'skew_'+str(periods)+'M')
     else:
-        return t_skew
+        return t_skew.astype(float)
 def cal_coskew(periods,save_data=False):
     coskew = pd.DataFrame(index=pd.date_range('20050101', '20180301', freq='M'), columns=rtn.columns[:-1])
     index_ret.insert(2, 'index^2', index_ret['pctchange'] ** 2)
@@ -151,14 +159,37 @@ def cal_coskew(periods,save_data=False):
                          +tmp3[1]*((tmp2 - tmp2.mean()).values[:,1][:,None] * (tmp1 - tmp1.mean())).sum()
     index_ret.drop('index^2', axis=1, inplace=True)
     if save_data:
-        coskew[coskew!=0].to_pickle(data_path+'coskew_'+str(periods)+'M')
+        coskew[coskew!=0].astype(float).to_pickle(data_path+'coskew_'+str(periods)+'M')
     else:
-        return coskew[coskew!=0]
-def cal_iskew():
-    # TODO
-    #cal_SMB
-    #cal_HML
-    pass
+        return coskew[coskew!=0].astype(float)
+def cal_iskew(periods,method='CAPM'):
+    iskew = pd.DataFrame(index=pd.date_range('20050101', '20180301', freq='M'), columns=rtn.columns[:-2])
+    if method == 'CAPM':
+        for i in range(periods, 159):
+            # 也可以通过cov/var，但是速度较慢
+            tmp1 = index_ret['pctchange'][(index_ret['month'] >= i - periods + 1) & (index_ret['month'] <= i)]
+            tmp2 = rtn.iloc[:, :-2][(i - periods + 1 <= rtn['month']) & (rtn['month'] <= i)]
+            beta_tmp = ((tmp1 - tmp1.mean()).values[:, None] * (tmp2 - tmp2.mean())).sum() / (
+                    (tmp1 - tmp1.mean()) ** 2).sum()
+            iskew.iloc[i - 1] = (tmp2 - tmp1[:, None] @ beta_tmp.values[None, :]).skew()
+    else:
+        '''
+        FF方法依赖于存在SMB和HML多空组合的return
+        '''
+        fSMB = SMB.iloc[:, 0] - SMB.iloc[:, -1]
+        fHML = HML.iloc[:, 0] - HML.iloc[:, -1]
+        X = pd.DataFrame({'pctchange': index_ret['pctchange'], 'SMB': fSMB, 'HML': fHML, 'month': index_ret['month']})
+        for i in range(periods, 159):
+            # 也可以通过cov/var，但是速度较慢
+            tmp1 = X[(X['month'] >= i - periods + 1) & (X['month'] <= i)][['pctchange', 'SMB', 'HML']]
+            tmp2 = rtn.iloc[:, :-2][(i - periods + 1 <= rtn['month']) & (rtn['month'] <= i)]
+            XY = pd.DataFrame(
+                {'MKT': ((tmp1['pctchange'] - tmp1['pctchange'].mean()).values[:, None] * (tmp2 - tmp2.mean())).mean(),
+                 'SMB': ((tmp1['SMB'] - tmp1['SMB'].mean()).values[:, None] * (tmp2 - tmp2.mean())).mean(),
+                 'HML': ((tmp1['HML'] - tmp1['HML'].mean()).values[:, None] * (tmp2 - tmp2.mean())).mean()}).T
+            beta_tmp = np.linalg.pinv((tmp1 - tmp1.mean()).cov()) @ (XY.loc[['MKT', 'SMB', 'HML']])
+            iskew.iloc[i - 1] = (tmp2 - tmp1 @ beta_tmp).skew()
+    return iskew.astype(float)
 def cal_vol(periods,save_data=False):
     t_vol=pd.DataFrame(index=pd.date_range('20050101','20180301',freq='M'),columns=rtn.columns[:-2])
     for i in range(periods,159):
@@ -186,8 +217,11 @@ def cal_ivol(periods,method='CAPM'):
             tmp2 = rtn.iloc[:, :-2][(i - periods + 1 <= rtn['month']) & (rtn['month'] <= i)]
             beta_tmp = ((tmp1 - tmp1.mean()).values[:, None] * (tmp2 - tmp2.mean())).sum() / (
                         (tmp1 - tmp1.mean()) ** 2).sum()
-            ivol.iloc[i-1]=(tmp2-tmp1[:,None]@beta_tmp.values[None,:]).std(axis=0)
-    elif method=='FF':
+            ivol.iloc[i-1]=(tmp2-tmp1[:,None]@beta_tmp.values[None,:]).std()
+    else:
+        '''
+        FF方法依赖于存在SMB和HML多空组合的return
+        '''
         fSMB=SMB.iloc[:,0]-SMB.iloc[:,-1]
         fHML=HML.iloc[:,0]-HML.iloc[:,-1]
         X=pd.DataFrame({'pctchange':index_ret['pctchange'],'SMB':fSMB,'HML':fHML,'month':index_ret['month']})
@@ -195,14 +229,49 @@ def cal_ivol(periods,method='CAPM'):
             # 也可以通过cov/var，但是速度较慢
             tmp1 = X[(X['month'] >= i - periods + 1) & (X['month'] <= i)][['pctchange', 'SMB', 'HML']]
             tmp2 = rtn.iloc[:, :-2][(i - periods + 1 <= rtn['month']) & (rtn['month'] <= i)]
-            XY=pd.DataFrame({'MKT':(tmp1['pctchange'].values[:,None]*tmp2).mean(),
-                             'SMB':(tmp1['SMB'].values[:,None]*tmp2).mean(),
-                             'HML':(tmp1['HML'].values[:, None] * tmp2).mean()}).T
+            XY=pd.DataFrame({'MKT':((tmp1['pctchange']-tmp1['pctchange'].mean()).values[:,None]*(tmp2-tmp2.mean())).mean(),
+                             'SMB':((tmp1['SMB']-tmp1['SMB'].mean()).values[:,None]*(tmp2-tmp2.mean())).mean(),
+                             'HML':((tmp1['HML']-tmp1['HML'].mean()).values[:, None] * (tmp2-tmp2.mean())).mean()}).T
             beta_tmp=np.linalg.pinv((tmp1-tmp1.mean()).cov())@(XY.loc[['MKT','SMB','HML']])
-            ivol.iloc[i-1]=(tmp2-tmp1@beta_tmp).std(axis=0)
+            ivol.iloc[i-1]=(tmp2-tmp1@beta_tmp).std()
     ivol=ivol.astype(float)*np.sqrt(12/periods)
     return ivol
-
+def cal_vol_year(periods,ret):
+    mini_periods={12:10,24:20,36:24}
+    return ret.rolling(periods,min_periods=mini_periods[periods]).std()*np.sqrt(12/periods)
+def cal_vol_ss_year(periods,ret):
+    mini_periods={12:10,24:20,36:24}
+    return np.sqrt((ret**2).rolling(periods,min_periods=mini_periods[periods]).mean()*12/periods)
+def cal_ivol_year(periods,ret,index_ret,method='CAPM'):
+    ivol = pd.DataFrame(index=pd.date_range('20050101', '20180301', freq='M'), columns=ret.columns)
+    if method == 'CAPM':
+        for i in range(periods, 159):
+            # 也可以通过cov/var，但是速度较慢
+            tmp1 = index_ret.iloc[i-periods:i]
+            tmp2 = ret.iloc[i-periods:i]
+            beta_tmp = ((tmp1 - tmp1.mean()).values[:, None] * (tmp2 - tmp2.mean())).sum() / (
+                    (tmp1 - tmp1.mean()) ** 2).sum()
+            ivol.iloc[i - 1] = (tmp2 - tmp1[:, None] @ beta_tmp.values[None, :]).std()
+    else:
+        '''
+        FF方法依赖于存在SMB和HML多空组合的return
+        '''
+        #SMB,HML=cal_SMB_HML()
+        fSMB = SMB.iloc[:, 0] - SMB.iloc[:, -1]
+        fHML = HML.iloc[:, 0] - HML.iloc[:, -1]
+        X = pd.DataFrame({'pctchange': index_ret, 'SMB': fSMB, 'HML': fHML})
+        for i in range(periods, 159):
+            # 也可以通过cov/var，但是速度较慢
+            tmp1 = X.iloc[i-periods:i]
+            tmp2 = ret.iloc[i-periods:i]
+            XY = pd.DataFrame(
+                {'MKT': ((tmp1['pctchange'] - tmp1['pctchange'].mean()).values[:, None] * (tmp2 - tmp2.mean())).mean(),
+                 'SMB': ((tmp1['SMB'] - tmp1['SMB'].mean()).values[:, None] * (tmp2 - tmp2.mean())).mean(),
+                 'HML': ((tmp1['HML'] - tmp1['HML'].mean()).values[:, None] * (tmp2 - tmp2.mean())).mean()}).T
+            beta_tmp = np.linalg.pinv((tmp1 - tmp1.mean()).cov()) @ (XY.loc[['MKT', 'SMB', 'HML']])
+            ivol.iloc[i - 1] = (tmp2 - tmp1 @ beta_tmp).std()
+    ivol = ivol.astype(float) * np.sqrt(12 / periods)
+    return ivol
 def cal_SMB_HML(freq='M',weight=False):
     size = cal_size(freq=freq)
     BM = cal_BM(size,freq=freq)
@@ -311,11 +380,62 @@ def summary_vol_ivol():
         ivol_CAPM.loc[i]=describe(cal_ivol(i).T, ['skew', 'kurt']).mean(axis=1)
         ivol_FF.loc[i] = describe(cal_ivol(i,method='FF').T, ['skew', 'kurt']).mean(axis=1)
     return vol,vol_ss,ivol_CAPM,ivol_FF
+def summary_vol_ivol_year():
+    index_ret=cal_index_ret()
+    ret=cal_rev()
+    measure_periods=(12, 24, 36)
+    vol = pd.DataFrame(index=measure_periods,
+                       columns=['count', 'mean', 'std', 'min', '5%', '25%', '50%', '75%', '95%', 'max', 'skew', 'kurt'])
+    vol_ss = pd.DataFrame(index=measure_periods,
+                          columns=['count', 'mean', 'std', 'min', '5%', '25%', '50%', '75%', '95%', 'max', 'skew',
+                                   'kurt'])
+    ivol_CAPM = pd.DataFrame(index=measure_periods,
+                             columns=['count', 'mean', 'std', 'min', '5%', '25%', '50%', '75%', '95%', 'max', 'skew',
+                                      'kurt'])
+    ivol_FF = pd.DataFrame(index=measure_periods,
+                           columns=['count', 'mean', 'std', 'min', '5%', '25%', '50%', '75%', '95%', 'max', 'skew',
+                                    'kurt'])
+    for i in measure_periods:
+        vol.loc[i] = describe(cal_vol_year(i,ret).iloc[i-1:].T, ['skew', 'kurt']).mean(axis=1)
+        vol_ss.loc[i] = describe(cal_vol_ss_year(i,ret).iloc[i-1:].T, ['skew', 'kurt']).mean(axis=1)
+        ivol_CAPM.loc[i] = describe(cal_ivol_year(i,ret,index_ret).T, ['skew', 'kurt']).mean(axis=1)
+        ivol_FF.loc[i] = describe(cal_ivol_year(i,ret,index_ret,method='FF').T, ['skew', 'kurt']).mean(axis=1)
+    return vol,vol_ss,ivol_CAPM,ivol_FF
+def summary_skew_coskew_iskew():
+    measure_periods = (1, 3, 6, 12)
+    skew = pd.DataFrame(index=measure_periods,
+                       columns=['count', 'mean', 'std', 'min', '5%', '25%', '50%', '75%', '95%', 'max', 'skew', 'kurt'])
+    coskew = pd.DataFrame(index=measure_periods,
+                          columns=['count', 'mean', 'std', 'min', '5%', '25%', '50%', '75%', '95%', 'max', 'skew',
+                                   'kurt'])
+    iskew_CAPM = pd.DataFrame(index=measure_periods,
+                             columns=['count', 'mean', 'std', 'min', '5%', '25%', '50%', '75%', '95%', 'max', 'skew',
+                                      'kurt'])
+    iskew_FF = pd.DataFrame(index=measure_periods,
+                           columns=['count', 'mean', 'std', 'min', '5%', '25%', '50%', '75%', '95%', 'max', 'skew',
+                                    'kurt'])
+    for i in measure_periods:
+        skew.loc[i]=describe(cal_skew(i).T,['skew','kurt']).mean(axis=1)
+        coskew.loc[i] = describe(cal_coskew(i).T, ['skew', 'kurt']).mean(axis=1)
+        iskew_CAPM.loc[i]=describe(cal_iskew(i).T, ['skew', 'kurt']).mean(axis=1)
+        iskew_FF.loc[i] = describe(cal_iskew(i,method='FF').T, ['skew', 'kurt']).mean(axis=1)
+    return skew,coskew,iskew_CAPM,iskew_FF
 if __name__ == '__main__':
     import_pv_index()
     #import_book(freq='D')
-    vol, vol_ss, ivol_CAPM, ivol_FF=summary_vol_ivol() # 不同测度期限相差较大（这点与美国不同）
+    vol, vol_ss, ivol_CAPM, ivol_FF=summary_vol_ivol() # 不同测度期限相差较大（这点与美国不同）;FF3-ivol存在更大的偏度，这是为什么，反映了什么
+    vol_y, vol_ss_y, ivol_CAPM_y, ivol_FF_y = summary_vol_ivol_year()
     vol
     vol_ss
     ivol_CAPM
     ivol_FF
+    vol_y
+    vol_ss_y
+    ivol_CAPM_y
+    ivol_FF_y
+    skew, coskew, iskew_CAPM, iskew_FF=summary_skew_coskew_iskew()
+    skew
+    coskew
+    iskew_CAPM
+    iskew_FF
+    SMB, HML = cal_SMB_HML()
