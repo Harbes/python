@@ -533,5 +533,5 @@ if __name__ == '__main__':
     ivol_mimick=cal_mimick_port1(tmp.loc['200512':'201802'],ret.loc['200512':'201802'],None)#size.loc['200502':'201802'].shift(1))
     tmp=ivol_mimick.iloc[:,0]-ivol_mimick.iloc[:,-1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
 
-    
+
     
