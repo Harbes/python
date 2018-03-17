@@ -10,7 +10,7 @@ from dateutil.parser import parse
 #import matplotlib.pyplot as plt
 data_path = 'E:/data/NewData/'  # '/Users/harbes/data/NewData/'#
 def import_pv_index():
-    global open_price,close_price,index_ret,rtn,stock_pool,rf
+    global pv,open_price,close_price,index_ret,rtn,stock_pool,rf
     rf = pd.read_excel(data_path + 'risk_free.xlsx')[2:].set_index(['Clsdt'])
     rf.index = pd.to_datetime(rf.index, format='%Y-%m-%d')
     pv = pd.read_pickle(data_path + 'PV_datetime')[['adj_close', 'adj_open', 'size_tot','amount']]
@@ -86,9 +86,9 @@ def cal_beta(periods,save_data=False):
         tmp2=rtn.iloc[:, :-1][(i - periods+1 <= rtn['month']) & (rtn['month'] <= i)]
         beta.iloc[i - 1] = ((tmp1-tmp1.mean()).values[:,None]*(tmp2-tmp2.mean())).sum()/((tmp1-tmp1.mean())**2).sum()
     if save_data:
-        beta[beta!=0].to_pickle(data_path + 'beta_daily_'+str(periods)+'M')
+        beta[beta!=0].astype(float).to_pickle(data_path + 'beta_daily_'+str(periods)+'M')
     else:
-        return beta[beta!=0]
+        return beta[beta!=0].astype(float)
 def cal_size(freq='M',save_data=False):
     '''
     :return:
@@ -478,7 +478,7 @@ if __name__ == '__main__':
     vol, vol_ss, ivol_CAPM, ivol_FF = return_vol_ivol()
     vol_y, vol_ss_y, ivol_CAPM_y, ivol_FF_y = return_vol_ivol_year()
     tmp=pd.concat([vol,vol_y,vol_ss,vol_ss_y,ivol_CAPM,ivol_CAPM_y,ivol_FF,ivol_FF_y],axis=1)
-    corr_=tmp.loc[start_:end_].groupby(level=0).corr('spearman').groupby(level=1).mean() # pearson # spearman
+    corr_=tmp.loc[start_:end_].groupby(level=0).corr('pearson').groupby(level=1).mean() # pearson # spearman
     corr_=corr_.loc[corr_.columns];corr_
     #corr_.to_csv(data_path+'pearson_correlation.csv')
     # correlations------ivol and other variables
@@ -490,7 +490,15 @@ if __name__ == '__main__':
     illiq=cal_illiq(12).stack()
     coskew=cal_coskew(12).stack()
     iskew=cal_iskew(12).stack()
-    tmp=pd.concat([ivol_FF,ivol_FF_y,beta,size,BM,MOM,rev,illiq,coskew,iskew],axis=1)#
+    beta.name='beta'
+    size.name='size'
+    BM.name='BM'
+    MOM.name='mom'
+    rev.name='rev'
+    illiq.name='illiq'
+    coskew.name='coskew'
+    iskew.name='iskew'
+    tmp=pd.concat([ivol_FF,ivol_FF_y,beta,size,BM,MOM,rev,illiq,coskew,iskew],axis=1);tmp.head()
     #tmp['beta']=beta;tmp['size']=size
     #tmp['BM']=BM
     #tmp['mom']=MOM
@@ -501,12 +509,13 @@ if __name__ == '__main__':
     corr_ = tmp.loc[start_:end_].groupby(level=0).corr('pearson').groupby(level=1).mean()  # pearson # spearman
     corr_ = corr_.loc[corr_.columns];corr_
     corr_.to_csv(data_path+'pearson_corr_between_ivol_other_variables.csv')
+    del beta, size, BM, MOM, rev, illiq, coskew, iskew
 
     # persistence analysis
     df= pd.concat([ivol_FF, ivol_FF_y], axis=1) ;columns_=df.columns
-    tau = 1
+    tau = 12
     df_tau= df.groupby(level=1).shift(tau)
-    pd.concat([df, df_tau], axis=1, keys=['df', 'df_'+str(tau)]).groupby(level=0).corr().mean(level=(1,2)).loc['df', 'df_'+str(tau)][columns_]
+    pd.concat([df, df_tau], axis=1, keys=['df', 'df_'+str(tau)]).groupby(level=0).corr(method='pearson').mean(level=(1,2)).loc['df', 'df_'+str(tau)][columns_]
 
 
 
@@ -518,9 +527,10 @@ if __name__ == '__main__':
     vol=cal_vol(1)
     vol_ss=cal_vol_ss(1)
     ret=cal_rev(del_rf=True)
-
+    SMB,HML=cal_SMB_HML(freq='D')
+    tmp=cal_ivol(12,SMB,HML,method='FF')
     size=cal_size(freq='M')
-    ivol_mimick=cal_mimick_port1(iskew.loc['200512':'201802'],ret.loc['200512':'201802'],None)#size.loc['200502':'201802'].shift(1))
+    ivol_mimick=cal_mimick_port1(tmp.loc['200512':'201802'],ret.loc['200512':'201802'],None)#size.loc['200502':'201802'].shift(1))
     tmp=ivol_mimick.iloc[:,0]-ivol_mimick.iloc[:,-1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
 
     
