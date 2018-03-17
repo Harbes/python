@@ -6,13 +6,14 @@ import pandas as pd
 import numpy as np
 from time import time
 from pandas.tseries.offsets import MonthEnd
+from dateutil.parser import parse
 #import matplotlib.pyplot as plt
 data_path = 'E:/data/NewData/'  # '/Users/harbes/data/NewData/'#
 def import_pv_index():
-    global pv,open_price,close_price,index_ret,rtn,stock_pool,rf
+    global open_price,close_price,index_ret,rtn,stock_pool,rf
     rf = pd.read_excel(data_path + 'risk_free.xlsx')[2:].set_index(['Clsdt'])
     rf.index = pd.to_datetime(rf.index, format='%Y-%m-%d')
-    pv = pd.read_pickle(data_path + 'PV_datetime')#[['adj_close', 'adj_open', 'size_tot']]
+    pv = pd.read_pickle(data_path + 'PV_datetime')[['adj_close', 'adj_open', 'size_tot','amount']]
     close_price = pv['adj_close'].unstack()
     filter_ = pd.read_pickle(data_path + 'filtered_data')
     close_price=close_price[filter_]
@@ -113,7 +114,7 @@ def cal_mom(periods,save_data=False):
     GroupBy = lambda x: x.year * 100 + x.month
     cls=close_price.groupby(GroupBy).nth(-1)
     opn=open_price.groupby(GroupBy).nth(0)
-    mom=(cls.shift(1)-opn.shift(periods))/opn.shift(periods)*100
+    mom=(cls.shift(1)-opn.shift(periods-1))/opn.shift(periods-1)*100
     mom.index = pd.to_datetime(mom.index.astype(str), format='%Y%m')+MonthEnd()
     if save_data:
         mom.to_pickle(data_path+'Mom_'+str(periods)+'M')
@@ -216,7 +217,7 @@ def cal_vol_ss(periods,save_data=False):
         vol_ss.to_pickle(data_path + 'Vol_SS' + str(periods) + 'M')
     else:
         return vol_ss
-def cal_ivol(periods,method='CAPM'):
+def cal_ivol(periods,SMB,HML,method='CAPM'):
     ivol = pd.DataFrame(index=pd.date_range('20050101', '20180301', freq='M'), columns=rtn.columns[:-2])
     if method =='CAPM':
         for i in range(periods, 159):
@@ -250,7 +251,7 @@ def cal_vol_year(periods,ret):
 def cal_vol_ss_year(periods,ret):
     mini_periods={12:10,24:20,36:24}
     return np.sqrt((ret**2).rolling(periods,min_periods=mini_periods[periods]).mean()*12/periods)
-def cal_ivol_year(periods,ret,index_ret,method='CAPM'):
+def cal_ivol_year(periods,ret,index_ret,SMB,HML,method='CAPM'):
     ivol = pd.DataFrame(index=pd.date_range('20050101', '20180301', freq='M'), columns=ret.columns)
     if method == 'CAPM':
         for i in range(periods, 159):
@@ -391,7 +392,7 @@ def summary_vol_ivol():
     return vol,vol_ss,ivol_CAPM,ivol_FF
 def summary_vol_ivol_year():
     index_ret=cal_index_ret()
-    ret=cal_rev()
+    ret=cal_rev(del_rf=True)
     measure_periods=(12, 24, 36)
     vol = pd.DataFrame(index=measure_periods,
                        columns=['count', 'mean', 'std', 'min', '5%', '25%', '50%', '75%', '95%', 'max', 'skew', 'kurt'])
@@ -429,29 +430,89 @@ def summary_skew_coskew_iskew():
         iskew_CAPM.loc[i]=describe(cal_iskew(i).T, ['skew', 'kurt']).mean(axis=1)
         iskew_FF.loc[i] = describe(cal_iskew(i,method='FF').T, ['skew', 'kurt']).mean(axis=1)
     return skew,coskew,iskew_CAPM,iskew_FF
+def return_vol_ivol():
+    df1=pd.DataFrame()
+    df2=pd.DataFrame()
+    df3=pd.DataFrame()
+    df4=pd.DataFrame()
+    SMB,HML=cal_SMB_HML(freq='D')
+    for i in (1,3,6,12):
+        df1['vol_'+str(i)+'M']=cal_vol(i).stack()
+        df2['vol_ss_'+str(i)+'M']=cal_vol_ss(i).stack()
+        df3['ivol_CAPM_'+str(i)+'M']=cal_ivol(i,SMB,HML).stack()
+        df4['ivol_FF_'+str(i)+'M']=cal_ivol(i,SMB,HML,method='FF').stack()
+    return df1, df2, df3, df4
+def return_vol_ivol_year():
+    df1 = pd.DataFrame()
+    df2 = pd.DataFrame()
+    df3 = pd.DataFrame()
+    df4 = pd.DataFrame()
+    SMB, HML = cal_SMB_HML(freq='M')
+    ret=cal_rev(del_rf=True)
+    index_ret=cal_index_ret()
+    for j in (1,2,3):
+        df1['vol_'+str(j)+'Y']=cal_vol_year(j*12,ret).stack()
+        df2['vol_ss_'+str(j)+'Y']=cal_vol_ss_year(j*12,ret).stack()
+        df3['ivol_CAPM_'+str(j)+'Y']=cal_ivol_year(j*12,ret,index_ret,SMB,HML).stack()
+        df4['ivol_FF_'+str(j)+'Y']=cal_ivol_year(j*12,ret,index_ret,SMB,HML,method='FF').stack()
+    return   df1,df2,df3,df4
 if __name__ == '__main__':
     import_pv_index()
     #import_book(freq='D')
-    SMB,HML=cal_SMB_HML(freq='D')
-    vol, vol_ss, ivol_CAPM, ivol_FF=summary_vol_ivol() # 不同测度期限相差较大（这点与美国不同）;FF3-ivol存在更大的偏度，这是为什么，反映了什么
+    # summary statistics------vol
     SMB, HML = cal_SMB_HML(freq='M')
     vol_y, vol_ss_y, ivol_CAPM_y, ivol_FF_y = summary_vol_ivol_year()
-    vol
-    vol_ss
-    ivol_CAPM
-    ivol_FF
-    vol_y
-    vol_ss_y
-    ivol_CAPM_y
-    ivol_FF_y
+    SMB,HML=cal_SMB_HML(freq='D')
+    vol, vol_ss, ivol_CAPM, ivol_FF=summary_vol_ivol() # 不同测度期限相差较大（这点与美国不同）;FF3-ivol存在更大的偏度，这是为什么，反映了什么
+    vol.to_csv(data_path+'Vol_.csv')
+    vol_ss.to_csv(data_path+'Vol_SS_.csv')
+    ivol_CAPM.to_csv(data_path+'iVol_CAPM_.csv')
+    ivol_FF.to_csv(data_path+'iVol_FF_.csv')
+    vol_y.to_csv(data_path+'Vol_1')
+    vol_ss_y.to_csv(data_path+'Vol_SS_1.csv')
+    ivol_CAPM_y.to_csv(data_path+'iVol_CAPM_1.csv')
+    ivol_FF_y.to_csv(data_path+'iVol_FF_1.csv')
+    # correlation------ within vol and between vol
+    start_ = parse('20071201')
+    end_ = parse('20180228')
+    vol, vol_ss, ivol_CAPM, ivol_FF = return_vol_ivol()
+    vol_y, vol_ss_y, ivol_CAPM_y, ivol_FF_y = return_vol_ivol_year()
+    tmp=pd.concat([vol,vol_y,vol_ss,vol_ss_y,ivol_CAPM,ivol_CAPM_y,ivol_FF,ivol_FF_y],axis=1)
+    corr_=tmp.loc[start_:end_].groupby(level=0).corr('spearman').groupby(level=1).mean() # pearson # spearman
+    corr_=corr_.loc[corr_.columns];corr_
+    #corr_.to_csv(data_path+'pearson_correlation.csv')
+    # correlations------ivol and other variables
+    beta=cal_beta(12).stack()
+    size=cal_size(freq='M')#.stack()
+    BM=cal_BM(size).stack();size=size.stack()
+    MOM=cal_mom(12).stack()
+    rev=cal_rev().stack()
+    illiq=cal_illiq(12).stack()
+    coskew=cal_coskew(12).stack()
+    iskew=cal_iskew(12).stack()
+    tmp=pd.concat([ivol_FF,ivol_FF_y],axis=1)# ,beta,size,BM,MOM,rev,illiq,coskew,iskew
+    tmp['beta']=beta
+    tmp['size']=size
+    tmp['BM']=BM
+    tmp['mom']=MOM
+    tmp['rev']=rev
+    tmp['illiq']=illiq
+    tmp['coskew']=coskew.iloc[:,:-1] # 剔除市场
+    tmp['iskew']=iskew
+    corr_ = tmp.loc[start_:end_].groupby(level=0).corr('pearson').groupby(level=1).mean()  # pearson # spearman
+    corr_ = corr_.loc[corr_.columns];corr_
+    corr_.to_csv(data_path+'pearson_corr_between_ivol_other_variables.csv')
+
 
     import_pv_index()
     ivol_FF=cal_ivol(12,method='FF')
-    vol=cal_vol(12)
-    vol_ss=cal_vol_ss(12)
+    vol=cal_vol(1)
+    vol_ss=cal_vol_ss(1)
     ret=cal_rev(del_rf=True)
 
     size=cal_size(freq='M')
-    ivol_mimick=cal_mimick_port1(ivol_FF.loc['200512':'201802'],ret.loc['200512':'201802'],None)#size.loc['200502':'201802'].shift(1))
+    ivol_mimick=cal_mimick_port1(iskew.loc['200512':'201802'],ret.loc['200512':'201802'],None)#size.loc['200502':'201802'].shift(1))
     tmp=ivol_mimick.iloc[:,0]-ivol_mimick.iloc[:,-1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
-    tmp = tmp.iloc[:13, 0] - tmp.iloc[:, -1];tmp.mean() / tmp.std() * np.sqrt(len(tmp))
+
+    
+    
