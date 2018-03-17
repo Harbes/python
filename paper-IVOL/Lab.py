@@ -457,9 +457,16 @@ def return_vol_ivol_year():
         df4['ivol_FF_'+str(j)+'Y']=cal_ivol_year(j*12,ret,index_ret,SMB,HML,method='FF').stack()
     return   df1,df2,df3,df4
 
-def NeweyWest(df,L=6):
-    df=df.dropna()
+def NeweyWest(df,L=None):
+    '''
+    df不要以Nan开头，会引起误差
+    :param df:
+    :param L:
+    :return:
+    '''
     T=len(df)
+    if L is None:
+        L=T**0.25//1.0
     w=1.0-np.arange(1,L+1)/(+1.0)
     return np.sqrt(2.0*pd.DataFrame((df*df.shift(i+1)*w[i]).sum() for i in range(L)).sum()/T+df.var())
 if __name__ == '__main__':
