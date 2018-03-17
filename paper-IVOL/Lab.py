@@ -545,6 +545,7 @@ if __name__ == '__main__':
     size=cal_size(freq='M')
     ivol_mimick=cal_mimick_port1(tmp.loc['200512':'201802'],ret.loc['200512':'201802'],None)#size.loc['200502':'201802'].shift(1))
     tmp=ivol_mimick.iloc[:,0]-ivol_mimick.iloc[:,-1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
-
+from arch import arch_model
+%timeit arch_model(rtn.iloc[:200,0],p=1,q=1).fit()
 
     
