@@ -306,7 +306,7 @@ def cal_mimick_port1(indi,rtn,weights):
     '''
     #indi=vol.loc['200512':'201802']
     #rtn=ret.loc['200512':'201802']
-    group_num=5
+    group_num=10
     percentile = np.linspace(0, 1, group_num + 1) #[0.0,0.3,0.7,1.0]# 也可以自定义percentile，例如
     label_ = [i + 1 for i in range(len(percentile) - 1)]
     mark_ = pd.DataFrame([pd.qcut(indi.iloc[i],q=percentile, labels=label_) for i in range(len(indi)-1)],index=indi.index[1:]) # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
@@ -456,6 +456,12 @@ def return_vol_ivol_year():
         df3['ivol_CAPM_'+str(j)+'Y']=cal_ivol_year(j*12,ret,index_ret,SMB,HML).stack()
         df4['ivol_FF_'+str(j)+'Y']=cal_ivol_year(j*12,ret,index_ret,SMB,HML,method='FF').stack()
     return   df1,df2,df3,df4
+
+def NeweyWest(df,L=6):
+    df=df.dropna()
+    T=len(df)
+    w=1.0-np.arange(1,L+1)/(+1.0)
+    return np.sqrt(2.0*pd.DataFrame((df*df.shift(i+1)*w[i]).sum() for i in range(L)).sum()/T+df.var())
 if __name__ == '__main__':
     import_pv_index()
     #import_book(freq='D')
