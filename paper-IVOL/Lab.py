@@ -490,18 +490,27 @@ if __name__ == '__main__':
     illiq=cal_illiq(12).stack()
     coskew=cal_coskew(12).stack()
     iskew=cal_iskew(12).stack()
-    tmp=pd.concat([ivol_FF,ivol_FF_y],axis=1)# ,beta,size,BM,MOM,rev,illiq,coskew,iskew
-    tmp['beta']=beta
-    tmp['size']=size
-    tmp['BM']=BM
-    tmp['mom']=MOM
-    tmp['rev']=rev
-    tmp['illiq']=illiq
-    tmp['coskew']=coskew.iloc[:,:-1] # 剔除市场
-    tmp['iskew']=iskew
+    tmp=pd.concat([ivol_FF,ivol_FF_y,beta,size,BM,MOM,rev,illiq,coskew,iskew],axis=1)#
+    #tmp['beta']=beta;tmp['size']=size
+    #tmp['BM']=BM
+    #tmp['mom']=MOM
+    #tmp['rev']=rev
+    #tmp['illiq']=illiq
+    #tmp['coskew']=coskew.iloc[:,:-1] # 剔除市场
+    #tmp['iskew']=iskew
     corr_ = tmp.loc[start_:end_].groupby(level=0).corr('pearson').groupby(level=1).mean()  # pearson # spearman
     corr_ = corr_.loc[corr_.columns];corr_
     corr_.to_csv(data_path+'pearson_corr_between_ivol_other_variables.csv')
+
+    # persistence analysis
+    df= pd.concat([ivol_FF, ivol_FF_y], axis=1) ;columns_=df.columns
+    tau = 1
+    df_tau= df.groupby(level=1).shift(tau)
+    pd.concat([df, df_tau], axis=1, keys=['df', 'df_'+str(tau)]).groupby(level=0).corr().mean(level=(1,2)).loc['df', 'df_'+str(tau)][columns_]
+
+
+
+
 
 
     import_pv_index()
