@@ -5,6 +5,7 @@ from math import sqrt
 import statsmodels.tsa.stattools as tsa_tools
 import matplotlib.pyplot as plt
 from numba import jit
+from scipy.optimize import fmin
 class uni_tsa:
     def __init__(self,arr):
         if type(arr) is not np.ndarray:
@@ -203,8 +204,7 @@ class uni_tsa:
         pass
     def garch(self,p=1,o=0,q=1,beta_init=[.1,.08,.9]):
         # TODO 需要提高GARCH运行速度
-        from scipy.optimize import fmin
-        from numba import jit
+
         #,fmin_powell,fmin_cg,fmin_bfgs,fmin_ncg,fmin_l_bfgs_b,fmin_cobyla
         rtn=self.arr-np.mean(self.arr)
         @jit
@@ -227,7 +227,7 @@ class uni_tsa:
         theta_estimate=fmin(func=neg_log_likelihood,x0=beta_init)
         #theta_estimate = fmin_cobyla(neg_log_likelihood, x0=beta_init,cons=[constraint,])
 
-        return theta_estimateS
+        return theta_estimate
 class simulation:
     def __init__(self,ar_params=None,ma_params=None,const=0,y_init=None,dist='normal',dist_sigma=1,M=1000,seed=None):
         self.phi=ar_params
@@ -451,7 +451,6 @@ def acf_pacf_plot(arr,max_lag,alpha=0.05,pacf_method='ols'):
     plt.axhline(0, linestyle='-', color='black')
     plt.axhline(- s / np.sqrt(len(arr)), linestyle="-.", color="red")
     plt.show()
-acf_pacf_plot(a,30)
 
 def Wald_stat(r,beta,q,Sigma):
     '''

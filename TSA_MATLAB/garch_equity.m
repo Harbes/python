@@ -22,8 +22,11 @@ function garch_estimate(  )
     % Estimating the GARCH(1,1) model
     ops = optimset( 'LargeScale','off','Display','off');
     start  = [ 0.05 0.1 0.9 ];
+    %%
+    tic
     [theta,lf1,~,~,~,hess] = fminunc( @(b) neglog(b,y),start,ops);
-
+    toc
+%%
     clear start
     lf1 = -lf1;
     

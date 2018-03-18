@@ -545,7 +545,40 @@ if __name__ == '__main__':
     size=cal_size(freq='M')
     ivol_mimick=cal_mimick_port1(tmp.loc['200512':'201802'],ret.loc['200512':'201802'],None)#size.loc['200502':'201802'].shift(1))
     tmp=ivol_mimick.iloc[:,0]-ivol_mimick.iloc[:,-1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
-from arch import arch_model
-%timeit arch_model(rtn.iloc[:200,0],p=1,q=1).fit()
 
-    
+
+import numpy as np
+from arch import arch_model
+from numba import jit
+from numpy.linalg import pinv
+%timeit arch_model(rtn.iloc[:200,0],p=1,q=1).fit()
+a=np.random.randn(100,1000)
+b=np.random.randn(10)
+
+
+#@jit
+def garch1(arr,max_iter,init=(0.1,0.4,0.5)):
+    theta=np.array(init)
+    T = len(arr)
+
+    for i in range(1,max_iter):
+        punish = np.array((0, -0.2, -0.2)) * np.maximum(theta[1] + theta[2] - 1.0, 0)
+        G = 0.0;
+        H = 0.0
+        sigma2_lag = arr[0] * arr[0]
+        for t in range(1, T):
+            tmp = np.array((1.0, arr[t-1] * arr[t-1], sigma2_lag))
+            sigma2 = theta[0] + theta[1] * arr[t - 1]* arr[t - 1] + theta[2] * sigma2_lag
+            sigma2_lag=sigma2
+            g = 0.5*(arr[t] * arr[t] / sigma2 / sigma2-1.0 / sigma2) * tmp#+punish
+            G += g
+            H +=0.5/sigma2/sigma2*tmp[:,None]*tmp
+            #H -=(0.5 / sigma2 / sigma2 - arr[t] * arr[t] / sigma2/ sigma2/ sigma2) * tmp[:,None]*tmp #利用信息矩阵：0.5 / sigma2 / sigma2 * h
+        G /=(T-1)
+        H /=(T-1)
+        theta +=pinv(H)@G
+    return theta
+
+from modules.uni_tsa import uni_tsa
+arr=np.random.randn(300)
+%timeit uni_tsa(arr).garch()
