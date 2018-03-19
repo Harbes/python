@@ -7,10 +7,8 @@ import numpy as np
 from time import time
 from pandas.tseries.offsets import MonthEnd
 from dateutil.parser import parse
-import warnings
-warnings.filterwarnings("ignore")
 #import matplotlib.pyplot as plt
-data_path ='/Users/harbes/data/NewData/'# 'E:/data/NewData/'  #
+data_path ='E:/data/NewData/'  #'/Users/harbes/data/NewData/'#
 def import_pv_index():
     global pv,open_price,close_price,index_ret,rtn,stock_pool,rf
     rf = pd.read_excel(data_path + 'risk_free.xlsx')[2:].set_index(['Clsdt'])
@@ -459,18 +457,61 @@ def return_vol_ivol_year():
         df4['ivol_FF_'+str(j)+'Y']=cal_ivol_year(j*12,ret,index_ret,SMB,HML,method='FF').stack()
     return   df1,df2,df3,df4
 
-def NeweyWest(df,L=None):
+def NWest_mean(df,L=None):
     '''
-    df不要以Nan开头，会引起误差
+    df不要以Nan开头，会引起误差;
     :param df:
     :param L:
     :return:
     '''
+    df-=df.mean()
     T=len(df)
     if L is None:
-        L=T**0.25//1.0
-    w=1.0-np.arange(1,L+1)/(+1.0)
-    return np.sqrt(2.0*pd.DataFrame((df*df.shift(i+1)*w[i]).sum() for i in range(L)).sum()/T+df.var())
+        L=int(T**0.25)
+    w=1.0-np.arange(1,L+1)/(L+1.0)
+    return np.sqrt(2.0*pd.DataFrame((df*df.shift(i+1)*w[i]).sum() for i in range(L)).sum()/T+df.var())/np.sqrt(T)
+def NWest(e,X,L=None):
+    T = len(e)
+    if L is None:
+        L = int(T ** 0.25) # or : L = 0.75*T**(1.0/3.0)-1
+    w = 1.0 - np.arange(1, L + 1) / (L+1.0)
+    X.insert(0,'c',np.ones(T))
+    S=0.0
+    for l in range(1,L+1):
+        for i in range(l,T):
+            S+=w[l-1]*e[i]*e[i-l]*(X.iloc[i][:,None]*X.iloc[i-l].values+X.iloc[i-l][:,None]*X.iloc[i].values)
+    for i in range(T):
+        S+=e[i]*e[i]*X.iloc[i][:,None]*X.iloc[i].values
+    S/=T
+    XX_1=np.linalg.pinv(X.T@X.values)
+    X.drop('c', axis=1, inplace=True)
+    return np.sqrt(T*(XX_1@S@XX_1)[0,0])
+def cal_FF_alpha(arr,period,index_ret,fSMB,fHML):
+    '''
+
+    :param arr:
+    :param period:
+    :param index_ret:
+    :param fSMB:
+    :param fHML:
+    :return: alpha, s.e. of estimated alpha
+    '''
+    start={1:'200502',
+           3:'200504',
+           6:'200507',
+           12:'200601'}
+    X=pd.DataFrame({'index':index_ret,'SMB':fSMB,'HML':fHML})[['index','SMB','HML']].loc[start[period]:'201802']
+    arr=arr.loc[start[period]:'201802']
+    tmp1=X-X.mean(axis=0)
+    tmp2=arr-arr.mean(axis=0)
+    tmp3=arr-X@np.linalg.pinv(tmp1.cov())@(tmp1.mul(tmp2,axis=0).mean()).values
+    return tmp3.mean(),NWest(tmp3-tmp3.mean(),X) #此处有错误，alpha的标准差应该使用原始的NeweyWest估计
+
+np.linalg.pinv(tmp1.values.T@tmp1)@(tmp1.T@tmp2.values)
+SMB,HML=cal_SMB_HML(freq='M')
+index_ret=cal_index_ret(freq='M')
+fSMB=SMB.iloc[:,0]-SMB.iloc[:,-1]
+fHML=HML.iloc[:,0]-HML.iloc[:,-1]
 if __name__ == '__main__':
     import_pv_index()
     #import_book(freq='D')
@@ -539,8 +580,29 @@ if __name__ == '__main__':
     df_tau= df.groupby(level=1).shift(tau)
     pd.concat([df, df_tau], axis=1, keys=['df', 'df_'+str(tau)]).groupby(level=0).corr(method='pearson').mean(level=(1,2)).loc['df', 'df_'+str(tau)][columns_]
 
+    # univariate portfolio analysis
+    import_pv_index()
+    periods=(1,3,6,12)
+    res_mean=pd.DataFrame(index=periods,columns=range(1,13))
+    res_t = pd.DataFrame(res_mean)
+    SMB,HML=cal_SMB_HML(freq='D')
+    ret=cal_rev(del_rf=True)
 
+    SMB_m, HML_m = cal_SMB_HML(freq='M')
+    index_ret_m = cal_index_ret(freq='M')
+    fSMB = SMB_m.iloc[:, 0] - SMB_m.iloc[:, -1]
+    fHML = HML_m.iloc[:, 0] - HML_m.iloc[:, -1]
+    for i in periods:
+        ivol=cal_ivol(i,SMB,HML,method='FF')
+        tmp=cal_mimick_port1(ivol.loc['2005-'+str(i):'201802'],ret.loc['2005-'+str(i):'201802'],None)
+        tmp[11]=tmp.iloc[:,0]-tmp.iloc[:,-1]
+        res_mean.loc[i]=tmp.mean()
+        res_t.loc[i]=res_mean.loc[i]/NWest_mean(tmp)
+        res_mean.loc[i, 12], b=cal_FF_alpha(tmp[11],i,index_ret_m,fSMB,fHML)
+        res_t.loc[i,12]=res_mean.loc[i, 12]/ b
 
+import statsmodels.api as sm
+sm.OLS(tmp[11],X).fit().summary()
 
 
 
@@ -564,7 +626,9 @@ from numpy.linalg import pinv
 a=np.random.randn(100,1000)
 b=np.random.randn(10)
 arr=np.random.randn(300);arr-=arr.mean()
-arch_model(arr,p=1,q=1,vol='egarch').fit(disp='no',show_warning=False)
+arch_model(arr,p=1,q=1,vol='egarch').fit(disp='off',show_warning=False)
+%timeit res=arch_model(arr-arr.mean(),p=1,o=1,q=1,vol='egarch').fit(disp='off',show_warning=False).conditional_volatility[-1]
+
 #@jit
 def garch1(arr,max_iter,init=(0.1,0.4,0.5)):
     theta=np.array(init)
