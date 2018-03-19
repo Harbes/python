@@ -7,6 +7,8 @@ import numpy as np
 from time import time
 from pandas.tseries.offsets import MonthEnd
 from dateutil.parser import parse
+import warnings
+warnings.filterwarnings("ignore")
 #import matplotlib.pyplot as plt
 data_path ='/Users/harbes/data/NewData/'# 'E:/data/NewData/'  #
 def import_pv_index():
@@ -561,8 +563,8 @@ from numpy.linalg import pinv
 %timeit arch_model(rtn.iloc[:200,0],p=1,q=1).fit()
 a=np.random.randn(100,1000)
 b=np.random.randn(10)
-
-
+arr=np.random.randn(300);arr-=arr.mean()
+arch_model(arr,p=1,q=1,vol='egarch').fit(disp='no',show_warning=False)
 #@jit
 def garch1(arr,max_iter,init=(0.1,0.4,0.5)):
     theta=np.array(init)

@@ -5,13 +5,13 @@
 %=========================================================================
 
 function garch_estimate(  )
-
+%%
     clear all
     clc
-    
+   %% 
     % Load data
     load equity
-
+%%
     % Choose equity index and compute percentage return and subtract mean
     equity  = ftse; % ftse, dow, nikkei
     
