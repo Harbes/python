@@ -8,7 +8,7 @@ from time import time
 from pandas.tseries.offsets import MonthEnd
 from dateutil.parser import parse
 #import matplotlib.pyplot as plt
-data_path = 'E:/data/NewData/'  # '/Users/harbes/data/NewData/'#
+data_path ='/Users/harbes/data/NewData/'# 'E:/data/NewData/'  #
 def import_pv_index():
     global pv,open_price,close_price,index_ret,rtn,stock_pool,rf
     rf = pd.read_excel(data_path + 'risk_free.xlsx')[2:].set_index(['Clsdt'])
@@ -369,7 +369,7 @@ def cal_mimick_port2(indi1,indi2,rtn,weights,independent=True):
         tmp.columns = tmp.columns.get_level_values(1)
     return tmp
 
-def describe(df,stats):
+def describe(df,stats=['skew','kurt']):
     d=df.describe(percentiles=[0.05,0.25,0.5,0.75,0.95])
     return d.append(df.reindex(d.columns, axis=1).agg(stats))
 def func_percentile(n):
@@ -497,10 +497,11 @@ if __name__ == '__main__':
     # correlations------ivol and other variables
     beta=cal_beta(12).stack()
     size=cal_size(freq='M')#.stack()
-    BM=cal_BM(size).stack();size=size.stack()
+    BM=cal_BM(size).stack();size=np.log(size).stack() #size=size.stack() #
     MOM=cal_mom(12).stack()
     rev=cal_rev().stack()
     illiq=cal_illiq(12).stack()
+    skew=cal_skew(12).stack()
     coskew=cal_coskew(12).stack()
     iskew=cal_iskew(12).stack()
     beta.name='beta'
@@ -509,9 +510,10 @@ if __name__ == '__main__':
     MOM.name='mom'
     rev.name='rev'
     illiq.name='illiq'
+    skew.name='skew'
     coskew.name='coskew'
     iskew.name='iskew'
-    tmp=pd.concat([ivol_FF,ivol_FF_y,beta,size,BM,MOM,rev,illiq,coskew,iskew],axis=1);tmp.head()
+    tmp=pd.concat([ivol_FF,ivol_FF_y,beta,size,BM,MOM,rev,illiq,skew,coskew,iskew],axis=1);tmp.head()
     #tmp['beta']=beta;tmp['size']=size
     #tmp['BM']=BM
     #tmp['mom']=MOM
@@ -519,10 +521,15 @@ if __name__ == '__main__':
     #tmp['illiq']=illiq
     #tmp['coskew']=coskew.iloc[:,:-1] # 剔除市场
     #tmp['iskew']=iskew
-    corr_ = tmp.loc[start_:end_].groupby(level=0).corr('pearson').groupby(level=1).mean()  # pearson # spearman
+    corr_ = tmp.loc[start_:end_].groupby(level=0).corr('spearman').groupby(level=1).mean()  # pearson # spearman
     corr_ = corr_.loc[corr_.columns];corr_
-    corr_.to_csv(data_path+'pearson_corr_between_ivol_other_variables.csv')
-    del beta, size, BM, MOM, rev, illiq, coskew, iskew
+    corr_.to_csv(data_path+'spearman_corr_between_ivol_other_variables.csv')
+
+    s=tmp.groupby(level=0).apply(describe)
+    s[s==0]=np.nan
+    s.mean(level=1).to_csv(data_path+'SummaryStatisticsOfOtherVariables.csv')
+
+    del beta, size, BM, MOM, rev, illiq, skew, coskew, iskew
 
     # persistence analysis
     df= pd.concat([ivol_FF, ivol_FF_y], axis=1) ;columns_=df.columns
@@ -564,7 +571,7 @@ def garch1(arr,max_iter,init=(0.1,0.4,0.5)):
     for i in range(1,max_iter):
         punish = np.array((0, -0.2, -0.2)) * np.maximum(theta[1] + theta[2] - 1.0, 0)
         G = 0.0;
-        H = 0.0
+        J = 0.0
         sigma2_lag = arr[0] * arr[0]
         for t in range(1, T):
             tmp = np.array((1.0, arr[t-1] * arr[t-1], sigma2_lag))
@@ -572,11 +579,11 @@ def garch1(arr,max_iter,init=(0.1,0.4,0.5)):
             sigma2_lag=sigma2
             g = 0.5*(arr[t] * arr[t] / sigma2 / sigma2-1.0 / sigma2) * tmp#+punish
             G += g
-            H +=0.5/sigma2/sigma2*tmp[:,None]*tmp
+            J +=0.5/sigma2/sigma2*tmp[:,None]*tmp
             #H -=(0.5 / sigma2 / sigma2 - arr[t] * arr[t] / sigma2/ sigma2/ sigma2) * tmp[:,None]*tmp #利用信息矩阵：0.5 / sigma2 / sigma2 * h
         G /=(T-1)
-        H /=(T-1)
-        theta +=pinv(H)@G
+        J /=(T-1)
+        theta +=pinv(J)@G
     return theta
 
 from modules.uni_tsa import uni_tsa
