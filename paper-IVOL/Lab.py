@@ -668,7 +668,6 @@ if __name__ == '__main__':
         X=pd.DataFrame({'beta':beta.loc[t],'size':size.loc[t],'BM':BM.loc[t],'ret':ret.loc[t],'ivol':ivol.loc[t],'mom':mom.loc[t],'rev':rev.loc[t],'illiq':illiq.loc[t],'skew':skew.loc[t],'coskew':coskew.loc[t],'iskew':iskew.loc[t]})[columns_+['ret']]
         X=sm.add_constant(X).dropna()
         params.loc[t]=sm.OLS(X.iloc[:,-1],X.iloc[:,:-1]).fit().params
-
     params.mean()/NWest_mean(params)
 
 
