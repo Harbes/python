@@ -8,7 +8,7 @@ from time import time
 from pandas.tseries.offsets import MonthEnd
 from dateutil.parser import parse
 #import matplotlib.pyplot as plt
-data_path ='E:/data/NewData/'  #'/Users/harbes/data/NewData/'#
+data_path ='/Users/harbes/data/NewData/'# 'E:/data/NewData/'  #
 def import_pv_index():
     global pv,open_price,close_price,index_ret,rtn,stock_pool,rf
     rf = pd.read_excel(data_path + 'risk_free.xlsx')[2:].set_index(['Clsdt'])
@@ -580,12 +580,15 @@ if __name__ == '__main__':
     pd.concat([df, df_tau], axis=1, keys=['df', 'df_'+str(tau)]).groupby(level=0).corr(method='pearson').mean(level=(1,2)).loc['df', 'df_'+str(tau)][columns_]
 
     # univariate portfolio analysis
+    # 一个疑问：ivol与size之间是负相关的，因此，直观感觉上，VW会强化ivol puzzle，然而我的结果为什么是弱化ivol puzzle?
+    # 如果剔除size中最小的30%，结果会如何？
     import_pv_index()
     periods=(1,3,6,12)
 
     SMB,HML=cal_SMB_HML(freq='D')
     ret=cal_rev(del_rf=True)
     size=cal_size(freq='M')
+    BM=cal_BM(size,freq='M')
     SMB_m, HML_m = cal_SMB_HML(freq='M')
     index_ret_m = cal_index_ret(freq='M')
     fSMB = SMB_m.iloc[:, 0] - SMB_m.iloc[:, -1]
@@ -597,6 +600,7 @@ if __name__ == '__main__':
         ivol=cal_ivol(i,SMB,HML,method='FF')
         tmp=cal_mimick_port1(ivol.loc['2005-'+str(i):'201802'],ret.loc['2005-'+str(i):'201802'],size.shift(1))#None)
         tmp[11]=tmp.iloc[:,-1]-tmp.iloc[:,0]
+        #tmp.mean()/NWest_mean(tmp)
         res_mean.loc[i]=tmp.mean()
         res_t.loc[i]=res_mean.loc[i]/NWest_mean(tmp)
         a, b=cal_FF_alpha(tmp[11],i,index_ret_m,fSMB,fHML)
@@ -604,6 +608,24 @@ if __name__ == '__main__':
         res_t.loc[i,12]=a/b
     res_mean.to_csv(data_path+'uni_portfolio_analysis_EW_mean.csv')
     res_t.to_csv(data_path+'uni_portfolio_analysis_EW_t.csv')
+
+    # portfolio characteristics
+    ivol=cal_ivol(1,SMB,HML,method='FF')
+    beta=cal_beta(12)
+    size=cal_size(freq='M')
+    BM=cal_BM(size,freq='M').loc[size.index,size.columns]
+    mom=cal_mom(12)
+    rev=cal_rev()
+    illiq=cal_illiq(12)
+    skew=cal_skew(12)
+    coskew=cal_coskew(12)
+    iskew=cal_iskew(1)
+    cha=(ivol,beta,size,BM,mom,rev,illiq,skew,coskew,iskew)
+    port_cha=pd.DataFrame(index=range(len(cha)),columns=range(1,len(cha)+1))
+    for i in range(len(cha)):
+        port_cha.iloc[i]=cal_mimick_port1(ivol.loc['200601':'201802'],cha[i].shift(1).loc['200601':'201802'],None).mean()
+
+
 
 import statsmodels.api as sm
 sm.OLS(tmp[11],X).fit().summary()
