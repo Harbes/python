@@ -482,10 +482,9 @@ def NWest(e,X,L=None):
             S+=w[l-1]*e[i]*e[i-l]*(X.iloc[i][:,None]*X.iloc[i-l].values+X.iloc[i-l][:,None]*X.iloc[i].values)
     for i in range(T):
         S+=e[i]*e[i]*X.iloc[i][:,None]*X.iloc[i].values
-    S/=T
     XX_1=np.linalg.pinv(X.T@X.values)
     X.drop('c', axis=1, inplace=True)
-    return np.sqrt(T*(XX_1@S@XX_1)[0,0])
+    return np.sqrt((XX_1@S@XX_1)[0,0])
 def cal_FF_alpha(arr,period,index_ret,fSMB,fHML):
     '''
 
@@ -583,23 +582,28 @@ if __name__ == '__main__':
     # univariate portfolio analysis
     import_pv_index()
     periods=(1,3,6,12)
-    res_mean=pd.DataFrame(index=periods,columns=range(1,13))
-    res_t = pd.DataFrame(res_mean)
+
     SMB,HML=cal_SMB_HML(freq='D')
     ret=cal_rev(del_rf=True)
-
+    size=cal_size(freq='M')
     SMB_m, HML_m = cal_SMB_HML(freq='M')
     index_ret_m = cal_index_ret(freq='M')
     fSMB = SMB_m.iloc[:, 0] - SMB_m.iloc[:, -1]
     fHML = HML_m.iloc[:, 0] - HML_m.iloc[:, -1]
+
+    res_mean = pd.DataFrame(index=periods, columns=range(1, 13))
+    res_t = pd.DataFrame(index=res_mean.index,columns=res_mean.columns)
     for i in periods:
         ivol=cal_ivol(i,SMB,HML,method='FF')
-        tmp=cal_mimick_port1(ivol.loc['2005-'+str(i):'201802'],ret.loc['2005-'+str(i):'201802'],None)
-        tmp[11]=tmp.iloc[:,0]-tmp.iloc[:,-1]
+        tmp=cal_mimick_port1(ivol.loc['2005-'+str(i):'201802'],ret.loc['2005-'+str(i):'201802'],size.shift(1))#None)
+        tmp[11]=tmp.iloc[:,-1]-tmp.iloc[:,0]
         res_mean.loc[i]=tmp.mean()
         res_t.loc[i]=res_mean.loc[i]/NWest_mean(tmp)
-        res_mean.loc[i, 12], b=cal_FF_alpha(tmp[11],i,index_ret_m,fSMB,fHML)
-        res_t.loc[i,12]=res_mean.loc[i, 12]/ b
+        a, b=cal_FF_alpha(tmp[11],i,index_ret_m,fSMB,fHML)
+        res_mean.loc[i, 12]=a
+        res_t.loc[i,12]=a/b
+    res_mean.to_csv(data_path+'uni_portfolio_analysis_EW_mean.csv')
+    res_t.to_csv(data_path+'uni_portfolio_analysis_EW_t.csv')
 
 import statsmodels.api as sm
 sm.OLS(tmp[11],X).fit().summary()
