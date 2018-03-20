@@ -8,7 +8,7 @@ from time import time
 from pandas.tseries.offsets import MonthEnd
 from dateutil.parser import parse
 #import matplotlib.pyplot as plt
-data_path ='/Users/harbes/data/NewData/'# 'E:/data/NewData/'  #
+data_path ='E:/data/NewData/'  #'/Users/harbes/data/NewData/'#
 def import_pv_index():
     global pv,open_price,close_price,index_ret,rtn,stock_pool,rf
     rf = pd.read_excel(data_path + 'risk_free.xlsx')[2:].set_index(['Clsdt'])
@@ -88,7 +88,7 @@ def cal_beta(periods,save_data=False):
     if save_data:
         beta[beta!=0].astype(float).to_pickle(data_path + 'beta_daily_'+str(periods)+'M')
     else:
-        return beta[beta!=0].astype(float)
+        return beta[beta!=0].astype(float).iloc[:,:-1] # 剔除 column：index
 def cal_size(freq='M',save_data=False):
     '''
     :return:
@@ -170,7 +170,7 @@ def cal_coskew(periods,save_data=False):
     if save_data:
         coskew[coskew!=0].astype(float).to_pickle(data_path+'coskew_'+str(periods)+'M')
     else:
-        return coskew[coskew!=0].astype(float)
+        return coskew[coskew!=0].astype(float).iloc[:,:-1]
 def cal_iskew(periods,method='CAPM'):
     iskew = pd.DataFrame(index=pd.date_range('20050101', '20180301', freq='M'), columns=rtn.columns[:-2])
     if method == 'CAPM':
@@ -281,7 +281,7 @@ def cal_ivol_year(periods,ret,index_ret,SMB,HML,method='CAPM'):
             ivol.iloc[i - 1] = (tmp2 - tmp1 @ beta_tmp).std()
     ivol = ivol.astype(float) * np.sqrt(12 / periods)
     return ivol
-def cal_SMB_HML(freq='M',weight=False):
+def cal_SMB_HML(freq='M',group_num=10,weight=False):
     size = cal_size(freq=freq)
     BM = cal_BM(size,freq=freq)
     stock_pool=BM.columns&size.columns
@@ -293,10 +293,10 @@ def cal_SMB_HML(freq='M',weight=False):
     else:
         ret = rtn.iloc[:,:-2][stock_pool]
     if weight:
-        return cal_mimick_port1(size['2005':'2018-02'], ret['2005':'2018-02'], size),cal_mimick_port1(BM['2005':'2018-02'],ret['2005':'2018-02'],size)
+        return cal_mimick_port1(size['2005':'2018-02'], ret['2005':'2018-02'], size,group_num),cal_mimick_port1(BM['2005':'2018-02'],ret['2005':'2018-02'],size,group_num)
     else:
-        return cal_mimick_port1(size['2005':'2018-02'], ret['2005':'2018-02'], None),cal_mimick_port1(BM['2005':'2018-02'],ret['2005':'2018-02'],None)
-def cal_mimick_port1(indi,rtn,weights):
+        return cal_mimick_port1(size['2005':'2018-02'], ret['2005':'2018-02'], None,group_num),cal_mimick_port1(BM['2005':'2018-02'],ret['2005':'2018-02'],None,group_num)
+def cal_mimick_port1(indi,rtn,weights,group_num):
     '''
     用法：cal_mimick_port(BM['2005':'2017'],rtn['2005':'2017'],None)或者
          cal_mimick_port(BM['2005':'2017'],rtn['2005':'2017'],size['2005':'2017'])
@@ -306,7 +306,7 @@ def cal_mimick_port1(indi,rtn,weights):
     '''
     #indi=vol.loc['200512':'201802']
     #rtn=ret.loc['200512':'201802']
-    group_num=10
+    #group_num=5
     percentile = np.linspace(0, 1, group_num + 1) #[0.0,0.3,0.7,1.0]# 也可以自定义percentile，例如
     label_ = [i + 1 for i in range(len(percentile) - 1)]
     mark_ = pd.DataFrame([pd.qcut(indi.iloc[i],q=percentile, labels=label_) for i in range(len(indi)-1)],index=indi.index[1:]) # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
@@ -344,7 +344,7 @@ def cal_mimick_port2(indi1,indi2,rtn,weights,independent=True):
                               index=indi1.index[1:])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
         mark_2=pd.DataFrame(index=mark_1.index,columns=mark_1.columns)
         for l_ in label_:
-            tmp=pd.DataFrame([pd.qcut(indi2.iloc[i][mark_1.iloc[i]==l_],q=percentile,labels=label_) for i in range(len(indi2)-1)])
+            tmp=pd.DataFrame([pd.qcut(indi2.iloc[i][mark_1.iloc[i]==l_],q=percentile,labels=label_) for i in range(len(indi2)-1)],index=mark_1.index)
             mark_2 = mark_2.combine_first(tmp)
     valid_ = ~(pd.isnull(mark_1+mark_2) | pd.isnull(rtn[1:]))  # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
     if weights is None:
@@ -457,13 +457,14 @@ def return_vol_ivol_year():
         df4['ivol_FF_'+str(j)+'Y']=cal_ivol_year(j*12,ret,index_ret,SMB,HML,method='FF').stack()
     return   df1,df2,df3,df4
 
-def NWest_mean(df,L=None):
+def NWest_mean(d,L=None):
     '''
     df不要以Nan开头，会引起误差;
     :param df:
     :param L:
     :return:
     '''
+    df=d.copy()
     df-=df.mean()
     T=len(df)
     if L is None:
@@ -504,13 +505,9 @@ def cal_FF_alpha(arr,period,index_ret,fSMB,fHML):
     tmp1=X-X.mean(axis=0)
     tmp2=arr-arr.mean(axis=0)
     tmp3=arr-X@np.linalg.pinv(tmp1.cov())@(tmp1.mul(tmp2,axis=0).mean()).values
-    return tmp3.mean(),NWest(tmp3-tmp3.mean(),X) #此处有错误，alpha的标准差应该使用原始的NeweyWest估计
+    return tmp3.mean(),NWest(tmp3-tmp3.mean(),X)
 
-np.linalg.pinv(tmp1.values.T@tmp1)@(tmp1.T@tmp2.values)
-SMB,HML=cal_SMB_HML(freq='M')
-index_ret=cal_index_ret(freq='M')
-fSMB=SMB.iloc[:,0]-SMB.iloc[:,-1]
-fHML=HML.iloc[:,0]-HML.iloc[:,-1]
+
 if __name__ == '__main__':
     import_pv_index()
     #import_book(freq='D')
@@ -585,11 +582,12 @@ if __name__ == '__main__':
     import_pv_index()
     periods=(1,3,6,12)
 
-    SMB,HML=cal_SMB_HML(freq='D')
+    SMB,HML=cal_SMB_HML(freq='D',group_num=10)
+    SMB_m, HML_m = cal_SMB_HML(freq='M', group_num=10)
     ret=cal_rev(del_rf=True)
     size=cal_size(freq='M')
     BM=cal_BM(size,freq='M')
-    SMB_m, HML_m = cal_SMB_HML(freq='M')
+    SMB_m, HML_m = cal_SMB_HML(freq='M',group_num=10)
     index_ret_m = cal_index_ret(freq='M')
     fSMB = SMB_m.iloc[:, 0] - SMB_m.iloc[:, -1]
     fHML = HML_m.iloc[:, 0] - HML_m.iloc[:, -1]
@@ -598,7 +596,7 @@ if __name__ == '__main__':
     res_t = pd.DataFrame(index=res_mean.index,columns=res_mean.columns)
     for i in periods:
         ivol=cal_ivol(i,SMB,HML,method='FF')
-        tmp=cal_mimick_port1(ivol.loc['2005-'+str(i):'201802'],ret.loc['2005-'+str(i):'201802'],size.shift(1))#None)
+        tmp=cal_mimick_port1(ivol.loc['2005-'+str(i):'201802'],ret.loc['2005-'+str(i):'201802'],size.shift(1),10)#None)
         tmp[11]=tmp.iloc[:,-1]-tmp.iloc[:,0]
         #tmp.mean()/NWest_mean(tmp)
         res_mean.loc[i]=tmp.mean()
@@ -610,9 +608,11 @@ if __name__ == '__main__':
     res_t.to_csv(data_path+'uni_portfolio_analysis_EW_t.csv')
 
     # portfolio characteristics
+    # 从结果看，似乎是BM、rev、skew、iskew驱动着ivol puzzle
+    import_pv_index()
     ivol=cal_ivol(1,SMB,HML,method='FF')
     beta=cal_beta(12)
-    size=cal_size(freq='M')
+    size=cal_size(freq='M') # 波动率最小的三组，size很大；ivol后面七组之间的差距不是很大
     BM=cal_BM(size,freq='M').loc[size.index,size.columns]
     mom=cal_mom(12)
     rev=cal_rev()
@@ -623,15 +623,60 @@ if __name__ == '__main__':
     cha=(ivol,beta,size,BM,mom,rev,illiq,skew,coskew,iskew)
     port_cha=pd.DataFrame(index=range(len(cha)),columns=range(1,len(cha)+1))
     for i in range(len(cha)):
-        port_cha.iloc[i]=cal_mimick_port1(ivol.loc['200601':'201802'],cha[i].shift(1).loc['200601':'201802'],None).mean()
+        port_cha.iloc[i]=cal_mimick_port1(ivol.loc['200601':'201802'],cha[i].shift(1).loc['200601':'201802'],None,10).mean()
+
+    # bivariate portfolio analysis
+    Return_m=pd.DataFrame(index=range(len(cha)),columns=range(1,7))
+    Return_t=pd.DataFrame(index=Return_m.index,columns=Return_m.columns)
+    FF_alpha = pd.DataFrame(index=Return_m.index, columns=Return_m.columns)
+    FF_t = pd.DataFrame(index=Return_m.index, columns=Return_m.columns)
+    SMB_m, HML_m = cal_SMB_HML(freq='M')
+    index_ret_m = cal_index_ret(freq='M')
+    fSMB = SMB_m.iloc[:, 0] - SMB_m.iloc[:, -1]
+    fHML = HML_m.iloc[:, 0] - HML_m.iloc[:, -1]
+    ret=cal_rev(del_rf=True)
+    for i in range(len(cha)):
+        tmp=cal_mimick_port2(cha[i].loc['200512':'201802'],ivol.loc['200512':'201802'],ret.loc['200512':'201802'],size.loc['200512':'201802'])#,independent=False)
+        long_short=(tmp.iloc[:,-1]-tmp.iloc[:,0]).unstack()
+        long_short[6]=long_short.mean(axis=1)
+        Return_m.iloc[i,:]=long_short.mean()
+        Return_t.iloc[i,:]=long_short.mean()/NWest_mean(long_short)
+        for j in range(6):
+            FF_alpha.iloc[i,j],se=cal_FF_alpha(long_short.iloc[:,j],12,index_ret_m,fSMB,fHML)
+            FF_t.iloc[i,j]=FF_alpha.iloc[i,j]/se
+
+
+    # Fama-MacBeth Regression
+    import statsmodels.api as sm
+    import_pv_index()
+    beta=cal_beta(12).shift(1)
+    size=cal_size(freq='M')
+    BM=cal_BM(size,freq='M').loc[size.index,size.columns].shift(1);size=(np.log(size)).shift(1)
+
+    SMB, HML = cal_SMB_HML(freq='D')
+    ivol=cal_ivol(1,SMB,HML,method='CAPM').shift(1)
+    mom=cal_mom(12).shift(1)
+    rev=cal_rev().shift(1)
+    illiq=cal_illiq(12).shift(1)
+    skew=cal_skew(12).shift(1)
+    coskew=cal_coskew(12).shift(1)
+    iskew=cal_iskew(12,method='FF').shift(1)
+    periods=size['200601':'201802'].index
+    columns_=['beta','size','BM','ivol','mom','rev','illiq','skew','coskew','iskew']
+    params=pd.DataFrame(index=periods,columns=['const']+columns_)
+    for t in periods:
+        X=pd.DataFrame({'beta':beta.loc[t],'size':size.loc[t],'BM':BM.loc[t],'ret':ret.loc[t],'ivol':ivol.loc[t],'mom':mom.loc[t],'rev':rev.loc[t],'illiq':illiq.loc[t],'skew':skew.loc[t],'coskew':coskew.loc[t],'iskew':iskew.loc[t]})[columns_+['ret']]
+        X=sm.add_constant(X).dropna()
+        params.loc[t]=sm.OLS(X.iloc[:,-1],X.iloc[:,:-1]).fit().params
+
+    params.mean()/NWest_mean(params)
 
 
 
-
-
-import statsmodels.api as sm
-sm.OLS(tmp[11],X).fit().summary()
-
+X = pd.DataFrame({'index': index_ret_m, 'SMB': fSMB, 'HML': fHML})[['index', 'SMB', 'HML']].loc[start[12]:'201802']
+X.insert(0,'c',np.ones(len(X)))
+%timeit sm.OLS(long_short[1],X).fit().params
+a,b=cal_FF_alpha(long_short.iloc[:,0],12,index_ret_m,fSMB,fHML);a/b
 
 
     import_pv_index()
@@ -642,8 +687,8 @@ sm.OLS(tmp[11],X).fit().summary()
     SMB,HML=cal_SMB_HML(freq='D')
     tmp=cal_ivol(12,SMB,HML,method='FF')
     size=cal_size(freq='M')
-    ivol_mimick=cal_mimick_port1(tmp.loc['200512':'201802'],ret.loc['200512':'201802'],None)#size.loc['200502':'201802'].shift(1))
-    tmp=ivol_mimick.iloc[:,0]-ivol_mimick.iloc[:,-1];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
+    ivol_mimick=cal_mimick_port1(illiq.loc['200512':'201802'],ret.loc['200512':'201802'],None)#size.loc['200502':'201802'].shift(1))
+    tmp=ivol_mimick.iloc[:,-1]-ivol_mimick.iloc[:,0];tmp.mean()/tmp.std()*np.sqrt(len(tmp))
 
 
 import numpy as np
