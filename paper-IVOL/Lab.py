@@ -627,6 +627,8 @@ if __name__ == '__main__':
 
 
 
+
+
 import statsmodels.api as sm
 sm.OLS(tmp[11],X).fit().summary()
 
