@@ -8,7 +8,7 @@ from time import time
 from pandas.tseries.offsets import MonthEnd
 from dateutil.parser import parse
 #import matplotlib.pyplot as plt
-data_path ='/Users/harbes/data/NewData/'#'E:/data/NewData/'  #
+data_path ='E:/data/NewData/'  #'/Users/harbes/data/NewData/'#
 def import_pv_index():
     global pv,open_price,close_price,index_ret,rtn,stock_pool,rf
     rf = pd.read_excel(data_path + 'risk_free.xlsx')[2:].set_index(['Clsdt'])
@@ -34,6 +34,7 @@ def import_pv_index():
     # 注意，rtn的最后两列是index return 和 月份序号
     rtn['index'] = index_ret['pctchange']#目的是通过cov计算beta，同时通过market_beta是否为1检验code是否正确
     rtn['month'] = (rtn.index.year - rtn.index[0].year) * 12 + rtn.index.month
+
 
 def cal_index_ret(freq='M'):
     index_ret = pd.read_pickle(data_path + 'index_ret').set_index(['index_code', 'trddt'])[['opnprc','clsprc']].loc['000016.SH']
@@ -590,7 +591,6 @@ if __name__ == '__main__':
     ret=cal_rev(del_rf=True)
     size=cal_size(freq='M')
     BM=cal_BM(size,freq='M')
-    SMB_m, HML_m = cal_SMB_HML(freq='M')
     index_ret_m = cal_index_ret(freq='M')
     fSMB = SMB_m.iloc[:, 0] - SMB_m.iloc[:, -1]
     fHML = HML_m.iloc[:, 0] - HML_m.iloc[:, -1]
@@ -643,7 +643,21 @@ if __name__ == '__main__':
     for i in range(len(cha)):
         port_cha.iloc[i]=cal_mimick_port1(ivol.loc['200601':'201802'],cha[i].shift(1).loc['200601':'201802'],None,10).mean()
     port_cha.to_csv(data_path+'Portfolio_Characteristics.csv')
+
     # bivariate portfolio analysis
+    import_pv_index()
+    SMB, HML = cal_SMB_HML(freq='D')
+    ivol = cal_ivol(1, SMB, HML, method='FF')
+    beta = cal_beta(12)
+    size = cal_size(freq='M')  # 波动率最小的三组，size很大；ivol后面七组之间的差距不是很大
+    BM = cal_BM(size, freq='M').loc[size.index, size.columns]
+    mom = cal_mom(12)
+    rev = cal_rev()
+    illiq = cal_illiq(12)
+    skew = cal_skew(12)
+    coskew = cal_coskew(12)
+    iskew = cal_iskew(1)
+    cha = (ivol, beta, size, BM, mom, rev, illiq, skew, coskew, iskew)
     Return_m=pd.DataFrame(index=range(len(cha)),columns=range(1,7))
     Return_t=pd.DataFrame(index=Return_m.index,columns=Return_m.columns)
     FF_alpha = pd.DataFrame(index=Return_m.index, columns=Return_m.columns)
@@ -653,16 +667,23 @@ if __name__ == '__main__':
     fSMB = SMB_m.iloc[:, 0] - SMB_m.iloc[:, -1]
     fHML = HML_m.iloc[:, 0] - HML_m.iloc[:, -1]
     ret=cal_rev(del_rf=True)
+    weights = None  #weights = size.loc['200512':'201802']  #
+    W='EW' if weights is None else 'VW'
+    independent = True  #independent = False  #
+    inde = 'inde' if independent else 'depe'
     for i in range(len(cha)):
-        tmp=cal_mimick_port2(cha[i].loc['200512':'201802'],ivol.loc['200512':'201802'],ret.loc['200512':'201802'],size.loc['200512':'201802'])#,independent=False)
-        long_short=(tmp.iloc[:,-1]-tmp.iloc[:,0]).unstack()
+        tmp=cal_mimick_port2(cha[i].loc['200512':'201802'],ivol.loc['200512':'201802'],ret.loc['200512':'201802'],weights,independent=independent)
+        long_short = (tmp.iloc[:, -1] - tmp.iloc[:, 0]).unstack()
         long_short[6]=long_short.mean(axis=1)
         Return_m.iloc[i,:]=long_short.mean()
         Return_t.iloc[i,:]=long_short.mean()/NWest_mean(long_short)
         for j in range(6):
             FF_alpha.iloc[i,j],se=cal_FF_alpha(long_short.iloc[:,j],12,index_ret_m,fSMB,fHML)
             FF_t.iloc[i,j]=FF_alpha.iloc[i,j]/se
-
+    Return_m.to_csv(data_path+'Return_mean_'+W+'_'+inde+'.csv')
+    Return_t.to_csv(data_path + 'Return_tValue_'+W+'_'+inde+'.csv')
+    FF_alpha.to_csv(data_path+'FF_alpha_'+W+'_'+inde+'.csv')
+    FF_t.to_csv(data_path+'FF_tValue_'+W+'_'+inde+'.csv')
 
 
 
@@ -689,6 +710,46 @@ if __name__ == '__main__':
         X=sm.add_constant(X).dropna()
         params.loc[t]=sm.OLS(X.iloc[:,-1],X.iloc[:,:-1]).fit().params
     params.mean()/NWest_mean(params)
+
+
+    # conditional volatility from EGARCH
+    from arch import arch_model
+    from time import time
+    periods=12
+    cvol = pd.DataFrame(index=pd.date_range('20050101', '20180301', freq='M'), columns=rtn.columns[:-2])
+    t0=time()
+    for i in range(periods, 158):
+        tmp = rtn[(rtn['month'] >= i - periods + 1) & (rtn['month'] <= i)]
+        for c in cvol.columns:
+            if (~tmp[c][-100].isnull()).sum()>100.0:
+                cvol.iloc[i - 1][c] =arch_model(tmp[c].fillna(0),p=1,o=1,q=1,vol='egarch').fit(disp='off',show_warning=False).conditional_volatility[-1]
+            else:
+                cvol.iloc[i - 1][c] =np.nan
+    cvol.to_csv(data_path+'conditonal_volatility_12M_EGARCH.csv')
+    time()-t0
+
+
+
+
+
+    arch_model(index_ret['pctchange'], p=1, o=1, q=1, vol='egarch').fit().conditional_volatility[-10:]
+    arch_model(rtn['000001.SZ'].combine_first(index_ret['pctchange'])[:100].fillna(0), p=1, o=1, q=1, vol='egarch').fit().conditional_volatility[-10:]
+    arch_model(rtn['000001.SZ'][:100].fillna(0), p=1, o=1, q=1, vol='egarch').fit(disp='off').conditional_volatility[-10:]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
