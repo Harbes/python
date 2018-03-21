@@ -8,7 +8,7 @@ from time import time
 from pandas.tseries.offsets import MonthEnd
 from dateutil.parser import parse
 #import matplotlib.pyplot as plt
-data_path ='E:/data/NewData/'  #'/Users/harbes/data/NewData/'#
+data_path ='/Users/harbes/data/NewData/'#'E:/data/NewData/'  #
 def import_pv_index():
     global pv,open_price,close_price,index_ret,rtn,stock_pool,rf
     rf = pd.read_excel(data_path + 'risk_free.xlsx')[2:].set_index(['Clsdt'])
@@ -499,7 +499,9 @@ def cal_FF_alpha(arr,period,index_ret,fSMB,fHML):
     start={1:'200502',
            3:'200504',
            6:'200507',
-           12:'200601'}
+           12:'200601',
+           24:'200701',
+           36:'200801'} # 回归有效数据的起始月
     X=pd.DataFrame({'index':index_ret,'SMB':fSMB,'HML':fHML})[['index','SMB','HML']].loc[start[period]:'201802']
     arr=arr.loc[start[period]:'201802']
     tmp1=X-X.mean(axis=0)
@@ -580,23 +582,28 @@ if __name__ == '__main__':
     # 一个疑问：ivol与size之间是负相关的，因此，直观感觉上，VW会强化ivol puzzle，然而我的结果为什么是弱化ivol puzzle?
     # 如果剔除size中最小的30%，结果会如何？
     import_pv_index()
-    periods=(1,3,6,12)
+    periods=[1,3,6,12]
+    periods_y=[12,24,36]
 
-    SMB,HML=cal_SMB_HML(freq='D',group_num=10)
-    SMB_m, HML_m = cal_SMB_HML(freq='M', group_num=10)
+    SMB,HML=cal_SMB_HML(freq='D')
+    SMB_m, HML_m = cal_SMB_HML(freq='M')
     ret=cal_rev(del_rf=True)
     size=cal_size(freq='M')
     BM=cal_BM(size,freq='M')
-    SMB_m, HML_m = cal_SMB_HML(freq='M',group_num=10)
+    SMB_m, HML_m = cal_SMB_HML(freq='M')
     index_ret_m = cal_index_ret(freq='M')
     fSMB = SMB_m.iloc[:, 0] - SMB_m.iloc[:, -1]
     fHML = HML_m.iloc[:, 0] - HML_m.iloc[:, -1]
 
     res_mean = pd.DataFrame(index=periods, columns=range(1, 13))
     res_t = pd.DataFrame(index=res_mean.index,columns=res_mean.columns)
+    res_y_mean = pd.DataFrame(index=periods_y, columns=range(1, 13))
+    res_y_t = pd.DataFrame(index=res_y_mean.index, columns=res_y_mean.columns)
+    weights= weights=size.shift(1) # None #
+    W='EW' if weights is None else 'VW'
     for i in periods:
         ivol=cal_ivol(i,SMB,HML,method='FF')
-        tmp=cal_mimick_port1(ivol.loc['2005-'+str(i):'201802'],ret.loc['2005-'+str(i):'201802'],size.shift(1),10)#None)
+        tmp=cal_mimick_port1(ivol.loc['2005-'+str(i):'201802'],ret.loc['2005-'+str(i):'201802'],weights,10)
         tmp[11]=tmp.iloc[:,-1]-tmp.iloc[:,0]
         #tmp.mean()/NWest_mean(tmp)
         res_mean.loc[i]=tmp.mean()
@@ -604,8 +611,19 @@ if __name__ == '__main__':
         a, b=cal_FF_alpha(tmp[11],i,index_ret_m,fSMB,fHML)
         res_mean.loc[i, 12]=a
         res_t.loc[i,12]=a/b
-    res_mean.to_csv(data_path+'uni_portfolio_analysis_EW_mean.csv')
-    res_t.to_csv(data_path+'uni_portfolio_analysis_EW_t.csv')
+    for i in periods_y:
+        ivol=cal_ivol_year(i,ret,index_ret_m,SMB_m,HML_m,method='FF')
+        tmp=cal_mimick_port1(ivol.loc['200'+str(4+int(i/12))+'12':'201802'],ret.loc['200'+str(4+int(i/12))+'12':'201802'],weights,10)
+        tmp[11] = tmp.iloc[:, -1] - tmp.iloc[:, 0]
+        # tmp.mean()/NWest_mean(tmp)
+        res_y_mean.loc[i] = tmp.mean()
+        res_y_t.loc[i] = res_y_mean.loc[i] / NWest_mean(tmp)
+        a, b = cal_FF_alpha(tmp[11], i, index_ret_m, fSMB, fHML)
+        res_y_mean.loc[i, 12] = a
+        res_y_t.loc[i, 12] = a / b
+
+    pd.concat((res_mean,res_y_mean)).to_csv(data_path+'uni_portfolio_analysis_'+W+'_mean.csv')
+    pd.concat((res_t, res_y_t)).to_csv(data_path+'uni_portfolio_analysis_'+W+'_t_value.csv')
 
     # portfolio characteristics
     # 从结果看，似乎是BM、rev、skew、iskew驱动着ivol puzzle
@@ -624,7 +642,7 @@ if __name__ == '__main__':
     port_cha=pd.DataFrame(index=range(len(cha)),columns=range(1,len(cha)+1))
     for i in range(len(cha)):
         port_cha.iloc[i]=cal_mimick_port1(ivol.loc['200601':'201802'],cha[i].shift(1).loc['200601':'201802'],None,10).mean()
-
+    port_cha.to_csv(data_path+'Portfolio_Characteristics.csv')
     # bivariate portfolio analysis
     Return_m=pd.DataFrame(index=range(len(cha)),columns=range(1,7))
     Return_t=pd.DataFrame(index=Return_m.index,columns=Return_m.columns)
