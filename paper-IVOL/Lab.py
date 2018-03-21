@@ -664,6 +664,7 @@ if __name__ == '__main__':
             FF_t.iloc[i,j]=FF_alpha.iloc[i,j]/se
 
 
+
     # Fama-MacBeth Regression
     import statsmodels.api as sm
     import_pv_index()
