@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from pandas import DataFrame
-data_path = 'E:/data/NewData/'  # '/Users/harbes/data/NewData/' #
+data_path = '/Users/harbes/data/NewData/' #'E:/data/NewData/'  #
 data_path0 = 'E:/data/xccdata/'  # '/Users/harbes/data/xccdata/' #
 # 涨跌停
 data=pd.read_pickle(data_path+'PV_datetime')[['opnprc','high','low']]
@@ -46,8 +46,8 @@ amount_filter.to_pickle(data_path+'FilterSmallVolume')
 
 
 # 归总筛选
-filter_=amount_filter[amount_filter>0][ST=='N'][~limit_move][NT==0.0];filter_.head()
-(filter_==1.0).to_pickle(data_path+'filtered_data') # 4672606个有效数据点(原来有6140094个数据点)
+filter_=amount_filter[amount_filter>0][ST=='N'][NT==0.0];filter_.head() #[~limit_move]
+(filter_==1.0).to_pickle(data_path+'filtered_data_with_limit_move') # 4672606个有效数据点(原来有6140094个数据点)
 (filter_==1.0).sum(axis=1).sum()
 
 

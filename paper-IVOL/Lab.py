@@ -8,14 +8,17 @@ from time import time
 from pandas.tseries.offsets import MonthEnd
 from dateutil.parser import parse
 #import matplotlib.pyplot as plt
-data_path ='E:/data/NewData/'  #'/Users/harbes/data/NewData/'#
-def import_pv_index():
+data_path = '/Users/harbes/data/NewData/'#'E:/data/NewData/'  #
+def import_pv_index(del_limit_move=True):
     global pv,open_price,close_price,index_ret,rtn,stock_pool,rf
     rf = pd.read_excel(data_path + 'risk_free.xlsx')[2:].set_index(['Clsdt'])
     rf.index = pd.to_datetime(rf.index, format='%Y-%m-%d')
     pv = pd.read_pickle(data_path + 'PV_datetime')[['adj_close', 'adj_open', 'size_tot','amount']]
     close_price = pv['adj_close'].unstack()
-    filter_ = pd.read_pickle(data_path + 'filtered_data')
+    if del_limit_move:
+        filter_ = pd.read_pickle(data_path + 'filtered_data')
+    else:
+        filter_=pd.read_pickle(data_path+'filtered_data_with_limit_move')
     close_price=close_price[filter_]
     # close_price.index=pd.to_datetime(close_price.index.astype(int).astype(str),format='%Y%m%d')
     open_price = pv['adj_open'].unstack()
@@ -121,10 +124,14 @@ def cal_mom(periods,save_data=False):
         mom.to_pickle(data_path+'Mom_'+str(periods)+'M')
     else:
         return mom
-def cal_rev(del_rf=False,save_data=False):
+def cal_rev(del_rf=False,first_day=True,save_data=False):
     GroupBy = lambda x: x.year * 100 + x.month
-    cls = close_price.groupby(GroupBy).nth(-1)
-    opn = open_price.groupby(GroupBy).nth(0)
+    if first_day:
+        cls = close_price.groupby(GroupBy).nth(-1)
+        opn = open_price.groupby(GroupBy).nth(0)
+    else:
+        cls = close_price.groupby(GroupBy).last()
+        opn = open_price.groupby(GroupBy).first()
     rev = (cls - opn) / opn*100
     rev.index = pd.to_datetime(rev.index.astype(str), format='%Y%m') + MonthEnd()
     if del_rf:
@@ -702,19 +709,57 @@ if __name__ == '__main__':
     skew=cal_skew(12).shift(1)
     coskew=cal_coskew(12).shift(1)
     iskew=cal_iskew(12,method='FF').shift(1)
+    ret=cal_rev(del_rf=True)
     periods=size['200601':'201802'].index
-    columns_=['beta','size','BM','ivol','mom','rev','illiq','skew','coskew','iskew']
+    columns_ = ['ivol', 'beta','size','BM','illiq']  #columns_=['beta','size','BM','ivol','mom','rev','illiq','skew','coskew','iskew'] #
     params=pd.DataFrame(index=periods,columns=['const']+columns_)
+    rsqurared_adj=pd.DataFrame(index=params.index,columns=['R2'])
     for t in periods:
         X=pd.DataFrame({'beta':beta.loc[t],'size':size.loc[t],'BM':BM.loc[t],'ret':ret.loc[t],'ivol':ivol.loc[t],'mom':mom.loc[t],'rev':rev.loc[t],'illiq':illiq.loc[t],'skew':skew.loc[t],'coskew':coskew.loc[t],'iskew':iskew.loc[t]})[columns_+['ret']]
         X=sm.add_constant(X).dropna()
-        params.loc[t]=sm.OLS(X.iloc[:,-1],X.iloc[:,:-1]).fit().params
+        model_fit=sm.OLS(X.iloc[:,-1],X.iloc[:,:-1]).fit()
+        params.loc[t]=model_fit.params
+        rsqurared_adj.loc[t]=model_fit.rsquared_adj
+    params.mean()
     params.mean()/NWest_mean(params)
+    rsqurared_adj.mean()
 
 
     # conditional volatility from EGARCH
     from arch import arch_model
     from time import time
+    import_pv_index(del_limit_move=False)
+    SMB_m,HML_m=cal_SMB_HML(freq='M')
+    fSMB = SMB_m.iloc[:, 0] - SMB_m.iloc[:, -1]
+    fHML = HML_m.iloc[:, 0] - HML_m.iloc[:, -1]
+    ret=cal_rev(del_rf=True,first_day=False)
+    index_ret_m=cal_index_ret(freq='M')
+
+    #y=ret.iloc[1:60]
+    X=pd.DataFrame({'index':index_ret_m,'SMB':fSMB,'HML':fHML})[['index','SMB','HML']]
+    e_ivol=pd.DataFrame(index=ret.index,columns=ret.columns)
+    %%timeit
+    for i in ret.index[31:32]:
+        tmp1 = X.loc['200502':i]
+        tmp2 = ret.loc['200502':i]
+        XY = pd.DataFrame(
+            {'MKT': ((tmp1['index'] - tmp1['index'].mean()).values[:, None] * (tmp2 - tmp2.mean())).mean(),
+             'SMB': ((tmp1['SMB'] - tmp1['SMB'].mean()).values[:, None] * (tmp2 - tmp2.mean())).mean(),
+             'HML': ((tmp1['HML'] - tmp1['HML'].mean()).values[:, None] * (tmp2 - tmp2.mean())).mean()}).T
+        beta_tmp = np.linalg.pinv((tmp1 - tmp1.mean()).cov()) @ (XY.loc[['MKT', 'SMB', 'HML']])
+        e = tmp2 - tmp1 @ beta_tmp;
+        e -= e.mean()
+        for col in e.columns:
+            ee=e[col][e[col].isnull()[::-1].idxmax():]
+            if len(ee)-1 >= 30:
+                e_ivol.loc[i, col] = arch_model(ee[1:], mean='zero', vol='egarch', p=1, o=1, q=1).fit(disp='off',
+                                                                                                 show_warning=False).conditional_volatility[-1]
+            else:
+                e_ivol.loc[i, col] = np.nan
+
+
+
+    arch_model(y,mean='zero',vol='egarch',p=1,o=1,q=1).fit(disp='off',show_warning=False)#.conditional_volatility[-10:]
     periods=12
     cvol = pd.DataFrame(index=pd.date_range('20050101', '20180301', freq='M'), columns=rtn.columns[:-2])
     t0=time()
