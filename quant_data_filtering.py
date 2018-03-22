@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from pandas import DataFrame
-data_path = '/Users/harbes/data/NewData/' #'E:/data/NewData/'  #
+data_path = 'E:/data/NewData/'  #'/Users/harbes/data/NewData/' #
 data_path0 = 'E:/data/xccdata/'  # '/Users/harbes/data/xccdata/' #
 # 涨跌停
 data=pd.read_pickle(data_path+'PV_datetime')[['opnprc','high','low']]

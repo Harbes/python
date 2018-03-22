@@ -8,7 +8,7 @@ from time import time
 from pandas.tseries.offsets import MonthEnd
 from dateutil.parser import parse
 #import matplotlib.pyplot as plt
-data_path = '/Users/harbes/data/NewData/'#'E:/data/NewData/'  #
+data_path ='E:/data/NewData/'  # '/Users/harbes/data/NewData/'#
 def import_pv_index(del_limit_move=True):
     global pv,open_price,close_price,index_ret,rtn,stock_pool,rf
     rf = pd.read_excel(data_path + 'risk_free.xlsx')[2:].set_index(['Clsdt'])
@@ -728,6 +728,7 @@ if __name__ == '__main__':
     # conditional volatility from EGARCH
     from arch import arch_model
     from time import time
+    from numba import jit
     import_pv_index(del_limit_move=False)
     SMB_m,HML_m=cal_SMB_HML(freq='M')
     fSMB = SMB_m.iloc[:, 0] - SMB_m.iloc[:, -1]
@@ -739,7 +740,8 @@ if __name__ == '__main__':
     X=pd.DataFrame({'index':index_ret_m,'SMB':fSMB,'HML':fHML})[['index','SMB','HML']]
     e_ivol=pd.DataFrame(index=ret.index,columns=ret.columns)
     %%timeit
-    for i in ret.index[31:32]:
+    t0 = time()
+    for i in ret.index[31:]:
         tmp1 = X.loc['200502':i]
         tmp2 = ret.loc['200502':i]
         XY = pd.DataFrame(
@@ -749,16 +751,45 @@ if __name__ == '__main__':
         beta_tmp = np.linalg.pinv((tmp1 - tmp1.mean()).cov()) @ (XY.loc[['MKT', 'SMB', 'HML']])
         e = tmp2 - tmp1 @ beta_tmp;
         e -= e.mean()
+        start_=e.shift(1).isnull()[::-1].idxmax()
+        e_ivol.loc[i] =cal_ConVol(e,start_)
+    time()-t0
+    e_ivol.astype(float).to_pickle(data_path+'Expected_iVol_using_OptimalEgarch')
+    time() - t0
+@jit
+def cal_ConVol(e,start_):
+    tmp=pd.Series(index=start_.index)
+    for col in e.columns:
+        if len(e.loc[start_[col]:,col]) >= 30:
+            model0 = arch_model(e.loc[start_[col]:,col], mean='zero', vol='egarch', p=1, o=1, q=1).fit(disp='off',
+                                                                                                 show_warning=False)
+            model12=arch_model(e.loc[start_[col]:,col], mean='zero', vol='egarch', p=1, o=1, q=2).fit(disp='off',
+                                                                                                 show_warning=False)
+            model0 = model12 if model0.aic>model12.aic else model0
+            model21=arch_model(e.loc[start_[col]:,col], mean='zero', vol='egarch', p=2, o=1, q=1).fit(disp='off',
+                                                                                                 show_warning=False)
+            model0 = model21 if model0.aic>model21.aic else model0
+            model22=arch_model(e.loc[start_[col]:,col], mean='zero', vol='egarch', p=2, o=1, q=2).fit(disp='off',
+                                                                                                 show_warning=False)
+            tmp[col] = model22.conditional_volatility[-1] if model0.aic>model22.aic else model0.conditional_volatility[-1]
+
+        else:
+            tmp[col]=  np.nan
+    return tmp
+
+
+
         for col in e.columns:
-            ee=e[col][e[col].isnull()[::-1].idxmax():]
-            if len(ee)-1 >= 30:
-                e_ivol.loc[i, col] = arch_model(ee[1:], mean='zero', vol='egarch', p=1, o=1, q=1).fit(disp='off',
+            if len(e.loc[start_[col]:,col]) >= 30:
+                e_ivol.loc[i, col] = arch_model(e.loc[start_[col]:,col], mean='zero', vol='egarch', p=1, o=1, q=1).fit(disp='off',
                                                                                                  show_warning=False).conditional_volatility[-1]
             else:
                 e_ivol.loc[i, col] = np.nan
-
-
-
+    time()-t0
+    (~e_ivol.loc[i].isnull()).sum()
+%timeit e.loc[start_[col]:, col]
+tmp=arch_model(e.loc[start_[col]:, col],mean='zero', vol='egarch', p=1,o=1, q=1).fit(disp='off',show_warning=False)#.conditional_volatility[-20:]
+tmp.aic
     arch_model(y,mean='zero',vol='egarch',p=1,o=1,q=1).fit(disp='off',show_warning=False)#.conditional_volatility[-10:]
     periods=12
     cvol = pd.DataFrame(index=pd.date_range('20050101', '20180301', freq='M'), columns=rtn.columns[:-2])
