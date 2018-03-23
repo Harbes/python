@@ -8,7 +8,7 @@ from time import time
 from pandas.tseries.offsets import MonthEnd
 from dateutil.parser import parse
 #import matplotlib.pyplot as plt
-data_path ='E:/data/NewData/'  # '/Users/harbes/data/NewData/'#
+data_path ='/Users/harbes/data/NewData/'#'E:/data/NewData/'  #
 def import_pv_index(del_limit_move=True):
     global pv,open_price,close_price,index_ret,rtn,stock_pool,rf
     rf = pd.read_excel(data_path + 'risk_free.xlsx')[2:].set_index(['Clsdt'])
@@ -660,15 +660,12 @@ if __name__ == '__main__':
     BM = cal_BM(size, freq='M').loc[size.index, size.columns]
     mom = cal_mom(12)
     rev = cal_rev()
-    illiq = cal_illiq(12)
-    skew = cal_skew(12)
+    illiq = cal_illiq(1)
+    skew = cal_skew(1)
     coskew = cal_coskew(12)
     iskew = cal_iskew(1)
     cha = (ivol, beta, size, BM, mom, rev, illiq, skew, coskew, iskew)
-    Return_m=pd.DataFrame(index=range(len(cha)),columns=range(1,7))
-    Return_t=pd.DataFrame(index=Return_m.index,columns=Return_m.columns)
-    FF_alpha = pd.DataFrame(index=Return_m.index, columns=Return_m.columns)
-    FF_t = pd.DataFrame(index=Return_m.index, columns=Return_m.columns)
+
     SMB_m, HML_m = cal_SMB_HML(freq='M')
     index_ret_m = cal_index_ret(freq='M')
     fSMB = SMB_m.iloc[:, 0] - SMB_m.iloc[:, -1]
@@ -676,15 +673,23 @@ if __name__ == '__main__':
     ret=cal_rev(del_rf=True)
     weights = None  #weights = size.loc['200512':'201802']  #
     W='EW' if weights is None else 'VW'
-    independent = True  #independent = False  #
+    independent = False  #independent = True  #
     inde = 'inde' if independent else 'depe'
+
+    Return_m = pd.DataFrame(index=range(len(cha)), columns=range(1, 12))
+    Return_t = pd.DataFrame(index=Return_m.index, columns=Return_m.columns)
+    FF_alpha = pd.DataFrame(index=Return_m.index, columns=Return_m.columns)
+    FF_t = pd.DataFrame(index=Return_m.index, columns=Return_m.columns)
     for i in range(len(cha)):
-        tmp=cal_mimick_port2(cha[i].loc['200512':'201802'],ivol.loc['200512':'201802'],ret.loc['200512':'201802'],weights,independent=independent)
-        long_short = (tmp.iloc[:, -1] - tmp.iloc[:, 0]).unstack()
-        long_short[6]=long_short.mean(axis=1)
+        #tmp=cal_mimick_port2(cha[i].loc['200512':'201802'],ivol.loc['200512':'201802'],ret.loc['200512':'201802'],weights,independent=independent)
+        #long_short = (tmp.iloc[:, -1] - tmp.iloc[:, 0]).unstack()
+        #long_short[6]=long_short.mean(axis=1)
+        tmp=cal_mimick_port1(cha[i].loc['200512':'201802'],ret.loc['200512':'201802'],weights,10)
+        long_short=tmp
+        long_short[len(long_short.columns)+1]=tmp.iloc[:,-1]-tmp.iloc[:,0]
         Return_m.iloc[i,:]=long_short.mean()
         Return_t.iloc[i,:]=long_short.mean()/NWest_mean(long_short)
-        for j in range(6):
+        for j in range(len(long_short.columns)):
             FF_alpha.iloc[i,j],se=cal_FF_alpha(long_short.iloc[:,j],12,index_ret_m,fSMB,fHML)
             FF_t.iloc[i,j]=FF_alpha.iloc[i,j]/se
     Return_m.to_csv(data_path+'Return_mean_'+W+'_'+inde+'.csv')
@@ -735,11 +740,41 @@ if __name__ == '__main__':
     fHML = HML_m.iloc[:, 0] - HML_m.iloc[:, -1]
     ret=cal_rev(del_rf=True,first_day=False)
     index_ret_m=cal_index_ret(freq='M')
+    @jit
+    def cal_ConVol(e, start_):
+        tmp = pd.Series(index=start_.index)
+        for col in e.columns:
+            if len(e.loc[start_[col]:, col]) >= 30:
+                model0 = arch_model(e.loc[start_[col]:, col], mean='zero', vol='egarch', p=1, o=1, q=1).fit(disp='off',
+                                                                                                            show_warning=False)
+                model12 = arch_model(e.loc[start_[col]:, col], mean='zero', vol='egarch', p=1, o=1, q=2).fit(disp='off',
+                                                                                                             show_warning=False)
+                model0 = model12 if model0.aic > model12.aic else model0
+                model21 = arch_model(e.loc[start_[col]:, col], mean='zero', vol='egarch', p=2, o=1, q=1).fit(disp='off',
+                                                                                                             show_warning=False)
+                model0 = model21 if model0.aic > model21.aic else model0
+                model22 = arch_model(e.loc[start_[col]:, col], mean='zero', vol='egarch', p=2, o=1, q=2).fit(disp='off',
+                                                                                                             show_warning=False)
+                tmp[col] = model22.conditional_volatility[-1] if model0.aic > model22.aic else \
+                model0.conditional_volatility[-1]
 
-    #y=ret.iloc[1:60]
+            else:
+                tmp[col] = np.nan
+        return tmp
+
+        for col in e.columns:
+            if len(e.loc[start_[col]:, col]) >= 30:
+                e_ivol.loc[i, col] = \
+                arch_model(e.loc[start_[col]:, col], mean='zero', vol='egarch', p=1, o=1, q=1).fit(disp='off',
+                                                                                                   show_warning=False).conditional_volatility[
+                    -1]
+            else:
+                e_ivol.loc[i, col] = np.nan
+
+
     X=pd.DataFrame({'index':index_ret_m,'SMB':fSMB,'HML':fHML})[['index','SMB','HML']]
     e_ivol=pd.DataFrame(index=ret.index,columns=ret.columns)
-    %%timeit
+    #%%timeit
     t0 = time()
     for i in ret.index[31:]:
         tmp1 = X.loc['200502':i]
@@ -756,35 +791,47 @@ if __name__ == '__main__':
     time()-t0
     e_ivol.astype(float).to_pickle(data_path+'Expected_iVol_using_OptimalEgarch')
     time() - t0
-@jit
-def cal_ConVol(e,start_):
-    tmp=pd.Series(index=start_.index)
-    for col in e.columns:
-        if len(e.loc[start_[col]:,col]) >= 30:
-            model0 = arch_model(e.loc[start_[col]:,col], mean='zero', vol='egarch', p=1, o=1, q=1).fit(disp='off',
-                                                                                                 show_warning=False)
-            model12=arch_model(e.loc[start_[col]:,col], mean='zero', vol='egarch', p=1, o=1, q=2).fit(disp='off',
-                                                                                                 show_warning=False)
-            model0 = model12 if model0.aic>model12.aic else model0
-            model21=arch_model(e.loc[start_[col]:,col], mean='zero', vol='egarch', p=2, o=1, q=1).fit(disp='off',
-                                                                                                 show_warning=False)
-            model0 = model21 if model0.aic>model21.aic else model0
-            model22=arch_model(e.loc[start_[col]:,col], mean='zero', vol='egarch', p=2, o=1, q=2).fit(disp='off',
-                                                                                                 show_warning=False)
-            tmp[col] = model22.conditional_volatility[-1] if model0.aic>model22.aic else model0.conditional_volatility[-1]
 
-        else:
-            tmp[col]=  np.nan
-    return tmp
+    e_ivol=pd.read_pickle(data_path+'Expected_iVol_using_OptimalEgarch')
+    e_ivol=e_ivol.loc['200708':'201802']
+    describe(e_ivol[e_ivol<25].T).mean(axis=1) # <25 和 <50 似乎都有可能
+    ret0=cal_rev(del_rf=True)
+    tmp=cal_mimick_port1(e_ivol,ret0.loc[e_ivol.index],None,10)
+    long_short=tmp.iloc[:,-1]-tmp.iloc[:,0]
+    long_short.mean()/long_short.std()*np.sqrt(len(long_short))
+    long_short.mean()/NWest_mean(long_short)
+
+    import_pv_index()
+    SMB, HML = cal_SMB_HML(freq='D')
+    ivol = cal_ivol(1, SMB, HML, method='FF')
+    tmp=cal_mimick_port2(e_ivol,ivol.loc[e_ivol.index],ret0.loc[e_ivol.index],None,independent=False)
+    long_short=(tmp.iloc[:,-1]-tmp.iloc[:,0]).unstack()
+    long_short[6]=long_short.mean(axis=1)
+    long_short.mean()/NWest_mean(long_short)
+    long_short.mean()
+
+    # max return from Bali et al(2011)
+    ret=cal_rev(del_rf=True)
+    By=lambda x:x.year*100+x.month
+    max_rtn=rtn.groupby(By).max().iloc[:,:-2]
+    max_rtn.index=pd.to_datetime(max_rtn.index,format='%Y%m')+MonthEnd()
+    max_rtn=max_rtn.loc['200501':'201802']
+    tmp=cal_mimick_port1(max_rtn,ret.loc[max_rtn.index],None,10)
+    long_short = tmp.iloc[:, -1] - tmp.iloc[:, 0]
+    long_short.mean() / long_short.std() * np.sqrt(len(long_short))
+    long_short.mean() / NWest_mean(long_short)
+
+    #import_pv_index()
+    #SMB, HML = cal_SMB_HML(freq='D')
+    #ivol = cal_ivol(1, SMB, HML, method='FF')
+    tmp = cal_mimick_port2(max_rtn, ivol.loc[max_rtn.index], ret.loc[max_rtn.index], None, independent=False)
+    #tmp = cal_mimick_port2(ivol, ivol.loc[ivol.index], ret.loc[ivol.index], None, independent=False)
+    long_short = (tmp.iloc[:, -1] - tmp.iloc[:, 0]).unstack()
+    long_short[6] = long_short.mean(axis=1)
+    long_short.mean() / NWest_mean(long_short)
+    long_short.mean()
 
 
-
-        for col in e.columns:
-            if len(e.loc[start_[col]:,col]) >= 30:
-                e_ivol.loc[i, col] = arch_model(e.loc[start_[col]:,col], mean='zero', vol='egarch', p=1, o=1, q=1).fit(disp='off',
-                                                                                                 show_warning=False).conditional_volatility[-1]
-            else:
-                e_ivol.loc[i, col] = np.nan
     time()-t0
     (~e_ivol.loc[i].isnull()).sum()
 %timeit e.loc[start_[col]:, col]
