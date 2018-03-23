@@ -8,12 +8,12 @@ from time import time
 from pandas.tseries.offsets import MonthEnd
 from dateutil.parser import parse
 #import matplotlib.pyplot as plt
-data_path ='/Users/harbes/data/NewData/'#'E:/data/NewData/'  #
+data_path ='E:/data/NewData/'  #'/Users/harbes/data/NewData/'#
 def import_pv_index(del_limit_move=True):
     global pv,open_price,close_price,index_ret,rtn,stock_pool,rf
     rf = pd.read_excel(data_path + 'risk_free.xlsx')[2:].set_index(['Clsdt'])
     rf.index = pd.to_datetime(rf.index, format='%Y-%m-%d')
-    pv = pd.read_pickle(data_path + 'PV_datetime')[['adj_close', 'adj_open', 'size_tot','amount']]
+    pv = pd.read_pickle(data_path + 'PV_datetime')[['adj_close', 'adj_open', 'size_tot','size_free','amount']]
     close_price = pv['adj_close'].unstack()
     if del_limit_move:
         filter_ = pd.read_pickle(data_path + 'filtered_data')
@@ -157,6 +157,23 @@ def cal_illiq(periods,save_data=False):
         illiq.to_pickle(data_path+'illiq_'+str(periods)+'M')
     else:
         return illiq
+def cal_turnover(periods):
+    amount_=pv['amount'].unstack()
+    size_free=pv['size_free'].unstack()
+    turnover=amount_/size_free*0.1
+    turnover=turnover[turnover>0.0001]
+    #turnover['Month']=(turnover.index.year-turnover.index[0].year)*12+turnover.index.month
+    By=lambda x:x.year*100+x.month
+    turnover_sum=turnover.groupby(By).sum()
+    turnover_count=turnover.groupby(By).count();turnover_count[turnover_count==0.0]=np.nan
+    tmp=turnover_sum.rolling(periods).sum()/turnover_count.rolling(periods).sum()
+    tmp.index=pd.to_datetime(tmp.index,format='%Y%m')+MonthEnd()
+    return tmp.iloc[periods-1:]
+def cal_MaxRet():
+    By = lambda x: x.year * 100 + x.month
+    max_rtn = rtn.groupby(By).max().iloc[:, :-2]
+    max_rtn.index = pd.to_datetime(max_rtn.index, format='%Y%m') + MonthEnd()
+    return max_rtn.loc['200501':'201802']
 def cal_skew(periods,save_data=False):
     t_skew=pd.DataFrame(index=pd.date_range('20050101','20180301',freq='M'),columns=rtn.columns[:-2])
     for i in range(periods,159):
@@ -711,16 +728,21 @@ if __name__ == '__main__':
     mom=cal_mom(12).shift(1)
     rev=cal_rev().shift(1)
     illiq=cal_illiq(12).shift(1)
+    turnover=cal_turnover(1).shift(1)
+    max_rtn = cal_MaxRet().shift(1)
     skew=cal_skew(12).shift(1)
     coskew=cal_coskew(12).shift(1)
     iskew=cal_iskew(12,method='FF').shift(1)
     ret=cal_rev(del_rf=True)
     periods=size['200601':'201802'].index
-    columns_ = ['ivol', 'beta','size','BM','illiq']  #columns_=['beta','size','BM','ivol','mom','rev','illiq','skew','coskew','iskew'] #
+    columns_ = ['beta', 'size', 'BM', 'ivol', 'mom', 'rev', 'illiq', 'turnover','max_rtn',  'skew', 'coskew',
+                'iskew']  ##
+    #columns_ = ['ivol', 'beta', 'size', 'BM', 'rev', 'max_rtn',
+    #            'iskew']  #
     params=pd.DataFrame(index=periods,columns=['const']+columns_)
     rsqurared_adj=pd.DataFrame(index=params.index,columns=['R2'])
     for t in periods:
-        X=pd.DataFrame({'beta':beta.loc[t],'size':size.loc[t],'BM':BM.loc[t],'ret':ret.loc[t],'ivol':ivol.loc[t],'mom':mom.loc[t],'rev':rev.loc[t],'illiq':illiq.loc[t],'skew':skew.loc[t],'coskew':coskew.loc[t],'iskew':iskew.loc[t]})[columns_+['ret']]
+        X=pd.DataFrame({'beta':beta.loc[t],'size':size.loc[t],'BM':BM.loc[t],'ret':ret.loc[t],'ivol':ivol.loc[t],'mom':mom.loc[t],'rev':rev.loc[t],'illiq':illiq.loc[t],'turnover':turnover.loc[t],'max_rtn':max_rtn.loc[t],'skew':skew.loc[t],'coskew':coskew.loc[t],'iskew':iskew.loc[t]})[columns_+['ret']]
         X=sm.add_constant(X).dropna()
         model_fit=sm.OLS(X.iloc[:,-1],X.iloc[:,:-1]).fit()
         params.loc[t]=model_fit.params
@@ -810,12 +832,9 @@ if __name__ == '__main__':
     long_short.mean()/NWest_mean(long_short)
     long_short.mean()
 
-    # max return from Bali et al(2011)
+    # max return from Bali et al(2012)
     ret=cal_rev(del_rf=True)
-    By=lambda x:x.year*100+x.month
-    max_rtn=rtn.groupby(By).max().iloc[:,:-2]
-    max_rtn.index=pd.to_datetime(max_rtn.index,format='%Y%m')+MonthEnd()
-    max_rtn=max_rtn.loc['200501':'201802']
+    max_rtn=cal_MaxRet()
     tmp=cal_mimick_port1(max_rtn,ret.loc[max_rtn.index],None,10)
     long_short = tmp.iloc[:, -1] - tmp.iloc[:, 0]
     long_short.mean() / long_short.std() * np.sqrt(len(long_short))
@@ -823,13 +842,43 @@ if __name__ == '__main__':
 
     #import_pv_index()
     #SMB, HML = cal_SMB_HML(freq='D')
-    #ivol = cal_ivol(1, SMB, HML, method='FF')
+    ivol = cal_ivol(1, SMB, HML, method='FF')
     tmp = cal_mimick_port2(max_rtn, ivol.loc[max_rtn.index], ret.loc[max_rtn.index], None, independent=False)
     #tmp = cal_mimick_port2(ivol, ivol.loc[ivol.index], ret.loc[ivol.index], None, independent=False)
     long_short = (tmp.iloc[:, -1] - tmp.iloc[:, 0]).unstack()
     long_short[6] = long_short.mean(axis=1)
     long_short.mean() / NWest_mean(long_short)
     long_short.mean()
+
+    # turnover
+    import_pv_index()
+    ret = cal_rev(del_rf=True)
+    turnover=cal_turnover(1)
+    turnover = turnover #.loc['200501':'201802']
+    tmp = cal_mimick_port1(turnover, ret.loc[turnover .index], None, 10)
+    long_short = tmp.iloc[:, -1] - tmp.iloc[:, 0]
+    long_short.mean(axis=0) / long_short.std(axis=0) * np.sqrt(len(long_short))
+    long_short.mean() / NWest_mean(long_short)
+
+
+    #SMB, HML = cal_SMB_HML(freq='D')
+    SMB_m, HML_m = cal_SMB_HML(freq='M')
+    fSMB = SMB_m.iloc[:, 0] - SMB_m.iloc[:, -1]
+    fHML = HML_m.iloc[:, 0] - HML_m.iloc[:, -1]
+    index_ret_m = cal_index_ret(freq='M')
+    ivol = cal_ivol(1, SMB, HML, method='FF')
+    tmp = cal_mimick_port2(turnover , ivol.loc[turnover .index], ret.loc[turnover .index], None, independent=False)
+    long_short = (tmp.iloc[:, -1] - tmp.iloc[:, 0]).unstack()
+    long_short[6] = long_short.mean(axis=1)
+    long_short.mean() / NWest_mean(long_short)
+    long_short.mean()
+    FF_alpha = pd.Series(index=long_short.columns)
+    FF_t = pd.Series(index=FF_alpha.index)
+    for j in long_short.columns:
+        FF_alpha.loc[j], se = cal_FF_alpha(long_short[ j], 12, index_ret_m, fSMB, fHML)
+        FF_t.loc[j] = FF_alpha.loc[j] / se
+    FF_t
+
 
 
     time()-t0
