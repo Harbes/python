@@ -7,8 +7,10 @@ import numpy as np
 from time import time
 from pandas.tseries.offsets import MonthEnd
 from dateutil.parser import parse
+import warnings
+warnings.filterwarnings("ignore")
 #import matplotlib.pyplot as plt
-data_path ='E:/data/NewData/'  #'/Users/harbes/data/NewData/'#
+data_path ='/Users/harbes/data/NewData/'#'E:/data/NewData/'  #
 def import_pv_index(del_limit_move=True):
     global pv,open_price,close_price,index_ret,rtn,stock_pool,rf
     rf = pd.read_excel(data_path + 'risk_free.xlsx')[2:].set_index(['Clsdt'])
@@ -752,11 +754,33 @@ if __name__ == '__main__':
     rsqurared_adj.mean()
 
 
+    # autocorrelation of ivol
+    import_pv_index()
+    SMB, HML = cal_SMB_HML(freq='D')
+    ivol = cal_ivol(1, SMB, HML, method='CAPM')
+    ivol_demean=ivol-ivol.mean()
+    #ivol_demean=np.log(ivol/ivol.shift(1));ivol_demean=ivol_demean-ivol_demean.mean()
+    lag = 6;
+    acf=(ivol_demean*ivol_demean.shift(lag)).mean()/ivol_demean.std();acf.mean()
+    import statsmodels.api as sm
+    from scipy.stats import norm
+    d_ivol=ivol-ivol.shift(1)
+    t_values=pd.Series(index=ivol.columns)
+    for j in ivol.columns:
+        YX=pd.concat((ivol[j].shift(1),d_ivol[j].shift(1),d_ivol[j].shift(2),d_ivol[j].shift(3),d_ivol[j]),axis=1)
+        YX=sm.add_constant(YX).dropna()
+        if len(YX)<30:
+            t_values.loc[j]=np.nan
+        else:
+            t_values.loc[j]=sm.OLS(YX.iloc[:,-1],YX.iloc[:,:-1]).fit().tvalues.iloc[1]
+    t_values=t_values.dropna()
+    (norm.cdf(t_values)<0.01).mean()
+    adfuller(ivol.iloc[:,0])
     # conditional volatility from EGARCH
     from arch import arch_model
     from time import time
     from numba import jit
-    import_pv_index(del_limit_move=False)
+    #import_pv_index(del_limit_move=False)
     SMB_m,HML_m=cal_SMB_HML(freq='M')
     fSMB = SMB_m.iloc[:, 0] - SMB_m.iloc[:, -1]
     fHML = HML_m.iloc[:, 0] - HML_m.iloc[:, -1]
@@ -792,8 +816,6 @@ if __name__ == '__main__':
                     -1]
             else:
                 e_ivol.loc[i, col] = np.nan
-
-
     X=pd.DataFrame({'index':index_ret_m,'SMB':fSMB,'HML':fHML})[['index','SMB','HML']]
     e_ivol=pd.DataFrame(index=ret.index,columns=ret.columns)
     #%%timeit
@@ -814,9 +836,10 @@ if __name__ == '__main__':
     e_ivol.astype(float).to_pickle(data_path+'Expected_iVol_using_OptimalEgarch')
     time() - t0
 
+
     e_ivol=pd.read_pickle(data_path+'Expected_iVol_using_OptimalEgarch')
     e_ivol=e_ivol.loc['200708':'201802']
-    describe(e_ivol[e_ivol<25].T).mean(axis=1) # <25 和 <50 似乎都有可能
+    describe(e_ivol[e_ivol<100.0].T).mean(axis=1) # <25 和 <50 似乎都有可能
     ret0=cal_rev(del_rf=True)
     tmp=cal_mimick_port1(e_ivol,ret0.loc[e_ivol.index],None,10)
     long_short=tmp.iloc[:,-1]-tmp.iloc[:,0]

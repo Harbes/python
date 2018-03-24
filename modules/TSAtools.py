@@ -19,7 +19,7 @@ def acovf(arr,lag):
     :param lag:
     :return:
     '''
-    return (arr[lag:len(arr)] - np.mean(arr)) @ (arr[0:len(arr)-lag] - np.mean(arr))/(len(arr)-lag)
+    return ((arr[lag:len(arr)] - np.mean(arr))*(arr[0:len(arr)-lag] - np.mean(arr))).namean()
 def acfs(arr,lags,LBq=False,alpha=None):
     return tsa.stattools.acf(arr,nlags=lags,qstat=LBq,alpha=alpha)
 def pacfs(arr,lags,alpha=None):
