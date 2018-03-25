@@ -10,7 +10,7 @@ from dateutil.parser import parse
 import warnings
 warnings.filterwarnings("ignore")
 #import matplotlib.pyplot as plt
-data_path ='/Users/harbes/data/NewData/'#'E:/data/NewData/'  #
+data_path ='E:/data/NewData/'  #'/Users/harbes/data/NewData/'#
 def import_pv_index(del_limit_move=True):
     global pv,open_price,close_price,index_ret,rtn,stock_pool,rf
     rf = pd.read_excel(data_path + 'risk_free.xlsx')[2:].set_index(['Clsdt'])
@@ -735,16 +735,17 @@ if __name__ == '__main__':
     skew=cal_skew(12).shift(1)
     coskew=cal_coskew(12).shift(1)
     iskew=cal_iskew(12,method='FF').shift(1)
+    e_ivol = pd.read_pickle(data_path + 'Expected_iVol_using_OptimalEgarch').shift(1)
     ret=cal_rev(del_rf=True)
-    periods=size['200601':'201802'].index
-    columns_ = ['beta', 'size', 'BM', 'ivol', 'mom', 'rev', 'illiq', 'turnover','max_rtn',  'skew', 'coskew',
-                'iskew']  ##
-    #columns_ = ['ivol', 'beta', 'size', 'BM', 'rev', 'max_rtn',
-    #            'iskew']  #
+    periods=size['2006':'201802'].index
+    #columns_ = ['beta', 'size', 'BM', 'ivol', 'mom', 'rev', 'turnover','max_rtn',  'skew', 'coskew',
+    #            'iskew','e_ivol']  ##
+    columns_ = [ 'turnover','ivol','beta', 'size', 'BM', 'rev', 'illiq', #
+                'coskew']  #
     params=pd.DataFrame(index=periods,columns=['const']+columns_)
     rsqurared_adj=pd.DataFrame(index=params.index,columns=['R2'])
     for t in periods:
-        X=pd.DataFrame({'beta':beta.loc[t],'size':size.loc[t],'BM':BM.loc[t],'ret':ret.loc[t],'ivol':ivol.loc[t],'mom':mom.loc[t],'rev':rev.loc[t],'illiq':illiq.loc[t],'turnover':turnover.loc[t],'max_rtn':max_rtn.loc[t],'skew':skew.loc[t],'coskew':coskew.loc[t],'iskew':iskew.loc[t]})[columns_+['ret']]
+        X=pd.DataFrame({'beta':beta.loc[t],'size':size.loc[t],'BM':BM.loc[t],'ret':ret.loc[t],'ivol':ivol.loc[t],'mom':mom.loc[t],'rev':rev.loc[t],'illiq':illiq.loc[t],'turnover':turnover.loc[t],'max_rtn':max_rtn.loc[t],'skew':skew.loc[t],'coskew':coskew.loc[t],'iskew':iskew.loc[t],'e_ivol':e_ivol.loc[t]})[columns_+['ret']]
         X=sm.add_constant(X).dropna()
         model_fit=sm.OLS(X.iloc[:,-1],X.iloc[:,:-1]).fit()
         params.loc[t]=model_fit.params
@@ -752,6 +753,7 @@ if __name__ == '__main__':
     params.mean()
     params.mean()/NWest_mean(params)
     rsqurared_adj.mean()
+    del beta,size,BM,ivol,mom,rev,illiq,turnover,max_rtn,skew,coskew,iskew,e_ivol
 
 
     # autocorrelation of ivol
@@ -760,7 +762,7 @@ if __name__ == '__main__':
     ivol = cal_ivol(1, SMB, HML, method='CAPM')
     ivol_demean=ivol-ivol.mean()
     #ivol_demean=np.log(ivol/ivol.shift(1));ivol_demean=ivol_demean-ivol_demean.mean()
-    lag = 6;
+    lag = 1
     acf=(ivol_demean*ivol_demean.shift(lag)).mean()/ivol_demean.std();acf.mean()
     import statsmodels.api as sm
     from scipy.stats import norm
@@ -840,48 +842,168 @@ if __name__ == '__main__':
     e_ivol=pd.read_pickle(data_path+'Expected_iVol_using_OptimalEgarch')
     e_ivol=e_ivol.loc['200708':'201802']
     describe(e_ivol[e_ivol<100.0].T).mean(axis=1) # <25 和 <50 似乎都有可能
-    ret0=cal_rev(del_rf=True)
-    tmp=cal_mimick_port1(e_ivol,ret0.loc[e_ivol.index],None,10)
-    long_short=tmp.iloc[:,-1]-tmp.iloc[:,0]
-    long_short.mean()/long_short.std()*np.sqrt(len(long_short))
-    long_short.mean()/NWest_mean(long_short)
-
+    # correlation between ivol and
     import_pv_index()
     SMB, HML = cal_SMB_HML(freq='D')
-    ivol = cal_ivol(1, SMB, HML, method='FF')
-    tmp=cal_mimick_port2(e_ivol,ivol.loc[e_ivol.index],ret0.loc[e_ivol.index],None,independent=False)
-    long_short=(tmp.iloc[:,-1]-tmp.iloc[:,0]).unstack()
-    long_short[6]=long_short.mean(axis=1)
+    SMB_m, HML_m = cal_SMB_HML(freq='M')
+    index_ret_m = cal_index_ret(freq='M')
+    fSMB = SMB_m.iloc[:, 0] - SMB_m.iloc[:, -1]
+    fHML = HML_m.iloc[:, 0] - HML_m.iloc[:, -1]
+    ret = cal_rev(del_rf=True)
+    start_ = parse('20071201')
+    end_ = parse('20180228')
+    ivol_1M=cal_ivol(1,SMB,HML).stack()
+    ivol_3M=cal_ivol(3,SMB,HML).stack()
+    ivol_6M = cal_ivol(6, SMB, HML).stack()
+    ivol_12M = cal_ivol(12, SMB, HML).stack()
+    ivol_1Y=cal_ivol_year(12,ret,index_ret_m,SMB_m,HML_m).stack()
+    ivol_2Y = cal_ivol_year(24, ret, index_ret_m, SMB_m, HML_m).stack()
+    ivol_3Y = cal_ivol_year(36, ret, index_ret_m, SMB_m, HML_m).stack()
+    ivol_1M.name = 'ivol_FF_1M'
+    ivol_3M.name = 'ivol_FF_3M'
+    ivol_6M.name = 'ivol_FF_6M'
+    ivol_12M.name = 'ivol_FF_12M'
+    ivol_1Y.name = 'ivol_FF_1Y'
+    ivol_2Y.name = 'ivol_FF_2Y'
+    ivol_3Y.name = 'ivol_FF_3Y'
+    tmp=pd.concat([ivol_1M,ivol_3M,ivol_6M,ivol_12M,ivol_1Y,ivol_2Y,ivol_3Y,e_ivol.stack()],axis=1);tmp.head()
+    corr_ = tmp.loc[start_:end_].groupby(level=0).corr('pearson').groupby(level=1).mean()  # pearson # spearman
+    corr_ = corr_.loc[corr_.columns];corr_
+    corr_.to_csv(data_path+'pearson_corr_between_ivol_and_eivol.csv')
+
+    size=cal_size(freq='M')
+    ret=cal_rev(del_rf=True)
+    tmp=cal_mimick_port1(e_ivol,ret.loc[e_ivol.index],size,10)
+    long_short=tmp.copy()
+    long_short[11]=tmp.iloc[:,-1]-tmp.iloc[:,0]
+    long_short.mean()/long_short.std()*np.sqrt(len(long_short))
     long_short.mean()/NWest_mean(long_short)
     long_short.mean()
+    a,se=cal_FF_alpha(long_short[11.0],36,index_ret_m,fSMB,fHML)
+    a/se
+    a
 
-    # max return from Bali et al(2012)
-    ret=cal_rev(del_rf=True)
-    max_rtn=cal_MaxRet()
-    tmp=cal_mimick_port1(max_rtn,ret.loc[max_rtn.index],None,10)
-    long_short = tmp.iloc[:, -1] - tmp.iloc[:, 0]
-    long_short.mean() / long_short.std() * np.sqrt(len(long_short))
+    #import_pv_index()
+    #SMB, HML = cal_SMB_HML(freq='D')
+    #ivol = cal_ivol(1, SMB, HML, method='FF')
+    tmp=cal_mimick_port2(e_ivol,ivol.loc[e_ivol.index],ret.loc[e_ivol.index],size,independent=False)
+    long_short=(tmp.iloc[:,-1]-tmp.iloc[:,0]).unstack()
+    long_short[6]=long_short.mean(axis=1)
+    long_short.mean()
+    long_short.mean()/NWest_mean(long_short)
+
+    FF_alpha=pd.Series(index=long_short.columns)
+    FF_tvalue=pd.Series(index=long_short.columns)
+    for j in long_short.columns:
+        FF_alpha.loc[j], se = cal_FF_alpha(long_short[j], 36, index_ret_m, fSMB, fHML)
+        FF_tvalue.loc[j]=FF_alpha.loc[j]/se
+    FF_alpha
+    FF_tvalue
+
+
+
+
+    # max return from Bali et al(2011)
+    import_pv_index()
+    SMB, HML = cal_SMB_HML(freq='D')
+    SMB_m, HML_m = cal_SMB_HML(freq='M')
+    index_ret_m = cal_index_ret(freq='M')
+    fSMB = SMB_m.iloc[:, 0] - SMB_m.iloc[:, -1]
+    fHML = HML_m.iloc[:, 0] - HML_m.iloc[:, -1]
+    ret = cal_rev(del_rf=True)
+    start_ = parse('20071201')
+    end_ = parse('20180228')
+    ivol_1M=cal_ivol(1,SMB,HML).stack()
+    ivol_3M=cal_ivol(3,SMB,HML).stack()
+    ivol_6M = cal_ivol(6, SMB, HML).stack()
+    ivol_12M = cal_ivol(12, SMB, HML).stack()
+    ivol_1Y=cal_ivol_year(12,ret,index_ret_m,SMB_m,HML_m).stack()
+    ivol_2Y = cal_ivol_year(24, ret, index_ret_m, SMB_m, HML_m).stack()
+    ivol_3Y = cal_ivol_year(36, ret, index_ret_m, SMB_m, HML_m).stack()
+    ivol_1M.name = 'ivol_FF_1M'
+    ivol_3M.name = 'ivol_FF_3M'
+    ivol_6M.name = 'ivol_FF_6M'
+    ivol_12M.name = 'ivol_FF_12M'
+    ivol_1Y.name = 'ivol_FF_1Y'
+    ivol_2Y.name = 'ivol_FF_2Y'
+    ivol_3Y.name = 'ivol_FF_3Y'
+    max_rtn = cal_MaxRet()
+    tmp=pd.concat([ivol_1M,ivol_3M,ivol_6M,ivol_12M,ivol_1Y,ivol_2Y,ivol_3Y,max_rtn.stack()],axis=1);tmp.head()
+    corr_ = tmp.loc[start_:end_].groupby(level=0).corr('spearman').groupby(level=1).mean()  # pearson # spearman
+    corr_ = corr_.loc[corr_.columns];
+    corr_
+    corr_.to_csv(data_path + 'spearman_corr_between_ivol_and_Max.csv')
+
+    size=cal_size(freq='M')
+    long_short=cal_mimick_port1(max_rtn,ret.loc[max_rtn.index],size,10)
+    long_short[11] = long_short.iloc[:, -1] -long_short.iloc[:, 0]
+    #long_short.mean() / long_short.std() * np.sqrt(len(long_short))
+    long_short.mean().values
     long_short.mean() / NWest_mean(long_short)
+    a, se = cal_FF_alpha(long_short[11.0], 36, index_ret_m, fSMB, fHML)
+    a / se
+    a
 
     #import_pv_index()
     #SMB, HML = cal_SMB_HML(freq='D')
     ivol = cal_ivol(1, SMB, HML, method='FF')
-    tmp = cal_mimick_port2(max_rtn, ivol.loc[max_rtn.index], ret.loc[max_rtn.index], None, independent=False)
+    tmp = cal_mimick_port2(max_rtn, ivol.loc[max_rtn.index], ret.loc[max_rtn.index],size, independent=False)
     #tmp = cal_mimick_port2(ivol, ivol.loc[ivol.index], ret.loc[ivol.index], None, independent=False)
     long_short = (tmp.iloc[:, -1] - tmp.iloc[:, 0]).unstack()
     long_short[6] = long_short.mean(axis=1)
-    long_short.mean() / NWest_mean(long_short)
     long_short.mean()
+    long_short.mean() / NWest_mean(long_short)
+    FF_alpha = pd.Series(index=long_short.columns)
+    FF_tvalue = pd.Series(index=long_short.columns)
+    for j in long_short.columns:
+        FF_alpha.loc[j], se = cal_FF_alpha(long_short[j], 36, index_ret_m, fSMB, fHML)
+        FF_tvalue.loc[j] = FF_alpha.loc[j] / se
+    FF_alpha
+    FF_tvalue
+
 
     # turnover
     import_pv_index()
+    turnover = cal_turnover(1)
+    SMB, HML = cal_SMB_HML(freq='D')
+    SMB_m, HML_m = cal_SMB_HML(freq='M')
+    index_ret_m = cal_index_ret(freq='M')
+    fSMB = SMB_m.iloc[:, 0] - SMB_m.iloc[:, -1]
+    fHML = HML_m.iloc[:, 0] - HML_m.iloc[:, -1]
     ret = cal_rev(del_rf=True)
-    turnover=cal_turnover(1)
-    turnover = turnover #.loc['200501':'201802']
-    tmp = cal_mimick_port1(turnover, ret.loc[turnover .index], None, 10)
-    long_short = tmp.iloc[:, -1] - tmp.iloc[:, 0]
-    long_short.mean(axis=0) / long_short.std(axis=0) * np.sqrt(len(long_short))
+    start_ = parse('20071201')
+    end_ = parse('20180228')
+    ivol_1M = cal_ivol(1, SMB, HML).stack()
+    ivol_3M = cal_ivol(3, SMB, HML).stack()
+    ivol_6M = cal_ivol(6, SMB, HML).stack()
+    ivol_12M = cal_ivol(12, SMB, HML).stack()
+    ivol_1Y = cal_ivol_year(12, ret, index_ret_m, SMB_m, HML_m).stack()
+    ivol_2Y = cal_ivol_year(24, ret, index_ret_m, SMB_m, HML_m).stack()
+    ivol_3Y = cal_ivol_year(36, ret, index_ret_m, SMB_m, HML_m).stack()
+    ivol_1M.name = 'ivol_FF_1M'
+    ivol_3M.name = 'ivol_FF_3M'
+    ivol_6M.name = 'ivol_FF_6M'
+    ivol_12M.name = 'ivol_FF_12M'
+    ivol_1Y.name = 'ivol_FF_1Y'
+    ivol_2Y.name = 'ivol_FF_2Y'
+    ivol_3Y.name = 'ivol_FF_3Y'
+    tmp = pd.concat([ivol_1M, ivol_3M, ivol_6M, ivol_12M, ivol_1Y, ivol_2Y, ivol_3Y, turnover.stack()], axis=1);
+    tmp.head()
+    corr_ = tmp.loc[start_:end_].groupby(level=0).corr('pearson').groupby(level=1).mean()  # pearson # spearman
+    corr_ = corr_.loc[corr_.columns];
+    corr_
+    corr_.to_csv(data_path + 'pearson_corr_between_ivol_and_turnover.csv')
+
+    #turnover = turnover #.loc['200501':'201802']
+    size=cal_size(freq='M')
+    ret=cal_rev(del_rf=True)
+    long_short = cal_mimick_port1(turnover, ret.loc[turnover .index], size, 10)
+    long_short[11] = long_short.iloc[:, -1] - long_short.iloc[:, 0]
+    long_short.mean()
     long_short.mean() / NWest_mean(long_short)
+    a, se = cal_FF_alpha(long_short[11.0], 36, index_ret_m, fSMB, fHML)
+    a / se
+    a
 
 
     #SMB, HML = cal_SMB_HML(freq='D')
@@ -890,16 +1012,18 @@ if __name__ == '__main__':
     fHML = HML_m.iloc[:, 0] - HML_m.iloc[:, -1]
     index_ret_m = cal_index_ret(freq='M')
     ivol = cal_ivol(1, SMB, HML, method='FF')
-    tmp = cal_mimick_port2(turnover , ivol.loc[turnover .index], ret.loc[turnover .index], None, independent=False)
+    tmp = cal_mimick_port2(turnover , ivol.loc[turnover.index], ret.loc[turnover.index], size.shift(1), independent=False)
     long_short = (tmp.iloc[:, -1] - tmp.iloc[:, 0]).unstack()
     long_short[6] = long_short.mean(axis=1)
-    long_short.mean() / NWest_mean(long_short)
     long_short.mean()
+    long_short.mean() / NWest_mean(long_short)
+
     FF_alpha = pd.Series(index=long_short.columns)
     FF_t = pd.Series(index=FF_alpha.index)
     for j in long_short.columns:
         FF_alpha.loc[j], se = cal_FF_alpha(long_short[ j], 12, index_ret_m, fSMB, fHML)
         FF_t.loc[j] = FF_alpha.loc[j] / se
+    FF_alpha
     FF_t
 
 
