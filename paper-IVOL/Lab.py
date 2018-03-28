@@ -120,7 +120,7 @@ def cal_mom(periods,save_data=False):
     GroupBy = lambda x: x.year * 100 + x.month
     cls=close_price.groupby(GroupBy).nth(-1)
     opn=open_price.groupby(GroupBy).nth(0)
-    mom=(cls.shift(1)-opn.shift(periods-1))/opn.shift(periods-1)*100
+    mom=(cls.shift(1)-opn.shift(periods-1))/opn.shift(periods-1)*100.0
     mom.index = pd.to_datetime(mom.index.astype(str), format='%Y%m')+MonthEnd()
     if save_data:
         mom.to_pickle(data_path+'Mom_'+str(periods)+'M')
@@ -308,21 +308,40 @@ def cal_ivol_year(periods,ret,index_ret,SMB,HML,method='CAPM'):
             ivol.iloc[i - 1] = (tmp2 - tmp1 @ beta_tmp).std()
     ivol = ivol.astype(float) * np.sqrt(12 / periods)
     return ivol
-def cal_SMB_HML(freq='M',group_num=10,weight=False):
-    size = cal_size(freq=freq)
-    BM = cal_BM(size,freq=freq)
-    stock_pool=BM.columns&size.columns
-    size=size[stock_pool]
-    BM=BM[stock_pool]
+def cal_SMB_HML(freq='M'):
+    indi1 = cal_size(freq=freq)
+    indi2 = cal_BM(indi1,freq=freq)
+    stock_pool=indi1.columns&indi2.columns
+    stock_date=indi1.index&indi2.index
+    indi1=indi1.loc[stock_date,stock_pool]
+    indi2=indi2.loc[stock_date,stock_pool]
     if freq=='M':
-        ret = cal_rev()
-        ret = ret[ret!=0][stock_pool].sub(rf['Nrrmtdt'][ret.index], axis=0).astype(float)
+        ret = cal_rev(del_rf=True)
+        #ret = ret[ret!=0][stock_pool].sub(rf['Nrrmtdt'][ret.index], axis=0).astype(float)
     else:
         ret = rtn.iloc[:,:-2][stock_pool]
-    if weight:
-        return cal_mimick_port1(size['2005':'2018-02'], ret['2005':'2018-02'], size,group_num),cal_mimick_port1(BM['2005':'2018-02'],ret['2005':'2018-02'],size,group_num)
-    else:
-        return cal_mimick_port1(size['2005':'2018-02'], ret['2005':'2018-02'], None,group_num),cal_mimick_port1(BM['2005':'2018-02'],ret['2005':'2018-02'],None,group_num)
+    percentile1=[0.0,0.5,1.0] # size
+    label_1=('S','B')
+    percentile2=[0.0,0.3,0.7,1.0] # value
+    label_2=('L','M','H')
+    mark_1 = pd.DataFrame([pd.qcut(indi1.iloc[i], q=percentile1, labels=label_1) for i in range(len(indi1) - 1)],
+                          index=indi1.index[1:])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+    mark_2 = pd.DataFrame([pd.qcut(indi2.iloc[i], q=percentile2, labels=label_2) for i in range(len(indi2) - 1)],
+                          index=indi2.index[1:])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+    valid_ = ~(pd.isnull(mark_1+mark_2) | pd.isnull(ret[1:]))  # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
+
+    df = pd.DataFrame()
+    df['rtn'] = ret[valid_].stack()
+    df['ref1'] = mark_1.stack()
+    df['ref2'] = mark_2.stack()
+    tmp = df.groupby(level=0).apply(lambda g: g.groupby(['ref1', 'ref2']).mean()).unstack()
+    tmp.columns = tmp.columns.get_level_values(1)
+    tmp.index.names=('date','ref1')
+    #HML=tmp.loc[(slice(None), 'S'), :].reset_index(level=1,drop=True).sub(tmp.loc[(slice(None), 'B'), :].reset_index(level=1,drop=True))[['L','M','H']]
+    HML=tmp.mean(axis=0,level=0)[['L','M','H']]
+    SMB=tmp.mean(axis=1).unstack()
+    return SMB,HML
+    #    return cal_mimick_port1(size['2005':'2018-02'], ret['2005':'2018-02'], None,group_num),cal_mimick_port1(BM['2005':'2018-02'],ret['2005':'2018-02'],None,group_num)
 def cal_mimick_port1(indi,rtn,weights,group_num):
     '''
     用法：cal_mimick_port(BM['2005':'2017'],rtn['2005':'2017'],None)或者
@@ -677,12 +696,21 @@ if __name__ == '__main__':
     beta = cal_beta(12)
     size = cal_size(freq='M')  # 波动率最小的三组，size很大；ivol后面七组之间的差距不是很大
     BM = cal_BM(size, freq='M').loc[size.index, size.columns]
-    mom = cal_mom(12)
+    mom = cal_mom(6)
     rev = cal_rev()
     illiq = cal_illiq(1)
     skew = cal_skew(1)
     coskew = cal_coskew(12)
     iskew = cal_iskew(1)
+    beta.name = 'beta'
+    size.name = 'size'
+    BM.name = 'BM'
+    mom.name = 'mom'
+    rev.name = 'rev'
+    illiq.name = 'illiq'
+    skew.name = 'skew'
+    coskew.name = 'coskew'
+    iskew.name = 'iskew'
     cha = (ivol, beta, size, BM, mom, rev, illiq, skew, coskew, iskew)
 
     SMB_m, HML_m = cal_SMB_HML(freq='M')
@@ -690,7 +718,7 @@ if __name__ == '__main__':
     fSMB = SMB_m.iloc[:, 0] - SMB_m.iloc[:, -1]
     fHML = HML_m.iloc[:, 0] - HML_m.iloc[:, -1]
     ret=cal_rev(del_rf=True)
-    weights = None  #weights = size.loc['200512':'201802']  #
+    weights = None  #weights = size.shift(1)  #
     W='EW' if weights is None else 'VW'
     independent = False  #independent = True  #
     inde = 'inde' if independent else 'depe'
@@ -700,17 +728,21 @@ if __name__ == '__main__':
     FF_alpha = pd.DataFrame(index=Return_m.index, columns=Return_m.columns)
     FF_t = pd.DataFrame(index=Return_m.index, columns=Return_m.columns)
     for i in range(len(cha)):
+        i=4
         #tmp=cal_mimick_port2(cha[i].loc['200512':'201802'],ivol.loc['200512':'201802'],ret.loc['200512':'201802'],weights,independent=independent)
         #long_short = (tmp.iloc[:, -1] - tmp.iloc[:, 0]).unstack()
         #long_short[6]=long_short.mean(axis=1)
-        tmp=cal_mimick_port1(cha[i].loc['200512':'201802'],ret.loc['200512':'201802'],weights,10)
-        long_short=tmp
-        long_short[len(long_short.columns)+1]=tmp.iloc[:,-1]-tmp.iloc[:,0]
+        long_short=cal_mimick_port1(cha[i].loc['200512':'201802'],ret.loc['200512':'201802'],weights,10)
+        long_short[len(long_short.columns)+1]=long_short.iloc[:,-1]-long_short.iloc[:,0]
         Return_m.iloc[i,:]=long_short.mean()
         Return_t.iloc[i,:]=long_short.mean()/NWest_mean(long_short)
         for j in range(len(long_short.columns)):
-            FF_alpha.iloc[i,j],se=cal_FF_alpha(long_short.iloc[:,j],12,index_ret_m,fSMB,fHML)
+            FF_alpha.iloc[i,j],se=cal_FF_alpha(long_short.iloc[:,j],12,index_ret_m.loc[long_short.index],fSMB.loc[long_short.index],fHML.loc[long_short.index])
             FF_t.iloc[i,j]=FF_alpha.iloc[i,j]/se
+    Return_m
+    Return_t
+    FF_alpha
+    FF_t
     Return_m.to_csv(data_path+'Return_mean_'+W+'_'+inde+'.csv')
     Return_t.to_csv(data_path + 'Return_tValue_'+W+'_'+inde+'.csv')
     FF_alpha.to_csv(data_path+'FF_alpha_'+W+'_'+inde+'.csv')
@@ -1127,3 +1159,18 @@ def garch1(arr,max_iter,init=(0.1,0.4,0.5)):
 from modules.uni_tsa import uni_tsa
 arr=np.random.randn(300)
 %timeit uni_tsa(arr).garch()
+
+
+import matplotlib.pyplot as plt
+x=np.arange(11,201)*0.1
+y1=x
+y2=-x
+y3=-0.5*x
+y4=0.5*x
+plt.plot(x,y1)
+plt.plot(x,y2)
+plt.plot(x,y3)
+plt.plot(x,y4)
+plt.show()
+
+
