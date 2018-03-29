@@ -18,7 +18,7 @@ def _data_path():
     else:
         raise ValueError('These is no such systerm in your work-station')
 
-def _resample_h2l(data,freq='M',n_th=0,by_position=True):
+def _resample_h2l(data,to_freq='M',n_th=0,by_position=True):
     '''
     resample the given data, high freq to low freq, like daily to weekly,monthly
     :param data:
@@ -26,10 +26,11 @@ def _resample_h2l(data,freq='M',n_th=0,by_position=True):
         'M': month
         'W': week
     :param n_th:
+        0,-1,...
     :param by_position:
     :return:
     '''
-    if freq=='M':
+    if to_freq=='M':
         By=lambda x:x.year*100+x.month
     else:
         By=lambda x:x.year*100+x.week
@@ -40,14 +41,14 @@ def _resample_h2l(data,freq='M',n_th=0,by_position=True):
         data=tmp.first()
     else:
         data =tmp.last()
-    if freq=='M':
+    if to_freq=='M':
         data.index=pd.to_datetime(data.index.astype(str),format='%Y%m')+MonthEnd()
     else:
         # 转成每周的固定day，0对应周日，1-6分别对应星期一到星期六
         data.index=pd.to_datetime(data.index.astype(str).str.pad(7,side='right',fillchar='0'),format='%Y%W%w')
     return data
 
-pd.to_datetime(tmp.index.astype(str).str.pad(7,side='right',fillchar='0'),format='%Y%W%w')
+#pd.to_datetime(tmp.index.astype(str).str.pad(7,side='right',fillchar='0'),format='%Y%W%w')
 def import_data(PV_vars=None, BS_vars=None,Rf_freq=None):
     '''
 
@@ -202,18 +203,86 @@ def cal_BM(size=None,freq='M'):
         size=cal_size(freq=freq)
     tmp=import_data(BS_vars=['tot_assets', 'tot_liab'])[1]
     book=tmp['tot_assets']-tmp['tot_liab']
-    book = book.drop(book.index[book.index.duplicated(keep='last')]).unstack().loc[size.index,size.columns] * 1e-8
-    book.index.name = 'trddt'
-    return book[book>0.0]
-def cal_mom(periods,freq='M'):
-    By = lambda x: x.year * 100 + x.month
+    book = book.drop(book.index[book.index.duplicated(keep='last')]).unstack()
+    book = book.resample('D').first().ffill()
+    book=book.loc[size.index,size.columns] * 1e-8
+    BM=book/size
+    return BM[BM>0.0]
 
-    mom=(cls.shift(1)-opn.shift(periods-1))/opn.shift(periods-1)*100.0
-    mom.index = pd.to_datetime(mom.index.astype(str), format='%Y%m')+MonthEnd()
+
+def cal_mom(periods,freq='M',opn=None,cls=None):
+    if opn is None:
+        pv=import_data(PV_vars=['adj_open','adj_close'])[0]
+        opn=pv['adj_open'].unstack()
+        cls=pv['adj_close'].unstack()
+    open_price=_resample_h2l(opn,to_freq=freq,n_th=0,by_position=False).shift(periods-1)
+    close_price=_resample_h2l(cls,to_freq=freq,n_th=-1,by_position=False).shift(1)
+    return ((close_price-open_price)/open_price*100.0).iloc[periods-1:]
+def cal_rev(periods=1,freq='M',opn=None,cls=None):
+    if opn is None:
+        pv=import_data(PV_vars=['adj_open','adj_close'])[0]
+        opn=pv['adj_open'].unstack()
+        cls=pv['adj_close'].unstack()
+    open_price=_resample_h2l(opn,to_freq=freq,n_th=0,by_position=False).shift(periods-1)
+    close_price=_resample_h2l(cls,to_freq=freq,n_th=-1,by_position=False)
+    return ((close_price-open_price)/open_price*100.0).iloc[periods-1:]
+def cal_illiq(periods=12,freq='M'):
+    pv=import_data(PV_vars=['adj_open','adj_close','amount'])[0]
+    amount = pv['amount'].unstack()
+    open_price=pv['adj_open'].unstack()
+    close_price=pv['adj_close'].unstack()
+    illiq_d=1e5*np.abs(close_price - open_price) / open_price / amount
+    if freq=='M':
+        By = lambda x: x.year * 100 + x.month
+    elif freq=='W':
+        By = lambda x: x.year * 100 + x.week
+    illiq_sum = illiq_d.groupby(By).sum()
+    illiq_count = illiq_d.groupby(By).count()
+    illiq_sum=illiq_sum.rolling(periods).sum()
+    illiq_count=illiq_count.rolling(periods).sum()
+    illiq=illiq_sum/illiq_count
+    if freq=='M':
+        illiq.index=pd.to_datetime(illiq.index.astype(str),format='%Y%m')+MonthEnd()
+    elif freq=='W':
+        illiq.index = pd.to_datetime(illiq.index.astype(str).str.pad(7,side='right',fillchar='0'),format='%Y%W%w')
+    return illiq.iloc[periods-1:]
+
+    _sum = 0;
+    _count = 0;
+    for i in range(periods):
+        _sum += rtn_amount_sum.shift(i)
+        _count += rtn_amount_count.shift(i)
+    illiq = _sum / _count
+    illiq.index = pd.to_datetime(illiq.index.astype(str), format='%Y%m') + MonthEnd()
+    illiq.iloc[:periods - 1] = np.nan
     if save_data:
-        mom.to_pickle(data_path+'Mom_'+str(periods)+'M')
+        illiq.to_pickle(data_path + 'illiq_' + str(periods) + 'M')
     else:
-        return mom
+        return illiq
+def cal_turnover(periods,freq='M',amount=None,size_free=None):
+    if amount is None:
+        pv=import_data(PV_vars=['amount','size_free'])[0]
+        amount_=pv['amount'].unstack()
+        size_free=pv['size_free'].unstack()
+    turnover=amount_/size_free*0.1
+    turnover=turnover[turnover>0.0001]
+    if freq=='M':
+        By=lambda x:x.year*100+x.month
+    elif freq=='W':
+        By = lambda x: x.year * 100 + x.week
+    turnover_sum=turnover.groupby(By).sum()
+    turnover_count=turnover.groupby(By).count();turnover_count[turnover_count==0.0]=np.nan
+    turnover=turnover_sum.rolling(periods).sum()/turnover_count.rolling(periods).sum()
+    if freq == 'M':
+        turnover.index = pd.to_datetime(turnover.index.astype(str), format='%Y%m') + MonthEnd()
+    elif freq == 'W':
+        turnover.index = pd.to_datetime(turnover.index.astype(str).str.pad(7, side='right', fillchar='0'), format='%Y%W%w')
+    return turnover.iloc[periods-1:]
+
+
+
+
+
 (tmp2-tmp2.mean()).mul(tmp1-tmp1.mean(),axis=0).mean()
 (tmp2-tmp2.mean()).mul(tmp1-tmp1.mean(),axis=0)
 tmp1.shape
