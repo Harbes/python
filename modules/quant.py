@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from pandas.tseries.offsets import MonthEnd
+from pandas.tseries.offsets import MonthEnd,MonthBegin,Day
 from dateutil.parser import parse
 import sys
 import warnings
@@ -17,10 +17,22 @@ def _data_path():
         return '/home/harbes/data/NewData/'
     else:
         raise ValueError('These is no such systerm in your work-station')
-
+def _GroupBy(freq):
+    if freq=='M':
+        return lambda x:x.year*100+x.month
+    elif freq=='W':
+        return lambda x: x.year * 100 + x.week
+def _GetEndDateList(data,freq):
+    if freq=='M':
+        date_list=data.index.year*100+data.index.month
+        date_list=pd.to_datetime(date_list.astype(str),format='%Y%m')+MonthEnd()
+    elif freq=='W':
+        date_list = data.index.year * 100 + data.index.week
+        date_list=pd.to_datetime(date_list.astype(str).str.pad(7,side='right',fillchar='6'),format='%Y%W%w')
+    return sorted(set(date_list))
 def _resample_h2l(data,to_freq='M',n_th=0,by_position=True):
     '''
-    resample the given data, high freq to low freq, like daily to weekly,monthly
+    resample the given data(high freq to low freq), like daily to weekly or monthly
     :param data:
     :param freq:
         'M': month
@@ -45,7 +57,7 @@ def _resample_h2l(data,to_freq='M',n_th=0,by_position=True):
         data.index=pd.to_datetime(data.index.astype(str),format='%Y%m')+MonthEnd()
     else:
         # 转成每周的固定day，0对应周日，1-6分别对应星期一到星期六
-        data.index=pd.to_datetime(data.index.astype(str).str.pad(7,side='right',fillchar='0'),format='%Y%W%w')
+        data.index=pd.to_datetime(data.index.astype(str).str.pad(7,side='right',fillchar='6'),format='%Y%W%w')
     return data
 
 #pd.to_datetime(tmp.index.astype(str).str.pad(7,side='right',fillchar='0'),format='%Y%W%w')
@@ -193,10 +205,7 @@ def cal_beta(periods,index_ret_d=None,ret_d=None):
 def cal_size(freq='M'):
     size=import_data(PV_vars=['size_tot'])[0].unstack()
     size.columns=size.columns.get_level_values(1)
-    if freq=='M':
-        By=lambda x:x.year*100+x.month
-        size=size.groupby(By).nth(-1)
-        size.index=pd.to_datetime(size.index.astype(str),format='%Y%m')+MonthEnd()
+    size=_resample_h2l(size,to_freq=freq,n_th=-1)
     return size[size>0.0]
 def cal_BM(size=None,freq='M'):
     if size is None:
@@ -208,8 +217,6 @@ def cal_BM(size=None,freq='M'):
     book=book.loc[size.index,size.columns] * 1e-8
     BM=book/size
     return BM[BM>0.0]
-
-
 def cal_mom(periods,freq='M',opn=None,cls=None):
     if opn is None:
         pv=import_data(PV_vars=['adj_open','adj_close'])[0]
@@ -244,7 +251,7 @@ def cal_illiq(periods=12,freq='M'):
     if freq=='M':
         illiq.index=pd.to_datetime(illiq.index.astype(str),format='%Y%m')+MonthEnd()
     elif freq=='W':
-        illiq.index = pd.to_datetime(illiq.index.astype(str).str.pad(7,side='right',fillchar='0'),format='%Y%W%w')
+        illiq.index = pd.to_datetime(illiq.index.astype(str).str.pad(7,side='right',fillchar='6'),format='%Y%W%w')
     return illiq.iloc[periods-1:]
 
     _sum = 0;
@@ -276,13 +283,70 @@ def cal_turnover(periods,freq='M',amount=None,size_free=None):
     if freq == 'M':
         turnover.index = pd.to_datetime(turnover.index.astype(str), format='%Y%m') + MonthEnd()
     elif freq == 'W':
-        turnover.index = pd.to_datetime(turnover.index.astype(str).str.pad(7, side='right', fillchar='0'), format='%Y%W%w')
+        turnover.index = pd.to_datetime(turnover.index.astype(str).str.pad(7, side='right', fillchar='6'), format='%Y%W%w')
     return turnover.iloc[periods-1:]
+def cal_MaxRet(periods=1,freq='M',ret=None):
+    if ret is None:
+        ret=cal_ret(freq='D',del_Rf=False)
+    By=_GroupBy(freq)
+    max_ret = ret.groupby(By).max().rolling(periods).max()
+    if freq == 'M':
+        max_ret.index = pd.to_datetime(max_ret.index.astype(str), format='%Y%m') + MonthEnd()
+    elif freq == 'W':
+        max_ret.index = pd.to_datetime(max_ret.index.astype(str).str.pad(7, side='right', fillchar='6'),
+                                        format='%Y%W%w')
+    return max_ret.iloc[periods-1:]
+def cal_skew(periods,freq='M',ret=None):
+    if ret is None:
+        ret=cal_ret(freq='D')
+    EndDate_list=_GetEndDateList(ret,freq)
+    if freq=='M':
+        return pd.DataFrame((ret.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].skew() for edt in EndDate_list)
+                 , index=EndDate_list)
+    elif freq=='W':
+        return pd.DataFrame((ret.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt].skew() for edt in EndDate_list)
+                 , index=EndDate_list)
+def cal_coskew(periods,save_data=False):
+    coskew = pd.DataFrame(index=pd.date_range('20050101', '20180301', freq='M'), columns=rtn.columns[:-1])
+    index_ret.insert(2, 'index^2', index_ret['pctchange'] ** 2)
+    for i in range(periods,159):
+        tmp1=rtn[(rtn['month'] >= i - periods + 1) & (rtn['month'] <= i)].iloc[:, :-1]
+        tmp2=index_ret[(rtn['month'] >= i - periods + 1) & (rtn['month'] <= i)][['pctchange','index^2']]
+        tmp3=np.linalg.pinv((tmp2-tmp2.mean()).values.T@(tmp2-tmp2.mean()))[1]
+        coskew.iloc[i-1]=tmp3[0]*((tmp2 - tmp2.mean()).values[:,0][:,None] * (tmp1 - tmp1.mean())).sum()\
+                         +tmp3[1]*((tmp2 - tmp2.mean()).values[:,1][:,None] * (tmp1 - tmp1.mean())).sum()
+    index_ret.drop('index^2', axis=1, inplace=True)
+    if save_data:
+        coskew[coskew!=0].astype(float).to_pickle(data_path+'coskew_'+str(periods)+'M')
+    else:
+        return coskew[coskew!=0].astype(float).iloc[:,:-1]
+
+
+
+
+def cal_weekday_ret():
+    pass
+
+
+    if freq=='M':
+        ret['period']=(ret.index.year-ret.index[0].year)*12+ret.index.month
+    elif freq=='W':
+        ret['period'] = (ret.index.year - ret.index[0].year) * 100 + ret.index.week
+
+
+
+    for i in range(periods,159):
+        t_skew.iloc[i-1]=rtn[(rtn['month']>=i-periods+1)&(rtn['month']<=i)].iloc[:,:-2].skew()
+    if save_data:
+        t_skew.astype(float).to_pickle(data_path+'skew_'+str(periods)+'M')
+    else:
+        return t_skew.astype(float)
 
 
 
 
 
+tmp.rolling('1M').std()
 (tmp2-tmp2.mean()).mul(tmp1-tmp1.mean(),axis=0).mean()
 (tmp2-tmp2.mean()).mul(tmp1-tmp1.mean(),axis=0)
 tmp1.shape
