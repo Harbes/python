@@ -18,8 +18,34 @@ def _data_path():
     else:
         raise ValueError('These is no such systerm in your work-station')
 
-def _resample(data,freq='M',by_position=True):
+def _resample_h2l(data,freq='M',n_th=0,by_position=True):
+    '''
+    resample the given data, high freq to low freq
+    :param data:
+    :param freq:
+    :param n_th:
+    :param by_position:
+    :return:
+    '''
+    if freq=='M':
+        By=lambda x:x.year*100+x.month
+    else:
+        By=lambda x:x.year*100+x.week
+    tmp=data.groupby(By)
+    if by_position:
+        data=tmp.nth(n_th)
+    elif n_th:
+        data=tmp.first()
+    else:
+        data =tmp.last()
+    if freq=='M':
+        data.index=pd.to_datetime(data.index.astype(str),format='%Y%m')+MonthEnd()
+    else:
+        # 转成每周的固定day，0对应周日，1-6分别对应星期一到星期六
+        data.index=pd.to_datetime(data.index.astype(str).str.pad(7,side='right',fillchar='0'),format='%Y%W%w')
+    return data
 
+pd.to_datetime(tmp.index.astype(str).str.pad(7,side='right',fillchar='0'),format='%Y%W%w')
 def import_data(PV_vars=None, BS_vars=None,Rf_freq=None):
     '''
 
