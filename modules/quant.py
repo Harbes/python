@@ -17,6 +17,9 @@ def _data_path():
         return '/home/harbes/data/NewData/'
     else:
         raise ValueError('These is no such systerm in your work-station')
+
+def _resample(data,freq='M',by_position=True):
+
 def import_data(PV_vars=None, BS_vars=None,Rf_freq=None):
     '''
 
@@ -77,6 +80,7 @@ def cal_index_ret(freq='M',index_code='399300.SZ',del_Rf=True):
         delete risk-free or not
     :return:
     '''
+    data_path=_data_path()
     index_ret = pd.read_pickle(data_path + 'index_ret')[['index_code', 'trddt', 'opnprc', 'clsprc']]
     index_ret = index_ret[index_ret['index_code'] == index_code][['trddt', 'opnprc', 'clsprc']].set_index('trddt')
     if freq=='M':
@@ -90,14 +94,14 @@ def cal_index_ret(freq='M',index_code='399300.SZ',del_Rf=True):
         index_ret.index = pd.to_datetime(index_ret.index.astype(int).astype(str), format='%Y%m%d')
     index_ret.index.name = 'trddt'
     if del_Rf:
-        *_,Rf=import_data(Rf_freq=freq)
+        Rf=import_data(Rf_freq=freq)[2]
         #index_ret = index_ret.sub(Rf.loc[index_ret.index], axis=0) # 报错，Rf是一个DataFrame，而不是Series
         #index_ret=-Rf.loc[index_ret.index].sub(index_ret,axis=0) # 虽然成功，但是返回的是一个DataFrame，而不是Series
         #index_ret = index_ret.sub(Rf.loc[index_ret.index].iloc[:,0], axis=0)
         index_ret=(index_ret + 100.0) / (Rf.loc[index_ret.index].iloc[:, 0] * 0.01 + 1.0) - 100.0
 
     return index_ret
-def cal_ret(periods=1,freq='M',del_Rf=True):
+def cal_ret(freq='M',periods=1,del_Rf=True):
     # TODO 尚未剔除异常交易数据
     '''
 
@@ -108,7 +112,7 @@ def cal_ret(periods=1,freq='M',del_Rf=True):
     :return:
     '''
     p0 = 'adj_open';p1 = 'adj_close' # price0也可以使用 'adj_pre_close'
-    PV,*_=import_data(PV_vars=[p0,p1])
+    PV=import_data(PV_vars=[p0,p1])[0]
     price0=PV[p0].unstack()
     price1=PV[p1].unstack()
     if freq=='M':
@@ -121,36 +125,85 @@ def cal_ret(periods=1,freq='M',del_Rf=True):
         price0=price0.shift(periods-1)
         ret=(price1-price0)/price0*100.0
     if del_Rf:
-        *_, Rf = import_data(Rf_freq=freq)
+        Rf = import_data(Rf_freq=freq)[2]
         ret = (ret.astype(float) + 100.0).div((Rf.loc[ret.index].iloc[:, 0] * 0.01 + 1.0) ** periods, axis=0) - 100.0
     return ret
 
-
-
+ret_d=cal_ret(freq='D')
+index_ret_d=cal_index_ret(freq='D')
 
 def cal_variables(var_list,start='20050101',end='20180228'):
     pass
 
-def cal_beta(periods,index_ret,ret_d):
+def cal_beta(periods,index_ret_d=None,ret_d=None):
     '''
     calculate the market beta
     :param periods: int{measure periods;number of month}
     :param save_data:
     :return:
     '''
-    beta = pd.DataFrame(index=pd.date_range('20050101', '20180301', freq='M'), columns=rtn.columns[:-1])
-    for i in range(periods, 159):
+    start_='20050101';end_='20180301'
+    if index_ret_d is None or ret_d is None:
+        ret=cal_ret(freq='D')
+        stock_pool=ret.columns
+        beta = pd.DataFrame(index=pd.date_range(start_, end_, freq='M'), columns=stock_pool)
+        ret['index']=cal_index_ret(freq='D')
+    else:
+        ret=ret_d.copy()
+        stock_pool = ret.columns
+        beta = pd.DataFrame(index=pd.date_range(start_, end_, freq='M'), columns=stock_pool)
+        ret['index']=index_ret_d.copy()
+    ret['month']=(ret.index.year-ret.index.year[0])*12+ret.index.month
+    for i in range(periods, ret['month']):
         # 也可以通过cov/var，但是速度较慢
-        tmp1=index_ret['pctchange'][(index_ret['month'] >= i - periods+1) & (index_ret['month'] <= i)]
-        tmp2=rtn.iloc[:, :-1][(i - periods+1 <= rtn['month']) & (rtn['month'] <= i)]
-        beta.iloc[i - 1] = ((tmp1-tmp1.mean()).values[:,None]*(tmp2-tmp2.mean())).sum()/((tmp1-tmp1.mean())**2).sum()
+        tmp1=ret['index'][(ret['month'] >= i - periods+1) & (ret['month'] <= i)]
+        tmp2=ret[stock_pool][(i - periods+1 <= ret['month']) & (ret['month'] <= i)]
+        year_=str(tmp1.index[-1].year);month_=str(tmp1.index[-1].month)
+        beta.loc[year_+'-'+month_] = ((tmp2-tmp2.mean()).mul(tmp1-tmp1.mean(),axis=0).mean()/((tmp1-tmp1.mean())**2).mean())[None,:]
+    return beta[beta!=0]
+def cal_size(freq='M'):
+    size=import_data(PV_vars=['size_tot'])[0].unstack()
+    size.columns=size.columns.get_level_values(1)
+    if freq=='M':
+        By=lambda x:x.year*100+x.month
+        size=size.groupby(By).nth(-1)
+        size.index=pd.to_datetime(size.index.astype(str),format='%Y%m')+MonthEnd()
+    return size[size>0.0]
+def cal_BM(size=None,freq='M'):
+    if size is None:
+        size=cal_size(freq=freq)
+    tmp=import_data(BS_vars=['tot_assets', 'tot_liab'])[1]
+    book=tmp['tot_assets']-tmp['tot_liab']
+    book = book.drop(book.index[book.index.duplicated(keep='last')]).unstack().loc[size.index,size.columns] * 1e-8
+    book.index.name = 'trddt'
+    return book[book>0.0]
+def cal_mom(periods,freq='M'):
+    By = lambda x: x.year * 100 + x.month
+
+    mom=(cls.shift(1)-opn.shift(periods-1))/opn.shift(periods-1)*100.0
+    mom.index = pd.to_datetime(mom.index.astype(str), format='%Y%m')+MonthEnd()
+    if save_data:
+        mom.to_pickle(data_path+'Mom_'+str(periods)+'M')
+    else:
+        return mom
+(tmp2-tmp2.mean()).mul(tmp1-tmp1.mean(),axis=0).mean()
+(tmp2-tmp2.mean()).mul(tmp1-tmp1.mean(),axis=0)
+tmp1.shape
+%timeit ((tmp1-tmp1.mean()).values[:,None]*(tmp2-tmp2.mean())).mean()/tmp1.var()
+%timeit ((tmp1-tmp1.mean()).values[:,None]*(tmp2-tmp2.mean())).mean()/((tmp1-tmp1.mean())**2).mean()
+
     if save_data:
         beta[beta!=0].astype(float).to_pickle(data_path + 'beta_daily_'+str(periods)+'M')
     else:
         return beta[beta!=0].astype(float).iloc[:,:-1] # 剔除 column：index
 
 
-
+import statsmodels.api as sm
+tmp=tmp1.copy()
+tmp=sm.add_constant(tmp)
+tmp['y']=tmp2['000002.SZ']
+tmp=tmp.dropna().astype(float)
+sm.OLS(tmp['y'],tmp[['const','index']]).fit().summary()
 
 
 data_dict={'pv':['']}
