@@ -20,9 +20,11 @@ def _data_path():
 
 def _resample_h2l(data,freq='M',n_th=0,by_position=True):
     '''
-    resample the given data, high freq to low freq
+    resample the given data, high freq to low freq, like daily to weekly,monthly
     :param data:
     :param freq:
+        'M': month
+        'W': week
     :param n_th:
     :param by_position:
     :return:
