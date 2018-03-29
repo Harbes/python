@@ -57,7 +57,7 @@ def cal_book(freq='M'):
     monthly
     :return:
     '''
-    BS = pd.read_pickle(data_path + '/BS')[['fin_year','ann_dt', 'stkcd', 'tot_assets', 'tot_liab']]#
+    BS = pd.read_pickle(data_path + 'BS')[['fin_year','ann_dt', 'stkcd', 'tot_assets', 'tot_liab']]#
     BS=BS[~(BS['ann_dt'].isnull())].set_index(['ann_dt', 'stkcd']).sort_index()
     book = BS['tot_assets'] - BS['tot_liab']
     book = book.drop(book.index[book.index.duplicated(keep='last')]).unstack() * 1e-8

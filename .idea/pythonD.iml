@@ -12,7 +12,7 @@
       <excludeFolder url="file://$MODULE_DIR$/julia-project" />
       <excludeFolder url="file://$MODULE_DIR$/output" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.6" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.6.2 (~/anaconda3/bin/python)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">
