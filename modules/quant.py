@@ -1,12 +1,12 @@
 import pandas as pd
 import numpy as np
-from pandas.tseries.offsets import MonthEnd,Day,YearEnd
-from dateutil.parser import parse
+from pandas.tseries.offsets import MonthEnd,YearEnd,Week,Day
+#from dateutil.parser import parse
 import sys
 import warnings
 warnings.filterwarnings("ignore")
 #data_path ='E:/data/NewData/'  #'/Users/harbes/data/NewData/'#
-data_path=_data_path()
+#data_path=_data_path()
 def _data_path():
     sys_platform=sys.platform
     if sys_platform =='win32':
@@ -24,14 +24,19 @@ def _GroupBy(freq):
         return lambda x: x.year * 100 + x.week
 def _GetEndDateList(data,freq):
     if freq=='M':
-        date_list=data.index.year*100+data.index.month
-        date_list=pd.to_datetime(date_list.astype(str),format='%Y%m')+MonthEnd()
+        date_list=data.index.where(data.index == ((data.index + MonthEnd()) - MonthEnd()),
+                                      data.index + MonthEnd())
+        #date_list=pd.to_datetime(date_list.astype(str),format='%Y%m')+MonthEnd()
     elif freq=='W':
-        date_list = data.index.year * 100 + data.index.week
-        date_list=pd.to_datetime(date_list.astype(str).str.pad(7,side='right',fillchar='6'),format='%Y%W%w')
+        week_day = 5  # 0-6分别对应周一至周日
+        date_list = data.index.where(data.index == ((data.index + Week(weekday=week_day)) - Week()),
+                                      data.index + Week(weekday=week_day))
+
+        #date_list=pd.to_datetime(date_list.astype(str).str.pad(7,side='right',fillchar='6'),format='%Y%W%w')
     elif freq=='Y':
-        date_list = data.index.year
-        date_list = pd.to_datetime(date_list.astype(str), format='%Y') + YearEnd()
+        date_list = data.index.where(data.index == ((data.index + YearEnd()) - YearEnd()),
+                                      data.index + YearEnd())
+        #date_list = pd.to_datetime(date_list.astype(str), format='%Y') + YearEnd()
     return sorted(set(date_list))
 def _resample_h2l(data,to_freq='M',n_th=0,by_position=True):
     '''
@@ -46,28 +51,35 @@ def _resample_h2l(data,to_freq='M',n_th=0,by_position=True):
     :return:
     '''
     if to_freq=='M':
-        By=lambda x:x.year*100+x.month
+        data.index = data.index.where(data.index == ((data.index + MonthEnd()) - MonthEnd()),
+                                      data.index + MonthEnd())
     elif to_freq=='W':
-        By=lambda x:x.year*100+x.week
+        # By=lambda x:x.year*100+x.week # 此种方法转化为周末日期时会出现错误
+        week_day=5 #0-6分别对应周一至周日
+        data.index=data.index.where(data.index==((data.index+Week(weekday=week_day))-Week()),data.index+Week(weekday=week_day))
+
     elif to_freq=='Y':
-        By=lambda x:x.year
+        data.index = data.index.where(data.index == ((data.index + YearEnd()) - YearEnd()),
+                                      data.index + YearEnd())
+    By = lambda x: x
     tmp=data.groupby(By)
+    #data.resample('D',fill_method='pad')
     if by_position:
         data=tmp.nth(n_th)
     elif n_th:
-        data=tmp.first()
+        data=tmp.last()
     else:
-        data =tmp.last()
-    if to_freq=='M':
-        data.index=pd.to_datetime(data.index.astype(str),format='%Y%m')+MonthEnd()
-    elif to_freq=='W':
+        data =tmp.first()
+    #if to_freq=='W':
+    #    data.drop(data.index.duplicated(keep=last),inplace=True)
+    #if to_freq=='M':
+    #    data.index=pd.to_datetime(data.index.astype(str),format='%Y%m')+MonthEnd()
+    #elif to_freq=='W':
         # 转成每周的固定day，0对应周日，1-6分别对应星期一到星期六
-        data.index=pd.to_datetime(data.index.astype(str).str.pad(7,side='right',fillchar='6'),format='%Y%W%w')
-    elif to_freq=='Y':
-        data.index=pd.to_datetime(data.index.astype(str),format='%Y')+YearEnd()
+        # data.index=pd.to_datetime(data.index.astype(str).str.pad(7,side='right',fillchar='6'),format='%Y%W%w')
+    #elif to_freq=='Y':
+    #    data.index=pd.to_datetime(data.index.astype(str),format='%Y')+YearEnd()
     return data
-
-#pd.to_datetime(tmp.index.astype(str).str.pad(7,side='right',fillchar='0'),format='%Y%W%w')
 def import_data(PV_vars=None, BS_vars=None,Rf_freq=None):
     '''
 
@@ -115,8 +127,6 @@ def import_data(PV_vars=None, BS_vars=None,Rf_freq=None):
     else:
         Rf=None
     return PV,BS,Rf
-
-#np.log(1.0+Rf['Nrrdata'].astype(float)*0.01)/np.log(Rf['Nrrmtdt'].astype(float)*0.01+1.0)
 def cal_index_ret(freq='M',index_code='399300.SZ',del_Rf=True):
     '''
 
@@ -202,8 +212,6 @@ def cal_SMB_HML(freq='M',size=None,BM=None,percentile1=None,percentile2=None,ind
     HML = tmp.mean(axis=0, level=0)
     SMB = tmp.mean(axis=1).unstack()
     return SMB.iloc[:,-1]-SMB.iloc[:,0], HML.iloc[:,-1]-HML.iloc[:,0]
-
-
 def cal_beta(periods,freq='M',index_ret_d=None,ret_d=None):
     if index_ret_d is None:
         index_ret_d=cal_index_ret(freq='D')
@@ -361,7 +369,7 @@ def cal_coskew(periods,freq='M',ret_d=None,index_ret_d=None):
             tmp3=np.linalg.pinv(tmp1.cov())[1]
             coskew.loc[edt]=tmp3[0]*tmp2.mul(tmp1['index'],axis=0).mean()+tmp3[1]*tmp2.mul(tmp1['index^2'],axis=0).mean()
     return coskew.iloc[periods-1:].astype(float)
-def cal_iskew(periods,freq='M',method='CAPM',ret=None,index_ret=None,SMB=None,HML=None):
+def cal_iskew(periods,freq='M',method='',ret=None,index_ret=None,SMB=None,HML=None):
     if ret is None:
         ret=cal_ret(freq=freq)
         index_ret=cal_index_ret(freq=freq)
@@ -409,14 +417,76 @@ def cal_iskew(periods,freq='M',method='CAPM',ret=None,index_ret=None,SMB=None,HM
                     tmp1[ret.columns].mul(tmp1['HML'], axis=0).mean()
                 ])).skew()
     return iskew.iloc[periods-1:].astype(float)
-from time import time
-t0=time()
-iskew=cal_iskew(52,freq='W',method='FF')
-print(time()-t0)
-
-
-
-
+def cal_mimick_port1(indi,freq='M',ret=None,weights=None,percentile=None):
+    if percentile is None:
+        percentile=np.arange(0.0,1.01,0.1)
+    label_=[i for i in range(1,len(percentile))]
+    if ret is None:
+        ret=cal_ret(freq=freq)
+    if len(indi)!=len(ret):
+        raise ValueError('the index of Indicator does not match the return data!')
+    mark_ = pd.DataFrame([pd.qcut(indi.iloc[i],q=percentile, labels=label_) for i in range(len(indi)-1)],index=indi.index[1:])
+    valid_=~(pd.isnull(mark_) | pd.isnull(ret.iloc[1:]))
+    if weights is None:
+        df = pd.DataFrame()
+        df['rtn'] = ret.iloc[1:][valid_].stack()
+        df['ref'] = mark_[valid_].stack()
+        tmp=df.groupby(level=0).apply(lambda g: g.groupby('ref').mean()).unstack()
+        tmp.columns = tmp.columns.get_level_values(1)
+    else:
+        df1=pd.DataFrame()
+        df2=pd.DataFrame()
+        df1['ret_w'] = (ret*weights).iloc[1:][valid_].stack()
+        df1['ref'] = mark_[valid_].stack()
+        df2['ret_w'] = weights.iloc[1:][valid_].stack()
+        df2['ref'] = mark_[valid_].stack()
+        tmp1=df1.groupby(level=0).apply(lambda g: g.groupby('ref').sum())
+        tmp2 = df2.groupby(level=0).apply(lambda g: g.groupby('ref').sum())
+        tmp=(tmp1/tmp2).unstack()
+        tmp.columns = tmp.columns.get_level_values(1)
+    return tmp
+def cal_mimick_port2(indi1,indi2,freq='M',ret=None,weights=None,percentile1=None,percentile2=None,independent=True):
+    if percentile1 is None:
+        percentile1=np.arange(0.0,1.01,0.2)
+        percentile2=np.arange(0.0,1.01,0.2)
+    label_1 = [i for i in range(1, len(percentile1))]
+    label_2 = [i for i in range(1, len(percentile2))]
+    if len(indi1) != len(ret) or len(indi2) != len(ret):
+        raise ValueError('the index of Indicators does not match the return data!')
+    if independent:
+        mark_1 = pd.DataFrame([pd.qcut(indi1.iloc[i], q=percentile1, labels=label_1) for i in range(len(indi1) - 1)],
+                              index=indi1.index[1:])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+        mark_2 = pd.DataFrame([pd.qcut(indi2.iloc[i], q=percentile2, labels=label_2) for i in range(len(indi2) - 1)],
+                              index=indi2.index[1:])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+    else:
+        mark_1 = pd.DataFrame([pd.qcut(indi1.iloc[i], q=percentile1, labels=label_1) for i in range(len(indi1) - 1)],
+                              index=indi1.index[1:])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+        mark_2=pd.DataFrame(index=mark_1.index,columns=mark_1.columns)
+        for l_ in label_1:
+            tmp=pd.DataFrame([pd.qcut(indi2.iloc[i][mark_1.iloc[i]==l_],q=percentile,labels=label_) for i in range(len(indi2)-1)],index=mark_1.index)
+            mark_2 = mark_2.combine_first(tmp)
+    valid_ = ~(pd.isnull(mark_1+mark_2) | pd.isnull(ret.iloc[1:]))  # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
+    if weights is None:
+        df = pd.DataFrame()
+        df['rtn'] = ret.iloc[1:][valid_].stack()
+        df['ref1'] = mark_1[valid_].stack()
+        df['ref2'] = mark_2[valid_].stack()
+        tmp = df.groupby(level=0).apply(lambda g: g.groupby(['ref1','ref2']).mean()).unstack()
+        tmp.columns = tmp.columns.get_level_values(1)
+    else:
+        df1 = pd.DataFrame()
+        df2 = pd.DataFrame()
+        df1['rtn_w'] = (ret * weights.shift(1)).iloc[1:][valid_].stack()
+        df1['ref1'] = mark_1[valid_].stack()
+        df1['ref2'] = mark_2[valid_].stack()
+        df2['rtn_w'] = weights.shift(1).iloc[1:][valid_].stack()
+        df2['ref1'] = mark_1[valid_].stack()
+        df2['ref2'] = mark_2[valid_].stack()
+        tmp1 = df1.groupby(level=0).apply(lambda g: g.groupby(['ref1','ref2']).sum())
+        tmp2 = df2.groupby(level=0).apply(lambda g: g.groupby(['ref1','ref2']).sum())
+        tmp = (tmp1 / tmp2).unstack()
+        tmp.columns = tmp.columns.get_level_values(1)
+    return tmp
 def describe(df,stats=['skew','kurt']):
     d=df.describe(percentiles=[0.05,0.25,0.5,0.75,0.95])
     return d.append(df.reindex(d.columns, axis=1).agg(stats))
@@ -449,6 +519,18 @@ def NWest(e,X,L=None):
     XX_1=np.linalg.pinv(X.T@X.values)
     X.drop('c', axis=1, inplace=True)
     return np.sqrt((XX_1@S@XX_1)[0,0])
+def cal_FF_alpha(arr,freq='M',index_ret=None, SMB=None, HML=None):
+    if SMB is None:
+        size=cal_size(freq=freq)
+        BM=cal_BM(size,freq=freq)
+        SMB,HML=cal_SMB_HML(freq=freq,size=size,BM=BM)
+    #start={1:'200502',3:'200504',6:'200507',12:'200601',24:'200701',36:'200801'} # 回归有效数据的起始月
+    X= pd.DataFrame({'index':index_ret,'SMB':SMB, 'HML':HML})[['index', 'SMB', 'HML']]#.loc[start[period]:'201802']
+    #arr=arr.loc[start[period]:'201802']
+    tmp1=X-X.mean(axis=0)
+    tmp2=arr-arr.mean(axis=0)
+    tmp3=arr-X@np.linalg.pinv(tmp1.cov())@(tmp1.mul(tmp2,axis=0).mean()).values
+    return tmp3.mean(),NWest(tmp3-tmp3.mean(),X)
 
 
 def cal_weekday_ret():
@@ -465,10 +547,7 @@ tmp1.shape
 %timeit ((tmp1-tmp1.mean()).values[:,None]*(tmp2-tmp2.mean())).mean()/tmp1.var()
 %timeit ((tmp1-tmp1.mean()).values[:,None]*(tmp2-tmp2.mean())).mean()/((tmp1-tmp1.mean())**2).mean()
 
-    if save_data:
-        beta[beta!=0].astype(float).to_pickle(data_path + 'beta_daily_'+str(periods)+'M')
-    else:
-        return beta[beta!=0].astype(float).iloc[:,:-1] # 剔除 column：index
+
 
 
 import statsmodels.api as sm
