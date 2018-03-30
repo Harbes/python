@@ -13,3 +13,4 @@ from .estimate import *
 from .mat_dec import *
 from .portfolio import *
 from .TSAtools import *
+from .quant import *

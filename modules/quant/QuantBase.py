@@ -5,7 +5,6 @@ from pandas.tseries.offsets import MonthEnd,YearEnd,Week,Day
 import sys
 import warnings
 warnings.filterwarnings("ignore")
-#data_path ='E:/data/NewData/'  #'/Users/harbes/data/NewData/'#
 #data_path=_data_path()
 def _data_path():
     sys_platform=sys.platform
@@ -175,8 +174,6 @@ def cal_ret(freq='M',periods=1,del_Rf=True):
         Rf = import_data(Rf_freq=freq)[2]
         ret = (ret + 100.0).div((Rf.loc[ret.index].iloc[:, 0] * 0.01 + 1.0) ** periods, axis=0) - 100.0
     return ret.iloc[periods-1:].astype(float)
-def cal_variables(var_list,start='20050101',end='20180228'):
-    pass
 def cal_SMB_HML(freq='M',size=None,BM=None,percentile1=None,percentile2=None,independent=True):
     if size is None:
         size=cal_size(freq=freq)
@@ -444,6 +441,7 @@ def cal_mimick_port1(indi,freq='M',ret=None,weights=None,percentile=None):
         tmp2 = df2.groupby(level=0).apply(lambda g: g.groupby('ref').sum())
         tmp=(tmp1/tmp2).unstack()
         tmp.columns = tmp.columns.get_level_values(1)
+    tmp.columns.name=None
     return tmp
 def cal_mimick_port2(indi1,indi2,freq='M',ret=None,weights=None,percentile1=None,percentile2=None,independent=True):
     if percentile1 is None:
@@ -486,6 +484,7 @@ def cal_mimick_port2(indi1,indi2,freq='M',ret=None,weights=None,percentile1=None
         tmp2 = df2.groupby(level=0).apply(lambda g: g.groupby(['ref1','ref2']).sum())
         tmp = (tmp1 / tmp2).unstack()
         tmp.columns = tmp.columns.get_level_values(1)
+    tmp.columns.name = None
     return tmp
 def describe(df,stats=['skew','kurt']):
     d=df.describe(percentiles=[0.05,0.25,0.5,0.75,0.95])
@@ -531,32 +530,13 @@ def cal_FF_alpha(arr,freq='M',index_ret=None, SMB=None, HML=None):
     tmp2=arr-arr.mean(axis=0)
     tmp3=arr-X@np.linalg.pinv(tmp1.cov())@(tmp1.mul(tmp2,axis=0).mean()).values
     return tmp3.mean(),NWest(tmp3-tmp3.mean(),X)
-
-
-def cal_weekday_ret():
+def CumRet(port_ret,method='simple',labels=None):
+    m,*n=port_ret.shape
+    if labels is not None:
+        port_ret.columns=labels
+    cum_ret=(port_ret*0.01+1.0).cumprod()
+    return cum_ret
+def backtest():
+    # TODO
     pass
-
-
-
-
-
-tmp.rolling('1M').std()
-(tmp2-tmp2.mean()).mul(tmp1-tmp1.mean(),axis=0).mean()
-(tmp2-tmp2.mean()).mul(tmp1-tmp1.mean(),axis=0)
-tmp1.shape
-%timeit ((tmp1-tmp1.mean()).values[:,None]*(tmp2-tmp2.mean())).mean()/tmp1.var()
-%timeit ((tmp1-tmp1.mean()).values[:,None]*(tmp2-tmp2.mean())).mean()/((tmp1-tmp1.mean())**2).mean()
-
-
-
-
-import statsmodels.api as sm
-tmp=tmp1.copy()
-tmp=sm.add_constant(tmp)
-tmp['y']=tmp2['000002.SZ']
-tmp=tmp.dropna().astype(float)
-sm.OLS(tmp['y'],tmp[['const','index']]).fit().summary()
-
-
-data_dict={'pv':['']}
 
