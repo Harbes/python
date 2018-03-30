@@ -6,10 +6,13 @@ import sys
 import warnings
 warnings.filterwarnings("ignore")
 data_path ='E:/data/NewData/'  #'/Users/harbes/data/NewData/'#
-
+sys.setrecursionlimit(100000)
+threading.stack_size(200000000)
+thread = threading.Thread(target=your_code)
+thread.start()
 def _data_path():
     sys_platform=sys.platform
-    if sys_platform =='windows':
+    if sys_platform =='win32':
         return 'E:/data/NewData/'
     elif sys_platform=='mac':
         return '/Users/harbes/data/NewData/'
@@ -100,6 +103,8 @@ def import_data(PV_vars=None, BS_vars=None,Rf_freq=None):
             Rf = pd.read_excel(data_path + 'risk_free.xlsx')[2:][['Clsdt','Nrrdata']].set_index(['Clsdt'])
         elif Rf_freq=='M':
             Rf = pd.read_excel(data_path + 'risk_free.xlsx')[2:][['Clsdt','Nrrmtdt']].set_index(['Clsdt'])
+        elif Rf_freq=='W':
+            Rf = (1.0+pd.read_excel(data_path + 'risk_free.xlsx')[2:][['Clsdt', 'Nrrdata']].set_index(['Clsdt'])*0.01)**(1.0/52.0)*100.0-100.0
         else:
             Rf = pd.read_excel(data_path + 'risk_free.xlsx')[2:][['Clsdt','Nrrdaydt']].set_index(['Clsdt'])
         Rf.index=pd.to_datetime(Rf.index,format='%Y-%m-%d')
@@ -124,15 +129,10 @@ def cal_index_ret(freq='M',index_code='399300.SZ',del_Rf=True):
     data_path=_data_path()
     index_ret = pd.read_pickle(data_path + 'index_ret')[['index_code', 'trddt', 'opnprc', 'clsprc']]
     index_ret = index_ret[index_ret['index_code'] == index_code][['trddt', 'opnprc', 'clsprc']].set_index('trddt')
-    if freq=='M':
-        By = lambda x: int(x * 0.01)
-        index_cls = index_ret['clsprc'].groupby(By).last()
-        index_opn = index_ret['opnprc'].groupby(By).first()
-        index_ret = (index_cls - index_opn) / index_opn * 100.0
-        index_ret.index = pd.to_datetime(index_ret.index.astype(str), format='%Y%m') + MonthEnd()
-    else:
-        index_ret=(index_ret['clsprc']-index_ret['opnprc'])/index_ret['opnprc']*100.0
-        index_ret.index = pd.to_datetime(index_ret.index.astype(int).astype(str), format='%Y%m%d')
+    index_ret.index=pd.to_datetime(index_ret.index.astype(int).astype(str),format='%Y%m%d')
+    price0=_resample_h2l(index_ret['opnprc'],to_freq=freq,n_th=0)
+    price1=_resample_h2l(index_ret['clsprc'],to_freq=freq,n_th=-1)
+    index_ret=(price1-price0)/price0*100.0
     index_ret.index.name = 'trddt'
     if del_Rf:
         Rf=import_data(Rf_freq=freq)[2]
@@ -141,7 +141,7 @@ def cal_index_ret(freq='M',index_code='399300.SZ',del_Rf=True):
         #index_ret = index_ret.sub(Rf.loc[index_ret.index].iloc[:,0], axis=0)
         index_ret=(index_ret + 100.0) / (Rf.loc[index_ret.index].iloc[:, 0] * 0.01 + 1.0) - 100.0
 
-    return index_ret
+    return index_ret.astype(float)
 def cal_ret(freq='M',periods=1,del_Rf=True):
     # TODO 尚未剔除异常交易数据
     '''
@@ -154,58 +154,81 @@ def cal_ret(freq='M',periods=1,del_Rf=True):
     '''
     p0 = 'adj_open';p1 = 'adj_close' # price0也可以使用 'adj_pre_close'
     PV=import_data(PV_vars=[p0,p1])[0]
-    price0=PV[p0].unstack()
-    price1=PV[p1].unstack()
-    if freq=='M':
-        By=lambda x:x.year*100+x.month
-        price0=price0.groupby(By).nth(0).shift(periods-1)
-        price1=price1.groupby(By).nth(-1)
-        ret=(price1-price0)/price0*100.0
-        ret.index=pd.to_datetime(ret.index.astype(str),format='%Y%m')+MonthEnd()
-    else:
-        price0=price0.shift(periods-1)
-        ret=(price1-price0)/price0*100.0
+    price0=_resample_h2l(PV[p0].unstack(),to_freq=freq,n_th=0).shift(periods-1)
+    price1=_resample_h2l(PV[p1].unstack(),to_freq=freq,n_th=-1)
+    ret=(price1-price0)/price0*100.0
     if del_Rf:
         Rf = import_data(Rf_freq=freq)[2]
-        ret = (ret.astype(float) + 100.0).div((Rf.loc[ret.index].iloc[:, 0] * 0.01 + 1.0) ** periods, axis=0) - 100.0
-    return ret
-
-ret_d=cal_ret(freq='D')
-index_ret_d=cal_index_ret(freq='D')
-
+        ret = (ret + 100.0).div((Rf.loc[ret.index].iloc[:, 0] * 0.01 + 1.0) ** periods, axis=0) - 100.0
+    return ret.iloc[periods-1:].astype(float)
 def cal_variables(var_list,start='20050101',end='20180228'):
     pass
-
-def cal_beta(periods,index_ret_d=None,ret_d=None):
-    '''
-    calculate the market beta
-    :param periods: int{measure periods;number of month}
-    :param save_data:
-    :return:
-    '''
-    start_='20050101';end_='20180301'
-    if index_ret_d is None or ret_d is None:
-        ret=cal_ret(freq='D')
-        stock_pool=ret.columns
-        beta = pd.DataFrame(index=pd.date_range(start_, end_, freq='M'), columns=stock_pool)
-        ret['index']=cal_index_ret(freq='D')
+def cal_SMB_HML(freq='M',size=None,BM=None,percentile1=None,percentile2=None,independent=True):
+    if size is None:
+        size=cal_size(freq=freq)
+        BM=cal_BM(size=size,freq=freq)
+    ret=cal_ret(freq=freq)
+    if percentile1 is None:
+        percentile1 = [0.0, 0.5, 1.0]  # size
+        #label_1 = ('S', 'B')
+        percentile2 = [0.0, 0.3, 0.7, 1.0]  # value
+        #label_2 = ('L', 'M', 'H')
+    label_1=[i+1 for i in range(len(percentile1)-1)]
+    label_2=[i+1 for i in range(len(percentile2)-1)]
+    if independent:
+        #mark_1 = pd.DataFrame([pd.qcut(size.iloc[i], q=percentile1, labels=label_1) for i in size.index[:-1]],
+        #                      index=size.index[:-1]) # 报错
+        mark_1 = pd.DataFrame([pd.qcut(size.iloc[i], q=percentile1, labels=label_1) for i in range(len(size)-1)],
+                              index=size.index[1:])
+        mark_2 = pd.DataFrame([pd.qcut(BM.iloc[i], q=percentile2, labels=label_2) for i in range(len(BM) - 1)],
+                              index=BM.index[1:])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
     else:
-        ret=ret_d.copy()
-        stock_pool = ret.columns
-        beta = pd.DataFrame(index=pd.date_range(start_, end_, freq='M'), columns=stock_pool)
-        ret['index']=index_ret_d.copy()
-    ret['month']=(ret.index.year-ret.index.year[0])*12+ret.index.month
-    for i in range(periods, ret['month']):
-        # 也可以通过cov/var，但是速度较慢
-        tmp1=ret['index'][(ret['month'] >= i - periods+1) & (ret['month'] <= i)]
-        tmp2=ret[stock_pool][(i - periods+1 <= ret['month']) & (ret['month'] <= i)]
-        year_=str(tmp1.index[-1].year);month_=str(tmp1.index[-1].month)
-        beta.loc[year_+'-'+month_] = ((tmp2-tmp2.mean()).mul(tmp1-tmp1.mean(),axis=0).mean()/((tmp1-tmp1.mean())**2).mean())[None,:]
-    return beta[beta!=0]
+        mark_1 = pd.DataFrame([pd.qcut(size.iloc[i], q=percentile1, labels=label_1) for i in range(len(size) - 1)],
+                              index=size.index[1:])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+        mark_2=pd.DataFrame(index=mark_1.index,columns=mark_1.columns)
+        for l_ in label_1:
+            tmp=pd.DataFrame([pd.qcut(BM.iloc[i][mark_1.iloc[i]==l_],q=percentile2,labels=label_2) for i in range(len(BM)-1)],index=mark_1.index)
+            mark_2 = mark_2.combine_first(tmp)
+    valid_ = ~(pd.isnull(mark_1 + mark_2) | pd.isnull(ret[1:]))  # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
+    ret[valid_].index
+    df = pd.DataFrame()
+    df['rtn'] = ret[valid_].stack()
+    df['ref1'] = mark_1.stack()
+    df['ref2'] = mark_2.stack()
+    tmp = df.groupby(level=0).apply(lambda g: g.groupby(['ref1', 'ref2']).mean()).unstack()
+    tmp.columns = tmp.columns.get_level_values(1)
+    tmp.index.names = ('date', 'ref1')
+    # HML=tmp.loc[(slice(None), 'S'), :].reset_index(level=1,drop=True).sub(tmp.loc[(slice(None), 'B'), :].reset_index(level=1,drop=True))[['L','M','H']]
+    HML = tmp.mean(axis=0, level=0)[['L', 'M', 'H']]
+    SMB = tmp.mean(axis=1).unstack()
+    return SMB, HML
+
+
+def cal_beta(periods,freq='M',index_ret_d=None,ret_d=None):
+    if index_ret_d is None:
+        index_ret_d=cal_index_ret(freq='D')
+        ret_d=cal_ret(freq='D')
+    EndDate_list=_GetEndDateList(ret_d,freq)
+    beta=pd.DataFrame(index=EndDate_list,columns=ret_d.columns)
+    if freq=='M':
+        for edt in EndDate_list[periods-1:]:
+            tmp1=index_ret_d.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt]\
+                 -index_ret_d.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].mean()
+            tmp2=ret_d.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt]\
+                 -index_ret_d.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].mean()
+            beta.loc[edt]=tmp2.mul(tmp1,axis=0).mean()/tmp1.var()
+    elif freq=='W':
+        for edt in EndDate_list[periods-1:]:
+            tmp1=index_ret_d.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt]\
+                 -index_ret_d.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt].mean()
+            tmp2=ret_d.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt]\
+                 -index_ret_d.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt].mean()
+            beta.loc[edt]=tmp2.mul(tmp1,axis=0).mean()/tmp1.var()
+    return beta[beta!=0.0].iloc[periods-1:].astype(float)
 def cal_size(freq='M'):
     size=import_data(PV_vars=['size_tot'])[0].unstack()
     size.columns=size.columns.get_level_values(1)
-    size=_resample_h2l(size,to_freq=freq,n_th=-1)
+    size=_resample_h2l(size,to_freq=freq,n_th=-1,by_position=False)
     return size[size>0.0]
 def cal_BM(size=None,freq='M'):
     if size is None:
@@ -214,7 +237,7 @@ def cal_BM(size=None,freq='M'):
     book=tmp['tot_assets']-tmp['tot_liab']
     book = book.drop(book.index[book.index.duplicated(keep='last')]).unstack()
     book = book.resample('D').first().ffill()
-    book=book.loc[size.index,size.columns] * 1e-8
+    book=book.loc[size.index,size.columns] * 1e-3
     BM=book/size
     return BM[BM>0.0]
 def cal_mom(periods,freq='M',opn=None,cls=None):
@@ -271,8 +294,8 @@ def cal_turnover(periods,freq='M',amount=None,size_free=None):
         pv=import_data(PV_vars=['amount','size_free'])[0]
         amount_=pv['amount'].unstack()
         size_free=pv['size_free'].unstack()
-    turnover=amount_/size_free*0.1
-    turnover=turnover[turnover>0.0001]
+    turnover=amount_/size_free*10.0
+    #turnover=turnover[turnover>0.0001]
     if freq=='M':
         By=lambda x:x.year*100+x.month
     elif freq=='W':
@@ -285,62 +308,62 @@ def cal_turnover(periods,freq='M',amount=None,size_free=None):
     elif freq == 'W':
         turnover.index = pd.to_datetime(turnover.index.astype(str).str.pad(7, side='right', fillchar='6'), format='%Y%W%w')
     return turnover.iloc[periods-1:]
-def cal_MaxRet(periods=1,freq='M',ret=None):
-    if ret is None:
-        ret=cal_ret(freq='D',del_Rf=False)
+def cal_MaxRet(periods=1,freq='M',ret_d=None):
+    if ret_d is None:
+        ret_d=cal_ret(freq='D',del_Rf=False)
     By=_GroupBy(freq)
-    max_ret = ret.groupby(By).max().rolling(periods).max()
+    max_ret = ret_d.groupby(By).max().rolling(periods).max()
     if freq == 'M':
         max_ret.index = pd.to_datetime(max_ret.index.astype(str), format='%Y%m') + MonthEnd()
     elif freq == 'W':
         max_ret.index = pd.to_datetime(max_ret.index.astype(str).str.pad(7, side='right', fillchar='6'),
                                         format='%Y%W%w')
     return max_ret.iloc[periods-1:]
-def cal_skew(periods,freq='M',ret=None):
-    if ret is None:
-        ret=cal_ret(freq='D')
-    EndDate_list=_GetEndDateList(ret,freq)
+def cal_skew(periods,freq='M',ret_d=None):
+    if ret_d is None:
+        ret_d=cal_ret(freq='D')
+    EndDate_list=_GetEndDateList(ret_d,freq)
     if freq=='M':
-        return pd.DataFrame((ret.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].skew() for edt in EndDate_list)
-                 , index=EndDate_list)
+        return pd.DataFrame((ret_d.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].skew() for edt in EndDate_list)
+                 , index=EndDate_list).iloc[periods-1]
     elif freq=='W':
-        return pd.DataFrame((ret.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt].skew() for edt in EndDate_list)
-                 , index=EndDate_list)
-def cal_coskew(periods,save_data=False):
-    coskew = pd.DataFrame(index=pd.date_range('20050101', '20180301', freq='M'), columns=rtn.columns[:-1])
-    index_ret.insert(2, 'index^2', index_ret['pctchange'] ** 2)
-    for i in range(periods,159):
-        tmp1=rtn[(rtn['month'] >= i - periods + 1) & (rtn['month'] <= i)].iloc[:, :-1]
-        tmp2=index_ret[(rtn['month'] >= i - periods + 1) & (rtn['month'] <= i)][['pctchange','index^2']]
-        tmp3=np.linalg.pinv((tmp2-tmp2.mean()).values.T@(tmp2-tmp2.mean()))[1]
-        coskew.iloc[i-1]=tmp3[0]*((tmp2 - tmp2.mean()).values[:,0][:,None] * (tmp1 - tmp1.mean())).sum()\
-                         +tmp3[1]*((tmp2 - tmp2.mean()).values[:,1][:,None] * (tmp1 - tmp1.mean())).sum()
-    index_ret.drop('index^2', axis=1, inplace=True)
-    if save_data:
-        coskew[coskew!=0].astype(float).to_pickle(data_path+'coskew_'+str(periods)+'M')
-    else:
-        return coskew[coskew!=0].astype(float).iloc[:,:-1]
+        return pd.DataFrame((ret_d.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt].skew() for edt in EndDate_list)
+                 , index=EndDate_list).iloc[periods-1]
+def cal_coskew(periods,freq='M',ret_d=None,index_ret_d=None):
+    if index_ret_d is None:
+        ret_d=cal_ret(freq='D')
+        index_ret_d=cal_index_ret(freq='D')
+    X=pd.DataFrame({'index':index_ret_d,'index^2':index_ret_d**2.0})
+    EndDate_list=_GetEndDateList(ret_d,freq)
+    coskew=pd.DataFrame(index=EndDate_list,columns=ret_d.columns)
+    if freq=='M':
+        for edt in EndDate_list[periods - 1:]:
+            tmp1=X.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt]\
+                 -X.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].mean()
+            tmp2=ret_d.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt]\
+                 -ret_d.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].mean()
+            tmp3 = np.linalg.pinv(tmp1.cov())[1]
+            coskew.loc[edt] = tmp3[0] * tmp2.mul(tmp1['index'], axis=0).mean() + tmp3[1] * tmp2.mul(tmp1['index^2'],
+                                                                                                    axis=0).mean()
+    elif freq=='W':
+        for edt in EndDate_list[periods - 1:]:
+            tmp1=X.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt]\
+                 -X.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt].mean()
+            tmp2=ret_d.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt]\
+                 -ret_d.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt].mean()
+            tmp3=np.linalg.pinv(tmp1.cov())[1]
+            coskew.loc[edt]=tmp3[0]*tmp2.mul(tmp1['index'],axis=0).mean()+tmp3[1]*tmp2.mul(tmp1['index^2'],axis=0).mean()
+    return coskew.iloc[periods-1:].astype(float)
+
+
+
+
 
 
 
 
 def cal_weekday_ret():
     pass
-
-
-    if freq=='M':
-        ret['period']=(ret.index.year-ret.index[0].year)*12+ret.index.month
-    elif freq=='W':
-        ret['period'] = (ret.index.year - ret.index[0].year) * 100 + ret.index.week
-
-
-
-    for i in range(periods,159):
-        t_skew.iloc[i-1]=rtn[(rtn['month']>=i-periods+1)&(rtn['month']<=i)].iloc[:,:-2].skew()
-    if save_data:
-        t_skew.astype(float).to_pickle(data_path+'skew_'+str(periods)+'M')
-    else:
-        return t_skew.astype(float)
 
 
 
