@@ -415,6 +415,8 @@ iskew=cal_iskew(52,freq='W',method='FF')
 print(time()-t0)
 
 
+
+
 def describe(df,stats=['skew','kurt']):
     d=df.describe(percentiles=[0.05,0.25,0.5,0.75,0.95])
     return d.append(df.reindex(d.columns, axis=1).agg(stats))
