@@ -236,6 +236,9 @@ def cal_beta(periods,freq='M',index_ret_d=None,ret_d=None):
     #        tmp2=ret_d.loc[edt - pd.tseries.offsets.DateOffset(years=periods) + Day():edt]\
     #             -ret_d.loc[edt - pd.tseries.offsets.DateOffset(years=periods) + Day():edt].mean()
     #        beta.loc[edt]=tmp2.mul(tmp1,axis=0).mean()/tmp1.var()
+    #if freq=='D':
+    #    return beta[beta!=0.0].resample('D',fill_method='pad').loc[ret_d.loc[EndDate_list[periods-1]:].index].astype(float)
+    #else:
     return beta[beta!=0.0].iloc[periods-1:].astype(float)
 def cal_size(freq='M'):
     size=import_data(PV_vars=['size_tot'])[0].unstack()
@@ -268,7 +271,8 @@ def cal_rev(periods=1,freq='M',opn=None,cls=None):
     open_price=_resample_h2l(opn,to_freq=freq,n_th=0,by_position=False).shift(periods-1)
     close_price=_resample_h2l(cls,to_freq=freq,n_th=-1,by_position=False)
     return ((close_price-open_price)/open_price*100.0).iloc[periods-1:]
-def cal_illiq(periods=12,freq='M'):
+def cal_illiq(periods=12,freq='M',ret_d=None):
+    # TODO: freq='W'时有错误
     pv=import_data(PV_vars=['adj_open','adj_close','amount'])[0]
     amount = pv['amount'].unstack()
     open_price=pv['adj_open'].unstack()
@@ -366,7 +370,7 @@ def cal_coskew(periods,freq='M',ret_d=None,index_ret_d=None):
             tmp3=np.linalg.pinv(tmp1.cov())[1]
             coskew.loc[edt]=tmp3[0]*tmp2.mul(tmp1['index'],axis=0).mean()+tmp3[1]*tmp2.mul(tmp1['index^2'],axis=0).mean()
     return coskew.iloc[periods-1:].astype(float)
-def cal_iskew(periods,freq='M',method='',ret=None,index_ret=None,SMB=None,HML=None):
+def cal_iskew(periods,freq='M',method='FF',ret=None,index_ret=None,SMB=None,HML=None):
     if ret is None:
         ret=cal_ret(freq=freq)
         index_ret=cal_index_ret(freq=freq)
@@ -414,6 +418,79 @@ def cal_iskew(periods,freq='M',method='',ret=None,index_ret=None,SMB=None,HML=No
                     tmp1[ret.columns].mul(tmp1['HML'], axis=0).mean()
                 ])).skew()
     return iskew.iloc[periods-1:].astype(float)
+def cal_vol(periods,freq='M',ZeroMean=False,ret_d=None):
+    if ret_d is None:
+        ret_d=cal_ret(freq='D')
+    EndDate_list=_GetEndDateList(ret_d,freq)
+    if freq=='M':
+        if ZeroMean:
+            ret_d=ret_d**2.0
+            return pd.DataFrame(
+                (ret_d.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].mean() for edt in
+                 EndDate_list)
+                , index=EndDate_list).iloc[periods - 1].sqrt()
+        else:
+            return pd.DataFrame((ret_d.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].std() for edt in EndDate_list)
+                 , index=EndDate_list).iloc[periods-1]
+    elif freq=='W':
+        if ZeroMean:
+            ret_d=ret_d**2.0
+            return pd.DataFrame(
+                (ret_d.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt].mean() for edt in
+                 EndDate_list)
+                , index=EndDate_list).iloc[periods - 1].sqrt()
+        else:
+            return pd.DataFrame((ret_d.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt].std() for edt in EndDate_list)
+                 , index=EndDate_list).iloc[periods-1]
+def cal_ivol(periods,freq='M',method='FF',ret=None,index_ret=None,SMB=None,HML=None):
+    if ret is None:
+        ret=cal_ret(freq=freq)
+        index_ret=cal_index_ret(freq=freq)
+        if method=='FF':
+            SMB,HML=cal_SMB_HML(freq=freq)
+    EndDate_list=_GetEndDateList(ret,freq)
+    ivol = pd.DataFrame(index=EndDate_list, columns=ret.columns)
+    if method == 'CAPM':
+        if freq == 'M':
+            for edt in EndDate_list[periods - 1:]:
+                tmp1 = index_ret.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt] \
+                       - index_ret.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].mean()
+                tmp2 = ret.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt] \
+                       - ret.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].mean()
+                ivol.loc[edt] =(tmp2-tmp1[:,None]@tmp2.mul(tmp1, axis=0).mean()[None,:]/tmp1.var()).std()
+        elif freq == 'W':
+            for edt in EndDate_list[periods - 1:]:
+                tmp1 = index_ret.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt] \
+                       - index_ret.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt].mean()
+                tmp2 = ret.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt] \
+                       - ret.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt].mean()
+                ivol.loc[edt] = (tmp2 - tmp1[:, None] @ tmp2.mul(tmp1, axis=0).mean()[None, :] / tmp1.var()).std()
+    elif method=='FF':
+        XY=pd.concat((pd.DataFrame({'index':index_ret,'SMB':SMB,'HML':HML}),ret),axis=1)
+        if freq == 'M':
+            for edt in EndDate_list[periods - 1:]:
+                tmp1 = XY.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt] \
+                       - XY.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].mean()
+                #tmp2 = ret.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt] \
+                #       - ret.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].mean()
+                ivol.loc[edt] =(tmp1[ret.columns]-tmp1[['index','SMB','HML']]@np.linalg.pinv(tmp1[['index','SMB','HML']].cov())@np.array([
+                    tmp1[ret.columns].mul(tmp1['index'],axis=0).mean(),
+                    tmp1[ret.columns].mul(tmp1['SMB'], axis=0).mean(),
+                    tmp1[ret.columns].mul(tmp1['HML'], axis=0).mean()
+                ])).std()
+        elif freq == 'W':
+            for edt in EndDate_list[periods - 1:]:
+                tmp1 = XY.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt] \
+                       - XY.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt].mean()
+                #tmp2 = ret.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt] \
+                #       - ret.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].mean()
+                ivol.loc[edt] =(tmp1[ret.columns]-tmp1[['index','SMB','HML']]@np.linalg.pinv(tmp1[['index','SMB','HML']].cov())@np.array([
+                    tmp1[ret.columns].mul(tmp1['index'],axis=0).mean(),
+                    tmp1[ret.columns].mul(tmp1['SMB'], axis=0).mean(),
+                    tmp1[ret.columns].mul(tmp1['HML'], axis=0).mean()
+                ])).std()
+    return ivol.iloc[periods-1:].astype(float)
+
 def cal_mimick_port1(indi,freq='M',ret=None,weights=None,percentile=None):
     if percentile is None:
         percentile=np.arange(0.0,1.01,0.1)
@@ -433,9 +510,9 @@ def cal_mimick_port1(indi,freq='M',ret=None,weights=None,percentile=None):
     else:
         df1=pd.DataFrame()
         df2=pd.DataFrame()
-        df1['ret_w'] = (ret*weights).iloc[1:][valid_].stack()
+        df1['ret_w'] = (ret*weights.shift(1)).iloc[1:][valid_].stack()
         df1['ref'] = mark_[valid_].stack()
-        df2['ret_w'] = weights.iloc[1:][valid_].stack()
+        df2['ret_w'] = weightsweights.shift(1).iloc[1:][valid_].stack()
         df2['ref'] = mark_[valid_].stack()
         tmp1=df1.groupby(level=0).apply(lambda g: g.groupby('ref').sum())
         tmp2 = df2.groupby(level=0).apply(lambda g: g.groupby('ref').sum())
@@ -539,4 +616,42 @@ def CumRet(port_ret,method='simple',labels=None):
 def backtest():
     # TODO
     pass
+def Fama_MacBeth(var_list,freq='M'):
+    #periods,cal_freq=12,'M'
+    freq_periods={
+        'M':12,
+        'W':52
+    }
+    try:
+        ret.iloc[0,0]
+    except NameError:
+        ret=cal_ret(freq=freq)
+    var_dict={}
+    if 'beta' in var_list:
+        var_dict['beta']=cal_beta(freq_periods[freq],freq='M').shift(1).stack()
+    if 'size' in var_list:
+        size=cal_size(freq=freq)
+        var_dict['BM']=cal_BM(size=size,freq=freq).shift(1).stack()
+        var_dict['size']=size.shift(1).stack()
+    if 'mom' in var_list:
+        var_dict['mom']=cal_mom(freq_periods[freq],freq=freq).shift(1).stack()
+    if 'rev' in var_list:
+        var_dict['rev']=ret.shift(1).stack()
+    if 'illiq' in var_list:
+        var_dict['illiq']=cal_illiq(freq_periods[freq],freq=freq).shift(1).stack()
+    if 'turnover' in var_list:
+        var_dict['turnover']=cal_turnover(freq_periods[freq],freq=freq).shift(1).stack()
+    if 'skew' in var_list:
+        var_dict['skew']=cal_skew(freq_periods[freq],freq=freq)
 
+
+
+    # TODO
+    pass
+try:
+    print(BM.head().T.describe())
+except NameError:
+    BM=cal_BM(size=size)
+    print(BM.head().T.describe())
+
+tmp=pd.DataFrame(np.random.randn(3))
