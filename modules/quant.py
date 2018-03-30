@@ -1,15 +1,12 @@
 import pandas as pd
 import numpy as np
-from pandas.tseries.offsets import MonthEnd,MonthBegin,Day
+from pandas.tseries.offsets import MonthEnd,Day,YearEnd
 from dateutil.parser import parse
 import sys
 import warnings
 warnings.filterwarnings("ignore")
-data_path ='E:/data/NewData/'  #'/Users/harbes/data/NewData/'#
-sys.setrecursionlimit(100000)
-threading.stack_size(200000000)
-thread = threading.Thread(target=your_code)
-thread.start()
+#data_path ='E:/data/NewData/'  #'/Users/harbes/data/NewData/'#
+data_path=_data_path()
 def _data_path():
     sys_platform=sys.platform
     if sys_platform =='win32':
@@ -32,6 +29,9 @@ def _GetEndDateList(data,freq):
     elif freq=='W':
         date_list = data.index.year * 100 + data.index.week
         date_list=pd.to_datetime(date_list.astype(str).str.pad(7,side='right',fillchar='6'),format='%Y%W%w')
+    elif freq=='Y':
+        date_list = data.index.year
+        date_list = pd.to_datetime(date_list.astype(str), format='%Y') + YearEnd()
     return sorted(set(date_list))
 def _resample_h2l(data,to_freq='M',n_th=0,by_position=True):
     '''
@@ -47,8 +47,10 @@ def _resample_h2l(data,to_freq='M',n_th=0,by_position=True):
     '''
     if to_freq=='M':
         By=lambda x:x.year*100+x.month
-    else:
+    elif to_freq=='W':
         By=lambda x:x.year*100+x.week
+    elif to_freq=='Y':
+        By=lambda x:x.year
     tmp=data.groupby(By)
     if by_position:
         data=tmp.nth(n_th)
@@ -58,9 +60,11 @@ def _resample_h2l(data,to_freq='M',n_th=0,by_position=True):
         data =tmp.last()
     if to_freq=='M':
         data.index=pd.to_datetime(data.index.astype(str),format='%Y%m')+MonthEnd()
-    else:
+    elif to_freq=='W':
         # 转成每周的固定day，0对应周日，1-6分别对应星期一到星期六
         data.index=pd.to_datetime(data.index.astype(str).str.pad(7,side='right',fillchar='6'),format='%Y%W%w')
+    elif to_freq=='Y':
+        data.index=pd.to_datetime(data.index.astype(str),format='%Y')+YearEnd()
     return data
 
 #pd.to_datetime(tmp.index.astype(str).str.pad(7,side='right',fillchar='0'),format='%Y%W%w')
@@ -170,9 +174,7 @@ def cal_SMB_HML(freq='M',size=None,BM=None,percentile1=None,percentile2=None,ind
     ret=cal_ret(freq=freq)
     if percentile1 is None:
         percentile1 = [0.0, 0.5, 1.0]  # size
-        #label_1 = ('S', 'B')
         percentile2 = [0.0, 0.3, 0.7, 1.0]  # value
-        #label_2 = ('L', 'M', 'H')
     label_1=[i+1 for i in range(len(percentile1)-1)]
     label_2=[i+1 for i in range(len(percentile2)-1)]
     if independent:
@@ -189,19 +191,17 @@ def cal_SMB_HML(freq='M',size=None,BM=None,percentile1=None,percentile2=None,ind
         for l_ in label_1:
             tmp=pd.DataFrame([pd.qcut(BM.iloc[i][mark_1.iloc[i]==l_],q=percentile2,labels=label_2) for i in range(len(BM)-1)],index=mark_1.index)
             mark_2 = mark_2.combine_first(tmp)
-    valid_ = ~(pd.isnull(mark_1 + mark_2) | pd.isnull(ret[1:]))  # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
-    ret[valid_].index
+    valid_ = ~(pd.isnull(mark_1 + mark_2) | pd.isnull(ret.iloc[1:]))  # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
     df = pd.DataFrame()
-    df['rtn'] = ret[valid_].stack()
-    df['ref1'] = mark_1.stack()
-    df['ref2'] = mark_2.stack()
+    df['rtn'] = ret.iloc[1:][valid_].stack()
+    df['ref1'] = mark_1[valid_].stack()
+    df['ref2'] = mark_2[valid_].stack()
     tmp = df.groupby(level=0).apply(lambda g: g.groupby(['ref1', 'ref2']).mean()).unstack()
     tmp.columns = tmp.columns.get_level_values(1)
     tmp.index.names = ('date', 'ref1')
-    # HML=tmp.loc[(slice(None), 'S'), :].reset_index(level=1,drop=True).sub(tmp.loc[(slice(None), 'B'), :].reset_index(level=1,drop=True))[['L','M','H']]
-    HML = tmp.mean(axis=0, level=0)[['L', 'M', 'H']]
+    HML = tmp.mean(axis=0, level=0)
     SMB = tmp.mean(axis=1).unstack()
-    return SMB, HML
+    return SMB.iloc[:,-1]-SMB.iloc[:,0], HML.iloc[:,-1]-HML.iloc[:,0]
 
 
 def cal_beta(periods,freq='M',index_ret_d=None,ret_d=None):
@@ -215,15 +215,22 @@ def cal_beta(periods,freq='M',index_ret_d=None,ret_d=None):
             tmp1=index_ret_d.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt]\
                  -index_ret_d.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].mean()
             tmp2=ret_d.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt]\
-                 -index_ret_d.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].mean()
+                 -ret_d.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].mean()
             beta.loc[edt]=tmp2.mul(tmp1,axis=0).mean()/tmp1.var()
     elif freq=='W':
         for edt in EndDate_list[periods-1:]:
             tmp1=index_ret_d.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt]\
                  -index_ret_d.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt].mean()
             tmp2=ret_d.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt]\
-                 -index_ret_d.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt].mean()
+                 -ret_d.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt].mean()
             beta.loc[edt]=tmp2.mul(tmp1,axis=0).mean()/tmp1.var()
+    #elif freq=='Y':
+    #    for edt in EndDate_list[periods-1:]:
+    #        tmp1=index_ret_d.loc[edt - pd.tseries.offsets.DateOffset(years=periods) + Day():edt]\
+    #             -index_ret_d.loc[edt - pd.tseries.offsets.DateOffset(years=periods) + Day():edt].mean()
+    #        tmp2=ret_d.loc[edt - pd.tseries.offsets.DateOffset(years=periods) + Day():edt]\
+    #             -ret_d.loc[edt - pd.tseries.offsets.DateOffset(years=periods) + Day():edt].mean()
+    #        beta.loc[edt]=tmp2.mul(tmp1,axis=0).mean()/tmp1.var()
     return beta[beta!=0.0].iloc[periods-1:].astype(float)
 def cal_size(freq='M'):
     size=import_data(PV_vars=['size_tot'])[0].unstack()
@@ -354,12 +361,92 @@ def cal_coskew(periods,freq='M',ret_d=None,index_ret_d=None):
             tmp3=np.linalg.pinv(tmp1.cov())[1]
             coskew.loc[edt]=tmp3[0]*tmp2.mul(tmp1['index'],axis=0).mean()+tmp3[1]*tmp2.mul(tmp1['index^2'],axis=0).mean()
     return coskew.iloc[periods-1:].astype(float)
+def cal_iskew(periods,freq='M',method='CAPM',ret=None,index_ret=None,SMB=None,HML=None):
+    if ret is None:
+        ret=cal_ret(freq=freq)
+        index_ret=cal_index_ret(freq=freq)
+        if method=='FF':
+            SMB,HML=cal_SMB_HML(freq=freq)
+    EndDate_list=_GetEndDateList(ret,freq)
+    iskew = pd.DataFrame(index=EndDate_list, columns=ret.columns)
+    if method == 'CAPM':
+        if freq == 'M':
+            for edt in EndDate_list[periods - 1:]:
+                tmp1 = index_ret.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt] \
+                       - index_ret.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].mean()
+                tmp2 = ret.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt] \
+                       - ret.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].mean()
+                iskew.loc[edt] =(tmp2-tmp1[:,None]@tmp2.mul(tmp1, axis=0).mean()[None,:]/tmp1.var()).skew()
+        elif freq == 'W':
+            for edt in EndDate_list[periods - 1:]:
+                tmp1 = index_ret.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt] \
+                       - index_ret.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt].mean()
+                tmp2 = ret.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt] \
+                       - ret.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt].mean()
+                iskew.loc[edt] = (tmp2 - tmp1[:, None] @ tmp2.mul(tmp1, axis=0).mean()[None, :] / tmp1.var()).skew()
+    elif method=='FF':
+        XY=pd.concat((pd.DataFrame({'index':index_ret,'SMB':SMB,'HML':HML}),ret),axis=1)
+        if freq == 'M':
+            for edt in EndDate_list[periods - 1:]:
+                tmp1 = XY.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt] \
+                       - XY.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].mean()
+                #tmp2 = ret.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt] \
+                #       - ret.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].mean()
+                iskew.loc[edt] =(tmp1[ret.columns]-tmp1[['index','SMB','HML']]@np.linalg.pinv(tmp1[['index','SMB','HML']].cov())@np.array([
+                    tmp1[ret.columns].mul(tmp1['index'],axis=0).mean(),
+                    tmp1[ret.columns].mul(tmp1['SMB'], axis=0).mean(),
+                    tmp1[ret.columns].mul(tmp1['HML'], axis=0).mean()
+                ])).skew()
+        elif freq == 'W':
+            for edt in EndDate_list[periods - 1:]:
+                tmp1 = XY.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt] \
+                       - XY.loc[edt - pd.tseries.offsets.DateOffset(weeks=periods) + Day():edt].mean()
+                #tmp2 = ret.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt] \
+                #       - ret.loc[edt - pd.tseries.offsets.DateOffset(months=periods) + Day():edt].mean()
+                iskew.loc[edt] =(tmp1[ret.columns]-tmp1[['index','SMB','HML']]@np.linalg.pinv(tmp1[['index','SMB','HML']].cov())@np.array([
+                    tmp1[ret.columns].mul(tmp1['index'],axis=0).mean(),
+                    tmp1[ret.columns].mul(tmp1['SMB'], axis=0).mean(),
+                    tmp1[ret.columns].mul(tmp1['HML'], axis=0).mean()
+                ])).skew()
+    return iskew.iloc[periods-1:].astype(float)
+from time import time
+t0=time()
+iskew=cal_iskew(52,freq='W',method='FF')
+print(time()-t0)
 
 
-
-
-
-
+def describe(df,stats=['skew','kurt']):
+    d=df.describe(percentiles=[0.05,0.25,0.5,0.75,0.95])
+    return d.append(df.reindex(d.columns, axis=1).agg(stats))
+def NWest_mean(d,L=None):
+    '''
+    df不要以Nan开头，会引起误差;
+    :param df:
+    :param L:
+    :return:
+    '''
+    df=d.copy()
+    df-=df.mean()
+    T=len(df)
+    if L is None:
+        L=int(T**0.25)
+    w=1.0-np.arange(1,L+1)/(L+1.0)
+    return np.sqrt(2.0*pd.DataFrame((df*df.shift(i+1)*w[i]).sum() for i in range(L)).sum()/T+df.var())/np.sqrt(T)
+def NWest(e,X,L=None):
+    T = len(e)
+    if L is None:
+        L = int(T ** 0.25) # or : L = 0.75*T**(1.0/3.0)-1
+    w = 1.0 - np.arange(1, L + 1) / (L+1.0)
+    X.insert(0,'c',np.ones(T))
+    S=0.0
+    for l in range(1,L+1):
+        for i in range(l,T):
+            S+=w[l-1]*e[i]*e[i-l]*(X.iloc[i][:,None]*X.iloc[i-l].values+X.iloc[i-l][:,None]*X.iloc[i].values)
+    for i in range(T):
+        S+=e[i]*e[i]*X.iloc[i][:,None]*X.iloc[i].values
+    XX_1=np.linalg.pinv(X.T@X.values)
+    X.drop('c', axis=1, inplace=True)
+    return np.sqrt((XX_1@S@XX_1)[0,0])
 
 
 def cal_weekday_ret():
