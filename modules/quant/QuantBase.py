@@ -143,7 +143,6 @@ def import_data(PV_vars=None, BS_vars=None,Rf_freq=None,filter_data=True):
     return PV,BS,Rf
 def cal_index_ret(freq='M',index_code='000016.SH',del_Rf=True):
     '''
-
     :param index_code:
         '000016.SH'：上证50
         '399005.SZ'：中小板指数
@@ -171,7 +170,6 @@ def cal_index_ret(freq='M',index_code='000016.SH',del_Rf=True):
 
     return index_ret.astype(float)
 def cal_ret(freq='M',periods=1,del_Rf=True):
-    # TODO 尚未剔除异常交易数据
     '''
 
     calculate the past returns,including the current period
@@ -568,13 +566,23 @@ def backtest():
     pass
 def Fama_MacBeth(var_list,freq='M'):
     # ret_freq/ret: rev
-    # ret_d: beta,illiq,skew,coskew,iskew,vol,ivol
+    # ret_d: beta,illiq,max_ret,skew,coskew,iskew,vol,ivol
     # index_ret_freq/index_ret:
     # index_ret_d: beta,coskew,iskew,ivol
-    # amount_d: illiq
     # SMB_d,HML_d: iskew,ivol
+    # amount_d: illiq,turnover
+    # size_free_d: turnover
     #
-
+    if set(var_list).intersection(['beta','illiq','max_ret','skew','coskew','iskew','vol','ivol']):
+        ret_d=cal_ret(freq='D')
+    if set(var_list).intersection(['beta','coskew','iskew','ivol']):
+        index_ret_d=cal_index_ret(freq='D')
+    if set(var_list).intersection(['iskew','ivol']):
+        SMB_d,HML_d=cal_SMB_HML(freq='D')
+    if set(var_list).intersection(['illiq','turnover']):
+        amount_d=import_data(PV_vars=['amount'])[0].unstack()
+    if set(var_list).intersection(['turnover']):
+        size_free_d=import_data(PV_vars=['size_free'])[0].unstack()
     ### beta,mom
     freq_periods1={
         'M':12,
@@ -589,8 +597,6 @@ def Fama_MacBeth(var_list,freq='M'):
     ret = cal_ret(freq=freq)
     var_dict['ret']=ret.stack()
     if 'beta' in var_list:
-        index_ret_d=cal_index_ret(freq='D')
-        ret_d=cal_ret(freq='D')
         var_dict['beta']=cal_beta(freq_periods1[freq],freq=freq,index_ret_d=index_ret_d,ret_d=ret_d).shift(1).stack()
     if 'size' in var_list or 'BM' in var_list:
         size=cal_size(freq=freq)
@@ -601,60 +607,26 @@ def Fama_MacBeth(var_list,freq='M'):
     if 'rev' in var_list:
         var_dict['rev']=ret.shift(1).stack()
     if 'illiq' in var_list:
-        if 'beta' in var_list:
-            amount=import_data(PV_vars=['amount'])[0].unstack()
-            var_dict['illiq']=cal_illiq(freq_periods2[freq],freq=freq,ret_d=ret_d,amount=amount).shift(1).stack()
-        else:
-            ret_d = cal_ret(freq='D')
-            amount = import_data(PV_vars=['amount'])[0].unstack()
-            var_dict['illiq'] = cal_illiq(freq_periods2[freq], freq=freq,ret_d=ret_d,amount=amount).shift(1).stack()
+        var_dict['illiq'] = cal_illiq(freq_periods2[freq], freq=freq, ret_d=ret_d, amount=amount_d).shift(1).stack()
+    if 'max_ret' in var_list:
+        var_dict['max_ret']=cal_MaxRet(freq_periods2,freq=freq,ret_d=ret_d).shift(1).stack()
     if 'turnover' in var_list:
-        if 'illiq' in var_list:
-            size_free=import_data(PV_vars=['size_free'])[0].unstack()
-            var_dict['turnover']=cal_turnover(freq_periods2[freq],freq=freq,amount=amount,size_free=size_free).shift(1).stack()
-        else:
-            amount = import_data(PV_vars=['amount'])[0].unstack()
-            size_free = import_data(PV_vars=['size_free'])[0].unstack()
-            var_dict['turnover'] = cal_turnover(freq_periods2[freq], freq=freq, amount=amount,
-                                                size_free=size_free).shift(1).stack()
+        var_dict['turnover'] = cal_turnover(freq_periods2[freq], freq=freq, amount=amount_d,
+                                            size_free=size_free_d).shift(1).stack()
     if 'skew' in var_list:
-        if 'beta' in var_list or 'illiq' in var_list :
-            var_dict['skew']=cal_skew(freq_periods2[freq],freq=freq,ret_d=ret_d).shift(1).stack()
-        else:
-            ret_d = cal_ret(freq='D')
-            var_dict['skew'] = cal_skew(freq_periods2[freq], freq=freq,ret_d=ret_d).shift(1).stack()
+        var_dict['skew'] = cal_skew(freq_periods2[freq], freq=freq, ret_d=ret_d).shift(1).stack()
     if 'coskew' in var_list:
-        if 'beta' in var_list:
-            var_dict['coskew']=cal_coskew(freq_periods2[freq],freq=freq,ret_d=ret_d,index_ret_d=index_ret_d).shift(1).stack()
-        else:
-            index_ret_d = cal_index_ret(freq='D')
-            ret_d = cal_ret(freq='D')
-            var_dict['coskew'] = cal_coskew(freq_periods2[freq], freq=freq,ret_d=ret_d,index_ret_d=index_ret_d).shift(1).stack()
+        var_dict['coskew'] = cal_coskew(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d).shift(
+            1).stack()
     if 'iskew' in var_list:
-        SMB_d, HML_d = cal_SMB_HML(freq='D')
-        if 'beta' in var_list or 'coskew' in var_list:
-            var_dict['iskew']=cal_iskew(freq_periods2[freq],freq=freq,ret_d=ret_d,index_ret_d=index_ret_d,SMB_d=SMB_d,HML_d=HML_d).shift(1).stack()
-        else:
-            index_ret_d = cal_index_ret(freq='D')
-            ret_d = cal_ret(freq='D')
-            var_dict['iskew'] = cal_iskew(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
-                                          SMB_d=SMB_d, HML_d=HML_d).shift(1).stack()
+        var_dict['iskew'] = cal_iskew(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
+                                      SMB_d=SMB_d, HML_d=HML_d).shift(1).stack()
+
     if 'vol' in var_list:
-        if 'beta' in var_list or 'illiq' in var_list:
-            var_dict['vol']=cal_vol(freq_periods2[freq],freq=freq,ret_d=ret_d).shift(1).stack()
-        else:
-            ret_d=cal_ret(freq='D')
-            var_dict['vol'] = cal_vol(freq_periods2[freq], freq=freq, ret_d=ret_d).shift(1).stack()
+        var_dict['vol'] = cal_vol(freq_periods2[freq], freq=freq, ret_d=ret_d).shift(1).stack()
     if 'ivol' in var_list:
-        if 'iskew' not in var_list:
-            SMB_d, HML_d = cal_SMB_HML(freq='D')
-        if 'beta' in var_list or 'coskew' in var_list or 'iskew' in var_list:
-            var_dict['ivol']=cal_ivol(freq_periods2[freq],freq=freq,ret_d=ret_d,index_ret_d=index_ret_d,SMB_d=SMB_d,HML_d=HML_d).shift(1).stack()
-        else:
-            ret_d=cal_ret(freq='D')
-            index_ret_d = cal_index_ret(freq='D')
-            var_dict['ivol'] = cal_ivol(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
-                                        SMB_d=SMB_d, HML_d=HML_d).shift(1).stack()
+        var_dict['ivol'] = cal_ivol(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
+                                    SMB_d=SMB_d, HML_d=HML_d).shift(1).stack()
 
     #global var_dict
     XY=pd.DataFrame(var_dict)[['ret']+var_list].dropna()
@@ -669,7 +641,7 @@ def Fama_MacBeth(var_list,freq='M'):
 
 from time import time
 t0=time()
-var_list=['ivol','beta','size','BM','mom']
+var_list=['ivol','beta','size','BM','mom','rev','']
 a,b=Fama_MacBeth(var_list)
 print(time()-t0)
 ivol=cal_ivol(1, freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
