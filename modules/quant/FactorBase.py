@@ -17,7 +17,14 @@ def GetDataPath():
         return '/home/harbes/data/NewData/'
     else:
         raise ValueError('These is no such systerm in your work-station')
-def resample_index(data, to_freq):
+def resample_index(dat, to_freq):
+    '''
+    使用时一定要注意，此命令会更改数据的index；因此，凡是涉及输入的数据使用此命令时，一定要使用copy()，以防出错
+    :param data:
+    :param to_freq:
+    :return:
+    '''
+    data=dat.copy()
     if to_freq=='M':
         data.index = data.index.where(data.index == ((data.index + MonthEnd()) - MonthEnd()),
                                       data.index + MonthEnd())
@@ -51,6 +58,7 @@ def GetEndDateList(data, freq, trim_end=False):
         return sorted(set(date_list))
 def resample_h2l(data, to_freq='M', n_th=0, by_position=True):
     '''
+    使用时一定要注意，此命令会更改数据的index
     resample the given data(high freq to low freq), like daily to weekly or monthly
     :param data:
     :param freq:
@@ -327,8 +335,8 @@ def cal_turnover(periods,freq='M',amount=None,size_free=None):
 def cal_MaxRet(periods=1,freq='M',ret_d=None):
     if ret_d is None:
         ret_d=cal_ret(freq='D',del_Rf=False)
-    ret_d=resample_index(ret_d, freq)
-    max_ret = ret_d.groupby(level=0).max().rolling(periods).max()
+    ret=resample_index(ret_d, freq)
+    max_ret = ret.groupby(level=0).max().rolling(periods).max()
     return max_ret.iloc[periods-1:]
 def cal_skew(periods,freq='M',ret_d=None):
     if ret_d is None:
@@ -568,7 +576,65 @@ def CumRet(port_ret,method='simple',labels=None):
         port_ret.columns=labels
     cum_ret=(port_ret*0.01+1.0).cumprod()
     return cum_ret
-def Fama_MacBeth(var_list,freq='M'):
+
+def GetVarsFromList(var_list,freq):
+    if set(var_list).intersection(['beta','illiq','max_ret','skew','coskew','iskew','vol','ivol']):
+        ret_d=cal_ret(freq='D')
+    if set(var_list).intersection(['beta','coskew','iskew','ivol']):
+        index_ret_d=cal_index_ret(freq='D')
+    if set(var_list).intersection(['iskew','ivol']):
+        SMB_d,HML_d=cal_SMB_HML(freq='D')
+    if set(var_list).intersection(['illiq','turnover']):
+        amount_d=import_data(PV_vars=['amount'])[0].unstack() # 如果只有一个变量时，unstack()的结果是columns是multiindex
+        amount_d.columns=amount_d.columns.get_level_values(1)
+    if set(var_list).intersection(['turnover']):
+        size_free_d=import_data(PV_vars=['size_free'])[0].unstack()
+        size_free_d.columns = size_free_d.columns.get_level_values(1)
+    ### beta,mom
+    freq_periods1={
+        'M':12,
+        'W':52
+    }
+    ### illiq,turnover,skew,coskew,iskew,vol,ivol
+    freq_periods2={
+        'M':1,
+        'W':4
+    }
+    var_dict={}
+    ret = cal_ret(freq=freq)
+    var_dict['ret']=ret
+    if 'skew' in var_list:
+        var_dict['skew'] = cal_skew(freq_periods2[freq], freq=freq, ret_d=ret_d)
+    if 'coskew' in var_list:
+        var_dict['coskew'] = cal_coskew(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d)
+    if 'iskew' in var_list:
+        var_dict['iskew'] = cal_iskew(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
+                                      SMB_d=SMB_d, HML_d=HML_d)
+    if 'vol' in var_list:
+        var_dict['vol'] = cal_vol(freq_periods2[freq], freq=freq, ret_d=ret_d)
+    if 'ivol' in var_list:
+        var_dict['ivol'] = cal_ivol(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
+                                    SMB_d=SMB_d, HML_d=HML_d)
+    if 'beta' in var_list:
+        var_dict['beta']=cal_beta(freq_periods1[freq],freq=freq,index_ret_d=index_ret_d,ret_d=ret_d)
+    if 'size' in var_list or 'BM' in var_list:
+        size=cal_size(freq=freq)
+        var_dict['BM']=cal_BM(size=size,freq=freq)
+        var_dict['size']=size*1e-5
+    if 'mom' in var_list:
+        var_dict['mom']=cal_mom(freq_periods1[freq],freq=freq)
+    if 'rev' in var_list:
+        var_dict['rev']=ret
+    if 'illiq' in var_list:
+        var_dict['illiq'] = cal_illiq(freq_periods2[freq], freq=freq, ret_d=ret_d, amount=amount_d)
+    if 'max_ret' in var_list:
+        var_dict['max_ret']=cal_MaxRet(freq_periods2[freq],freq=freq,ret_d=ret_d)
+    if 'turnover' in var_list:
+        var_dict['turnover'] = cal_turnover(freq_periods2[freq], freq=freq, amount=amount_d,
+                                            size_free=size_free_d)
+
+    return var_dict
+def _Fama_MacBeth0(var_list,freq):
     # ret_freq/ret: rev
     # ret_d: beta,illiq,max_ret,skew,coskew,iskew,vol,ivol
     # index_ret_freq/index_ret:
@@ -634,7 +700,6 @@ def Fama_MacBeth(var_list,freq='M'):
         var_dict['ivol'] = cal_ivol(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
                                     SMB_d=SMB_d, HML_d=HML_d).shift(1).stack()
 
-    #global var_dict
     XY=pd.DataFrame(var_dict)[['ret']+var_list].dropna()
     date_list=sorted(set(XY.index.get_level_values(0)))
     params_list=['const']+var_list
@@ -643,64 +708,31 @@ def Fama_MacBeth(var_list,freq='M'):
         model_fit= sm.OLS(XY.loc[t]['ret'], sm.add_constant(XY.loc[t][var_list])).fit()
         fit_results.loc[t,params_list]=model_fit.params
         fit_results.loc[t,'adj.R2']=model_fit.rsquared_adj
-    return fit_results.iloc[:-1].mean(),fit_results.iloc[:-1][params_list].mean() / NWest_mean(fit_results.iloc[:-1][params_list])
-def GetVarsFromList(var_list,freq='M'):
-    if set(var_list).intersection(['beta','illiq','max_ret','skew','coskew','iskew','vol','ivol']):
-        ret_d=cal_ret(freq='D')
-    if set(var_list).intersection(['beta','coskew','iskew','ivol']):
-        index_ret_d=cal_index_ret(freq='D')
-    if set(var_list).intersection(['iskew','ivol']):
-        SMB_d,HML_d=cal_SMB_HML(freq='D')
-    if set(var_list).intersection(['illiq','turnover']):
-        amount_d=import_data(PV_vars=['amount'])[0].unstack() # 如果只有一个变量时，unstack()的结果是columns是multiindex
-        amount_d.columns=amount_d.columns.get_level_values(1)
-    if set(var_list).intersection(['turnover']):
-        size_free_d=import_data(PV_vars=['size_free'])[0].unstack()
-        size_free_d.columns = size_free_d.columns.get_level_values(1)
-    ### beta,mom
-    freq_periods1={
-        'M':12,
-        'W':52
-    }
-    ### illiq,turnover,skew,coskew,iskew,vol,ivol
-    freq_periods2={
-        'M':1,
-        'W':4
-    }
-    var_dict={}
-    ret = cal_ret(freq=freq)
-    var_dict['ret']=ret
-    if 'skew' in var_list:
-        var_dict['skew'] = cal_skew(freq_periods2[freq], freq=freq, ret_d=ret_d)
-    if 'coskew' in var_list:
-        var_dict['coskew'] = cal_coskew(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d)
-    if 'iskew' in var_list:
-        var_dict['iskew'] = cal_iskew(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
-                                      SMB_d=SMB_d, HML_d=HML_d)
-    if 'vol' in var_list:
-        var_dict['vol'] = cal_vol(freq_periods2[freq], freq=freq, ret_d=ret_d)
-    if 'ivol' in var_list:
-        var_dict['ivol'] = cal_ivol(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
-                                    SMB_d=SMB_d, HML_d=HML_d)
-    if 'beta' in var_list:
-        var_dict['beta']=cal_beta(freq_periods1[freq],freq=freq,index_ret_d=index_ret_d,ret_d=ret_d)
-    if 'size' in var_list or 'BM' in var_list:
-        size=cal_size(freq=freq)
-        var_dict['BM']=cal_BM(size=size,freq=freq)
-        var_dict['size']=size*1e-5
-    if 'mom' in var_list:
-        var_dict['mom']=cal_mom(freq_periods1[freq],freq=freq)
-    if 'rev' in var_list:
-        var_dict['rev']=ret
-    if 'illiq' in var_list:
-        var_dict['illiq'] = cal_illiq(freq_periods2[freq], freq=freq, ret_d=ret_d, amount=amount_d)
-    if 'max_ret' in var_list:
-        var_dict['max_ret']=cal_MaxRet(freq_periods2[freq],freq=freq,ret_d=ret_d)
-    if 'turnover' in var_list:
-        var_dict['turnover'] = cal_turnover(freq_periods2[freq], freq=freq, amount=amount_d,
-                                            size_free=size_free_d)
+    return pd.DataFrame({'mean':fit_results.iloc[:-1].mean(),'t':fit_results.iloc[:-1][params_list].mean() / NWest_mean(fit_results.iloc[:-1][params_list])}).T
+def Fama_MacBeth(var_list,freq='M',var_dict=None):
+    # ret_freq/ret: rev
+    # ret_d: beta,illiq,max_ret,skew,coskew,iskew,vol,ivol
+    # index_ret_freq/index_ret:
+    # index_ret_d: beta,coskew,iskew,ivol
+    # SMB_d,HML_d: iskew,ivol
+    # amount_d: illiq,turnover
+    # size_free_d: turnover
+    #
 
-    return var_dict
+    if var_dict is None:
+        var_dict=GetVarsFromList(var_list,freq=freq)
+    var_d={}
+    for k in var_dict:
+        var_d[k]=var_dict[k].shift(1).stack()
+    XY=pd.DataFrame(var_d)[['ret']+var_list].dropna()
+    date_list=sorted(set(XY.index.get_level_values(0)))
+    params_list=['const']+var_list
+    fit_results=pd.DataFrame(index=date_list,columns=params_list+['adj.R2'])
+    for t in date_list:
+        model_fit= sm.OLS(XY.loc[t]['ret'], sm.add_constant(XY.loc[t][var_list])).fit()
+        fit_results.loc[t,params_list]=model_fit.params
+        fit_results.loc[t,'adj.R2']=model_fit.rsquared_adj
+    return pd.DataFrame({'mean':fit_results.iloc[:-1].mean(),'t':fit_results.iloc[:-1][params_list].mean() / NWest_mean(fit_results.iloc[:-1][params_list])}).T
 def SinglePortAnalysis(var_list,var_dict=None,freq='M',value_weighted=False):
     # TODO 待解决重复计算相同数据的非效率问题
     if var_dict is None:

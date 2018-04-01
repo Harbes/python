@@ -31,9 +31,9 @@ if __name__ == '__main__':
     from time import time
 
     t0 = time()
-    var_list = ['skew', 'iskew', 'coskew', 'vol', 'ivol', 'beta', 'size', 'mom', 'rev', 'illiq', 'turnover',
-                'max_ret']  # ['iskew']#
-    var_dict = GetVarsFromList(var_list, freq='M')
+    var_list = [ 'beta', 'size', 'mom', 'rev', 'illiq', 'turnover',
+                'max_ret','skew', 'iskew', 'coskew', 'vol', 'ivol']  # ['iskew']#
+    var_dict = GetVarsFromList(var_list,'M')
     print(time() - t0)
     to = time()
     results1_EW = SinglePortAnalysis(var_list, var_dict=var_dict)
@@ -48,7 +48,14 @@ if __name__ == '__main__':
     results2_VW = DoublePortAnalysis(var_list, 'ivol', var_dict=var_dict, value_weighted=True)
     print(time() - t0)
     # Fama-MacBeth
-
+    t0 = time()
+    var_list = ['beta', 'size', 'mom', 'rev', 'illiq', 'turnover',
+                'max_ret', 'skew', 'iskew', 'coskew', 'vol', 'ivol']  # ['iskew']#
+    var_dict = GetVarsFromList(var_list, 'M')
+    print(time() - t0)
+    t0 = time()
+    Fama_MacBeth(var_list,freq='M',var_dict=var_dict)
+    print(time() - t0)
 
 
     data_path = GetDataPath()
