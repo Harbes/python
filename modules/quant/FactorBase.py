@@ -158,6 +158,21 @@ def import_data(PV_vars=None, BS_vars=None,Rf_freq=None,filter_data=True):
     else:
         Rf=None
     return PV,BS,Rf
+def FilterSample(indi,percentile,label):
+    '''
+    for example:
+        percentile=[0.0,0.3,0.7,1.0]
+        label=[0.0,1.0,0.0] # 保留非0标记的分位区间
+    :param indi:
+    :param percentile:
+    :param label:
+    :param freq:
+    :return:
+    '''
+    if (len(percentile)-1)!=len(label):
+        raise ValueError('Percentile does not match label !!!')
+    mark_=pd.DataFrame([pd.qcut(indi.loc[t],q=percentile,labels=label) for t in indi.index])
+    return mark_!=0.0
 def cal_index_ret(freq='M',index_code='000016.SH',del_Rf=True,trim_end=True):
     '''
     :param index_code:
