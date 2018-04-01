@@ -624,7 +624,7 @@ def GetVarsFromList(var_list,freq):
     if 'mom' in var_list:
         var_dict['mom']=cal_mom(freq_periods1[freq],freq=freq)
     if 'rev' in var_list:
-        var_dict['rev']=ret
+        var_dict['rev']=ret.copy()
     if 'illiq' in var_list:
         var_dict['illiq'] = cal_illiq(freq_periods2[freq], freq=freq, ret_d=ret_d, amount=amount_d)
     if 'max_ret' in var_list:
@@ -722,8 +722,9 @@ def Fama_MacBeth(var_list,freq='M',var_dict=None):
     if var_dict is None:
         var_dict=GetVarsFromList(var_list,freq=freq)
     var_d={}
-    for k in var_dict:
+    for k in var_list:
         var_d[k]=var_dict[k].shift(1).stack()
+    var_d['ret']=var_dict['ret'].stack()
     XY=pd.DataFrame(var_d)[['ret']+var_list].dropna()
     date_list=sorted(set(XY.index.get_level_values(0)))
     params_list=['const']+var_list
@@ -732,7 +733,7 @@ def Fama_MacBeth(var_list,freq='M',var_dict=None):
         model_fit= sm.OLS(XY.loc[t]['ret'], sm.add_constant(XY.loc[t][var_list])).fit()
         fit_results.loc[t,params_list]=model_fit.params
         fit_results.loc[t,'adj.R2']=model_fit.rsquared_adj
-    return pd.DataFrame({'mean':fit_results.iloc[:-1].mean(),'t':fit_results.iloc[:-1][params_list].mean() / NWest_mean(fit_results.iloc[:-1][params_list])}).T
+    return pd.DataFrame({'mean':fit_results.iloc[:-1].mean(),'t':fit_results.iloc[:-1][params_list].mean() / NWest_mean(fit_results.iloc[:-1][params_list])}).T[params_list+['adj.R2']]
 def SinglePortAnalysis(var_list,var_dict=None,freq='M',value_weighted=False):
     # TODO 待解决重复计算相同数据的非效率问题
     if var_dict is None:

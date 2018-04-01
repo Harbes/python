@@ -1,8 +1,8 @@
 from modules.quant.FactorBase import *
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-
+from time import time
 
 if __name__ == '__main__':
     #freq = 'M'
@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
 
     # portfolio analysis
-    from time import time
+
 
     t0 = time()
     var_list = [ 'beta', 'size', 'mom', 'rev', 'illiq', 'turnover',
@@ -54,12 +54,12 @@ if __name__ == '__main__':
     var_dict = GetVarsFromList(var_list, 'M')
     print(time() - t0)
     t0 = time()
-    Fama_MacBeth(var_list,freq='M',var_dict=var_dict)
+    FM_result=Fama_MacBeth(var_list,freq='M',var_dict=var_dict)
     print(time() - t0)
 
-
-    data_path = GetDataPath()
+    data_path=GetDataPath()
     results1_EW.to_csv(data_path + 'results1_EW.csv')
     results1_VW.to_csv(data_path + 'results1_VW.csv')
     results2_EW.to_csv(data_path + 'results2_EW.csv')
     results2_VW.to_csv(data_path + 'results2_VW.csv')
+    FM_result.to_csv(data_path+'FM_result.csv')
