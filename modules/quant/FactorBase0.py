@@ -1,5 +1,4 @@
 import pandas as pd
-from pandas import DataFrame,qcut
 import numpy as np
 from pandas.tseries.offsets import MonthEnd,YearEnd,Week,Day,DateOffset
 import statsmodels.api as sm
@@ -40,7 +39,7 @@ def resample_index(dat, to_freq):
     return data
 def GetEndDateList(data, freq, trim_end=False):
     '''
-    trim主要用于日度数据resample成低频数据
+    trim主要用于日度数据
     :param data:
     :param freq:
     :param trim_end:
@@ -49,27 +48,21 @@ def GetEndDateList(data, freq, trim_end=False):
     if freq=='M':
         date_list=data.index.where(data.index == ((data.index + MonthEnd()) - MonthEnd()),
                                       data.index + MonthEnd())
+        #date_list=pd.to_datetime(date_list.astype(str),format='%Y%m')+MonthEnd()
     elif freq=='W':
         week_day = 5  # 0-6分别对应周一至周日
         date_list = data.index.where(data.index == ((data.index + Week(weekday=week_day)) - Week()),
                                       data.index + Week(weekday=week_day))
+
+        #date_list=pd.to_datetime(date_list.astype(str).str.pad(7,side='right',fillchar='6'),format='%Y%W%w')
     elif freq=='Y':
         date_list = data.index.where(data.index == ((data.index + YearEnd()) - YearEnd()),
                                       data.index + YearEnd())
+        #date_list = pd.to_datetime(date_list.astype(str), format='%Y') + YearEnd()
     if trim_end:
         return sorted(set(date_list))[:-1]
     else:
         return sorted(set(date_list))
-def GetValueWeightedIndexReturn(freq):
-    p0 = 'adj_open'
-    p1 = 'adj_close'  # price0也可以使用 'adj_pre_close'
-    PV = import_data(PV_vars=['size_tot',p0, p1])[0]
-    price0 = resample_index(PV[p0].unstack(),to_freq=freq).groupby(level=0).nth(0).stack()
-    price1 = resample_index(PV[p1].unstack(),to_freq=freq).groupby(level=0).nth(-1).stack()
-    size=resample_index(PV['size_tot'].unstack(),to_freq=freq).groupby(level=0).nth(-1).stack()
-    #df=pd.concat(((price1-price0)/price0,size),axis=1).dropna()
-    df=pd.DataFrame({'ret':(price1-price0)/price0,'size':size}).dropna()
-    return (df['ret']*df['size']).sum(level=0)/df['size'].sum(level=0)* 100.0
 def resample_h2l(data, to_freq='M', n_th=0, by_position=True):
     '''
     使用时一定要注意，此命令会更改数据的index
@@ -99,20 +92,30 @@ def resample_h2l(data, to_freq='M', n_th=0, by_position=True):
     #By = lambda x: x
     data=resample_index(data, to_freq)
     tmp=data.groupby(level=0)
+    #data.resample('D',fill_method='pad')
     if by_position:
-        return tmp.nth(n_th)
+        data=tmp.nth(n_th)
     elif n_th:
-        return tmp.last()
+        data=tmp.last()
     else:
-        return tmp.first()
+        data =tmp.first()
+    #if to_freq=='W':
+    #    data.drop(data.index.duplicated(keep=last),inplace=True)
+    #if to_freq=='M':
+    #    data.index=pd.to_datetime(data.index.astype(str),format='%Y%m')+MonthEnd()
+    #elif to_freq=='W':
+        # 转成每周的固定day，0对应周日，1-6分别对应星期一到星期六
+        # data.index=pd.to_datetime(data.index.astype(str).str.pad(7,side='right',fillchar='6'),format='%Y%W%w')
+    #elif to_freq=='Y':
+    #    data.index=pd.to_datetime(data.index.astype(str),format='%Y')+YearEnd()
+    return data
 def GetDeltaDate(periods,freq):
     if freq == 'M':
-        return MonthEnd(periods)#DateOffset(months=periods)
+        delta_date = periods*MonthEnd()#DateOffset(months=periods)
     elif freq == 'W':
-        return DateOffset(weeks=periods)
-    elif freq=='D':
-        return Day(periods)
-def import_data(PV_vars=None, BS_vars=None,Rf_freq=None,filter_data=False):
+        delta_date = DateOffset(weeks=periods)
+    return delta_date
+def import_data(PV_vars=None, BS_vars=None,Rf_freq=None,filter_data=True):
     '''
 
     :param pv_vars[pv数据已经指定index变量了]: list of strings
@@ -125,7 +128,6 @@ def import_data(PV_vars=None, BS_vars=None,Rf_freq=None,filter_data=False):
 
     :param BS_vars[BS数据尚未指定index变量]: list of strings
         'fin_year','ann_dt', 'stkcd', 'tot_assets', 'tot_liab'
-        【book数据可以直接使用'tot_shrhldr_eqy_excl_min_int】
 
     :param Rf_freq:
         'Y','M','D'
@@ -137,10 +139,7 @@ def import_data(PV_vars=None, BS_vars=None,Rf_freq=None,filter_data=False):
         raise ValueError("You haven't name the varables to be imported")
     data_path=GetDataPath()
     if PV_vars is not None:
-        if len(PV_vars)>1:
-            PV=pd.read_pickle(data_path+'PV_datetime')[PV_vars]
-        else:
-            PV = pd.read_pickle(data_path + 'PV_datetime')[PV_vars[0]]
+        PV=pd.read_pickle(data_path+'PV_datetime')[PV_vars]
         if filter_data is True:
             filter_ =pd.read_pickle(data_path + 'filtered_data').stack()
             PV=PV[filter_]
@@ -166,7 +165,7 @@ def import_data(PV_vars=None, BS_vars=None,Rf_freq=None,filter_data=False):
     else:
         Rf=None
     return PV,BS,Rf
-def winsorize(indi,percentile,label):
+def FilterSample(indi,percentile,label):
     '''
     for example:
         percentile=[0.0,0.3,0.7,1.0]
@@ -180,8 +179,8 @@ def winsorize(indi,percentile,label):
     if (len(percentile)-1)!=len(label):
         raise ValueError('Percentile does not match label !!!')
     mark_=pd.DataFrame([pd.qcut(indi.loc[t],q=percentile,labels=label) for t in indi.index])
-    return indi[mark_!=0.0]
-def cal_index_ret(freq='M',index_code=None,del_Rf=True,trim_end=True):
+    return mark_!=0.0
+def cal_index_ret(freq='M',index_code='000016.SH',del_Rf=True,trim_end=True):
     '''
     :param index_code:
         '000016.SH'：上证50
@@ -193,21 +192,14 @@ def cal_index_ret(freq='M',index_code=None,del_Rf=True,trim_end=True):
         delete risk-free or not
     :return:
     '''
-    data_path = GetDataPath()
-    if index_code is None:
-        try:
-            index_ret=pd.read_pickle(data_path+'value_weighted_index_return_'+freq)
-        except NameError:
-            index_ret=GetValueWeightedIndexReturn(freq)
-            index_ret.to_pickle(data_path+'value_weighted_index_return_'+freq)
-    else:
-        index_ret = pd.read_pickle(data_path + 'index_ret')[['index_code', 'trddt', 'opnprc', 'clsprc']]
-        index_ret = index_ret[index_ret['index_code'] == index_code][['trddt', 'opnprc', 'clsprc']].set_index('trddt')
-        index_ret.index = pd.to_datetime(index_ret.index.astype(int).astype(str), format='%Y%m%d')
-        price0 = resample_h2l(index_ret['opnprc'], to_freq=freq, n_th=0)
-        price1 = resample_h2l(index_ret['clsprc'], to_freq=freq, n_th=-1)
-        index_ret = (price1 - price0) / price0 * 100.0
-        index_ret.index.name = 'trddt'
+    data_path=GetDataPath()
+    index_ret = pd.read_pickle(data_path + 'index_ret')[['index_code', 'trddt', 'opnprc', 'clsprc']]
+    index_ret = index_ret[index_ret['index_code'] == index_code][['trddt', 'opnprc', 'clsprc']].set_index('trddt')
+    index_ret.index=pd.to_datetime(index_ret.index.astype(int).astype(str),format='%Y%m%d')
+    price0=resample_h2l(index_ret['opnprc'], to_freq=freq, n_th=0)
+    price1=resample_h2l(index_ret['clsprc'], to_freq=freq, n_th=-1)
+    index_ret=(price1-price0)/price0*100.0
+    index_ret.index.name = 'trddt'
     if del_Rf:
         Rf=import_data(Rf_freq=freq)[2]
         #index_ret = index_ret.sub(Rf.loc[index_ret.index], axis=0) # 报错，Rf是一个DataFrame，而不是Series
@@ -239,7 +231,48 @@ def cal_ret(freq='M',periods=1,del_Rf=True,trim_end=True):
         return ret.iloc[periods - 1:-1].astype(float)
     else:
         return ret.iloc[periods-1:].astype(float)
-
+def cal_SMB_HML(freq='M',ret=None,size=None,BM=None,percentile1=None,percentile2=None,independent=True):
+    if ret is None:
+        ret = cal_ret(freq=freq)
+        size=cal_size(freq=freq)
+        BM=cal_BM(size=size,freq=freq)
+    ret=ret.loc[size.index[0]:]
+    size=size.loc[:ret.index[-1]]
+    BM=BM.loc[:ret.index[-1]]
+    valid_ = ~(pd.isnull(size.shift(1)) | pd.isnull(BM.shift(1)) | pd.isnull(ret))  # TypeError: bad operand type for unary ~: 'float'--->index或columns不匹配
+    size = size[valid_.shift(-1).fillna(False)]
+    BM = BM[valid_.shift(-1).fillna(False)]
+    ret = ret[valid_]
+    if percentile1 is None:
+        percentile1 = [0.0, 0.5, 1.0]  # size
+        percentile2 = [0.0, 0.3, 0.7, 1.0]  # value
+    label_1=[i+1 for i in range(len(percentile1)-1)]
+    label_2=[i+1 for i in range(len(percentile2)-1)]
+    if independent:
+        #mark_1 = pd.DataFrame([pd.qcut(size.iloc[i], q=percentile1, labels=label_1) for i in size.index[:-1]],
+        #                      index=size.index[:-1]) # 报错
+        mark_1 = pd.DataFrame([pd.qcut(size.iloc[i], q=percentile1, labels=label_1) for i in range(len(size)-1)],
+                              index=size.index[1:])
+        mark_2 = pd.DataFrame([pd.qcut(BM.iloc[i], q=percentile2, labels=label_2) for i in range(len(BM) - 1)],
+                              index=BM.index[1:])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+    else:
+        mark_1 = pd.DataFrame([pd.qcut(size.iloc[i], q=percentile1, labels=label_1) for i in range(len(size) - 1)],
+                              index=size.index[1:])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+        mark_2=pd.DataFrame(index=mark_1.index,columns=mark_1.columns)
+        for l_ in label_1:
+            tmp=pd.DataFrame([pd.qcut(BM.iloc[i][mark_1.iloc[i]==l_],q=percentile2,labels=label_2) for i in range(len(BM)-1)],index=mark_1.index)
+            mark_2 = mark_2.combine_first(tmp)
+    #valid_ = ~(pd.isnull(mark_1 + mark_2) | pd.isnull(ret.iloc[1:]))  # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
+    df = pd.DataFrame()
+    df['rtn'] = ret.iloc[1:].stack()
+    df['ref1'] = mark_1.stack()
+    df['ref2'] = mark_2.stack()
+    tmp = df.groupby(level=0).apply(lambda g: g.groupby(['ref1', 'ref2']).mean()).unstack()
+    tmp.columns = tmp.columns.get_level_values(1)
+    tmp.index.names = ('trddt', 'ref1')
+    HML = tmp.mean(axis=0, level=0)
+    SMB = tmp.mean(axis=1).unstack()
+    return SMB.iloc[:,-1]-SMB.iloc[:,0], HML.iloc[:,-1]-HML.iloc[:,0]
 def cal_beta(periods,freq='M',index_ret_d=None,ret_d=None):
     if index_ret_d is None:
         index_ret_d=cal_index_ret(freq='D')
@@ -256,19 +289,22 @@ def cal_beta(periods,freq='M',index_ret_d=None,ret_d=None):
     #if freq=='D'or freq=='D-W':
     #    return beta[beta!=0.0].resample('D',fill_method='pad').loc[ret_d.loc[EndDate_list[periods-1]:].index].astype(float)
     #else:
-    return beta[beta!=0.0].shift(1).iloc[periods:].astype(float)
-def cal_size(freq='M',shift_num=1):
+    return beta[beta!=0.0].iloc[periods-1:].astype(float)
+def cal_size(freq='M'):
     size=import_data(PV_vars=['size_tot'])[0].unstack()
     size.columns=size.columns.get_level_values(1)
     size=resample_h2l(size, to_freq=freq, n_th=-1, by_position=False)
-    return size[size>0.0].shift(shift_num).iloc[shift_num:]*1.0e-5
+    return size[size>0.0]
 def cal_BM(size=None,freq='M'):
     if size is None:
-        size=cal_size(freq=freq,shift_num=0)
-    book=import_data(BS_vars=['tot_shrhldr_eqy_excl_min_int'])[1]
-    book = book.drop(book.index[book.index.duplicated(keep='last')]).unstack()['tot_shrhldr_eqy_excl_min_int']
-    BM=book.resample('D').first().ffill().loc[size.index,size.columns]/size*1.0e-8
-    return BM[BM>0.0].shift(1).iloc[1:]
+        size=cal_size(freq=freq)
+    tmp=import_data(BS_vars=['tot_assets', 'tot_liab'])[1]
+    book=tmp['tot_assets']-tmp['tot_liab']
+    book = book.drop(book.index[book.index.duplicated(keep='last')]).unstack()
+    book = book.resample('D').first().ffill()
+    book=book.loc[size.index,size.columns] * 1e-3
+    BM=book/size
+    return BM[BM>0.0]
 def cal_mom(periods,freq='M',opn=None,cls=None):
     if periods <2:
         raise ValueError('Periods must not be lower than 2 !!!')
@@ -280,7 +316,7 @@ def cal_mom(periods,freq='M',opn=None,cls=None):
         cls = pv[p1].unstack()
     open_price=resample_h2l(opn, to_freq=freq, n_th=0, by_position=False).shift(periods - 1)
     close_price=resample_h2l(cls, to_freq=freq, n_th=-1, by_position=False).shift(1)
-    return ((close_price-open_price)/open_price*100.0).shift(1).iloc[periods:]
+    return ((close_price-open_price)/open_price*100.0).iloc[periods-1:]
 def cal_rev(periods=1,freq='M',opn=None,cls=None):
     if opn is None:
         p0 = 'adj_open'
@@ -290,7 +326,7 @@ def cal_rev(periods=1,freq='M',opn=None,cls=None):
         cls=pv[p1].unstack()
     open_price=resample_h2l(opn, to_freq=freq, n_th=0, by_position=False).shift(periods - 1)
     close_price=resample_h2l(cls, to_freq=freq, n_th=-1, by_position=False)
-    return ((close_price-open_price)/open_price*100.0).shift(1).iloc[periods:]
+    return ((close_price-open_price)/open_price*100.0).iloc[periods-1:]
 def cal_illiq(periods=12,freq='M',ret_d=None,amount=None):
     if ret_d is None:
         p0='adj_open';p1='adj_close'
@@ -305,7 +341,7 @@ def cal_illiq(periods=12,freq='M',ret_d=None,amount=None):
     illiq_sum=illiq_sum.rolling(periods).sum()
     illiq_count=illiq_count.rolling(periods).sum()
     illiq=illiq_sum/illiq_count
-    return illiq.shift(1).iloc[periods:]
+    return illiq.iloc[periods-1:]
 def cal_turnover(periods,freq='M',amount=None,size_free=None):
     if amount is None:
         pv=import_data(PV_vars=['amount','size_free'])[0]
@@ -317,20 +353,13 @@ def cal_turnover(periods,freq='M',amount=None,size_free=None):
     turnover_sum=turnover.groupby(level=0).sum()
     turnover_count=turnover.groupby(level=0).count();turnover_count[turnover_count==0.0]=np.nan
     turnover=turnover_sum.rolling(periods).sum()/turnover_count.rolling(periods).sum()
-    return turnover.shift(1).iloc[periods:]
+    return turnover.iloc[periods-1:]
 def cal_MaxRet(periods=1,freq='M',ret_d=None):
-    '''
-    也许15个交易日的效果更好
-    :param periods:
-    :param freq:
-    :param ret_d:
-    :return:
-    '''
     if ret_d is None:
         ret_d=cal_ret(freq='D',del_Rf=False)
     ret=resample_index(ret_d, freq)
     max_ret = ret.groupby(level=0).max().rolling(periods).max()
-    return max_ret.shift(1).iloc[periods:]
+    return max_ret.iloc[periods-1:]
 def cal_skew(periods,freq='M',ret_d=None):
     if ret_d is None:
         ret_d=cal_ret(freq='D')
@@ -338,7 +367,7 @@ def cal_skew(periods,freq='M',ret_d=None):
     delta_date = GetDeltaDate(periods,freq)
     return pd.DataFrame(
         (ret_d.loc[edt - delta_date + Day():edt].skew() for edt in EndDate_list)
-        , index=EndDate_list).shift(1).iloc[periods:]
+        , index=EndDate_list).iloc[periods - 1:]
 def cal_coskew(periods,freq='M',ret_d=None,index_ret_d=None):
     if index_ret_d is None:
         ret_d=cal_ret(freq='D')
@@ -355,15 +384,15 @@ def cal_coskew(periods,freq='M',ret_d=None,index_ret_d=None):
         tmp3 = np.linalg.pinv(tmp1.cov())[1]
         coskew.loc[edt] = tmp3[0] * tmp2.mul(tmp1['index'], axis=0).mean() \
                           + tmp3[1] * tmp2.mul(tmp1['index^2'],axis=0).mean()
-    return coskew.shift(1).iloc[periods:].astype(float)
+    return coskew.iloc[periods-1:].astype(float)
 def cal_iskew(periods,freq='M',method='FF',ret_d=None,index_ret_d=None,SMB_d=None,HML_d=None):
     if ret_d is None:
         ret_d=cal_ret(freq='D')
         index_ret_d=cal_index_ret(freq='D')
         if method=='FF':
-            size_d = cal_size(freq='D', shift_num=0)
-            BM_d = cal_BM(size_d, freq='D')
-            SMB_d, HML_d = cal_SMB_HML(ret_d, size_d.shift(1).iloc[1:], BM_d)
+            size_d=cal_size(freq='D')
+            BM_d=cal_BM(size=size_d,freq='D')
+            SMB_d,HML_d=cal_SMB_HML(freq='D',ret=ret_d,size=size_d,BM=BM_d)
     EndDate_list=GetEndDateList(ret_d, freq,trim_end=True)
     iskew = pd.DataFrame(index=EndDate_list, columns=ret_d.columns)
     delta_date = GetDeltaDate(periods,freq)
@@ -387,7 +416,7 @@ def cal_iskew(periods,freq='M',method='FF',ret_d=None,index_ret_d=None,SMB_d=Non
                 tmp2.mul(tmp1['SMB'], axis=0).mean(),
                 tmp2.mul(tmp1['HML'], axis=0).mean()
             ])).skew()
-    return iskew.shift(1).iloc[periods:].astype(float)
+    return iskew.iloc[periods-1:].astype(float)
 def cal_vol(periods,freq='M',ZeroMean=False,ret_d=None):
     if ret_d is None:
         ret_d=cal_ret(freq='D')
@@ -398,19 +427,19 @@ def cal_vol(periods,freq='M',ZeroMean=False,ret_d=None):
         return pd.DataFrame(
             (ret_d.loc[edt - delta_date + Day():edt].mean() for edt in
              EndDate_list)
-            , index=EndDate_list).shift(1).iloc[periods:].sqrt()
+            , index=EndDate_list).iloc[periods - 1:].sqrt()
     else:
         return pd.DataFrame(
             (ret_d.loc[edt - delta_date + Day():edt].std() for edt in EndDate_list)
-            , index=EndDate_list).shift(1).iloc[periods:]
+            , index=EndDate_list).iloc[periods - 1:]
 def cal_ivol(periods,freq='M',method='FF',ret_d=None,index_ret_d=None,SMB_d=None,HML_d=None):
     if ret_d is None:
         ret_d = cal_ret(freq='D')
         index_ret_d = cal_index_ret(freq='D')
         if method == 'FF':
-            size_d = cal_size(freq='D',shift_num=0)
-            BM_d = cal_BM(size_d, freq='D')
-            SMB_d, HML_d = cal_SMB_HML( ret_d,size_d.shift(1).iloc[1:],BM_d)
+            size_d = cal_size(freq='D')
+            BM_d = cal_BM(size=size_d, freq='D')
+            SMB_d, HML_d = cal_SMB_HML(freq='D', ret=ret_d, size=size_d, BM=BM_d)
     EndDate_list=GetEndDateList(ret_d, freq,trim_end=True)
     ivol = pd.DataFrame(index=EndDate_list, columns=ret_d.columns)
     delta_date = GetDeltaDate(periods, freq)
@@ -435,79 +464,39 @@ def cal_ivol(periods,freq='M',method='FF',ret_d=None,index_ret_d=None,SMB_d=None
                 tmp2.mul(tmp1['SMB'], axis=0).mean(),
                 tmp2.mul(tmp1['HML'], axis=0).mean()
             ])).std()
-    return ivol.shift(1).iloc[periods:].astype(float)
-def IndexAlign(*vars):
-    l=len(vars)
-    index=vars[0].index.copy()
-    for i in range(1,l):
-        index &=vars[i].index
-    return [vars[i].loc[index] for i in range(l)]
+    return ivol.iloc[periods-1:].astype(float)
 
-def cal_SMB_HML(ret,size,BM,percentile1=None,percentile2=None,independent=True):
-    ret,size,BM=IndexAlign(ret,size,BM)
-    valid_ = ~pd.isnull(BM+ret)  # TypeError: bad operand type for unary ~: 'float'--->index或columns不匹配
-    size = size[valid_]
-    BM = BM[valid_]
-    ret = ret[valid_]
-    if percentile1 is None:
-        percentile1 = [0.0, 0.5, 1.0]  # size
-        percentile2 = [0.0, 0.3, 0.7, 1.0]  # value
-    label_1=[i+1 for i in range(len(percentile1)-1)]
-    label_2=[i+1 for i in range(len(percentile2)-1)]
-    if independent:
-        #mark_1 = pd.DataFrame([pd.qcut(size.iloc[i], q=percentile1, labels=label_1) for i in size.index[:-1]],
-        #                      index=size.index[:-1]) # 报错
-        mark_1 = DataFrame([qcut(size.iloc[i], q=percentile1, labels=label_1) for i in range(len(size))])
-        mark_2 = DataFrame([qcut(BM.iloc[i], q=percentile2, labels=label_2) for i in range(len(BM))])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
-    else:
-        mark_1 = DataFrame([qcut(size.iloc[i], q=percentile1, labels=label_1) for i in range(len(size))])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
-        mark_2=DataFrame(index=mark_1.index,columns=mark_1.columns)
-        for l_ in label_1:
-            tmp=DataFrame([qcut(BM.iloc[i][mark_1.iloc[i]==l_],q=percentile2,labels=label_2) for i in range(len(BM))])
-            mark_2 = mark_2.combine_first(tmp)
-    #valid_ = ~(pd.isnull(mark_1 + mark_2) | pd.isnull(ret.iloc[1:]))  # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
-    df = DataFrame()
-    df['rtn'] = ret.stack()
-    df['ref1'] = mark_1.stack()
-    df['ref2'] = mark_2.stack()
-    tmp = df.groupby(level=0).apply(lambda g: g.groupby(['ref1', 'ref2']).mean()).unstack()
-    tmp.columns = tmp.columns.get_level_values(1)
-    tmp.index.names = ('trddt', 'ref1')
-    HML = tmp.mean(axis=0, level=0)
-    SMB = tmp.mean(axis=1).unstack()
-    return SMB.iloc[:,-1]-SMB.iloc[:,0], HML.iloc[:,-1]-HML.iloc[:,0]
-def cal_mimick_port1(indi, freq='M', ret=None, weights=None, percentile=None):
+def cal_mimick_port1(indi,freq='M',ret=None,weights=None,percentile=None):
     if percentile is None:
         percentile=np.arange(0.0,1.01,0.1)
     label_=[i for i in range(1,len(percentile))]
     if ret is None:
-        ret= cal_ret(freq=freq).loc[indi.index[0]:]
+        ret=cal_ret(freq=freq).loc[indi.index[0]:]
     else:
-        ret= ret.loc[indi.index[0]:].copy()
-    indi= indi.loc[:ret.index[-1]].copy()
-    valid_=~pd.isnull(indi+ret) # TypeError: bad operand type for unary ~: 'float'--->index或columns不匹配
-    indi=indi[valid_]
+        ret=ret.loc[indi.index[0]:]
+    indi=indi.loc[:ret.index[-1]]
+    valid_=~(pd.isnull(indi.shift(1)) | pd.isnull(ret)) # TypeError: bad operand type for unary ~: 'float'--->index或columns不匹配
+    indi=indi[valid_.shift(-1).fillna(False)]
     ret=ret[valid_]
-    mark_ = pd.DataFrame([pd.qcut(indi.iloc[i],q=percentile, labels=label_) for i in range(len(indi))])
+    mark_ = pd.DataFrame([pd.qcut(indi.iloc[i],q=percentile, labels=label_) for i in range(len(indi)-1)],index=indi.index[1:])
     if weights is None:
         df = pd.DataFrame()
-        df['rtn'] = ret.stack() # ValueError: Must pass DataFrame with boolean values only--->index或columns不匹配
+        df['rtn'] = ret.iloc[1:].stack() # ValueError: Must pass DataFrame with boolean values only--->index或columns不匹配
         df['ref'] = mark_.stack()
-        tmp=df.groupby(level=0).apply(lambda g: g.groupby('ref').mean()).unstack()['rtn']
-        #tmp.columns = tmp.columns.get_level_values(1)
+        tmp=df.groupby(level=0).apply(lambda g: g.groupby('ref').mean()).unstack()
+        tmp.columns = tmp.columns.get_level_values(1)
     else:
         df1=pd.DataFrame()
         df2=pd.DataFrame()
-        df1['rtn_w'] = (ret*weights).stack()
+        df1['ret_w'] = (ret*weights.shift(1)).iloc[1:].stack()
         df1['ref'] = mark_.stack()
-        df2['rtn_w'] = weights[valid_].stack()
-        #df2['ref'] = mark_.stack()
-        df2['ref']=df1['ref']
+        df2['ret_w'] = weights.shift(1).iloc[1:].stack()
+        df2['ref'] = mark_.stack()
         tmp1=df1.groupby(level=0).apply(lambda g: g.groupby('ref').sum())
         tmp2 = df2.groupby(level=0).apply(lambda g: g.groupby('ref').sum())
-        tmp=(tmp1/tmp2).unstack()['rtn_w']
-        #tmp.columns = tmp.columns.get_level_values(1)
-    #tmp.columns.name=None
+        tmp=(tmp1/tmp2).unstack()
+        tmp.columns = tmp.columns.get_level_values(1)
+    tmp.columns.name=None
     return tmp
 def cal_mimick_port2(indi1,indi2,freq='M',ret=None,weights=None,percentile1=None,percentile2=None,independent=False):
     if percentile1 is None:
@@ -516,43 +505,50 @@ def cal_mimick_port2(indi1,indi2,freq='M',ret=None,weights=None,percentile1=None
     label_1 = [i for i in range(1, len(percentile1))]
     label_2 = [i for i in range(1, len(percentile2))]
     if ret is None:
-        ret = cal_ret(freq=freq)
-    indi1,indi2,ret=IndexAlign(indi1,indi2,ret)
-    valid_ = ~pd.isnull(indi1+indi2+ret)  # TypeError: bad operand type for unary ~: 'float'--->index或columns不匹配
-    indi1 = indi1[valid_]
-    indi2 = indi2[valid_]
+        ret = cal_ret(freq=freq).loc[indi1.index[0]:]
+    else:
+        ret = ret.loc[indi1.index[0]:]
+    start_=indi1.index[0] if indi1.index[0]>indi2.index[0] else indi2.index[0]
+    indi1 = indi1.loc[start_:ret.index[-1]].copy()
+    indi2 = indi2.loc[start_:ret.index[-1]].copy()
+    valid_ = ~(pd.isnull((indi1+indi2).shift(1)) | pd.isnull(ret))  # TypeError: bad operand type for unary ~: 'float'--->index或columns不匹配
+    indi1 = indi1[valid_.shift(-1).fillna(False)]
+    indi2 = indi2[valid_.shift(-1).fillna(False)]
     ret = ret[valid_]
     if independent:
-        mark_1 = pd.DataFrame([pd.qcut(indi1.iloc[i], q=percentile1, labels=label_1) for i in range(len(indi1))])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
-        mark_2 = pd.DataFrame([pd.qcut(indi2.iloc[i], q=percentile2, labels=label_2) for i in range(len(indi2))])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+        mark_1 = pd.DataFrame([pd.qcut(indi1.iloc[i], q=percentile1, labels=label_1) for i in range(len(indi1) - 1)],
+                              index=indi1.index[1:])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+        mark_2 = pd.DataFrame([pd.qcut(indi2.iloc[i], q=percentile2, labels=label_2) for i in range(len(indi2) - 1)],
+                              index=indi2.index[1:])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
     else:
-        mark_1 = pd.DataFrame([pd.qcut(indi1.iloc[i], q=percentile1, labels=label_1) for i in range(len(indi1) -)])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+        mark_1 = pd.DataFrame([pd.qcut(indi1.iloc[i], q=percentile1, labels=label_1) for i in range(len(indi1) - 1)],
+                              index=indi1.index[1:])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
         mark_2=pd.DataFrame(index=mark_1.index,columns=mark_1.columns)
         for l_ in label_1:
-            tmp=pd.DataFrame([pd.qcut(indi2.iloc[i][mark_1.iloc[i]==l_],q=percentile2,labels=label_2) for i in range(len(indi2))])
+            tmp=pd.DataFrame([pd.qcut(indi2.iloc[i][mark_1.iloc[i]==l_],q=percentile2,labels=label_2) for i in range(len(indi2)-1)],index=mark_1.index)
             mark_2 = mark_2.combine_first(tmp)
     #valid_ = ~(pd.isnull(mark_1+mark_2) | pd.isnull(ret.iloc[1:]))  # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
     if weights is None:
         df = pd.DataFrame()
-        df['rtn'] = ret.stack()
+        df['rtn'] = ret.iloc[1:].stack()
         df['ref1'] = mark_1.stack()
         df['ref2'] = mark_2.stack()
-        tmp = df.groupby(level=0).apply(lambda g: g.groupby(['ref1','ref2']).mean()).unstack()['rtn']
-        #tmp.columns = tmp.columns.get_level_values(1)
+        tmp = df.groupby(level=0).apply(lambda g: g.groupby(['ref1','ref2']).mean()).unstack()
+        tmp.columns = tmp.columns.get_level_values(1)
     else:
         df1 = pd.DataFrame()
         df2 = pd.DataFrame()
-        df1['rtn_w'] = (ret * weights).stack()
+        df1['rtn_w'] = (ret * weights.shift(1)).loc[ret.index[1:]].stack()
         df1['ref1'] = mark_1.stack()
         df1['ref2'] = mark_2.stack()
-        df2['rtn_w'] = weights[valid_].stack()
+        df2['rtn_w'] = weights.shift(1).loc[ret.index[1:]].stack()
         df2['ref1'] = mark_1.stack()
         df2['ref2'] = mark_2.stack()
         tmp1 = df1.groupby(level=0).apply(lambda g: g.groupby(['ref1','ref2']).sum())
         tmp2 = df2.groupby(level=0).apply(lambda g: g.groupby(['ref1','ref2']).sum())
-        tmp = (tmp1 / tmp2).unstack()['rtn_w']
-        #tmp.columns = tmp.columns.get_level_values(1)
-    #tmp.columns.name = None
+        tmp = (tmp1 / tmp2).unstack()
+        tmp.columns = tmp.columns.get_level_values(1)
+    tmp.columns.name = None
     return tmp
 def describe(df,stats=['skew','kurt']):
     d=df.describe(percentiles=[0.05,0.25,0.5,0.75,0.95])
@@ -587,12 +583,10 @@ def NWest(e,X,L=None):
     return np.sqrt((XX_1@S@XX_1)[0,0])
 def cal_FF_alpha(arr,freq='M',index_ret=None, SMB=None, HML=None):
     if index_ret is None:
-        ret=cal_ret(freq=freq)
         index_ret=cal_index_ret(freq=freq)
-        size=cal_size(freq=freq,shift_num=0)
+        size=cal_size(freq=freq)
         BM=cal_BM(size,freq=freq)
-        SMB,HML=cal_SMB_HML(ret,size.shift(1).iloc[1:],BM)
-        #del ret,size,BM
+        SMB,HML=cal_SMB_HML(freq=freq,size=size,BM=BM)
     independent_vars=['index', 'SMB', 'HML']#[independent_vars+['ret']]
     XY=pd.DataFrame({'index':index_ret,'SMB':SMB, 'HML':HML,'ret':arr}).dropna()
     tmp1=XY-XY.mean(axis=0)
@@ -608,18 +602,16 @@ def CumRet(port_ret,method='simple',labels=None):
 def GetVarsFromList(var_list,freq):
     if set(var_list).intersection(['beta','illiq','max_ret','skew','coskew','iskew','vol','ivol']):
         ret_d=cal_ret(freq='D')
-        if set(var_list).intersection(['iskew', 'ivol']):
-            size_d=cal_size(freq='D',shift_num=0)
-            BM_d=cal_BM(size_d,freq='M')
-            SMB_d, HML_d = cal_SMB_HML(ret_d, size_d.shift(1).iloc[1:], BM_d)
     if set(var_list).intersection(['beta','coskew','iskew','ivol']):
         index_ret_d=cal_index_ret(freq='D')
+    if set(var_list).intersection(['iskew','ivol']):
+        SMB_d,HML_d=cal_SMB_HML(freq='D')
     if set(var_list).intersection(['illiq','turnover']):
-        amount_d=import_data(PV_vars=['amount'])[0].unstack()['amount'] # 如果只有一个变量时，unstack()的结果是columns是multiindex
-        #amount_d.columns=amount_d.columns.get_level_values(1)
+        amount_d=import_data(PV_vars=['amount'])[0].unstack() # 如果只有一个变量时，unstack()的结果是columns是multiindex
+        amount_d.columns=amount_d.columns.get_level_values(1)
     if set(var_list).intersection(['turnover']):
-        size_free_d=import_data(PV_vars=['size_free'])[0].unstack()['size_free']
-        #size_free_d.columns = size_free_d.columns.get_level_values(1)
+        size_free_d=import_data(PV_vars=['size_free'])[0].unstack()
+        size_free_d.columns = size_free_d.columns.get_level_values(1)
     ### beta,mom
     freq_periods1={
         'M':12,
@@ -633,7 +625,18 @@ def GetVarsFromList(var_list,freq):
     var_dict={}
     ret = cal_ret(freq=freq)
     var_dict['ret']=ret
-
+    if 'skew' in var_list:
+        var_dict['skew'] = cal_skew(freq_periods2[freq], freq=freq, ret_d=ret_d)
+    if 'coskew' in var_list:
+        var_dict['coskew'] = cal_coskew(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d)
+    if 'iskew' in var_list:
+        var_dict['iskew'] = cal_iskew(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
+                                      SMB_d=SMB_d, HML_d=HML_d)
+    if 'vol' in var_list:
+        var_dict['vol'] = cal_vol(freq_periods2[freq], freq=freq, ret_d=ret_d)
+    if 'ivol' in var_list:
+        var_dict['ivol'] = cal_ivol(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
+                                    SMB_d=SMB_d, HML_d=HML_d)
     if 'beta' in var_list:
         var_dict['beta']=cal_beta(freq_periods1[freq],freq=freq,index_ret_d=index_ret_d,ret_d=ret_d)
     if 'size' in var_list or 'BM' in var_list:
@@ -651,20 +654,83 @@ def GetVarsFromList(var_list,freq):
     if 'turnover' in var_list:
         var_dict['turnover'] = cal_turnover(freq_periods2[freq], freq=freq, amount=amount_d,
                                             size_free=size_free_d)
-    if 'skew' in var_list:
-        var_dict['skew'] = cal_skew(freq_periods2[freq], freq=freq, ret_d=ret_d)
-    if 'coskew' in var_list:
-        var_dict['coskew'] = cal_coskew(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d)
-    if 'iskew' in var_list:
-        var_dict['iskew'] = cal_iskew(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
-                                      SMB_d=SMB_d, HML_d=HML_d)
-    if 'vol' in var_list:
-        var_dict['vol'] = cal_vol(freq_periods2[freq], freq=freq, ret_d=ret_d)
-    if 'ivol' in var_list:
-        var_dict['ivol'] = cal_ivol(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
-                                    SMB_d=SMB_d, HML_d=HML_d)
 
     return var_dict
+def _Fama_MacBeth0(var_list,freq):
+    # ret_freq/ret: rev
+    # ret_d: beta,illiq,max_ret,skew,coskew,iskew,vol,ivol
+    # index_ret_freq/index_ret:
+    # index_ret_d: beta,coskew,iskew,ivol
+    # SMB_d,HML_d: iskew,ivol
+    # amount_d: illiq,turnover
+    # size_free_d: turnover
+    #
+    if set(var_list).intersection(['beta','illiq','max_ret','skew','coskew','iskew','vol','ivol']):
+        ret_d=cal_ret(freq='D')
+    if set(var_list).intersection(['beta','coskew','iskew','ivol']):
+        index_ret_d=cal_index_ret(freq='D')
+    if set(var_list).intersection(['iskew','ivol']):
+        SMB_d,HML_d=cal_SMB_HML(freq='D')
+    if set(var_list).intersection(['illiq','turnover']):
+        amount_d=import_data(PV_vars=['amount'])[0].unstack() # 如果只有一个变量时，unstack()的结果是columns是multiindex
+        amount_d.columns=amount_d.columns.get_level_values(1)
+    if set(var_list).intersection(['turnover']):
+        size_free_d=import_data(PV_vars=['size_free'])[0].unstack()
+        size_free_d.columns = size_free_d.columns.get_level_values(1)
+    ### beta,mom
+    freq_periods1={
+        'M':12,
+        'W':52
+    }
+    ### illiq,turnover,skew,coskew,iskew,vol,ivol
+    freq_periods2={
+        'M':1,
+        'W':4
+    }
+    var_dict={}
+    ret = cal_ret(freq=freq)
+    var_dict['ret']=ret.stack()
+    if 'beta' in var_list:
+        var_dict['beta']=cal_beta(freq_periods1[freq],freq=freq,index_ret_d=index_ret_d,ret_d=ret_d).shift(1).stack()
+    if 'size' in var_list or 'BM' in var_list:
+        size=cal_size(freq=freq)
+        var_dict['BM']=cal_BM(size=size,freq=freq).shift(1).stack()
+        var_dict['size']=size.shift(1).stack()*1e-5
+    if 'mom' in var_list:
+        var_dict['mom']=cal_mom(freq_periods1[freq],freq=freq).shift(1).stack()
+    if 'rev' in var_list:
+        var_dict['rev']=ret.shift(1).stack()
+    if 'illiq' in var_list:
+        var_dict['illiq'] = cal_illiq(freq_periods2[freq], freq=freq, ret_d=ret_d, amount=amount_d).shift(1).stack()
+    if 'max_ret' in var_list:
+        var_dict['max_ret']=cal_MaxRet(freq_periods2[freq],freq=freq,ret_d=ret_d).shift(1).stack()
+    if 'turnover' in var_list:
+        var_dict['turnover'] = cal_turnover(freq_periods2[freq], freq=freq, amount=amount_d,
+                                            size_free=size_free_d).shift(1).stack()
+    if 'skew' in var_list:
+        var_dict['skew'] = cal_skew(freq_periods2[freq], freq=freq, ret_d=ret_d).shift(1).stack()
+    if 'coskew' in var_list:
+        var_dict['coskew'] = cal_coskew(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d).shift(
+            1).stack()
+    if 'iskew' in var_list:
+        var_dict['iskew'] = cal_iskew(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
+                                      SMB_d=SMB_d, HML_d=HML_d).shift(1).stack()
+
+    if 'vol' in var_list:
+        var_dict['vol'] = cal_vol(freq_periods2[freq], freq=freq, ret_d=ret_d).shift(1).stack()
+    if 'ivol' in var_list:
+        var_dict['ivol'] = cal_ivol(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
+                                    SMB_d=SMB_d, HML_d=HML_d).shift(1).stack()
+
+    XY=pd.DataFrame(var_dict)[['ret']+var_list].dropna()
+    date_list=sorted(set(XY.index.get_level_values(0)))
+    params_list=['const']+var_list
+    fit_results=pd.DataFrame(index=date_list,columns=params_list+['adj.R2'])
+    for t in date_list:
+        model_fit= sm.OLS(XY.loc[t]['ret'], sm.add_constant(XY.loc[t][var_list])).fit()
+        fit_results.loc[t,params_list]=model_fit.params
+        fit_results.loc[t,'adj.R2']=model_fit.rsquared_adj
+    return pd.DataFrame({'mean':fit_results.iloc[:-1].mean(),'t':fit_results.iloc[:-1][params_list].mean() / NWest_mean(fit_results.iloc[:-1][params_list])}).T
 def Fama_MacBeth(var_list,freq='M',var_dict=None):
     # ret_freq/ret: rev
     # ret_d: beta,illiq,max_ret,skew,coskew,iskew,vol,ivol
@@ -679,7 +745,7 @@ def Fama_MacBeth(var_list,freq='M',var_dict=None):
         var_dict=GetVarsFromList(var_list,freq=freq)
     var_d={}
     for k in var_list:
-        var_d[k]=var_dict[k].stack()
+        var_d[k]=var_dict[k].shift(1).stack()
     var_d['ret']=var_dict['ret'].stack()
     XY=pd.DataFrame(var_d)[['ret']+var_list].dropna()
     date_list=sorted(set(XY.index.get_level_values(0)))
@@ -751,4 +817,8 @@ def DoublePortAnalysis(var_list,var2,var_dict=None,freq='M',value_weighted=False
                                                             SMB=SMB, HML=HML)
             portfolio_alpha_t.loc[var, port] = portfolio_alpha.loc[var,port]/se
     return pd.DataFrame({'mean': portfolio_mean.stack(), 't': portfolio_t.stack(),'alpha':portfolio_alpha.stack(),'alpha_t':portfolio_alpha_t.stack()}).T
+
+
+
+
 
