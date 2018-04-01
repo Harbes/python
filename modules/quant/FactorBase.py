@@ -487,8 +487,9 @@ def cal_mimick_port2(indi1,indi2,freq='M',ret=None,weights=None,percentile1=None
         ret = cal_ret(freq=freq).loc[indi1.index[0]:]
     else:
         ret = ret.loc[indi1.index[0]:]
-    indi1 = indi1.loc[:ret.index[-1]]
-    indi2 = indi2.loc[:ret.index[-1]]
+    start_=indi1.index[0] if indi1.index[0]>indi2.index[0] else indi2.index[0]
+    indi1 = indi1.loc[start_:ret.index[-1]].copy()
+    indi2 = indi2.loc[start_:ret.index[-1]].copy()
     valid_ = ~(pd.isnull((indi1+indi2).shift(1)) | pd.isnull(ret))  # TypeError: bad operand type for unary ~: 'float'--->index或columns不匹配
     indi1 = indi1[valid_.shift(-1).fillna(False)]
     indi2 = indi2[valid_.shift(-1).fillna(False)]
@@ -621,7 +622,7 @@ def Fama_MacBeth(var_list,freq='M'):
     if 'illiq' in var_list:
         var_dict['illiq'] = cal_illiq(freq_periods2[freq], freq=freq, ret_d=ret_d, amount=amount_d).shift(1).stack()
     if 'max_ret' in var_list:
-        var_dict['max_ret']=cal_MaxRet(freq_periods2,freq=freq,ret_d=ret_d).shift(1).stack()
+        var_dict['max_ret']=cal_MaxRet(freq_periods2[freq],freq=freq,ret_d=ret_d).shift(1).stack()
     if 'turnover' in var_list:
         var_dict['turnover'] = cal_turnover(freq_periods2[freq], freq=freq, amount=amount_d,
                                             size_free=size_free_d).shift(1).stack()
@@ -658,9 +659,11 @@ def GetVarsFromList(var_list,freq):
     if set(var_list).intersection(['iskew','ivol']):
         SMB_d,HML_d=cal_SMB_HML(freq='D')
     if set(var_list).intersection(['illiq','turnover']):
-        amount_d=import_data(PV_vars=['amount'])[0].unstack()
+        amount_d=import_data(PV_vars=['amount'])[0].unstack() # 如果只有一个变量时，unstack()的结果是columns是multiindex
+        amount_d.columns=amount_d.columns.get_level_values(1)
     if set(var_list).intersection(['turnover']):
         size_free_d=import_data(PV_vars=['size_free'])[0].unstack()
+        size_free_d.columns = size_free_d.columns.get_level_values(1)
     ### beta,mom
     freq_periods1={
         'M':12,
@@ -704,18 +707,21 @@ def GetVarsFromList(var_list,freq):
         var_dict['ivol'] = cal_ivol(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
                                     SMB_d=SMB_d, HML_d=HML_d)
     return var_dict
-def SinglePortAnalysis(var_list,freq='M',weights=None):
+def SinglePortAnalysis(var_list,freq='M',value_weighted=False):
+    # TODO 待解决重复计算相同数据的非效率问题
     var_dict = GetVarsFromList(var_list, freq)
     index_ret = cal_index_ret(freq=freq)
     if 'size' in var_list or 'BM' in var_list:
         SMB, HML = cal_SMB_HML(freq=freq,ret=var_dict['ret'],size=var_dict['size'],BM=var_dict['BM'])
     else:
         SMB, HML = cal_SMB_HML(freq=freq)
-    if weights is not None:
+    if value_weighted:
         if 'size' in var_list or 'BM' in var_list:
             weights=var_dict['size']
         else:
             weights=cal_size(freq=freq)
+    else:
+        weights=None
     percentile_=np.arange(0.0,1.01,0.1)
     portfolio_mean=pd.DataFrame(index=var_list,columns=[i for i in range(1,len(percentile_)+1)]+['alpha'])
     portfolio_t=pd.DataFrame(index=portfolio_mean.index,columns=portfolio_mean.columns)
@@ -727,22 +733,27 @@ def SinglePortAnalysis(var_list,freq='M',weights=None):
         portfolio_mean.loc[var,'alpha'],se=cal_FF_alpha(tmp[len(percentile_)],freq=freq,index_ret=index_ret,SMB=SMB,HML=HML)
         portfolio_t.loc[var,'alpha']=portfolio_mean.loc[var,'alpha']/se
     return pd.DataFrame({'mean':portfolio_mean.stack(),'t':portfolio_t.stack()}).T
-def DoublePortAnalysis(var_list,var2,freq='M',weights=None):
+def DoublePortAnalysis(var_list,var2,freq='M',value_weighted=False):
+    # TODO 待解决重复计算相同数据的非效率问题
     var_dict = GetVarsFromList(var_list+[var2], freq)
     index_ret = cal_index_ret(freq=freq)
     if 'size' in var_list or 'BM' in var_list:
         SMB, HML = cal_SMB_HML(freq=freq, ret=var_dict['ret'], size=var_dict['size'], BM=var_dict['BM'])
     else:
         SMB, HML = cal_SMB_HML(freq=freq)
-    if weights is not None:
+    if value_weighted:
         if 'size' in var_list or 'BM' in var_list:
             weights = var_dict['size']
         else:
             weights = cal_size(freq=freq)
+    else:
+        weights=None
     percentile1 = np.arange(0.0, 1.01, 0.2)
     percentile2 = np.arange(0.0, 1.01, 0.2)
-    portfolio_mean = pd.DataFrame(index=var_list, columns=[i for i in range(1, len(percentile1) + 1)] + ['alpha'])
+    portfolio_mean = pd.DataFrame(index=var_list, columns=range(1, len(percentile1) + 1))
     portfolio_t = pd.DataFrame(index=portfolio_mean.index, columns=portfolio_mean.columns)
+    portfolio_alpha=pd.DataFrame(index=portfolio_mean.index, columns=portfolio_mean.columns)
+    portfolio_alpha_t = pd.DataFrame(index=portfolio_mean.index, columns=portfolio_mean.columns)
     for var in var_list:
         tmp = cal_mimick_port2(indi1=var_dict[var],indi2=var_dict[var2], freq=freq, ret=var_dict['ret'], weights=weights,
                                percentile1=percentile1,percentile2=percentile2)
@@ -750,13 +761,11 @@ def DoublePortAnalysis(var_list,var2,freq='M',weights=None):
         long_short[len(percentile1)] = long_short.mean(axis=1)
         portfolio_mean.loc[var] = long_short.mean()
         portfolio_t.loc[var] = portfolio_mean.loc[var] / NWest_mean(long_short)
-        portfolio_mean.loc[var, 'alpha'], se = cal_FF_alpha(long_short[len(percentile1)], freq=freq, index_ret=index_ret,
+        for port in long_short.columns:
+            portfolio_alpha.loc[var,port], se = cal_FF_alpha(long_short[port], freq=freq, index_ret=index_ret,
                                                             SMB=SMB, HML=HML)
-        portfolio_t.loc[var, 'alpha'] = portfolio_mean.loc[var, 'alpha'] / se
-    return pd.DataFrame({'mean': portfolio_mean.stack(), 't': portfolio_t.stack()}).T
-
-#pd.DataFrame({'mean': portfolio_mean.stack(), 't': portfolio_t.stack()}).T
-
+            portfolio_alpha_t.loc[var, port] = portfolio_alpha.loc[var,port]/se
+    return pd.DataFrame({'mean': portfolio_mean.stack(), 't': portfolio_t.stack(),'alpha':portfolio_alpha.stack(),'alpha_t':portfolio_alpha_t.stack()}).T
 
 
 

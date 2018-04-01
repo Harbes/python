@@ -1,4 +1,4 @@
-from modules.quant.QuantBase import *
+from modules.quant.FactorBase import *
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -36,5 +36,8 @@ if __name__ == '__main__':
     t0 = time()
     var_list = ['beta', 'size', 'mom', 'rev', 'illiq', 'turnover', 'max_ret', 'skew', 'coskew', 'iskew', 'vol',
                 'ivol']  #
-    results = SinglePortAnalysis(var_list)
+    results1_EW = SinglePortAnalysis(var_list)
+    results1_VW = SinglePortAnalysis(var_list,value_weighted=True)
+    results2_EW = DoublePortAnalysis(var_list,'ivol')
+    results2_VW = DoublePortAnalysis(var_list,'ivol',)
     print(time() - t0)

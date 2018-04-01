@@ -1,3 +1,3 @@
-from .QuantBase import *
+from .FactorBase import *
 #from .FromPapers import *
 #from .factor import *
