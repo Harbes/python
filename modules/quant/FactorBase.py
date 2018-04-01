@@ -355,8 +355,8 @@ def cal_coskew(periods,freq='M',ret_d=None,index_ret_d=None):
         tmp2 = ret_d.loc[edt - delta_date + Day():edt] \
                - ret_d.loc[edt - delta_date + Day():edt].mean()
         tmp3 = np.linalg.pinv(tmp1.cov())[1]
-        coskew.loc[edt] = tmp3[0] * tmp2.mul(tmp1['index'], axis=0).mean() + tmp3[1] * tmp2.mul(tmp1['index^2'],
-                                                                                                axis=0).mean()
+        coskew.loc[edt] = tmp3[0] * tmp2.mul(tmp1['index'], axis=0).mean() \
+                          + tmp3[1] * tmp2.mul(tmp1['index^2'],axis=0).mean()
     return coskew.iloc[periods-1:].astype(float)
 def cal_iskew(periods,freq='M',method='FF',ret_d=None,index_ret_d=None,SMB_d=None,HML_d=None):
     if ret_d is None:
@@ -364,7 +364,7 @@ def cal_iskew(periods,freq='M',method='FF',ret_d=None,index_ret_d=None,SMB_d=Non
         index_ret_d=cal_index_ret(freq='D')
         if method=='FF':
             size_d=cal_size(freq='D')
-            BM_d=cal_BM(size=size,freq='D')
+            BM_d=cal_BM(size=size_d,freq='D')
             SMB_d,HML_d=cal_SMB_HML(freq='D',ret=ret_d,size=size_d,BM=BM_d)
     EndDate_list=_GetEndDateList(ret_d,freq,trim_end=True)
     iskew = pd.DataFrame(index=EndDate_list, columns=ret_d.columns)
@@ -415,7 +415,7 @@ def cal_ivol(periods,freq='M',method='FF',ret_d=None,index_ret_d=None,SMB_d=None
         index_ret_d = cal_index_ret(freq='D')
         if method == 'FF':
             size_d = cal_size(freq='D')
-            BM_d = cal_BM(size=size, freq='D')
+            BM_d = cal_BM(size=size_d, freq='D')
             SMB_d, HML_d = cal_SMB_HML(freq='D', ret=ret_d, size=size_d, BM=BM_d)
     EndDate_list=_GetEndDateList(ret_d,freq,trim_end=True)
     ivol = pd.DataFrame(index=EndDate_list, columns=ret_d.columns)
