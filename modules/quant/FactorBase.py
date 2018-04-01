@@ -651,7 +651,7 @@ def Fama_MacBeth(var_list,freq='M'):
         fit_results.loc[t,params_list]=model_fit.params
         fit_results.loc[t,'adj.R2']=model_fit.rsquared_adj
     return fit_results.iloc[:-1].mean(),fit_results.iloc[:-1][params_list].mean() / NWest_mean(fit_results.iloc[:-1][params_list])
-def GetVarsFromList(var_list,freq):
+def GetVarsFromList(var_list,freq='M'):
     if set(var_list).intersection(['beta','illiq','max_ret','skew','coskew','iskew','vol','ivol']):
         ret_d=cal_ret(freq='D')
     if set(var_list).intersection(['beta','coskew','iskew','ivol']):
@@ -707,9 +707,10 @@ def GetVarsFromList(var_list,freq):
         var_dict['ivol'] = cal_ivol(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
                                     SMB_d=SMB_d, HML_d=HML_d)
     return var_dict
-def SinglePortAnalysis(var_list,freq='M',value_weighted=False):
+def SinglePortAnalysis(var_list,var_dict=None,freq='M',value_weighted=False):
     # TODO 待解决重复计算相同数据的非效率问题
-    var_dict = GetVarsFromList(var_list, freq)
+    if var_dict is None:
+        var_dict = GetVarsFromList(var_list, freq)
     index_ret = cal_index_ret(freq=freq)
     if 'size' in var_list or 'BM' in var_list:
         SMB, HML = cal_SMB_HML(freq=freq,ret=var_dict['ret'],size=var_dict['size'],BM=var_dict['BM'])
@@ -733,9 +734,10 @@ def SinglePortAnalysis(var_list,freq='M',value_weighted=False):
         portfolio_mean.loc[var,'alpha'],se=cal_FF_alpha(tmp[len(percentile_)],freq=freq,index_ret=index_ret,SMB=SMB,HML=HML)
         portfolio_t.loc[var,'alpha']=portfolio_mean.loc[var,'alpha']/se
     return pd.DataFrame({'mean':portfolio_mean.stack(),'t':portfolio_t.stack()}).T
-def DoublePortAnalysis(var_list,var2,freq='M',value_weighted=False):
+def DoublePortAnalysis(var_list,var2,var_dict=None,freq='M',value_weighted=False):
     # TODO 待解决重复计算相同数据的非效率问题
-    var_dict = GetVarsFromList(var_list+[var2], freq)
+    if var_dict is None:
+        var_dict = var_dict = GetVarsFromList(var_list+[var2], freq)
     index_ret = cal_index_ret(freq=freq)
     if 'size' in var_list or 'BM' in var_list:
         SMB, HML = cal_SMB_HML(freq=freq, ret=var_dict['ret'], size=var_dict['size'], BM=var_dict['BM'])

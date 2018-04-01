@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
-size=cal_size
 
 if __name__ == '__main__':
     freq = 'M'
@@ -36,8 +35,9 @@ if __name__ == '__main__':
     t0 = time()
     var_list = ['beta', 'size', 'mom', 'rev', 'illiq', 'turnover', 'max_ret', 'skew', 'coskew', 'iskew', 'vol',
                 'ivol']  #
-    results1_EW = SinglePortAnalysis(var_list)
-    results1_VW = SinglePortAnalysis(var_list,value_weighted=True)
-    results2_EW = DoublePortAnalysis(var_list,'ivol')
-    results2_VW = DoublePortAnalysis(var_list,'ivol',)
+    var_dict=GetVarsFromList(var_list)
+    results1_EW = SinglePortAnalysis(var_list,var_dict=var_dict)
+    results1_VW = SinglePortAnalysis(var_list,var_dict=var_dict,value_weighted=True)
+    results2_EW = DoublePortAnalysis(var_list,'ivol',var_dict=var_dict)
+    results2_VW = DoublePortAnalysis(var_list,'ivol',var_dict=var_dict,value_weighted=True)
     print(time() - t0)
