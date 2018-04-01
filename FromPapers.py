@@ -23,7 +23,6 @@ def SizeAndValueInChina_LiuStambaughYuan():
     return res1_EW,res1_VW,res2_EW,res2_VW,FM_res,var_dict
 
 
-
 if __name__ is '__main__':
     t0=time()
     res1_EW, res1_VW, res2_EW, res2_VW, FM_res,var_dict=SizeAndValueInChina_LiuStambaughYuan()
