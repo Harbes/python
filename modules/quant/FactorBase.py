@@ -61,6 +61,7 @@ def GetEndDateList(data, freq, trim_end=False):
     else:
         return sorted(set(date_list))
 def GetValueWeightedIndexReturn(freq):
+    # TODO 过滤数据
     p0 = 'adj_open'
     p1 = 'adj_close'  # price0也可以使用 'adj_pre_close'
     PV = import_data(PV_vars=['size_tot',p0, p1])[0]
