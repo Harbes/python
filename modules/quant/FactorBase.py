@@ -342,7 +342,7 @@ def cal_coskew(periods,freq='M',ret_d=None,index_ret_d=None):
     if index_ret_d is None:
         ret_d=cal_ret(freq='D')
         index_ret_d=cal_index_ret(freq='D')
-    X=pd.DataFrame({'index':index_ret_d,'index^2':index_ret_d**2.0})
+    X=pd.DataFrame({'index':index_ret_d,'index^2':index_ret_d**2.0})[['index','index^2']]
     EndDate_list=GetEndDateList(ret_d, freq,trim_end=True)
     coskew=pd.DataFrame(index=EndDate_list,columns=ret_d.columns)
     delta_date = GetDeltaDate(periods, freq)
@@ -460,7 +460,7 @@ def cal_mimick_port1(indi,freq='M',ret=None,weights=None,percentile=None):
         df2=pd.DataFrame()
         df1['ret_w'] = (ret*weights.shift(1)).iloc[1:].stack()
         df1['ref'] = mark_.stack()
-        df2['ret_w'] = weightsweights.shift(1).iloc[1:].stack()
+        df2['ret_w'] = weights.shift(1).iloc[1:].stack()
         df2['ref'] = mark_.stack()
         tmp1=df1.groupby(level=0).apply(lambda g: g.groupby('ref').sum())
         tmp2 = df2.groupby(level=0).apply(lambda g: g.groupby('ref').sum())
@@ -584,9 +584,11 @@ def Fama_MacBeth(var_list,freq='M'):
     if set(var_list).intersection(['iskew','ivol']):
         SMB_d,HML_d=cal_SMB_HML(freq='D')
     if set(var_list).intersection(['illiq','turnover']):
-        amount_d=import_data(PV_vars=['amount'])[0].unstack()
+        amount_d=import_data(PV_vars=['amount'])[0].unstack() # 如果只有一个变量时，unstack()的结果是columns是multiindex
+        amount_d.columns=amount_d.columns.get_level_values(1)
     if set(var_list).intersection(['turnover']):
         size_free_d=import_data(PV_vars=['size_free'])[0].unstack()
+        size_free_d.columns = size_free_d.columns.get_level_values(1)
     ### beta,mom
     freq_periods1={
         'M':12,
@@ -668,6 +670,18 @@ def GetVarsFromList(var_list,freq='M'):
     var_dict={}
     ret = cal_ret(freq=freq)
     var_dict['ret']=ret
+    if 'skew' in var_list:
+        var_dict['skew'] = cal_skew(freq_periods2[freq], freq=freq, ret_d=ret_d)
+    if 'coskew' in var_list:
+        var_dict['coskew'] = cal_coskew(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d)
+    if 'iskew' in var_list:
+        var_dict['iskew'] = cal_iskew(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
+                                      SMB_d=SMB_d, HML_d=HML_d)
+    if 'vol' in var_list:
+        var_dict['vol'] = cal_vol(freq_periods2[freq], freq=freq, ret_d=ret_d)
+    if 'ivol' in var_list:
+        var_dict['ivol'] = cal_ivol(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
+                                    SMB_d=SMB_d, HML_d=HML_d)
     if 'beta' in var_list:
         var_dict['beta']=cal_beta(freq_periods1[freq],freq=freq,index_ret_d=index_ret_d,ret_d=ret_d)
     if 'size' in var_list or 'BM' in var_list:
@@ -685,18 +699,7 @@ def GetVarsFromList(var_list,freq='M'):
     if 'turnover' in var_list:
         var_dict['turnover'] = cal_turnover(freq_periods2[freq], freq=freq, amount=amount_d,
                                             size_free=size_free_d)
-    if 'skew' in var_list:
-        var_dict['skew'] = cal_skew(freq_periods2[freq], freq=freq, ret_d=ret_d)
-    if 'coskew' in var_list:
-        var_dict['coskew'] = cal_coskew(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d)
-    if 'iskew' in var_list:
-        var_dict['iskew'] = cal_iskew(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
-                                      SMB_d=SMB_d, HML_d=HML_d)
-    if 'vol' in var_list:
-        var_dict['vol'] = cal_vol(freq_periods2[freq], freq=freq, ret_d=ret_d)
-    if 'ivol' in var_list:
-        var_dict['ivol'] = cal_ivol(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
-                                    SMB_d=SMB_d, HML_d=HML_d)
+
     return var_dict
 def SinglePortAnalysis(var_list,var_dict=None,freq='M',value_weighted=False):
     # TODO 待解决重复计算相同数据的非效率问题
@@ -760,21 +763,6 @@ def DoublePortAnalysis(var_list,var2,var_dict=None,freq='M',value_weighted=False
             portfolio_alpha_t.loc[var, port] = portfolio_alpha.loc[var,port]/se
     return pd.DataFrame({'mean': portfolio_mean.stack(), 't': portfolio_t.stack(),'alpha':portfolio_alpha.stack(),'alpha_t':portfolio_alpha_t.stack()}).T
 
-from time import time
-    t0 = time()
-    # 当包含'coskew'时,ValueError: cannot reindex from a duplicate axis
-    # 当包含'iskew'时,ValueError: Shape of passed values is (3500, 68564), indices imply (3500, 6286)
-    var_list =['skew','iskew', 'coskew','vol','ivol','beta', 'size', 'mom', 'rev', 'illiq', 'turnover', 'max_ret']  #['iskew']#
-    var_dict=GetVarsFromList(var_list,freq='M')
-    print(time() - t0)
-    results1_EW = SinglePortAnalysis(var_list,var_dict=var_dict)
-    print(time() - t0)
-    results1_VW = SinglePortAnalysis(var_list,var_dict=var_dict,value_weighted=True)
-    print(time() - t0)
-    results2_EW = DoublePortAnalysis(var_list,'ivol',var_dict=var_dict)
-    print(time() - t0)
-    results2_VW = DoublePortAnalysis(var_list,'ivol',var_dict=var_dict,value_weighted=True)
-    print(time() - t0)
 
 
 

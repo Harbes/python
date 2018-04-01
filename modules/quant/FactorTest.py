@@ -28,19 +28,31 @@ if __name__ == '__main__':
 
 
     # portfolio analysis
-
     from time import time
+
     t0 = time()
-    # 当包含'coskew'时,ValueError: cannot reindex from a duplicate axis
-    # 当包含'iskew'时,ValueError: Shape of passed values is (3500, 68564), indices imply (3500, 6286)
-    var_list =['beta', 'size', 'mom', 'rev', 'illiq', 'turnover', 'max_ret', 'skew', 'vol','ivol']  #['iskew']#
-    var_dict=GetVarsFromList(var_list,freq='M')
+    var_list = ['skew', 'iskew', 'coskew', 'vol', 'ivol', 'beta', 'size', 'mom', 'rev', 'illiq', 'turnover',
+                'max_ret']  # ['iskew']#
+    var_dict = GetVarsFromList(var_list, freq='M')
     print(time() - t0)
-    results1_EW = SinglePortAnalysis(var_list,var_dict=var_dict)
+    to = time()
+    results1_EW = SinglePortAnalysis(var_list, var_dict=var_dict)
     print(time() - t0)
-    results1_VW = SinglePortAnalysis(var_list,var_dict=var_dict,value_weighted=True)
+    t0 = time()
+    results1_VW = SinglePortAnalysis(var_list, var_dict=var_dict, value_weighted=True)
     print(time() - t0)
-    results2_EW = DoublePortAnalysis(var_list,'ivol',var_dict=var_dict)
+    t0 = time()
+    results2_EW = DoublePortAnalysis(var_list, 'ivol', var_dict=var_dict)
     print(time() - t0)
-    results2_VW = DoublePortAnalysis(var_list,'ivol',var_dict=var_dict,value_weighted=True)
+    t0 = time()
+    results2_VW = DoublePortAnalysis(var_list, 'ivol', var_dict=var_dict, value_weighted=True)
     print(time() - t0)
+    # Fama-MacBeth
+
+
+
+    data_path = GetDataPath()
+    results1_EW.to_csv(data_path + 'results1_EW.csv')
+    results1_VW.to_csv(data_path + 'results1_VW.csv')
+    results2_EW.to_csv(data_path + 'results2_EW.csv')
+    results2_VW.to_csv(data_path + 'results2_VW.csv')
