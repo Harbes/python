@@ -1,8 +1,18 @@
 import pandas as pd
 import numpy as np
 from pandas import DataFrame
-data_path = 'E:/data/NewData/'  #'/Users/harbes/data/NewData/' #
-data_path0 = 'E:/data/xccdata/'  # '/Users/harbes/data/xccdata/' #
+
+def GetDataPath():
+    sys_platform=sys.platform
+    if sys_platform =='win32':
+        return 'E:/data/NewData/'
+    elif sys_platform=='mac':
+        return '/Users/harbes/data/NewData/'
+    elif sys_platform=='linux':
+        return '/home/harbes/data/NewData/'
+    else:
+        raise ValueError('These is no such systerm in your work-station')
+data_path = GetDataPath()
 # 涨跌停
 data=pd.read_pickle(data_path+'PV_datetime')[['opnprc','high','low']]
 opnprc=data['opnprc'].unstack()
@@ -18,13 +28,13 @@ limit_move.sum().sum() # 剔除113640个数据点
 # 非ST股票，且非新股(约三个月)
 ST=pd.read_pickle(data_path+'ST');ST.head() # N表示非ST，且剔除IPO三个月交易数据【财神已标记】
 ST.index=pd.to_datetime(ST.index.astype(int).astype(str),format='%Y%m%d');ST.head()
-(ST=='N').to_pickle(data_path+'ST_datetime')
+(ST=='N').to_pickle(data_path+'non_ST_IPO_datetime')
 
 
 # 停牌NT，以及停牌
 NT=pd.read_pickle(data_path+'NT');NT.head() # 1表示停牌
 NT.index=pd.to_datetime(NT.index.astype(int).astype(str),format='%Y%m%d');NT.head()
-#(NT==0.0).to_pickle(data_path+'NT_datetime')
+(NT==0.0).to_pickle(data_path+'NT_datetime')
 
 NT50=NT.rolling(50).mean()>0.99 # 标记超过停牌不小于50天的点
 NT50 +=0;NT50.sum().sum()
@@ -46,9 +56,9 @@ amount_filter.to_pickle(data_path+'FilterSmallVolume')
 
 
 # 归总筛选
-filter_=amount_filter[amount_filter>0][ST=='N'][NT==0.0];filter_.head() #[~limit_move]
-(filter_==1.0).to_pickle(data_path+'filtered_data_with_limit_move') # 4672606个有效数据点(原来有6140094个数据点)
-(filter_==1.0).sum(axis=1).sum()
+filter_=NT[ST=='N'];filter_.head() #[~limit_move]
+(filter_==0.0).to_pickle(data_path+'non_ST_IPO_NT_datetime') # 4672606个有效数据点(原来有6140094个数据点)
+(filter_==0.0).sum(axis=1).sum()
 
 
 

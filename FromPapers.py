@@ -27,3 +27,14 @@ if __name__ is '__main__':
     t0=time()
     res1_EW, res1_VW, res2_EW, res2_VW, FM_res,var_dict=SizeAndValueInChina_LiuStambaughYuan()
     print(time()-t0) # 450s
+
+    from time import time
+
+    t0 = time()
+    freq = 'M'
+    var_list = ['ivol', 'beta', 'size', 'BM', 'turnover']
+    var_dict = GetVarsFromList(var_list, freq)
+    index_ret, SMB, HML = Get_Index_SMB_HML(freq, var_dict)
+    res1 = SinglePortAnalysis(var_list, var_dict=var_dict, index_ret=index_ret, SMB=SMB, HML=HML)
+    res2 = DoublePortAnalysis(var_list, 'ivol', var_dict=var_dict, index_ret=index_ret, SMB=SMB, HML=HML)
+    print(time() - t0)

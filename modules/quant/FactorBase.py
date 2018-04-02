@@ -3,6 +3,7 @@ from pandas import DataFrame,qcut
 import numpy as np
 from pandas.tseries.offsets import MonthEnd,YearEnd,Week,Day,DateOffset
 import statsmodels.api as sm
+#from copy import copy
 #from dateutil.parser import parse
 import sys
 import warnings
@@ -113,7 +114,7 @@ def GetDeltaDate(periods,freq):
         return DateOffset(weeks=periods)
     elif freq=='D':
         return Day(periods)
-def import_data(PV_vars=None, BS_vars=None,Rf_freq=None,filter_data=False):
+def import_data(PV_vars=None, BS_vars=None,Rf_freq=None,filter_data=True):
     '''
 
     :param pv_vars[pv数据已经指定index变量了]: list of strings
@@ -143,7 +144,7 @@ def import_data(PV_vars=None, BS_vars=None,Rf_freq=None,filter_data=False):
         else:
             PV = pd.read_pickle(data_path + 'PV_datetime')[PV_vars[0]]
         if filter_data is True:
-            filter_ =pd.read_pickle(data_path + 'filtered_data').stack()
+            filter_ =pd.read_pickle(data_path + 'non_ST_IPO_NT_datetime').stack()
             PV=PV[filter_]
     else:
         PV=None
@@ -181,7 +182,15 @@ def winsorize(indi,percentile,label):
     if (len(percentile)-1)!=len(label):
         raise ValueError('Percentile does not match label !!!')
     mark_=pd.DataFrame([pd.qcut(indi.loc[t],q=percentile,labels=label) for t in indi.index])
-    return indi[mark_!=0.0]
+    return mark_!=0.0
+def winsorize_vars(var_dict,percentile,label,var_list=None):
+    if var_list is None:
+        var_l=var_dict.keys()
+    else:
+        var_l=set(var_list).intersection(var_dict.keys())
+    for i in var_l:
+        var_dict[i]=var_dict[i][winsorize(var_dict[i],percentile,label)]
+    return var_dict
 def cal_index_ret(freq='M',index_code=None,del_Rf=True,trim_end=True):
     '''
     :param index_code:
@@ -198,7 +207,7 @@ def cal_index_ret(freq='M',index_code=None,del_Rf=True,trim_end=True):
     if index_code is None:
         try:
             index_ret=pd.read_pickle(data_path+'value_weighted_index_return_'+freq)
-        except NameError:
+        except(NameError,FileNotFoundError):
             index_ret=GetValueWeightedIndexReturn(freq)
             index_ret.to_pickle(data_path+'value_weighted_index_return_'+freq)
     else:
@@ -260,7 +269,7 @@ def cal_beta(periods,freq='M',index_ret_d=None,ret_d=None):
     return beta[beta!=0.0].shift(1).iloc[periods:].astype(float)
 def cal_size(freq='M',shift_num=1):
     size=import_data(PV_vars=['size_tot'])[0].unstack()
-    size.columns=size.columns.get_level_values(1)
+    #size.columns=size.columns.get_level_values(1)
     size=resample_h2l(size, to_freq=freq, n_th=-1, by_position=False)
     return size[size>0.0].shift(shift_num).iloc[shift_num:]*1.0e-5
 def cal_BM(size=None,freq='M'):
@@ -396,14 +405,15 @@ def cal_vol(periods,freq='M',ZeroMean=False,ret_d=None):
     delta_date = GetDeltaDate(periods, freq)
     if ZeroMean:
         ret_d = ret_d ** 2.0
-        return pd.DataFrame(
+        vol=DataFrame(
             (ret_d.loc[edt - delta_date + Day():edt].mean() for edt in
              EndDate_list)
             , index=EndDate_list).shift(1).iloc[periods:].sqrt()
     else:
-        return pd.DataFrame(
+        vol=pd.DataFrame(
             (ret_d.loc[edt - delta_date + Day():edt].std() for edt in EndDate_list)
             , index=EndDate_list).shift(1).iloc[periods:]
+    return vol[vol>0.0]
 def cal_ivol(periods,freq='M',method='FF',ret_d=None,index_ret_d=None,SMB_d=None,HML_d=None):
     if ret_d is None:
         ret_d = cal_ret(freq='D')
@@ -423,7 +433,6 @@ def cal_ivol(periods,freq='M',method='FF',ret_d=None,index_ret_d=None,SMB_d=None
                    - ret_d.loc[tmp1.index].mean()
             ivol.loc[edt] = (tmp2 - tmp1[:, None] @ tmp2.mul(tmp1, axis=0).mean()[None, :] / tmp1.var()).std()
     elif method=='FF':
-        # TODO 自从trim_end之后就存在问题，而且concat消耗资源
         X=pd.DataFrame({'index':index_ret_d,'SMB':SMB_d,'HML':HML_d})[['index', 'SMB', 'HML']].dropna()
         for edt in EndDate_list[periods - 1:]:
             tmp1 = X.loc[edt - delta_date + Day():edt] \
@@ -436,7 +445,9 @@ def cal_ivol(periods,freq='M',method='FF',ret_d=None,index_ret_d=None,SMB_d=None
                 tmp2.mul(tmp1['SMB'], axis=0).mean(),
                 tmp2.mul(tmp1['HML'], axis=0).mean()
             ])).std()
-    return ivol.shift(1).iloc[periods:].astype(float)
+    return ivol[ivol>0.0].shift(1).iloc[periods:].astype(float)
+#ivol[ivol>0.0]
+#tmp2.loc['2015-12','603999.SH']
 def IndexAlign(*vars):
     l=len(vars)
     index=vars[0].index.copy()
@@ -471,15 +482,15 @@ def cal_SMB_HML(ret,size,BM,percentile1=None,percentile2=None,independent=True):
     df['rtn'] = ret.stack()
     df['ref1'] = mark_1.stack()
     df['ref2'] = mark_2.stack()
-    tmp = df.groupby(level=0).apply(lambda g: g.groupby(['ref1', 'ref2']).mean()).unstack()
-    tmp.columns = tmp.columns.get_level_values(1)
+    tmp = df.groupby(level=0).apply(lambda g: g.groupby(['ref1', 'ref2']).mean()).unstack()['rtn']
+    #tmp.columns = tmp.columns.get_level_values(1)
     tmp.index.names = ('trddt', 'ref1')
     HML = tmp.mean(axis=0, level=0)
     SMB = tmp.mean(axis=1).unstack()
     return SMB.iloc[:,-1]-SMB.iloc[:,0], HML.iloc[:,-1]-HML.iloc[:,0]
 def cal_mimick_port1(indi, freq='M', ret=None, weights=None, percentile=None):
     if percentile is None:
-        percentile=np.arange(0.0,1.01,0.1)
+        percentile=np.arange(0.0,1.01,0.2)
     label_=[i for i in range(1,len(percentile))]
     if ret is None:
         ret= cal_ret(freq=freq).loc[indi.index[0]:]
@@ -499,9 +510,9 @@ def cal_mimick_port1(indi, freq='M', ret=None, weights=None, percentile=None):
     else:
         df1=pd.DataFrame()
         df2=pd.DataFrame()
-        df1['rtn_w'] = (ret*weights).stack()
+        df1['rtn_w'] = (ret*weights.loc[ret.index]).stack()
         df1['ref'] = mark_.stack()
-        df2['rtn_w'] = weights[valid_].stack()
+        df2['rtn_w'] = weights.loc[ret.index][valid_].stack()
         #df2['ref'] = mark_.stack()
         df2['ref']=df1['ref']
         tmp1=df1.groupby(level=0).apply(lambda g: g.groupby('ref').sum())
@@ -527,7 +538,7 @@ def cal_mimick_port2(indi1,indi2,freq='M',ret=None,weights=None,percentile1=None
         mark_1 = pd.DataFrame([pd.qcut(indi1.iloc[i], q=percentile1, labels=label_1) for i in range(len(indi1))])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
         mark_2 = pd.DataFrame([pd.qcut(indi2.iloc[i], q=percentile2, labels=label_2) for i in range(len(indi2))])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
     else:
-        mark_1 = pd.DataFrame([pd.qcut(indi1.iloc[i], q=percentile1, labels=label_1) for i in range(len(indi1) -)])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+        mark_1 = pd.DataFrame([pd.qcut(indi1.iloc[i], q=percentile1, labels=label_1) for i in range(len(indi1))])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
         mark_2=pd.DataFrame(index=mark_1.index,columns=mark_1.columns)
         for l_ in label_1:
             tmp=pd.DataFrame([pd.qcut(indi2.iloc[i][mark_1.iloc[i]==l_],q=percentile2,labels=label_2) for i in range(len(indi2))])
@@ -543,10 +554,10 @@ def cal_mimick_port2(indi1,indi2,freq='M',ret=None,weights=None,percentile1=None
     else:
         df1 = pd.DataFrame()
         df2 = pd.DataFrame()
-        df1['rtn_w'] = (ret * weights).stack()
+        df1['rtn_w'] = (ret * weights.loc[ret.index]).stack()
         df1['ref1'] = mark_1.stack()
         df1['ref2'] = mark_2.stack()
-        df2['rtn_w'] = weights[valid_].stack()
+        df2['rtn_w'] = weights.loc[ret.index][valid_].stack()
         df2['ref1'] = mark_1.stack()
         df2['ref2'] = mark_2.stack()
         tmp1 = df1.groupby(level=0).apply(lambda g: g.groupby(['ref1','ref2']).sum())
@@ -555,7 +566,7 @@ def cal_mimick_port2(indi1,indi2,freq='M',ret=None,weights=None,percentile1=None
         #tmp.columns = tmp.columns.get_level_values(1)
     #tmp.columns.name = None
     return tmp
-def describe(df,stats=['skew','kurt']):
+def describe(df,stats=('skew','kurt')):
     d=df.describe(percentiles=[0.05,0.25,0.5,0.75,0.95])
     return d.append(df.reindex(d.columns, axis=1).agg(stats))
 def NWest_mean(dataframe,L=None):
@@ -616,10 +627,10 @@ def GetVarsFromList(var_list,freq):
     if set(var_list).intersection(['beta','coskew','iskew','ivol']):
         index_ret_d=cal_index_ret(freq='D')
     if set(var_list).intersection(['illiq','turnover']):
-        amount_d=import_data(PV_vars=['amount'])[0].unstack()['amount'] # 如果只有一个变量时，unstack()的结果是columns是multiindex
+        amount_d=import_data(PV_vars=['amount'])[0].unstack() # 如果只有一个变量时，unstack()的结果是columns是multiindex
         #amount_d.columns=amount_d.columns.get_level_values(1)
     if set(var_list).intersection(['turnover']):
-        size_free_d=import_data(PV_vars=['size_free'])[0].unstack()['size_free']
+        size_free_d=import_data(PV_vars=['size_free'])[0].unstack()
         #size_free_d.columns = size_free_d.columns.get_level_values(1)
     ### beta,mom
     freq_periods1={
@@ -634,13 +645,12 @@ def GetVarsFromList(var_list,freq):
     var_dict={}
     ret = cal_ret(freq=freq)
     var_dict['ret']=ret
-
     if 'beta' in var_list:
         var_dict['beta']=cal_beta(freq_periods1[freq],freq=freq,index_ret_d=index_ret_d,ret_d=ret_d)
     if 'size' in var_list or 'BM' in var_list:
-        size=cal_size(freq=freq)
+        size=cal_size(freq=freq,shift_num=0)
         var_dict['BM']=cal_BM(size=size,freq=freq)
-        var_dict['size']=size*1e-5
+        var_dict['size']=size.shift(1).iloc[1:]
     if 'mom' in var_list:
         var_dict['mom']=cal_mom(freq_periods1[freq],freq=freq)
     if 'rev' in var_list:
@@ -675,39 +685,52 @@ def Fama_MacBeth(var_list,freq='M',var_dict=None):
     # amount_d: illiq,turnover
     # size_free_d: turnover
     #
-
     if var_dict is None:
-        var_dict=GetVarsFromList(var_list,freq=freq)
+        var_dict=GetVarsFromList(var_list,freq)
     var_d={}
-    for k in var_list:
+    for k in var_dict.keys():
         var_d[k]=var_dict[k].stack()
-    var_d['ret']=var_dict['ret'].stack()
+    if 'size' in var_d.keys():
+        var_d['size']=np.log(var_d['size'])
     XY=pd.DataFrame(var_d)[['ret']+var_list].dropna()
     date_list=sorted(set(XY.index.get_level_values(0)))
     params_list=['const']+var_list
-    fit_results=pd.DataFrame(index=date_list,columns=params_list+['adj.R2'])
+    fit_results=DataFrame(index=date_list,columns=params_list+['adj.R2'])
     for t in date_list:
         model_fit= sm.OLS(XY.loc[t]['ret'], sm.add_constant(XY.loc[t][var_list])).fit()
         fit_results.loc[t,params_list]=model_fit.params
         fit_results.loc[t,'adj.R2']=model_fit.rsquared_adj
     return pd.DataFrame({'mean':fit_results.iloc[:-1].mean(),'t':fit_results.iloc[:-1][params_list].mean() / NWest_mean(fit_results.iloc[:-1][params_list])}).T[params_list+['adj.R2']]
-def SinglePortAnalysis(var_list,var_dict=None,freq='M',value_weighted=False):
-    # TODO 待解决重复计算相同数据的非效率问题
+def Get_Index_SMB_HML(freq,var_dict):
+    index_ret = cal_index_ret(freq=freq)
+    if 'size' in var_dict.keys():
+        SMB, HML = cal_SMB_HML(var_dict['ret'], var_dict['size'], var_dict['BM'])
+    else:
+        size = cal_size(freq=freq, shift_num=0)
+        BM = cal_BM(size, freq='M')
+        SMB, HML = cal_SMB_HML(var_dict['ret'], size.shift(1).iloc[1:], BM)
+    return index_ret,SMB,HML
+def SinglePortAnalysis(var_list,var_dict=None,index_ret=None,SMB=None,HML=None,freq='M',value_weighted=False):
     if var_dict is None:
         var_dict = GetVarsFromList(var_list, freq)
-    index_ret = cal_index_ret(freq=freq)
-    if 'size' in var_list or 'BM' in var_list:
-        SMB, HML = cal_SMB_HML(freq=freq,ret=var_dict['ret'],size=var_dict['size'],BM=var_dict['BM'])
-    else:
-        SMB, HML = cal_SMB_HML(freq=freq)
+    if index_ret is None:
+        index_ret = cal_index_ret(freq=freq)
+        if 'size' in var_list or 'BM' in var_list:
+            SMB, HML = cal_SMB_HML(var_dict['ret'], var_dict['size'], var_dict['BM'])
+        else:
+            size = cal_size(freq=freq, shift_num=0)
+            BM = cal_BM(size, freq='M')
+            SMB, HML = cal_SMB_HML(var_dict['ret'], size.shift(1).iloc[1:], BM)
     if value_weighted:
         if 'size' in var_list or 'BM' in var_list:
             weights=var_dict['size']
+        elif index_ret is None:
+            weights=size.shift(1).iloc[1:] # 需要上面的size
         else:
             weights=cal_size(freq=freq)
     else:
         weights=None
-    percentile_=np.arange(0.0,1.01,0.1)
+    percentile_=np.arange(0.0,1.01,0.2)
     portfolio_mean=pd.DataFrame(index=var_list,columns=[i for i in range(1,len(percentile_)+1)]+['alpha'])
     portfolio_t=pd.DataFrame(index=portfolio_mean.index,columns=portfolio_mean.columns)
     for var in var_list:
@@ -718,29 +741,33 @@ def SinglePortAnalysis(var_list,var_dict=None,freq='M',value_weighted=False):
         portfolio_mean.loc[var,'alpha'],se=cal_FF_alpha(tmp[len(percentile_)],freq=freq,index_ret=index_ret,SMB=SMB,HML=HML)
         portfolio_t.loc[var,'alpha']=portfolio_mean.loc[var,'alpha']/se
     return pd.DataFrame({'mean':portfolio_mean.stack(),'t':portfolio_t.stack()}).T
-def DoublePortAnalysis(var_list,var2,var_dict=None,freq='M',value_weighted=False):
-    # TODO 待解决重复计算相同数据的非效率问题
+def DoublePortAnalysis(var_list,var2,var_dict=None,index_ret=None,SMB=None,HML=None,freq='M',value_weighted=False):
     if var_dict is None:
-        var_dict = var_dict = GetVarsFromList(var_list+[var2], freq)
-    index_ret = cal_index_ret(freq=freq)
-    if 'size' in var_list or 'BM' in var_list:
-        SMB, HML = cal_SMB_HML(freq=freq, ret=var_dict['ret'], size=var_dict['size'], BM=var_dict['BM'])
-    else:
-        SMB, HML = cal_SMB_HML(freq=freq)
+        var_dict = GetVarsFromList(var_list+[var2], freq)
+    if index_ret is None:
+        index_ret = cal_index_ret(freq=freq)
+        if 'size' in var_list or 'BM' in var_list:
+            SMB, HML = cal_SMB_HML(var_dict['ret'], var_dict['size'], var_dict['BM'])
+        else:
+            size = cal_size(freq=freq, shift_num=0)
+            BM = cal_BM(size, freq='M')
+            SMB, HML = cal_SMB_HML(var_dict['ret'], size.shift(1).iloc[1:], BM)
     if value_weighted:
         if 'size' in var_list or 'BM' in var_list:
-            weights = var_dict['size']
+            weights=var_dict['size']
+        elif index_ret is None:
+            weights=size.shift(1).iloc[1:]
         else:
-            weights = cal_size(freq=freq)
+            weights=cal_size(freq=freq)
     else:
         weights=None
     percentile1 = np.arange(0.0, 1.01, 0.2)
     percentile2 = np.arange(0.0, 1.01, 0.2)
-    portfolio_mean = pd.DataFrame(index=var_list, columns=range(1, len(percentile1) + 1))
-    portfolio_t = pd.DataFrame(index=portfolio_mean.index, columns=portfolio_mean.columns)
-    portfolio_alpha=pd.DataFrame(index=portfolio_mean.index, columns=portfolio_mean.columns)
-    portfolio_alpha_t = pd.DataFrame(index=portfolio_mean.index, columns=portfolio_mean.columns)
-    for var in var_list:
+    portfolio_mean = DataFrame(index=set(var_list).difference([var2]), columns=range(1, len(percentile1) + 1))
+    portfolio_t = DataFrame(index=portfolio_mean.index, columns=portfolio_mean.columns)
+    portfolio_alpha=DataFrame(index=portfolio_mean.index, columns=portfolio_mean.columns)
+    portfolio_alpha_t = DataFrame(index=portfolio_mean.index, columns=portfolio_mean.columns)
+    for var in portfolio_mean.index:
         tmp = cal_mimick_port2(indi1=var_dict[var],indi2=var_dict[var2], freq=freq, ret=var_dict['ret'], weights=weights,
                                percentile1=percentile1,percentile2=percentile2)
         long_short=(tmp.iloc[:,-1]-tmp.iloc[:,0]).unstack()
@@ -752,4 +779,3 @@ def DoublePortAnalysis(var_list,var2,var_dict=None,freq='M',value_weighted=False
                                                             SMB=SMB, HML=HML)
             portfolio_alpha_t.loc[var, port] = portfolio_alpha.loc[var,port]/se
     return pd.DataFrame({'mean': portfolio_mean.stack(), 't': portfolio_t.stack(),'alpha':portfolio_alpha.stack(),'alpha_t':portfolio_alpha_t.stack()}).T
-
