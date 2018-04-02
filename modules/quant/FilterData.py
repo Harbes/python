@@ -11,6 +11,7 @@ def _data_path():
         return '/home/harbes/data/NewData/'
     else:
         raise ValueError('These is no such systerm in your work-station')
+# TODO 写成程序模块
 data_path=_data_path()
 data=pd.read_pickle(data_path+'PV_datetime')[['opnprc','high','low']]
 opnprc=data['opnprc'].unstack()

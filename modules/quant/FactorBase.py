@@ -1,9 +1,10 @@
 import pandas as pd
-from pandas import DataFrame,qcut
+from pandas import DataFrame,Series,qcut
 import numpy as np
 from pandas.tseries.offsets import MonthEnd,YearEnd,Week,Day,DateOffset
 import statsmodels.api as sm
-#from copy import copy
+from copy import deepcopy
+from scipy.stats import mstats
 #from dateutil.parser import parse
 import sys
 import warnings
@@ -19,6 +20,9 @@ def GetDataPath():
         return '/home/harbes/data/NewData/'
     else:
         raise ValueError('These is no such systerm in your work-station')
+def InvestTime():
+    # TODO 用 InvestTime替代GetEndDateList
+    pass
 def resample_index(dat, to_freq):
     '''
     使用时一定要注意，此命令会更改数据的index；因此，凡是涉及输入的数据使用此命令时，一定要使用copy()，以防出错
@@ -62,7 +66,6 @@ def GetEndDateList(data, freq, trim_end=False):
     else:
         return sorted(set(date_list))
 def GetValueWeightedIndexReturn(freq):
-    # TODO 过滤数据
     p0 = 'adj_open'
     p1 = 'adj_close'  # price0也可以使用 'adj_pre_close'
     PV = import_data(PV_vars=['size_tot',p0, p1])[0]
@@ -168,7 +171,22 @@ def import_data(PV_vars=None, BS_vars=None,Rf_freq=None,filter_data=True):
     else:
         Rf=None
     return PV,BS,Rf
-def winsorize(indi,percentile,label):
+def ClipQuantile(indi,percentile,label,output_indi=True):
+    '''
+    label的标准是：给欲保留的数据设置大于0的数
+    :param indi:
+    :param percentile:
+    :param label:
+    :return:
+    '''
+    if len(label)!=len(percentile)-1:
+        raise ValueError('len(label)!=len(percentile)-1')
+    mark_=DataFrame([qcut(indi.loc[t],q=percentile,labels=label) for t in indi.index])
+    if output_indi:
+        return indi[mark_>0.0]
+    else:
+        return mark_>0.0
+def winsorize(indi,limits):
     '''
     for example:
         percentile=[0.0,0.3,0.7,1.0]
@@ -179,18 +197,24 @@ def winsorize(indi,percentile,label):
     :param freq:
     :return:
     '''
-    if (len(percentile)-1)!=len(label):
-        raise ValueError('Percentile does not match label !!!')
-    mark_=pd.DataFrame([pd.qcut(indi.loc[t],q=percentile,labels=label) for t in indi.index])
-    return mark_!=0.0
-def winsorize_vars(var_dict,percentile,label,var_list=None):
+    return DataFrame([mstats.winsorize(indi.loc[t],limits=limits,inplace=True) for t in indi.index],index=indi.index,columns=indi.columns)
+def winsorize_vars(var_dict,limits,var_list=None):
+    '''
+    会修改输入数据var_dict
+    :param var_dict:
+    :param percentile:
+    :param label:
+    :param var_list:
+    :return:
+    '''
+    var_d=deepcopy(var_dict)
     if var_list is None:
-        var_l=var_dict.keys()
+        var_l=var_d.keys()
     else:
-        var_l=set(var_list).intersection(var_dict.keys())
+        var_l=set(var_list).intersection(var_d.keys())
     for i in var_l:
-        var_dict[i]=var_dict[i][winsorize(var_dict[i],percentile,label)]
-    return var_dict
+        var_d[i]=winsorize(var_d[i],limits)
+    return var_d
 def cal_index_ret(freq='M',index_code=None,del_Rf=True,trim_end=True):
     '''
     :param index_code:
@@ -398,6 +422,7 @@ def cal_iskew(periods,freq='M',method='FF',ret_d=None,index_ret_d=None,SMB_d=Non
                 tmp2.mul(tmp1['HML'], axis=0).mean()
             ])).skew()
     return iskew.shift(1).iloc[periods:].astype(float)
+
 def cal_vol(periods,freq='M',ZeroMean=False,ret_d=None):
     if ret_d is None:
         ret_d=cal_ret(freq='D')
@@ -454,7 +479,6 @@ def IndexAlign(*vars):
     for i in range(1,l):
         index &=vars[i].index
     return [vars[i].loc[index] for i in range(l)]
-
 def cal_SMB_HML(ret,size,BM,percentile1=None,percentile2=None,independent=True):
     ret,size,BM=IndexAlign(ret,size,BM)
     valid_ = ~pd.isnull(BM+ret)  # TypeError: bad operand type for unary ~: 'float'--->index或columns不匹配
@@ -469,13 +493,13 @@ def cal_SMB_HML(ret,size,BM,percentile1=None,percentile2=None,independent=True):
     if independent:
         #mark_1 = pd.DataFrame([pd.qcut(size.iloc[i], q=percentile1, labels=label_1) for i in size.index[:-1]],
         #                      index=size.index[:-1]) # 报错
-        mark_1 = DataFrame([qcut(size.iloc[i], q=percentile1, labels=label_1) for i in range(len(size))])
-        mark_2 = DataFrame([qcut(BM.iloc[i], q=percentile2, labels=label_2) for i in range(len(BM))])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+        mark_1 = DataFrame([qcut(size.loc[i], q=percentile1, labels=label_1) for i in size.index])
+        mark_2 = DataFrame([qcut(BM.loc[i], q=percentile2, labels=label_2) for i in BM.index])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
     else:
-        mark_1 = DataFrame([qcut(size.iloc[i], q=percentile1, labels=label_1) for i in range(len(size))])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+        mark_1 = DataFrame([qcut(size.loc[i], q=percentile1, labels=label_1) for i in size.index])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
         mark_2=DataFrame(index=mark_1.index,columns=mark_1.columns)
         for l_ in label_1:
-            tmp=DataFrame([qcut(BM.iloc[i][mark_1.iloc[i]==l_],q=percentile2,labels=label_2) for i in range(len(BM))])
+            tmp=DataFrame([qcut(BM.loc[i][mark_1.iloc[i]==l_],q=percentile2,labels=label_2) for i in BM.index])
             mark_2 = mark_2.combine_first(tmp)
     #valid_ = ~(pd.isnull(mark_1 + mark_2) | pd.isnull(ret.iloc[1:]))  # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
     df = DataFrame()
@@ -500,7 +524,7 @@ def cal_mimick_port1(indi, freq='M', ret=None, weights=None, percentile=None):
     valid_=~pd.isnull(indi+ret) # TypeError: bad operand type for unary ~: 'float'--->index或columns不匹配
     indi=indi[valid_]
     ret=ret[valid_]
-    mark_ = pd.DataFrame([pd.qcut(indi.iloc[i],q=percentile, labels=label_) for i in range(len(indi))])
+    mark_ = pd.DataFrame([pd.qcut(indi.loc[i],q=percentile, labels=label_) for i in indi.index])
     if weights is None:
         df = pd.DataFrame()
         df['rtn'] = ret.stack() # ValueError: Must pass DataFrame with boolean values only--->index或columns不匹配
@@ -535,13 +559,13 @@ def cal_mimick_port2(indi1,indi2,freq='M',ret=None,weights=None,percentile1=None
     indi2 = indi2[valid_]
     ret = ret[valid_]
     if independent:
-        mark_1 = pd.DataFrame([pd.qcut(indi1.iloc[i], q=percentile1, labels=label_1) for i in range(len(indi1))])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
-        mark_2 = pd.DataFrame([pd.qcut(indi2.iloc[i], q=percentile2, labels=label_2) for i in range(len(indi2))])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+        mark_1 = pd.DataFrame([pd.qcut(indi1.loc[i], q=percentile1, labels=label_1) for i in indi1.index])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+        mark_2 = pd.DataFrame([pd.qcut(indi2.loc[i], q=percentile2, labels=label_2) for i in indi2.index])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
     else:
-        mark_1 = pd.DataFrame([pd.qcut(indi1.iloc[i], q=percentile1, labels=label_1) for i in range(len(indi1))])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
+        mark_1 = pd.DataFrame([pd.qcut(indi1.loc[i], q=percentile1, labels=label_1) for i in indi1.index])  # indi已经shift(1)了，也就是其时间index与holding period of portfolio是一致的
         mark_2=pd.DataFrame(index=mark_1.index,columns=mark_1.columns)
         for l_ in label_1:
-            tmp=pd.DataFrame([pd.qcut(indi2.iloc[i][mark_1.iloc[i]==l_],q=percentile2,labels=label_2) for i in range(len(indi2))])
+            tmp=pd.DataFrame([pd.qcut(indi2.loc[i][mark_1.loc[i]==l_],q=percentile2,labels=label_2) for i in indi2.index])
             mark_2 = mark_2.combine_first(tmp)
     #valid_ = ~(pd.isnull(mark_1+mark_2) | pd.isnull(ret.iloc[1:]))  # valid的股票要满足：当期有前一个月的indicator信息；当期保证交易
     if weights is None:
@@ -583,6 +607,16 @@ def NWest_mean(dataframe,L=None):
     w=1.0-np.arange(1,L+1)/(L+1.0)
     return np.sqrt(2.0*pd.DataFrame((df*df.shift(i+1)*w[i]).sum() for i in range(L)).sum()/T+df.var())/np.sqrt(T)
 def NWest(e,X,L=None):
+    '''
+
+    :param e:
+        e是残差序列
+    :param X:
+        X是不包含常数项的解释变量
+    :param L:
+        L是滞后阶数
+    :return:
+    '''
     T = len(e)
     if L is None:
         L = int(T ** 0.25) # or : L = 0.75*T**(1.0/3.0)-1
@@ -616,7 +650,6 @@ def CumRet(port_ret,method='simple',labels=None):
         port_ret.columns=labels
     cum_ret=(port_ret*0.01+1.0).cumprod()
     return cum_ret
-
 def GetVarsFromList(var_list,freq):
     if set(var_list).intersection(['beta','illiq','max_ret','skew','coskew','iskew','vol','ivol']):
         ret_d=cal_ret(freq='D')
@@ -654,7 +687,7 @@ def GetVarsFromList(var_list,freq):
     if 'mom' in var_list:
         var_dict['mom']=cal_mom(freq_periods1[freq],freq=freq)
     if 'rev' in var_list:
-        var_dict['rev']=ret.copy()
+        var_dict['rev']=ret.shift(1).iloc[1:]
     if 'illiq' in var_list:
         var_dict['illiq'] = cal_illiq(freq_periods2[freq], freq=freq, ret_d=ret_d, amount=amount_d)
     if 'max_ret' in var_list:

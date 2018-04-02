@@ -32,7 +32,7 @@ ST.index=pd.to_datetime(ST.index.astype(int).astype(str),format='%Y%m%d');ST.hea
 
 
 # 停牌NT，以及停牌
-NT=pd.read_pickle(data_path+'NT');NT.head() # 1表示停牌
+NT=pd.read_pickle(data_path+'NT');NT.head() # 1表示停牌，且停牌超过一定时间后删除60天交易数据【财神已标记】
 NT.index=pd.to_datetime(NT.index.astype(int).astype(str),format='%Y%m%d');NT.head()
 (NT==0.0).to_pickle(data_path+'NT_datetime')
 
