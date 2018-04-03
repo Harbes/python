@@ -51,13 +51,13 @@ amount=data['amount'].unstack()
 clsprc=data['clsprc'].unstack()
 amount /=clsprc;amount.head()
 amount[amount==0]=np.nan
-amount_filter=DataFrame([pd.qcut(amount.iloc[i],q=[0.0,0.01,1.0],labels=[0,1]) for i in range(len(amount))])
+amount_filter=DataFrame([pd.qcut(amount.loc[i],q=[0.0,0.1,1.0],labels=[0,1]) for i in amount.index])
 amount_filter.to_pickle(data_path+'FilterSmallVolume')
 
 
 # 归总筛选
-filter_=NT[ST=='N'];filter_.head() #[~limit_move]
-(filter_==0.0).to_pickle(data_path+'non_ST_IPO_NT_datetime') # 4672606个有效数据点(原来有6140094个数据点)
+filter_=NT[ST=='N'][amount_filter==1.0];filter_.head() #[~limit_move]
+(filter_==0.0).to_pickle(data_path+'non_ST_IPO_NT_SmallVolume_datetime') # 4672606个有效数据点(原来有6140094个数据点)
 (filter_==0.0).sum(axis=1).sum()
 
 

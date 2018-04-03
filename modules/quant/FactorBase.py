@@ -129,8 +129,12 @@ def import_data(PV_vars=None, BS_vars=None,Rf_freq=None,filter_data=True):
         'size_tot', 'size_free'
 
     :param BS_vars[BS数据尚未指定index变量]: list of strings
+        资产负债表
         'fin_year','ann_dt', 'stkcd', 'tot_assets', 'tot_liab'
         【book数据可以直接使用'tot_shrhldr_eqy_excl_min_int】
+        利润表
+        's_fa_eps_basic'
+
 
     :param Rf_freq:
         'Y','M','D'
@@ -152,7 +156,7 @@ def import_data(PV_vars=None, BS_vars=None,Rf_freq=None,filter_data=True):
     else:
         PV=None
     if BS_vars is not None:
-        BS = pd.read_pickle(data_path + 'BS')[['ann_dt', 'stkcd']+BS_vars]  #
+        BS = pd.read_pickle(data_path + 'BS')[['ann_dt', 'stkcd']+BS_vars]  #'BS'
         BS = BS[~(BS['ann_dt'].isnull())]
         BS['ann_dt'] = pd.to_datetime(BS['ann_dt'].astype(int).astype(str), format='%Y%m%d')
         BS=BS.set_index(['ann_dt', 'stkcd']).sort_index()
@@ -291,18 +295,32 @@ def cal_beta(periods,freq='M',index_ret_d=None,ret_d=None):
     #    return beta[beta!=0.0].resample('D',fill_method='pad').loc[ret_d.loc[EndDate_list[periods-1]:].index].astype(float)
     #else:
     return beta[beta!=0.0].shift(1).iloc[periods:].astype(float)
-def cal_size(freq='M',shift_num=1):
+def cal_size(freq='M',shift_num=1,exclude=False):
     size=import_data(PV_vars=['size_tot'])[0].unstack()
     #size.columns=size.columns.get_level_values(1)
     size=resample_h2l(size, to_freq=freq, n_th=-1, by_position=False)
+    if exclude:
+        size=ClipQuantile(size,[0.0,0.3,1.0],[-1.0,1.0])
     return size[size>0.0].shift(shift_num).iloc[shift_num:]*1.0e-5
-def cal_BM(size=None,freq='M'):
-    if size is None:
-        size=cal_size(freq=freq,shift_num=0)
-    book=import_data(BS_vars=['tot_shrhldr_eqy_excl_min_int'])[1]
-    book = book.drop(book.index[book.index.duplicated(keep='last')]).unstack()['tot_shrhldr_eqy_excl_min_int']
-    BM=book.resample('D').first().ffill().loc[size.index,size.columns]/size*1.0e-8
-    return BM[BM>0.0].shift(1).iloc[1:]
+def cal_BM(size=None,freq='M',measure='BM'):
+    if measure=='BM':
+        if size is None:
+            size = cal_size(freq=freq, shift_num=0)
+        book=import_data(BS_vars=['tot_shrhldr_eqy_excl_min_int'])[1]
+        book = book.drop(book.index[book.index.duplicated(keep='last')]).unstack()['tot_shrhldr_eqy_excl_min_int']
+        BM=book.resample('D').first().ffill().loc[size.index,size.columns]/size*1.0e-8
+        return BM[BM > 0.0].shift(1).iloc[1:]
+    elif measure=='EP':
+        # TODO 寻找相关的数据，例如
+        '''
+        不知道为什么，cnrds上的每股收益与wind上的eps_basic对不上？
+        '''
+        price, book = import_data(PV_vars=['clsprc'], BS_vars=['s_fa_eps_basic'])[:2]
+        book = book.drop(book.index[book.index.duplicated(keep='last')]).unstack()['s_fa_eps_basic']
+        price = resample_h2l(price.unstack(), to_freq=freq, n_th=-1)
+        #BM = book.resample('D').first().ffill().loc[price.index, price.columns] / price * 100.0
+        BM = book.fillna(method='ffill').loc[price.index, price.columns] / price * 100.0
+        return BM.shift(1).iloc[1:]
 def cal_mom(periods,freq='M',opn=None,cls=None):
     if periods <2:
         raise ValueError('Periods must not be lower than 2 !!!')
@@ -479,9 +497,11 @@ def IndexAlign(*vars):
     for i in range(1,l):
         index &=vars[i].index
     return [vars[i].loc[index] for i in range(l)]
-def cal_SMB_HML(ret,size,BM,percentile1=None,percentile2=None,independent=True):
+def cal_SMB_HML(ret,size,BM,percentile1=None,percentile2=None,independent=True,exclude_30_small_size=False):
+    if exclude_30_small_size:
+        size = ClipQuantile(size, [0.0, 0.3, 1.0], [-1.0, 1.0])
     ret,size,BM=IndexAlign(ret,size,BM)
-    valid_ = ~pd.isnull(BM+ret)  # TypeError: bad operand type for unary ~: 'float'--->index或columns不匹配
+    valid_ = ~pd.isnull(BM+ret+size)  # TypeError: bad operand type for unary ~: 'float'--->index或columns不匹配
     size = size[valid_]
     BM = BM[valid_]
     ret = ret[valid_]
@@ -812,3 +832,5 @@ def DoublePortAnalysis(var_list,var2,var_dict=None,index_ret=None,SMB=None,HML=N
                                                             SMB=SMB, HML=HML)
             portfolio_alpha_t.loc[var, port] = portfolio_alpha.loc[var,port]/se
     return pd.DataFrame({'mean': portfolio_mean.stack(), 't': portfolio_t.stack(),'alpha':portfolio_alpha.stack(),'alpha_t':portfolio_alpha_t.stack()}).T
+
+
