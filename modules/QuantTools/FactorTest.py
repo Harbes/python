@@ -1,4 +1,4 @@
-from modules.quant.FactorBase0 import *
+from modules.QuantTools.FactorBase0 import *
 #import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np

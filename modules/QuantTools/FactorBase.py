@@ -10,6 +10,18 @@ import sys
 import warnings
 warnings.filterwarnings("ignore")
 #data_path=_data_path()
+#
+def InputOptions():
+    # TODO
+    # 时间：投资时间点，调仓频率
+    #      因子计算窗口期：日历窗口期or交易日窗口期
+    # 收益率计算：method=arithmetic、log
+    #      数据：close-close，close-open
+    pass
+def PreCalData():
+    # TODO
+    # 例如：ret_d,ret_index_d,SMB_freq,HML_freq
+    pass
 def GetDataPath():
     sys_platform=sys.platform
     if sys_platform =='win32':
@@ -151,7 +163,7 @@ def import_data(PV_vars=None, BS_vars=None,Rf_freq=None,filter_data=True):
         else:
             PV = pd.read_pickle(data_path + 'PV_datetime')[PV_vars[0]]
         if filter_data is True:
-            filter_ =pd.read_pickle(data_path + 'non_ST_IPO_NT_datetime').stack()
+            filter_ =pd.read_pickle(data_path + 'non_ST_IPO_NT_datetime').stack() # non_ST_IPO_NT_SmallVolume_datetime
             PV=PV[filter_]
     else:
         PV=None
@@ -456,7 +468,7 @@ def cal_vol(periods,freq='M',ZeroMean=False,ret_d=None):
         vol=pd.DataFrame(
             (ret_d.loc[edt - delta_date + Day():edt].std() for edt in EndDate_list)
             , index=EndDate_list).shift(1).iloc[periods:]
-    return vol[vol>0.0]
+    return vol[vol>0.0].shift(1).iloc[periods:]
 def cal_ivol(periods,freq='M',method='FF',ret_d=None,index_ret_d=None,SMB_d=None,HML_d=None):
     if ret_d is None:
         ret_d = cal_ret(freq='D')
@@ -489,6 +501,8 @@ def cal_ivol(periods,freq='M',method='FF',ret_d=None,index_ret_d=None,SMB_d=None
                 tmp2.mul(tmp1['HML'], axis=0).mean()
             ])).std()
     return ivol[ivol>0.0].shift(1).iloc[periods:].astype(float)
+def cal_ivol_from_EGARCH():
+    return pd.read_pickle(GetDataPath()+'Expected_iVol_using_OptimalEgarch').shift(1).loc['2007-09']
 #ivol[ivol>0.0]
 #tmp2.loc['2015-12','603999.SH']
 def IndexAlign(*vars):
@@ -718,7 +732,7 @@ def GetVarsFromList(var_list,freq):
     if 'skew' in var_list:
         var_dict['skew'] = cal_skew(freq_periods2[freq], freq=freq, ret_d=ret_d)
     if 'coskew' in var_list:
-        var_dict['coskew'] = cal_coskew(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d)
+        var_dict['coskew'] = cal_coskew(4, freq=freq, ret_d=ret_d, index_ret_d=index_ret_d)
     if 'iskew' in var_list:
         var_dict['iskew'] = cal_iskew(freq_periods2[freq], freq=freq, ret_d=ret_d, index_ret_d=index_ret_d,
                                       SMB_d=SMB_d, HML_d=HML_d)
@@ -741,7 +755,7 @@ def Fama_MacBeth(var_list,freq='M',var_dict=None):
     if var_dict is None:
         var_dict=GetVarsFromList(var_list,freq)
     var_d={}
-    for k in var_dict.keys():
+    for k in var_list+['ret']:
         var_d[k]=var_dict[k].stack()
     if 'size' in var_d.keys():
         var_d['size']=np.log(var_d['size'])
