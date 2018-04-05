@@ -3,23 +3,23 @@ import numpy as np
 from scipy.stats import norm
 
 
-start = lambda eqd: eqd.index[0]
-end = lambda eqd: eqd.index[-1]
-days = lambda eqd: (eqd.index[-1] - eqd.index[0]).days
-trades_per_month = lambda eqd: eqd.groupby(
-    lambda x: (x.year, x.month)
-).apply(lambda x: x[x != 0].count()).mean()
-profit = lambda eqd: eqd.sum()
-average = lambda eqd: eqd[eqd != 0].mean()
-average_gain = lambda eqd: eqd[eqd > 0].mean()
-average_loss = lambda eqd: eqd[eqd < 0].mean()
-winrate = lambda eqd: float(sum(eqd > 0)) / len(eqd)
-payoff = lambda eqd: eqd[eqd > 0].mean() / -eqd[eqd < 0].mean()
-pf = PF = lambda eqd: abs(eqd[eqd > 0].sum() / eqd[eqd < 0].sum())
-maxdd = lambda eqd: (eqd.cumsum().expanding().max() - eqd.cumsum()).max()
-rf = RF = lambda eqd: eqd.sum() / maxdd(eqd)
-trades = lambda eqd: len(eqd[eqd != 0])
-_days = lambda eqd: eqd.resample('D').sum().dropna() #意图是什么
+# start = lambda eqd: eqd.index[0]
+# end = lambda eqd: eqd.index[-1]
+# days = lambda eqd: (eqd.index[-1] - eqd.index[0]).days
+# trades_per_month = lambda eqd: eqd.groupby(
+#     lambda x: (x.year, x.month)
+# ).apply(lambda x: x[x != 0].count()).mean()
+# profit = lambda eqd: eqd.sum()
+# average = lambda eqd: eqd[eqd != 0].mean()
+# average_gain = lambda eqd: eqd[eqd > 0].mean()
+# average_loss = lambda eqd: eqd[eqd < 0].mean()
+# winrate = lambda eqd: float(sum(eqd > 0)) / len(eqd)
+# payoff = lambda eqd: eqd[eqd > 0].mean() / -eqd[eqd < 0].mean()
+# pf = PF = lambda eqd: abs(eqd[eqd > 0].sum() / eqd[eqd < 0].sum())
+# maxdd = lambda eqd: (eqd.cumsum().expanding().max() - eqd.cumsum()).max()
+# rf = RF = lambda eqd: eqd.sum() / maxdd(eqd)
+# trades = lambda eqd: len(eqd[eqd != 0])
+# _days = lambda eqd: eqd.resample('D').sum().dropna() #意图是什么
 
 def kwarges_Options():
     options={
@@ -90,51 +90,51 @@ def UPI(df, Rf=0.0):
 #        return maxdds
 
 
-def performance_summary(equity_diffs, quantile=0.99, precision=4):
-    def _format_out(v, precision=4):
-        if isinstance(v, dict):
-            return {k: _format_out(v) for k, v in list(v.items())}
-        if isinstance(v, (float, np.float)):
-            v = round(v, precision)
-        if isinstance(v, np.generic):
-            return np.asscalar(v)
-        return v
-
-    def force_quantile(series, q):
-        return sorted(series.values)[int(len(series) * q)]
-
-    eqd = equity_diffs[equity_diffs != 0]
-    if getattr(eqd.index, 'tz', None) is not None:
-        eqd = eqd.tz_convert(None)
-    if len(eqd) == 0:
-        return {}
-    hold = holding_periods(equity_diffs)
-
-    return _format_out({
-        'backtest': {
-            'from': str(start(eqd)),
-            'to': str(end(eqd)),
-            'days': days(eqd),
-            'trades': len(eqd),
-            },
-        'performance': {
-            'profit': eqd.sum(),
-            'averages': {
-                'trade': average(eqd),
-                'gain': average_gain(eqd),
-                'loss': average_loss(eqd),
-                },
-            'winrate': winrate(eqd),
-            'payoff': payoff(eqd),
-            'PF': PF(eqd),
-            'RF': RF(eqd),
-            },
-        'risk/return profile': {
-            'sharpe': sharpe(eqd),
-            'sortino': sortino(eqd),
-            'maxdd': maxdd(eqd),
-            'WCDD (monte-carlo {} quantile)'.format(quantile): mcmdd(eqd, quantile=quantile),
-            'UPI': UPI(eqd),
-            'MPI': MPI(eqd),
-            }
-        })
+# def performance_summary(equity_diffs, quantile=0.99, precision=4):
+#     def _format_out(v, precision=4):
+#         if isinstance(v, dict):
+#             return {k: _format_out(v) for k, v in list(v.items())}
+#         if isinstance(v, (float, np.float)):
+#             v = round(v, precision)
+#         if isinstance(v, np.generic):
+#             return np.asscalar(v)
+#         return v
+#
+#     def force_quantile(series, q):
+#         return sorted(series.values)[int(len(series) * q)]
+#
+#     eqd = equity_diffs[equity_diffs != 0]
+#     if getattr(eqd.index, 'tz', None) is not None:
+#         eqd = eqd.tz_convert(None)
+#     if len(eqd) == 0:
+#         return {}
+#     hold = holding_periods(equity_diffs)
+#
+#     return _format_out({
+#         'backtest': {
+#             'from': str(start(eqd)),
+#             'to': str(end(eqd)),
+#             'days': days(eqd),
+#             'trades': len(eqd),
+#             },
+#         'performance': {
+#             'profit': eqd.sum(),
+#             'averages': {
+#                 'trade': average(eqd),
+#                 'gain': average_gain(eqd),
+#                 'loss': average_loss(eqd),
+#                 },
+#             'winrate': winrate(eqd),
+#             'payoff': payoff(eqd),
+#             'PF': PF(eqd),
+#             'RF': RF(eqd),
+#             },
+#         'risk/return profile': {
+#             'sharpe': sharpe(eqd),
+#             'sortino': sortino(eqd),
+#             'maxdd': maxdd(eqd),
+#             'WCDD (monte-carlo {} quantile)'.format(quantile): mcmdd(eqd, quantile=quantile),
+#             'UPI': UPI(eqd),
+#             'MPI': MPI(eqd),
+#             }
+#         })
