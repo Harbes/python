@@ -6,11 +6,11 @@ Created on Sun Apr 30 16:16:44 2017
 @author: harbes
 usage
 ============
-from modules import options
+from my_modules import options
 temp=options.euro_option()
 temp.value_BSM()
 == or ==
-from modules import euro_option
+from my_modules import euro_option
 temp=euro_option(otype='put')
 a.value_BSM()
 """
@@ -652,7 +652,7 @@ class HestonOptions:
         '''
         一个值得深入思考的现象：
 import numpy as np
-from modules import HestonOptions as Hoptions
+from my_modules import HestonOptions as Hoptions
 import matplotlib.pyplot as plt
 Hoptions.ExampleEffect_of_Correlation_on_Heston_and_BlackScholes_Prices()
 x,f1,f2,f3=Hoptions.ExampleEffect_of_Correlation_on_Terminal_Price_Density(True)

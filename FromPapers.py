@@ -1,4 +1,4 @@
-from modules.QuantTools.FactorBase import *
+from my_modules.QuantTools.FactorBase import *
 import numpy as np
 import pandas as pd
 from time import time

@@ -1156,7 +1156,7 @@ def garch1(arr,max_iter,init=(0.1,0.4,0.5)):
         theta +=pinv(J)@G
     return theta
 
-from modules.uni_tsa import uni_tsa
+from my_modules.uni_tsa import uni_tsa
 arr=np.random.randn(300)
 %timeit uni_tsa(arr).garch()
 

@@ -7,7 +7,6 @@ class matrix:
             raise ValueError('不是方阵！请检查错误')
         elif np.abs(self.det)<1e-8:
             raise ValueError('奇异矩阵！抱歉我算不了^_^!!!')
-    @property
     def det(self):
         return np.linalg.det(self.mat)
     @jit

@@ -79,7 +79,7 @@ import numpy as np
 import math
 from numba import jit
 import matplotlib.pyplot as plt
-from modules import euro_option as e_option
+from my_modules import euro_option as e_option
 M=100  # nb of time steps of size dt
 N=100000 #nb of stochastic realization
 L=100  #nb of sampling point for S
@@ -129,7 +129,7 @@ import numpy as np
 from numba import jit
 import math
 import matplotlib.pyplot as plt
-from modules import euro_option as e_option
+from my_modules import euro_option as e_option
 from scipy.special import comb
 M=81  # nb of time steps of size dt
 N=100000 #nb of stochastic realization
@@ -204,7 +204,7 @@ import numpy as np
 from numba import jit
 import math
 import matplotlib.pyplot as plt
-from modules import ame_option as a_option,euro_option as e_option
+from my_modules import ame_option as a_option,euro_option as e_option
 M=50  # nb of time steps of size dt
 N=100000 #nb of stochastic realization
 L=100  #nb of sampling point for S
@@ -263,7 +263,7 @@ exact=e_option(r=0.1).value_BSM
 import numpy as np
 import math
 from numba import jit
-from modules import Ame_option_binomial as a_bin_fun
+from my_modules import Ame_option_binomial as a_bin_fun
 import matplotlib.pyplot as plt
 
 @jit
@@ -311,7 +311,7 @@ plt.show()
 import numpy as np
 import math
 from numba import jit
-from modules import Ame_option_binomial as a_bin_fun,euro_option as e_opt_class
+from my_modules import Ame_option_binomial as a_bin_fun,euro_option as e_opt_class
 import matplotlib.pyplot as plt
 
 @jit

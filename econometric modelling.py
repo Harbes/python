@@ -1,6 +1,6 @@
 # chapter 2=========================================
 ## example 2.1: stationary AR(1) process
-from modules import simulation as simu
+from my_modules import simulation as simu
 import numpy as np
 import matplotlib.pyplot as plt
 alpha=1
@@ -117,7 +117,7 @@ for j in range(repetition):
     for i in range(T):
         y[i]=np.random.binomial(1,theta[i])
     y_hat[j]=sqrt(T)*(np.mean(y-theta)/np.mean(theta*(1-theta)))
-from modules import distribution as dist
+from my_modules import distribution as dist
 dist(y_hat).hist(disp_norm=1)
 
 
