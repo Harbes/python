@@ -5,7 +5,7 @@ from pandas.tseries.offsets import MonthEnd,YearEnd,Week,Day,DateOffset
 import statsmodels.api as sm
 from copy import deepcopy
 from scipy.stats import mstats
-#from dateutil.parser import parse
+from dateutil.parser import parse
 import sys
 import warnings
 warnings.filterwarnings("ignore")
@@ -33,8 +33,11 @@ def GetDataPath():
     else:
         raise ValueError('These is no such systerm in your work-station')
 def InvestTime():
-    # TODO 用 InvestTime替代GetEndDateList
-    pass
+    start_=parse('20050101')
+    end_=parse('20180301')
+    return None
+
+
 def resample_index(dat, to_freq):
     '''
     使用时一定要注意，此命令会更改数据的index；因此，凡是涉及输入的数据使用此命令时，一定要使用copy()，以防出错
