@@ -12,6 +12,9 @@
 %自动换行
 \XeTeXlinebreaklocale "zh" 
 \XeTeXlinebreakskip = 0pt plus 1pt
+% Added by lyx2lyx
+\renewcommand{\textendash}{--}
+\renewcommand{\textemdash}{---}
 \end_preamble
 \use_default_options true
 \maintain_unincluded_children false
@@ -19,9 +22,9 @@
 \language_package default
 \inputencoding utf8-plain
 \fontencoding global
-\font_roman "default" "微软雅黑"
-\font_sans "default" "楷体"
-\font_typewriter "default" "楷体"
+\font_roman "default" "Noto Sans CJK SC"
+\font_sans "default" "Noto Sans CJK SC"
+\font_typewriter "default" "Noto Sans Mono CJK SC"
 \font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts true
@@ -47,7 +50,7 @@
 \pdf_backref false
 \pdf_pdfusetitle true
 \papersize default
-\use_geometry true
+\use_geometry false
 \use_package amsmath 1
 \use_package amssymb 1
 \use_package cancel 1
@@ -1101,12 +1104,12 @@ CAPM。命题3.4告诉我们，资产预期超额收益率向量与资产关于�
 \begin_inset Formula $r_{PA}$
 \end_inset
 
-是指主动投资所得到的收益率与基准收益率之间的差值“the difference between the manager’s portfolio’s
+是指主动投资所得到的收益率与基准收益率之间的差值“the difference between the manager's portfolio's
  return 
 \begin_inset Formula $r_{P}$
 \end_inset
 
- and the benchmark’s return 
+ and the benchmark's return 
 \begin_inset Formula $r_{B}$
 \end_inset
 
@@ -2615,6 +2618,170 @@ r_{P}(t)=\alpha_{P}+\beta_{P}r_{B}(t)+\varepsilon_{P}(t)
 \end_layout
 
 \end_deeper
+\begin_layout Itemize
+残差前沿：投资经理的机会集。假设投资组合
+\begin_inset Formula $Q$
+\end_inset
+
+是
+\begin_inset Formula $IR=max\{IR_{P}|P\}$
+\end_inset
+
+的一个非0解，一般而言，投资经理的残差前沿（即机会集）应该是经过原点（业绩基准组合）和组合
+\begin_inset Formula $Q$
+\end_inset
+
+的一条直线。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+注意：投资者的机会集并不意味着投资经理无法投资机会集以外的其他组合，它只意味着投资经理的信息不足以引导他持有其他组合。
+\end_layout
+
+\begin_layout Itemize
+信息率为主动投资经理定义了一条“预算约束”，其直观图像就是残差前沿：
+\begin_inset Formula 
+\[
+\alpha_{P}=IR*\omega_{P}
+\]
+
+\end_inset
+
+在最有情形下（即沿着残差前沿），投资经理只能通过增加相应程度的残差风险来增加预期残差收益率。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+主动投资经理的目标函数。根据第4章，主动管理的目标是最大化残差收益率附加值，其中附加值定义为
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+忽略业绩基准择时，所以主动收益率就等于残差收益率，主动风险就等于残差风险
+\end_layout
+
+\end_inset
+
+：
+\begin_inset Formula 
+\[
+VA[P]=\alpha_{P}-\lambda_{R}*\omega_{P}^{2}
+\]
+
+\end_inset
+
+简单地说，预期残差收益率越高越好，残差风险越低越好。参数
+\begin_inset Formula $\lambda_{R}$
+\end_inset
+
+衡量了对残差风险的厌恶程度，它将残差风险转化为alpha上的损失。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+事实上，当附加值固定时，预期残差收益率与残差风险之间是一种抛物线关系。
+\end_layout
+
+\begin_layout Itemize
+有时候，把附加值称为
+\series bold
+确定性等价收益率
+\series default
+。给定风险厌恶系数
+\begin_inset Formula $\lambda_{R}$
+\end_inset
+
+，投资者把收益率为
+\begin_inset Formula $\alpha_{P}$
+\end_inset
+
+、风险为
+\begin_inset Formula $\omega_{P}$
+\end_inset
+
+的投资与具有确定性收益率
+\begin_inset Formula $\alpha_{P}-\lambda_{R}*\omega_{P}^{2}$
+\end_inset
+
+的无风险投资视为效用等同。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+偏好与机会集的相交。信息率描述了主动投资经理可选的机会集，主动投资经理应该探寻其4机会集中的各种选择，挑选附加值最大的那个投资组合。
+\end_layout
+
+\begin_layout Itemize
+激进程度
+\begin_inset Formula $\omega^{*}$
+\end_inset
+
+、机会集[
+\begin_inset Formula $IR$
+\end_inset
+
+]和残差风险厌恶[
+\begin_inset Formula $\lambda_{R}$
+\end_inset
+
+]。投资经理的信息率（决定机会集）和残差风险厌恶水平通过一种简单的关系决定了该经理的最优残差风险水平或激进程度。推导如下：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $VA[P]=\alpha_{P}-\lambda_{R}*\omega_{P}^{2}$
+\end_inset
+
+[效用函数] 以及 
+\begin_inset Formula $IR=\alpha_{P}/\omega_{P}$
+\end_inset
+
+[约束集] ——》 
+\begin_inset Formula $VA[\omega_{P}]=\omega_{P}*IR-\lambda_{R}*\omega_{P}^{2}$
+\end_inset
+
+[无约束最优化]。于是，使得附加值最大化的最优残差风险水平为：
+\begin_inset Formula 
+\[
+\omega_{P}^{*}=\frac{IR}{2\lambda_{R}}
+\]
+
+\end_inset
+
+注意，信息率与最优残差风险水平呈现线性关系【前提：二次效用函数】。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+附加值：风险调整残差收益率。最优残差风险水平为
+\begin_inset Formula $\omega_{P}^{*}=\frac{IR}{2\lambda_{R}}$
+\end_inset
+
+，因此，对应的最大附加值为
+\begin_inset Formula 
+\[
+VA^{*}=VA[\omega^{*}]=\frac{IR}{4\lambda_{R}}=\frac{\omega^{*}\times IR}{2}
+\]
+
+\end_inset
+
+由此可知，投资经理创造附加值的能力随着信息率的平方递增，而随着投资经理风险厌恶水平的增加而递减。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+事实上，每位投资者都会寻找最高信息率的策略或投资经理，不同投资者仅会在实施策略的激进程度上有所不同。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $\beta=1$
+\end_inset
+
+前沿。
+\end_layout
+
 \begin_layout Chapter
 主动管理基本定律
 \end_layout

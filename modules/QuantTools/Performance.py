@@ -21,18 +21,17 @@ rf = RF = lambda eqd: eqd.sum() / maxdd(eqd)
 trades = lambda eqd: len(eqd[eqd != 0])
 _days = lambda eqd: eqd.resample('D').sum().dropna() #意图是什么
 
-def SetOptions():
+def kwarges_Options():
     options={
         'periods_per_year':252.0,
         'MARR':None
     }
     return options
-options=SetOptions()
 def Sharpe(df,Rf=0.0):
     ''' annualised Sharpe ratio '''
     d=df.sub(Rf,axis=0)
     return d.mean() / d.std() * (options['periods_per_year']**0.5)
-def DownsideRisk(df,method='full'):
+def DownsideRisk(df,method='full',**kwargs):
     '''
 
     :param df:
@@ -41,7 +40,7 @@ def DownsideRisk(df,method='full'):
     :param method:
     :return:
     '''
-    MARR=options['MARR']
+    MARR=kwargs['MARR']
     if MARR is None:
         MARR=df.mean()
     d=df.sub(MARR,axis=1)
@@ -49,8 +48,8 @@ def DownsideRisk(df,method='full'):
         return np.sqrt((d**2.0)[d<0.0].sum()/len(d))
     elif method=='subset':
         return np.sqrt((d**2.0)[d<0.0].mean())
-def Sortino(df,Rf=0.0):
-    return df.sub(Rf,axis=0).mean()/DownsideRisk(df)
+def Sortino(df,Rf=0.0,**kwargs):
+    return df.sub(Rf,axis=0).mean()/DownsideRisk(df,**kwargs)
 def VaR(df,alpha=0.05,method='history'):
     if method=='history':
         return df.quantile(q=alpha)
@@ -66,36 +65,29 @@ def MaxDrawdown(df):
     df_CumMax=df_CumRet.cummax()
     return (df_CumMax-df_CumRet).cummax()/df_CumMax*100.0
 def ulcer(df):
-    # The ulcer index is a stock market risk measure or technical analysis indicator devised by Peter Martin in 1987
+    '''The ulcer index is a stock market risk measure or technical analysis indicator devised by Peter Martin in 1987'''
     d=(df+1.0).cumprod()
     d_cummax=d.cummax()
     return ((((d - d_cummax)/d_cummax) ** 2.0).mean()) ** 0.5
 
 
 def UPI(df, Rf=0.0):
-    d=df.sub(Rf,axis=0)
-    return (eq.mean() - risk_free) / ulcer(eq)
-UPI = upi
+    return df.sub(Rf,axis=0) / ulcer(df)
 
 
-def mpi(eqd):
-    """ Modified UPI, with enumerator resampled to months (to be able to
-    compare short- to medium-term strategies with different trade frequencies. """
-    return eqd.resample('M').sum().mean() / ulcer(eqd)
-MPI = mpi
+#def mpi(eqd):
+#    """ Modified UPI, with enumerator resampled to months (to be able to
+#    compare short- to medium-term strategies with different trade frequencies. """
+#    return eqd.resample('M').sum().mean() / ulcer(eqd)
+#MPI = mpi
 
 
-def mcmdd(eqd, runs=100, quantile=0.99, array=False):
-    maxdds = [maxdd(eqd.take(np.random.permutation(len(eqd)))) for i in range(runs)]
-    if not array:
-        return pd.Series(maxdds).quantile(quantile)
-    else:
-        return maxdds
-
-
-def holding_periods(eqd):
-    # rather crude, but will do
-    return pd.Series(eqd.index.to_datetime(), index=eqd.index, dtype=object).diff().dropna()
+#def mcmdd(eqd, runs=100, quantile=0.99, array=False):
+#    maxdds = [maxdd(eqd.take(np.random.permutation(len(eqd)))) for i in range(runs)]
+#    if not array:
+#        return pd.Series(maxdds).quantile(quantile)
+#    else:
+#        return maxdds
 
 
 def performance_summary(equity_diffs, quantile=0.99, precision=4):
