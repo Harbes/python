@@ -850,4 +850,3 @@ def DoublePortAnalysis(var_list,var2,var_dict=None,index_ret=None,SMB=None,HML=N
             portfolio_alpha_t.loc[var, port] = portfolio_alpha.loc[var,port]/se
     return pd.DataFrame({'mean': portfolio_mean.stack(), 't': portfolio_t.stack(),'alpha':portfolio_alpha.stack(),'alpha_t':portfolio_alpha_t.stack()}).T
 
-
