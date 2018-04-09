@@ -2779,11 +2779,208 @@ VA^{*}=VA[\omega^{*}]=\frac{IR}{4\lambda_{R}}=\frac{\omega^{*}\times IR}{2}
 \begin_inset Formula $\beta=1$
 \end_inset
 
-前沿。
+前沿。【
+\color red
+？？？
+\color inherit
+】
 \end_layout
 
+\begin_layout Itemize
+直接预期alpha。【？？？】
+\end_layout
+
+\begin_layout Itemize
+实证观察
+\end_layout
+
+\begin_layout Section*
+技术附录
+\end_layout
+
+\begin_layout Itemize
+alpha的特征组合。假定对一组资产的预期残差收益率（alpha）的预测向量为：
+\begin_inset Formula $\boldsymbol{\alpha}=\{\alpha_{1},\alpha_{2},...,\alpha_{N}\}$
+\end_inset
+
+，显然，业绩基准以及无风险资产的alpha数值均为0，即
+\begin_inset Formula $\alpha_{B}=0$
+\end_inset
+
+、
+\begin_inset Formula $\alpha_{F}=0$
+\end_inset
+
+。定义组合A为alpha向量的特征组合：
+\begin_inset Formula 
+\[
+\boldsymbol{h}_{A}=\frac{\boldsymbol{V}^{-1}\boldsymbol{\alpha}}{\boldsymbol{\alpha}^{T}\boldsymbol{V}^{-1}\boldsymbol{\alpha}}
+\]
+
+\end_inset
+
+依据定义，组合A具有单位alpha暴露，即
+\begin_inset Formula $\boldsymbol{h}_{A}^{T}\boldsymbol{\alpha}=1$
+\end_inset
+
+，并且在所有满足这样性质的投资组合中具有最小风险。组合A的方差为
+\begin_inset Formula 
+\[
+\sigma_{A}^{2}=\boldsymbol{h}_{A}^{T}\boldsymbol{V}\boldsymbol{h}_{A}=\frac{1}{\boldsymbol{\alpha}^{T}V^{-1}\boldsymbol{\alpha}}
+\]
+
+\end_inset
+
+此时，
+\begin_inset Formula 
+\[
+\boldsymbol{\alpha}=\frac{\boldsymbol{V}\boldsymbol{h}_{A}}{\sigma_{A}^{2}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+信息率。对任意满足
+\begin_inset Formula $\omega_{P}>0$
+\end_inset
+
+（残差风险）的投资组合，定义
+\begin_inset Formula $IR_{P}$
+\end_inset
+
+为
+\begin_inset Formula 
+\[
+IR_{P}=\frac{\alpha_{P}}{\omega_{P}}
+\]
+
+\end_inset
+
+若
+\begin_inset Formula $\omega_{P}=0$
+\end_inset
+
+，则定义
+\begin_inset Formula $IR_{P}=0$
+\end_inset
+
+。对于给定的一组
+\begin_inset Formula $\{\alpha_{n}\}$
+\end_inset
+
+，定义其信息率为
+\begin_inset Formula $IR_{P}$
+\end_inset
+
+的最大可能数值，即：
+\begin_inset Formula 
+\[
+IR=Max\{IR_{P}|P\}
+\]
+
+\end_inset
+
+在第二章的技术附录中，我们确定了组合Q是具有最高夏普率的全额投资组合。组合Q在所有组合P中最大化了
+\begin_inset Formula $f_{P}/\sigma_{P}$
+\end_inset
+
+。下面想要建立组合Q、组合A以及信息率之间的联系。
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+命题1：
+\end_layout
+
+\begin_layout Enumerate
+组合A的
+\begin_inset Formula $\beta$
+\end_inset
+
+等于0，即
+\begin_inset Formula $\beta_{A}=\boldsymbol{\beta}^{T}\boldsymbol{h}_{A}=0$
+\end_inset
+
+。因此，组合A通常同时具有多空头寸。
+\end_layout
+
+\begin_layout Enumerate
+组合A具有最高的信息率。
+\begin_inset Formula $IR=IR_{A}=\sqrt{\boldsymbol{\alpha}^{T}\boldsymbol{V}^{-1}\boldsymbol{\alpha}}\geq IR_{P},\forall P$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+组合A的总风险和残差风险（业绩基准是市场吗？）都等于
+\begin_inset Formula $IR$
+\end_inset
+
+的倒数：
+\begin_inset Formula 
+\[
+\omega_{A}=\sigma_{A}=\frac{1}{IR}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+任意可以写成如下形式的组合P：
+\begin_inset Formula 
+\[
+\boldsymbol{h}_{P}=\beta_{P}\boldsymbol{h}_{B}+\alpha_{P}\boldsymbol{h}_{A}(\alpha_{P}>0)
+\]
+
+\end_inset
+
+都具有最高
+\begin_inset Formula $IR$
+\end_inset
+
+，即
+\begin_inset Formula $IR_{P}=IR$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Enumerate
+组合Q是业绩基准组合和组合A的某种混合（线性组合）：
+\begin_inset Formula 
+\[
+\boldsymbol{h}_{Q}=\beta_{Q}\boldsymbol{h}_{B}+\alpha_{Q}\boldsymbol{h}_{A}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula 
+\begin{align*}
+\beta_{Q} & =\frac{f_{B}\sigma_{Q}^{2}}{f_{Q}\sigma_{B}^{2}}\\
+\alpha_{Q} & =\frac{\sigma_{Q}^{2}}{f_{Q}\omega_{A}^{2}}
+\end{align*}
+
+\end_inset
+
+因此
+\begin_inset Formula $IR_{Q}=IR$
+\end_inset
+
+，组合Q与组合A具有相同的信息率。
+\end_layout
+
+\end_deeper
 \begin_layout Chapter
 主动管理基本定律
+\color red
+？？？
 \end_layout
 
 \begin_layout Part
