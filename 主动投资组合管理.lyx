@@ -2976,11 +2976,795 @@ IR=Max\{IR_{P}|P\}
 ，组合Q与组合A具有相同的信息率。
 \end_layout
 
+\begin_layout Enumerate
+组合A在风险资产中的总持仓权重为：
+\begin_inset Formula 
+\[
+e_{A}=\frac{\alpha_{C}\omega_{A}^{2}}{\sigma_{C}^{2}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+令
+\begin_inset Formula $\theta_{P}$
+\end_inset
+
+表示任意投资组合P的残差收益率，则组合P的信息率为：
+\begin_inset Formula 
+\[
+IR_{P}=IP_{Q}*Corr\{\theta_{P},\theta_{Q}\}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+（最高）信息率与组合Q的（最高）夏普率有关：
+\begin_inset Formula 
+\[
+IR=\frac{\alpha_{Q}}{\omega_{Q}}=SR*(\frac{\omega_{Q}}{\sigma_{Q}})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+可以将alpha表达为：
+\begin_inset Formula 
+\[
+\alpha=IR*(\frac{\boldsymbol{V}\boldsymbol{h}_{A}}{\omega_{A}})=IR*MCRR_{Q}
+\]
+
+\end_inset
+
+上式将资产的alpha值与该资产的
+\color red
+残差风险边际贡献
+\color inherit
+直接关联起来，关联系数正是信息率（一个常数）。
+\end_layout
+
+\begin_layout Enumerate
+业绩基准的夏普率与最高信息率和最高夏普率有关：
+\begin_inset Formula 
+\[
+SR_{B}^{2}=SR^{2}-IR^{2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+最有投资政策和最优附加值。组合A是寻找最优残差头寸的关键。考虑如下优化问题：
+\begin_inset Formula 
+\[
+VA=Max\{\boldsymbol{h}_{P}^{T}*\boldsymbol{\alpha}-\lambda_{R}*\boldsymbol{h}_{P}^{T}*\boldsymbol{VR}*\boldsymbol{h}_{P}\}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+命题2：
+\end_layout
+
+\begin_layout Enumerate
+上式最优解是：
+\begin_inset Formula 
+\[
+\boldsymbol{h}_{P}=\beta_{P}*\boldsymbol{h}_{B}+(\frac{IR}{2\lambda_{R}\omega_{A}})*\boldsymbol{h}_{A}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $\beta_{P}$
+\end_inset
+
+是任意的。最优解的附加值是：
+\begin_inset Formula 
+\[
+VA=\frac{IR^{2}}{4\lambda_{R}}
+\]
+
+\end_inset
+
+最优解的残差波动率是：
+\begin_inset Formula 
+\[
+\omega_{P}=\frac{IR}{2\lambda_{R}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $\beta=1$
+\end_inset
+
+主动前沿。前面的分析将引导我们识别一组具有单位
+\begin_inset Formula $\beta$
+\end_inset
+
+，并在给定预期收益率水平上具有最小风险的有效组合。当
+\begin_inset Formula $\beta=1$
+\end_inset
+
+，那么风险和预期收益率将满足：
+\begin_inset Formula 
+\begin{align*}
+\sigma_{P}^{2} & =\sigma_{B}^{2}+\omega_{P}^{2}\\
+f_{P} & =f_{B}+\alpha_{P}
+\end{align*}
+
+\end_inset
+
+落在
+\begin_inset Formula $\beta=1$
+\end_inset
+
+有效前沿上的投资组合必须具有单位
+\begin_inset Formula $\beta$
+\end_inset
+
+以及最高的alpha/残差风险比率。这些组合的alpha与残差风险之比必然等于信息率
+\begin_inset Formula $IR$
+\end_inset
+
+，它们也因子落在预期残差收益率/残差风险图中的有效前沿上。它们的残差方差为：
+\begin_inset Formula 
+\[
+\omega_{P}^{2}=\frac{\alpha_{P}^{2}}{IR^{2}}
+\]
+
+\end_inset
+
+结合上面三个等式，就可以得到
+\begin_inset Formula $\beta=1$
+\end_inset
+
+有效前沿的方程式：
+\begin_inset Formula 
+\[
+\sigma_{P}^{2}=\sigma_{B}^{2}+(\frac{1}{IR^{2}})*(f_{P}-f_{B})^{2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+主动头寸Y：无主动现金和无主动
+\begin_inset Formula $\beta$
+\end_inset
+
+。组合A在具有单位alpha值的组合中具有最小方差。然而，我们发现组合A往往具有较大的正向或负向现金暴露。在主动管理中，我们常常希望在偏离业绩基准和有效利用al
+pha的过程中，能够保持无主动现金或主动
+\begin_inset Formula $\beta$
+\end_inset
+
+的状态。但从命题1的结论6可以看出，
+\begin_inset Formula $e_{A}=0$
+\end_inset
+
+当且仅当
+\begin_inset Formula $\alpha_{C}=0$
+\end_inset
+
+。因此，我们需要探索一下，在无主动现金和无主动
+\begin_inset Formula $\beta$
+\end_inset
+
+的约束下，组合的性质，在下一小节中，将证明组合Y就是在无主动现金和无主动
+\begin_inset Formula $\beta$
+\end_inset
+
+的约束下的最优解。首先定义组合C的残差组合CR：
+\begin_inset Formula 
+\[
+\boldsymbol{h}_{CR}=\boldsymbol{h}_{C}-\beta_{C}\boldsymbol{h}_{B}
+\]
+
+\end_inset
+
+组合Y被定义为组合A和组合CR的如下组合：
+\begin_inset Formula 
+\[
+\boldsymbol{h}_{Y}=\frac{\boldsymbol{h}_{A}}{\omega_{A}}-(\frac{IR_{C}}{IR})*(\frac{\boldsymbol{h}_{CR}}{\omega_{C}})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+命题3。组合Y有以下属性：
+\end_layout
+
+\begin_layout Enumerate
+组合Y的
+\begin_inset Formula $\beta_{Y}=0$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Enumerate
+组合Y的总方差和残差方差由下式给出：
+\begin_inset Formula 
+\[
+\omega_{Y}^{2}=1-(\frac{IR_{C}}{IR})^{2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+组合Y的alpha为：
+\begin_inset Formula 
+\[
+\alpha_{Y}=IR*[1-(\frac{IR_{C}}{IR})^{2}]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+组合Y的现金头寸为0，即
+\begin_inset Formula $e_{Y}=0$
+\end_inset
+
+。注意到Y是一个主动头寸，性质4保证了组合Y的多头资产风险与空头资产风险的市值是恰好相抵的，因此组合Y的现金头寸必然等于0。
+\end_layout
+
+\begin_layout Enumerate
+组合Y的信息率为：
+\begin_inset Formula 
+\[
+IR_{Y}=IR*\sqrt{1-(\frac{IR_{C}}{IR})^{2}}=IR*\sqrt{1-Corr^{2}\{\theta_{Q},\theta_{C}\}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+最优无主动
+\begin_inset Formula $\beta$
+\end_inset
+
+、无主动现金组合。相应的最优化问题：
+\begin_inset Formula 
+\begin{align*}
+ & Max\{\boldsymbol{h}_{P}^{T}\boldsymbol{\alpha}-\lambda_{R}\boldsymbol{h}_{P}^{T}*\boldsymbol{VR}*\boldsymbol{h}_{P}\}\\
+s.t. & \boldsymbol{\beta}^{T}\boldsymbol{h}_{P}=1\\
+ & \boldsymbol{e}^{T}\boldsymbol{h}_{P}=e_{B}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+命题4。上式最优解是：
+\begin_inset Formula 
+\[
+\boldsymbol{h}_{P}=\boldsymbol{h}_{B}+(\frac{IR}{2\lambda_{B}})\boldsymbol{h}_{Y}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+命题5。考虑一段长为T年的时期。如果任意两段不重叠的时间区间上的残差收益是独立的，并且任意长度相同的时间区间上的残差收益率具有相同的期望值和标准差，那么在这段时
+期
+\begin_inset Formula $[0,T]$
+\end_inset
+
+上，预期残差收益率与残差风险的比值（即时期
+\begin_inset Formula $[0,T]$
+\end_inset
+
+上的信息率）随T的平方根增长。
+\end_layout
+
+\begin_layout Itemize
+命题6。信息率线性依赖于输入的alpha向量。
+\end_layout
+
 \end_deeper
 \begin_layout Chapter
 主动管理基本定律
+\end_layout
+
+\begin_layout Itemize
+本章要点
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+投资策略的广度（BR，breadth）就是它每年作出的独立的主动投资决策的数目。
+\end_layout
+
+\begin_layout Itemize
+投资经理的能力（skill）用信息系数（IC，information coefficient。not信息率）来衡量，就是预测值和实现值之间的相关系数。
+\end_layout
+
+\begin_layout Itemize
+主动管理基本定律利用广度和能力来解释信息率。
+\end_layout
+
+\begin_layout Itemize
+主动管理基本定律的可加性，能够把投资策略的附加值归因到其各个组成部分上。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+主动管理基本定律。（给出了信息率的一种近似表达）。基本定律通过以下（近似成立的）公式将广度、能力与信息率联系在一起：
+\begin_inset Formula 
+\[
+IR=IC*\sqrt{BR}
+\]
+
+\end_inset
+
+上式并未考虑风险问题。于是，第5章中残差风险水平与信息率之间的关系可以表述为：
+\begin_inset Formula 
+\[
+\omega^{*}=\frac{IR}{2\lambda_{R}}=\frac{IC*\sqrt{BR}}{2\lambda_{R}}
+\]
+
+\end_inset
+
+因此，最优的激进程度正比于能力以及广度的平方根。广度越高，就越有机会在不同的主动赌注之间分散风险，从而适当增加整体激进水平
+\begin_inset Formula $\omega^{*}$
+\end_inset
+
+。另一方面，能力越高，成功的概率就越大，预期收获也越大，因此我们愿意承担更多风险。类似的，投资经理创造附加值的能力可以表述为能力（IC）和广度（BR）的函数：
+\begin_inset Formula 
+\[
+VA^{*}=\frac{IR^{2}}{4\lambda_{R}}=\frac{IC^{2}*BR}{4\lambda_{R}}
+\]
+
+\end_inset
+
+投资策略创造的附加值（风险调整收益率）随着它的广度和能力的平方增长。总的来说，投资经理需要在增加投资策略的广度（例如覆盖更多的股票或缩短预测的时间尺度）与提高能
+力之间的作出权衡。
+\end_layout
+
+\begin_layout Itemize
+例子。
+\end_layout
+
+\begin_layout Itemize
+可加性。基本定律在信息率平方上具有可加性，即（假定我们以最优方式利用了两类股票并集的alpha信息）：
+\begin_inset Formula 
+\[
+IR^{2}=BR_{1}*IC_{1}^{2}+BR_{2}*IC_{2}^{2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+假设。
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+各个预测之间应该是独立的。
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $BR$
+\end_inset
+
+个主动赌注中的每一个都具有相同的能力。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+不是大数定律。
+\end_layout
+
+\begin_layout Itemize
+测试。
+\end_layout
+
+\begin_layout Itemize
+投资风格。
+\end_layout
+
+\begin_layout Section*
+技术附录
+\end_layout
+
+\begin_layout Itemize
+信息模型。假定样本空间中的N只证券的超额收益率表述为下面的形式：
+\begin_inset Formula 
+\[
+\boldsymbol{r}=\boldsymbol{\beta}*r_{B}+\boldsymbol{\theta}
+\]
+
+\end_inset
+
+对残差收益率
+\begin_inset Formula $\boldsymbol{\theta}$
+\end_inset
+
+建立模型：
+\begin_inset Formula 
+\[
+\boldsymbol{\theta}=\boldsymbol{A}*\boldsymbol{x}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $\boldsymbol{x}$
+\end_inset
+
+表示N个互不相关的标准随机变量（均值为0，方差为1）构成的列向量；A是
+\begin_inset Formula $\boldsymbol{r}$
+\end_inset
+
+的残差协方差矩阵的平方根矩阵，即
+\begin_inset Formula $\boldsymbol{V}=\boldsymbol{\beta}*\sigma_{B}^{2}*\boldsymbol{\beta}^{T}+A*A^{T}$
+\end_inset
+
+。注意因为业绩基准的组合权重
+\begin_inset Formula $\boldsymbol{h}_{B}$
+\end_inset
+
+必然满足
+\begin_inset Formula $\boldsymbol{A}^{T}*\boldsymbol{h}_{B}=0$
+\end_inset
+
+，故矩阵
+\begin_inset Formula $\boldsymbol{A}$
+\end_inset
+
+的秩为
+\begin_inset Formula $N-1$
+\end_inset
+
+。【
+\color red
+一般情况下，
+\begin_inset Formula $\boldsymbol{A}$
+\end_inset
+
+是从一组不相关的基础变量到相互关联的 残差收益率变量的线性变换矩阵
+\color inherit
+】
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+假定信息以
+\begin_inset Formula $BR$
+\end_inset
+
+个信号构成的信号向量
+\begin_inset Formula $\boldsymbol{z}$
+\end_inset
+
+的形式呈现，且这些信号
+\begin_inset Formula $\boldsymbol{z}$
+\end_inset
+
+服从均值为0、标准差为1的联合正态分布。则可以将
+\begin_inset Formula $\boldsymbol{z}$
+\end_inset
+
+写成：
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{z} & =\boldsymbol{E}*\boldsymbol{y}\\
+\boldsymbol{y} & =\boldsymbol{J}*\boldsymbol{z}
+\end{align*}
+
+\end_inset
+
+其中，
+\begin_inset Formula $\boldsymbol{E}$
+\end_inset
+
+为
+\begin_inset Formula $\boldsymbol{z}$
+\end_inset
+
+的协方差矩阵的平方根矩阵，即
+\begin_inset Formula $Var\{\boldsymbol{z}\}=\boldsymbol{E}*\boldsymbol{E}^{T}$
+\end_inset
+
+；
+\begin_inset Formula $\boldsymbol{J}$
+\end_inset
+
+为矩阵
+\begin_inset Formula $\boldsymbol{E}$
+\end_inset
+
+的逆。
+\end_layout
+
+\begin_layout Standard
+令
+\begin_inset Formula $\boldsymbol{Q}=Cov\{\boldsymbol{\theta},\boldsymbol{z}\}$
+\end_inset
+
+为残差收益率
+\begin_inset Formula $\boldsymbol{\theta}$
+\end_inset
+
+和信号
+\begin_inset Formula $\boldsymbol{z}$
+\end_inset
+
+之间协方差矩阵，维度为
+\begin_inset Formula $N*BR$
+\end_inset
+
+；令
+\begin_inset Formula $\boldsymbol{P}=Corr\{\boldsymbol{x},\boldsymbol{y}\}$
+\end_inset
+
+为向量
+\series bold
+
+\begin_inset Formula $\boldsymbol{x}$
+\end_inset
+
+
+\series default
+和
+\begin_inset Formula $\boldsymbol{y}$
+\end_inset
+
+之间的
+\begin_inset Formula $N*BR$
+\end_inset
+
+的相关系数矩阵；于是
+\begin_inset Formula $\boldsymbol{Q}=\boldsymbol{A}*\boldsymbol{P}*\boldsymbol{E}^{T}$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Standard
+主动投资经理感兴趣的是在已知信号
+\begin_inset Formula $\boldsymbol{z}$
+\end_inset
+
+情况下，
+\begin_inset Formula $\boldsymbol{\theta}$
+\end_inset
+
+的条件均值和条件方差。依据数学推导，它们是：
+\begin_inset Formula 
+\begin{align*}
+E\{\boldsymbol{\theta}|\boldsymbol{z}\} & =\boldsymbol{\alpha}(\boldsymbol{z})=\boldsymbol{A}*\boldsymbol{P}*\boldsymbol{J}*\boldsymbol{z}\\
+Var\{\boldsymbol{\theta}|\boldsymbol{z}\} & =\boldsymbol{G}=\boldsymbol{A}*(\boldsymbol{I}-\boldsymbol{P}*\boldsymbol{P}^{T})*\boldsymbol{A}^{T}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+注意：
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\boldsymbol{\alpha}(\boldsymbol{z})$
+\end_inset
+
+的无条件期望值是0.
+\end_layout
+
+\begin_layout Itemize
+残差收益率的条件协方差矩阵不依赖于
+\begin_inset Formula $\boldsymbol{z}$
+\end_inset
+
+的值。
+\end_layout
+
+\begin_layout Itemize
+alpha向量的无条件方差为
+\begin_inset Formula $Var\{\boldsymbol{\alpha}(\boldsymbol{z})\}=\boldsymbol{A}*\boldsymbol{P}*\boldsymbol{P}^{T}*\boldsymbol{A}^{T}$
+\end_inset
+
+【
 \color red
 ？？？
+\color inherit
+】
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+目标。给定信息
+\begin_inset Formula $\boldsymbol{z}$
+\end_inset
+
+，选择一个残差头寸（即
+\begin_inset Formula $\boldsymbol{\beta}^{T}*\boldsymbol{h}^{*}(\boldsymbol{z})=0$
+\end_inset
+
+）
+\begin_inset Formula $\boldsymbol{h}^{*}(\boldsymbol{z})$
+\end_inset
+
+以求解下述最优化问题：
+\begin_inset Formula 
+\[
+VA(\boldsymbol{z})=Max\{\boldsymbol{h}^{T}*\boldsymbol{\alpha}(\boldsymbol{z})-\lambda*\boldsymbol{h}^{T}*\boldsymbol{G}*\boldsymbol{h}|\boldsymbol{z}\}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+最优主动头寸。上述最优化问题的一阶条件：
+\begin_inset Formula 
+\[
+\boldsymbol{\alpha}(\boldsymbol{z})=2\lambda*\boldsymbol{G}*\boldsymbol{h}^{*}(\boldsymbol{z})
+\]
+
+\end_inset
+
+因此，
+\begin_inset Formula 
+\[
+\boldsymbol{A}*\boldsymbol{P}*\boldsymbol{J}*\boldsymbol{z}=2\lambda\boldsymbol{A}*(\boldsymbol{I}-\boldsymbol{P}*\boldsymbol{P}^{T})*\boldsymbol{A}^{T}*\boldsymbol{h}^{*}(\boldsymbol{z})
+\]
+
+\end_inset
+
+通过简单变化可以得到：
+\begin_inset Formula 
+\[
+\boldsymbol{A}^{T}*\boldsymbol{h}^{*}(\boldsymbol{z})=(\frac{1}{2\lambda})*D*\boldsymbol{P}*\boldsymbol{J}*\boldsymbol{z}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $D=(\boldsymbol{I}-\boldsymbol{P}*\boldsymbol{P}^{T})^{-1}$
+\end_inset
+
+。
+\end_layout
+
+\begin_layout Itemize
+信息率的计算与近似。最优组合的alpha为：
+\begin_inset Formula 
+\[
+\boldsymbol{h}^{*T}(\boldsymbol{z})\bullet\boldsymbol{\alpha}(\boldsymbol{z})=(\frac{1}{2\lambda})\bullet\boldsymbol{z}^{T}\bullet\boldsymbol{J}^{T}\bullet\boldsymbol{P}^{T}\bullet\boldsymbol{D}\bullet\boldsymbol{P}\bullet\boldsymbol{J}\bullet\boldsymbol{z}
+\]
+
+\end_inset
+
+同时最优组合的残差方差为：
+\begin_inset Formula 
+\[
+\boldsymbol{h}^{*T}(\boldsymbol{z})\bullet\boldsymbol{G}\bullet\boldsymbol{h}^{*}(\boldsymbol{z})=(\frac{1}{4\lambda^{2}})\bullet\boldsymbol{z}^{T}\bullet\boldsymbol{J}^{T}\bullet\boldsymbol{P}^{T}\bullet\boldsymbol{D}\bullet\boldsymbol{P}\bullet\boldsymbol{J}\bullet\boldsymbol{z}
+\]
+
+\end_inset
+
+因此，在
+\begin_inset Formula $\boldsymbol{z}$
+\end_inset
+
+条件下的信息率平方为：
+\begin_inset Formula 
+\begin{align*}
+IR^{2}(\boldsymbol{z}) & =\boldsymbol{z}^{T}\bullet\boldsymbol{J}^{T}\bullet\boldsymbol{P}^{T}\bullet\boldsymbol{D}\bullet\boldsymbol{P}\bullet\boldsymbol{J}\bullet\boldsymbol{z}\\
+ & =\boldsymbol{y}^{T}\bullet\boldsymbol{P}^{T}\bullet\boldsymbol{D}\bullet\boldsymbol{P}\bullet\boldsymbol{y}
+\end{align*}
+
+\end_inset
+
+则信息率平方的无条件期望值为：
+\begin_inset Formula 
+\[
+IR^{2}=E\{IR^{2}(\boldsymbol{z})\}=Tr\{\boldsymbol{P}^{T}\bullet\boldsymbol{D}\bullet\boldsymbol{P}\}
+\]
+
+\end_inset
+
+又
+\begin_inset Formula $\boldsymbol{D}=\boldsymbol{I}+\boldsymbol{P}*\boldsymbol{P}^{T}+\boldsymbol{P}*\boldsymbol{P}^{T}*\boldsymbol{P}*\boldsymbol{P}^{T}+...$
+\end_inset
+
+，因此，
+\begin_inset Formula 
+\[
+\boldsymbol{P}^{T}*\boldsymbol{D}*\boldsymbol{P}=\boldsymbol{P}*\boldsymbol{P}^{T}+\boldsymbol{P}*\boldsymbol{P}^{T}*\boldsymbol{P}*\boldsymbol{P}^{T}+...
+\]
+
+\end_inset
+
+现实中，相关系数通常都较小（一般不超过0.1），因此
+\begin_inset Formula 
+\[
+Tr\{\boldsymbol{P}^{T}\bullet\boldsymbol{D}\bullet\boldsymbol{P}\}\approx Tr\{\boldsymbol{P}^{T}\bullet\boldsymbol{P}\}=\sum_{n=1}^{N}\sum_{b=1}^{BR}\rho_{n,b}^{2}
+\]
+
+\end_inset
+
+令
+\begin_inset Formula 
+\[
+\xi_{b}^{2}=\sum_{n=1}^{N}\rho_{n,b}^{2}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+IR^{2}=\sum_{b=1}^{BR}\xi_{b}^{2}
+\]
+
+\end_inset
+
+假定所有信号都具有相同的价值，即：
+\begin_inset Formula 
+\[
+\xi_{b}^{2}=\rho^{2}=IC^{2}
+\]
+
+\end_inset
+
+于是
+\begin_inset Formula 
+\[
+IR^{2}=BR*IC^{2}
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Part
@@ -2991,6 +3775,142 @@ IR=Max\{IR_{P}|P\}
 预期收益率和套利定价理论
 \end_layout
 
+\begin_layout Itemize
+导言
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+APT是生成预期收益率的模型；
+\end_layout
+
+\begin_layout Itemize
+APT的应用是一种艺术，而非科学；
+\end_layout
+
+\begin_layout Itemize
+APT引导量化投资经理去关注因子和预期收益率之间的关系；
+\end_layout
+
+\begin_layout Itemize
+APT因子有多种定义方式，例如基本面因子、技术分析因子、宏观因子等；
+\end_layout
+
+\begin_layout Itemize
+APT的灵活性使它不适合作为一致预期收益率的模型，但它适合投资经理生成自己的预期收益率；
+\end_layout
+
+\begin_layout Itemize
+APT是主动投资经理的一个信息来源。它应当是灵活多样的，如果所有主动投资经理分享同样的信息，它就失去价值了。
+\end_layout
+
+\begin_layout Itemize
+注意：APT认为每只股票的预期超额收益率由股票的因子暴露决定，每个因子都有一个权重（称为因子预测），而股票的预期超额收益率恰好等于它的每个因子暴露与相应因子预测
+的乘积的总和。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+CAPM的缺点。CAPM有许多假设：均值/方差偏好、相同的预期收益率和方差、无税收与交易成本、无股票持仓限制。美国1983-1984利率下降时期的β异常说明：在
+某些历史时期中，CAPM预期的预期超额收益率出现了系统性的缺陷。
+\end_layout
+
+\begin_layout Itemize
+套利定价理论（APT）。假设存在
+\begin_inset Formula $K$
+\end_inset
+
+个因子：
+\begin_inset Formula 
+\[
+r_{n}=\sum_{k=1}^{K}X_{n,k}\cdot b_{k}+u_{n}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $X_{n,k}$
+\end_inset
+
+表示股票n对因子k的暴露度（exposure of stock n to factor k）/因子载荷（factor loading）；
+\begin_inset Formula $b_{k}$
+\end_inset
+
+表示因子收益率（factor return for factor k），因子收益率或是在考察期末归因到因子上，或是直接在考察期上被观测到；
+\begin_inset Formula $u_{n}$
+\end_inset
+
+表示股票n的特异收益率（idiosyncratic return）
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+APT是关于预期超额收益率的，其主要结论是：预期超额收益率可以用一组因子的暴露度来表达，即：
+\begin_inset Formula 
+\[
+f_{n}=E[r_{n}]=\sum_{k=1}^{K}X_{n,k}\cdot m_{k}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $m_{k}$
+\end_inset
+
+是因子k的因子预测。
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+例子。
+\end_layout
+
+\begin_layout Itemize
+APT的原理。
+\end_layout
+
+\begin_layout Itemize
+组合Q和APT。
+\end_layout
+
+\begin_layout Itemize
+容易的部分：找到合格的模型。
+\end_layout
+
+\begin_layout Itemize
+困难的部分：因子预测。
+\end_layout
+
+\begin_layout Itemize
+应用（多种方法建立APT）。
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+结构化模型1：给定暴露度，估计因子收益率。
+\end_layout
+
+\begin_layout Enumerate
+结构化模型2：给定因子收益率，估计暴露度。
+\end_layout
+
+\begin_layout Enumerate
+结构化模型3：结构化模型1和模型2的结合。
+\end_layout
+
+\begin_layout Enumerate
+统计模型1：主成分分析。
+\end_layout
+
+\begin_layout Enumerate
+统计模型2：最大似然因子分析。
+\end_layout
+
+\begin_layout Enumerate
+统计模型3：统计模型2的对偶。
+\end_layout
+
+\end_deeper
 \begin_layout Chapter
 估值理论
 \end_layout

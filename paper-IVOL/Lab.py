@@ -791,24 +791,24 @@ if __name__ == '__main__':
     # autocorrelation of ivol
     import_pv_index()
     SMB, HML = cal_SMB_HML(freq='D')
-    ivol = cal_ivol(1, SMB, HML, method='CAPM')
+    ivol = cal_ivol(1, SMB, HML, method='FF')
     ivol_demean=ivol-ivol.mean()
     #ivol_demean=np.log(ivol/ivol.shift(1));ivol_demean=ivol_demean-ivol_demean.mean()
     lag = 1
-    acf=(ivol_demean*ivol_demean.shift(lag)).mean()/ivol_demean.std();acf.mean()
+    acf=(ivol_demean*ivol_demean.shift(lag)).mean()/ivol_demean.var();acf.mean()
     import statsmodels.api as sm
     from scipy.stats import norm
     d_ivol=ivol-ivol.shift(1)
-    t_values=pd.Series(index=ivol.columns)
+    p_values=pd.Series(index=ivol.columns)
     for j in ivol.columns:
         YX=pd.concat((ivol[j].shift(1),d_ivol[j].shift(1),d_ivol[j].shift(2),d_ivol[j].shift(3),d_ivol[j]),axis=1)
         YX=sm.add_constant(YX).dropna()
         if len(YX)<30:
-            t_values.loc[j]=np.nan
+            p_values.loc[j]=np.nan
         else:
-            t_values.loc[j]=sm.OLS(YX.iloc[:,-1],YX.iloc[:,:-1]).fit().tvalues.iloc[1]
-    t_values=t_values.dropna()
-    (norm.cdf(t_values)<0.01).mean()
+            p_values.loc[j]=sm.OLS(YX.iloc[:,-1],YX.iloc[:,:-1]).fit().tvalues.iloc[1]
+    p_values=p_values.dropna()
+    (norm.cdf(p_values)<0.01).mean()
     adfuller(ivol.iloc[:,0])
     # conditional volatility from EGARCH
     from arch import arch_model

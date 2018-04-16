@@ -42,7 +42,7 @@ def InputOptions():
         'close_price':'adj_close',
         'pv_name':'PV_datetime', # price&volume
         'bs_name':'BS',# balance of sheet
-        'bs_date_name':'fin_year',#'ann_dt', #
+        'bs_date_name':'ann_dt', #'fin_year',#
         'filter_data_name':'non_ST_IPO_NT_datetime' ## non_ST_IPO_NT_SmallVolume_datetime
     }
 
@@ -317,6 +317,7 @@ def cal_ret_d(p0,p1,del_Rf=True):
         ret = (ret + 100.0).div(Rf[Rf.columns[0]].reindex(index=ret.index) * 0.01 + 1.0,axis=0) - 100.0
     return ret.astype(float)
 def cal_index_ret(index_code=None,del_Rf=True):
+    # TODO 有问题
     '''
     :param index_code:
         '000016.SH'：上证50
@@ -330,7 +331,7 @@ def cal_index_ret(index_code=None,del_Rf=True):
     '''
     data_path = options['data_path']
     if index_code is None:
-        index_ret=GetValueWeightedIndexReturn()
+        index_ret=GetValueWeightedIndexReturn(p0,p1,size,EndDate)
     else:
         index_ret = pd.read_pickle(data_path + 'index_ret')[['index_code', 'trddt', 'opnprc', 'clsprc']]
         index_ret = index_ret[index_ret['index_code'] == index_code][['trddt', 'opnprc', 'clsprc']].set_index('trddt')
@@ -348,7 +349,7 @@ def cal_index_ret_d(index_code=None,del_Rf=True):
         try:
             index_ret=pd.read_pickle(data_path+'daily_value_weighted_index_return')
         except FileNotFoundError:
-            index_ret = GetDailyValueWeightedIndexReturn()
+            index_ret = GetDailyValueWeightedIndexReturn(p0,p1,size)
             index_ret.to_pickle(data_path + 'daily_value_weighted_index_return')
     else:
         index_ret = pd.read_pickle(data_path + 'index_ret')[['index_code', 'trddt', 'opnprc', 'clsprc']]
@@ -490,7 +491,8 @@ def cal_SMB_HML(ret,size,BM,percentile1=None,percentile2=None,independent=True,w
     HML = tmp.mean(axis=0, level=0)
     SMB = tmp.mean(axis=1).unstack()
     return SMB.iloc[:,-1]-SMB.iloc[:,0], HML.iloc[:,-1]-HML.iloc[:,0]
-def cal_SMB_HML_FF(ret,size,book,EndDate,weights=None):
+def cal_SMB_HML_FF(ret,EndDate,size=None,book=None,weights=None):
+    # TODO return要和EndDate的频率保持一致
     percentile1 = [0.0, 0.5, 1.0]  # size
     percentile2 = [0.0, 0.3, 0.7, 1.0]  # value
     label_1 = [i + 1 for i in range(len(percentile1) - 1)]
@@ -520,7 +522,7 @@ def cal_SMB_HML_FF(ret,size,book,EndDate,weights=None):
         df['ref1'] = mark_1.stack()
         df['ref2'] = mark_2.stack()
         df = df.dropna()
-        tmp = df.groupby(level=0).apply(lambda g: g.groupby(['ref1', 'ref2']).mean())['ret']
+        tmp = df.groupby(level=0).apply(lambda g: g.groupby(['ref1', 'ref2']).mean())['ret'].unstack()
     else:
         weights = size.resample('D').ffill().reindex(index=EndDate).shift(1)
         df = DataFrame()
@@ -568,18 +570,18 @@ def cal_vol(ret_d,EndDate,ZeroMean=False):
     #vol = pd.DataFrame(index=start2end.index, columns=ret_d.columns)
     if ZeroMean:
         ret_d = ret_d ** 2.0
-        vol=DataFrame(
+        vol=np.sqrt(DataFrame(
             (ret_d.loc[start2end.loc[t, 'start']:start2end.loc[t, 'end']].mean() for t in
              start2end.index)
-            , index=start2end.index).shift(1).iloc[1:].sqrt()
+            , index=start2end.index).shift(1).iloc[1:])
     else:
         vol=pd.DataFrame(
             (ret_d.loc[start2end.loc[t, 'start']:start2end.loc[t, 'end']].std() for t in start2end.index)
             , index=start2end.index).shift(1).iloc[1:]
     return vol[vol>0.0]
 def cal_ivol(ret_d,index_ret_d,EndDate,SMB_d=None,HML_d=None,method='FF'):
-    # todo 待检验
-    start2end = PerCal_Start2End(EndDate, 'iskew')
+    # todo 待检验;对于月度数据呢？？？
+    start2end = PerCal_Start2End(EndDate, 'ivol')
     ivol = pd.DataFrame(index=start2end.index, columns=ret_d.columns)
     if method == 'CAPM':
         for t in ivol.index:
@@ -587,7 +589,7 @@ def cal_ivol(ret_d,index_ret_d,EndDate,SMB_d=None,HML_d=None,method='FF'):
                    - index_ret_d.loc[start2end.loc[t, 'start']:start2end.loc[t, 'end']].mean()
             tmp2 = ret_d.loc[tmp1.index] \
                    - ret_d.loc[tmp1.index].mean()
-            ivol.loc[edt] = (tmp2 - tmp1[:, None] @ tmp2.mul(tmp1, axis=0).mean()[None, :] / tmp1.var()).std()
+            ivol.loc[t] = (tmp2 - tmp1[:, None] @ tmp2.mul(tmp1, axis=0).mean()[None, :] / tmp1.var()).std()
     elif method=='FF':
         X=pd.DataFrame({'index':index_ret_d,'SMB':SMB_d,'HML':HML_d})[['index', 'SMB', 'HML']].dropna()
         for t in ivol.index:
@@ -595,7 +597,7 @@ def cal_ivol(ret_d,index_ret_d,EndDate,SMB_d=None,HML_d=None,method='FF'):
                    - X.loc[start2end.loc[t, 'start']:start2end.loc[t, 'end']].mean()
             tmp2 = ret_d.loc[tmp1.index] \
                    - ret_d.loc[tmp1.index].mean()
-            ivol.loc[edt] = (tmp2 - tmp1 @ np.linalg.pinv(
+            ivol.loc[t] = (tmp2 - tmp1 @ np.linalg.pinv(
                 tmp1.cov()) @ np.array([
                 tmp2.mul(tmp1['index'], axis=0).mean(),
                 tmp2.mul(tmp1['SMB'], axis=0).mean(),
@@ -863,3 +865,68 @@ def DoublePortAnalysis(var_list,var2,var_dict=None,index_ret=None,SMB=None,HML=N
     return pd.DataFrame({'mean': portfolio_mean.stack(), 't': portfolio_t.stack(),'alpha':portfolio_alpha.stack(),'alpha_t':portfolio_alpha_t.stack()}).T
 
 
+options=InputOptions()
+EndDate=EndDateOfPerInvestment()
+measure_window=VarsMeasureWindow()
+PV=import_data(PV_vars=['size_tot',options['open_price'],options['close_price']])[0]
+p0=PV[options['open_price']].unstack()
+p1=PV[options['close_price']].unstack()
+size=PV['size_tot'].unstack()
+ret_d=cal_ret_d(p0,p1)
+ret=cal_ret(p0,p1,EndDate)
+# def acovf(arr,lag):
+#     '''
+#     支持 1-D和2-D；unbiased
+#     :param arr:
+#     :param lag:
+#     :return:
+#     '''
+#     return np.nanmean((arr[lag:len(arr)] - np.mean(arr))*(arr[0:len(arr)-lag] - np.mean(arr)),axis=0)
+# rho=((ret_d.iloc[:-1]-ret_d.mean()).shift(1)*(ret_d.iloc[1:]-ret_d.mean())).mean()/ret_d.var()
+# from my_modules.TSAtools import pacfs
+# ret_d_dm=ret_d-ret_d.mean()
+# rho_d=(ret_d_dm.shift(1)*ret_d_dm).mean()/ret_d_dm.var()
+# ret_dm=ret-ret.mean()
+# rho=(ret_dm.shift(1)*ret_dm).mean()/ret_dm.var()
+
+# ret_d.std().mean()*np.sqrt(220)
+# ret.std().mean()*np.sqrt(12)
+
+mp_d=[1,3,6,12]
+mp_m=[12,24,36]
+index_ret_d=cal_index_ret_d()
+index_ret=cal_index_ret(index_code='399300.SZ')
+#SMB_d,HML_d=cal_SMB_HML_FF(ret_d,ret_d.index)
+size_d,BM_d=cal_size_BM(size,size.index)
+size_m,BM_m=cal_size_BM(size,EndDate)
+SMB_d,HML_d=cal_SMB_HML(ret_d,size_d,BM_d)
+SMB_m,HML_m=cal_SMB_HML(ret,size_m,BM_m)
+ivol_method='FF'
+vol_name='vol' # 'vol_ss'
+var_list=[]
+for i in mp_d:
+    var_list.append(vol_name+'_'+str(i)+'M')
+for i in mp_m:
+    var_list.append(vol_name+'_'+str(i//12)+'Y')
+
+sum_stat=pd.DataFrame(index=var_list,columns=['count', 'mean', 'std', 'min', '5%', '25%', '50%', '75%', '95%', 'max',
+       'skew', 'kurt'])
+for i in mp_d:
+    #options['calendar_periods']=MonthEnd(i)
+    #options['num_periods']=float(i)
+    #EndDate=EndDateOfPerInvestment()
+    measure_window[vol_name]=(MonthEnd(i),Day(0))
+    if vol_name.startswith('vol'):
+        vol = cal_vol(ret_d, EndDate,ZeroMean=True) * np.sqrt(220)
+    else:
+        vol=cal_ivol(ret_d,index_ret_d,EndDate,SMB_d=SMB_d,HML_d=HML_d,method=ivol_method)* np.sqrt(220)
+    sum_stat.loc[vol_name+'_'+str(i)+'M']=describe(vol.T).mean(axis=1)
+for i in mp_m:
+    measure_window[vol_name] = (MonthEnd(i), Day(0))
+    if vol_name.startswith('vol'):
+        vol = cal_vol(ret, EndDate,ZeroMean=True) * np.sqrt(12)
+    else:
+        vol=cal_ivol(ret,index_ret,EndDate,SMB_d=SMB_m,HML_d=HML_m,method=ivol_method)* np.sqrt(12)
+    sum_stat.loc[vol_name+'_'+str(i//12)+'Y'] = describe(vol.T).mean(axis=1)
+sum_stat.to_csv(options['data_path']+vol_name+'_'+ivol_method+'.csv')
+sum_stat
