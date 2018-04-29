@@ -3947,6 +3947,168 @@ APT的原理。
 组合构建
 \end_layout
 
+\begin_layout Itemize
+策略实施是将研究结果有效地转化为投资组合。
+\end_layout
+
+\begin_layout Itemize
+组合构建需要几个输入值：当前组合、alpha向量、协方差估计、交易成本估计以及主动风险厌恶水平。
+\end_layout
+
+\begin_layout Section
+alpha与组合构建
+\end_layout
+
+\begin_layout Itemize
+现实中，多数主动投资经理在构建投资组合时，要遵守他与客户商定的某些投资约束条件。例如：不能持有空头头寸，限定组合中现金的比例。另一方面，投资经理也把自己的投资约
+束加入倒投资过程中，例如：投资经理可能要求组合对不同经济板块或行业保持中性，也可能为了保证主动头寸充分分散化限制个股头寸，还可能限制任何基于基准收益率预测的头寸
+（即择时头寸）
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+通常这些约束条件是用来增强组合构建流程的稳健性的
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+事实上，对于任何一个复杂（带有多个约束条件）的组合优化过程，我们总能通过调整输入值将它转化为一个简单的无约束均值/方差优化过程。具体：若原优化过程的最优解为
+\begin_inset Formula $\boldsymbol{h}_{PA}^{*}$
+\end_inset
+
+（主动头寸），对应主动风险为
+\begin_inset Formula $\psi_{P}^{*}$
+\end_inset
+
+，对应先验信息率为
+\begin_inset Formula $IR$
+\end_inset
+
+，于是调整后的alpha向量以及风险厌恶系数分别为：
+\begin_inset Formula 
+\[
+\boldsymbol{\alpha}^{'}=(\frac{IR}{\psi_{P}^{*}})\cdot\boldsymbol{V}\cdot\boldsymbol{h}_{PA}^{*}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\lambda_{A}^{'}=\frac{IR}{2\cdot\psi_{P}^{*}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+无论多么复杂的组合构建流程，总可以拥首先调整alpha，然后进行简单的无约束均值/方差优化的流程来替代它。
+\end_layout
+
+\begin_layout Section
+alpha分析
+\end_layout
+
+\begin_layout Subsection
+alpha的量级调整
+\end_layout
+
+\begin_layout Itemize
+alpha的预测经验法则：
+\begin_inset Formula $\alpha=\sigma\cdot IC\cdot\text{标准分值}$
+\end_inset
+
+。将alpha的信息系数（IC）与残差风险（波动率）近似视为常数，而标准分值的均值为0、标准差为1.因此alpha的均值近似为0；并且其标准差（或者量级）为
+\begin_inset Formula $std(\alpha)\sim\sigma\cdot IC$
+\end_inset
+
+。一个例子：IC=0.05，残差风险=30%的alpha量级为1.5%，也就是说大约2/3的股票的alpha都在
+\begin_inset Formula $-1.5\%\sim1.5\%$
+\end_inset
+
+之间，大约有5%的股票的alpha在
+\begin_inset Formula $3\%$
+\end_inset
+
+和
+\begin_inset Formula $-3\%$
+\end_inset
+
+之外。
+\end_layout
+
+\begin_layout Itemize
+在表14-1的例子中，原始alpha标准差为2%，而修正alpha的标准差为0.57%，这表明例子中的限制条件实际上将
+\begin_inset Formula $IC$
+\end_inset
+
+缩减了
+\begin_inset Formula $72\%$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+alpha的量级调整取决于投资经理的信息系数
+\end_layout
+
+\begin_layout Subsection
+剔除alpha离群值
+\end_layout
+
+\begin_layout Itemize
+极端的alpha值都会有不当影响，因而需要检查所有alpha偏离均值3个标准差之外的股票。winsorize处理，或者设为0（一般认为有问题时，设为0）
+\end_layout
+
+\begin_layout Itemize
+另一种更极端的消除alpha异常值的方法是强制将原始alpha输入值变换为一组正态分布数值，使业绩基准alpha等于0且满足需要的量级。这种方法的极端性体现在它
+仅利用alpha中的顺序信息，而忽略alha差异的程度。
+\end_layout
+
+\begin_layout Subsection
+中性化
+\end_layout
+
+\begin_layout Itemize
+在量级调整以及剔除极端值之后，还可以从alpha中剔除倾向性或者不希望的“赌注”，这就是中性化
+\end_layout
+
+\begin_layout Itemize
+基准中性化意味着基准具有零alpha。从组合角度出发，基准中性化意味着最优组合的beta为1，也就是说，最优组合不会在基准上下赌注
+\end_layout
+
+\begin_layout Itemize
+一般可以选择的中性化操作包括基准、现金、行业以及因子中性化。我们的alpha包含能够判断不同行业前景的信息吗？如果没有，那么应该实施行业中性化。这种先验的方法比
+简单地尝试所有可能性并选择表现最优的方法更有效。
+\end_layout
+
+\begin_layout Subsection
+基准中性和现金中性的alpha
+\end_layout
+
+\begin_layout Itemize
+基准组合应具有零alpha（即使它的超长收益率实现值可能不等于零）。将基准alpha设置为0，确保alpha的基准中性，避免基准择时。
+\end_layout
+
+\begin_layout Itemize
+同理，我们希望alpha是现金中性的，即alpha不会导致任何主动现金头寸
+\end_layout
+
+\begin_layout Itemize
+附录中展示了实现alha的基准中性和现金中性是可能的
+\end_layout
+
+\begin_layout Subsection
+风险因子中性的alpha
+\end_layout
+
 \begin_layout Chapter
 多空投资
 \end_layout

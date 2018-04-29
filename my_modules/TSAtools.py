@@ -125,7 +125,6 @@ def DynamicVAR():
 def SVAR():
     #TODO
     pass
-
 def Coint():
     # TODO
     pass
