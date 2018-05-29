@@ -98,10 +98,10 @@
 \begin_layout Title
 因子库
 \begin_inset Foot
-status collapsed
+status open
 
 \begin_layout Plain Layout
-记录因子的详细构成、因子出处、（可能）不同的方法、实证结果的记录
+记录因子的详细构成、（可能不同的）计算方法、因子出处、（如果存在）实证结果的记录
 \end_layout
 
 \end_inset
@@ -120,6 +120,876 @@ LatexCommand tableofcontents
 
 \begin_layout Section
 beta
+\end_layout
+
+\begin_layout Itemize
+according to CAPM：
+\begin_inset Formula 
+\[
+E[R_{i,t}]=R_{f,t}+\beta_{i}(E[R_{m,t}]-R_{f,t})
+\]
+
+\end_inset
+
+最常用的计算beta的方法就是run a CAPM regression，the regression specification is:
+\begin_inset Formula 
+\[
+r_{i,t}=\alpha_{i}+\beta_{i}MKT_{t}+\epsilon_{i,t}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\beta_{i}=\frac{Cov(r_{i,t},MKT_{t})}{Var(MKT_{t})}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $r_{i,t}$
+\end_inset
+
+和
+\begin_inset Formula $MKT_{t}$
+\end_inset
+
+都是超额收益率。
+\end_layout
+
+\begin_layout Subsection
+estimating beta
+\end_layout
+
+\begin_layout Itemize
+frequency and periodicity
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+daily data: one year's worth of daily excess return data, using at least
+ 200 data points (中国可能要求少一点，例如150)
+\end_layout
+
+\begin_layout Itemize
+monthly data: five years' worth of monthly excess return data
+\end_layout
+
+\begin_layout Itemize
+财神的经验之谈：国内5天得数据估算的beta效果最好（不知道是什么performance指标下地最优）
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+in most cases, market beta for any given period 
+\begin_inset Formula $t$
+\end_inset
+
+ is estimated using only data from periods prior to and including period
+ 
+\begin_inset Formula $t$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+alternative measures
+\end_layout
+
+\begin_layout Subsubsection
+non-synchronicity
+\end_layout
+
+\begin_layout Itemize
+to accout for non-synchronicity, Scholes and Williams(1977) propose running
+ the series of regressions:
+\begin_inset Formula 
+\[
+r_{i,t}=\alpha_{i}+b_{i}^{-}MKT_{t-1}+\epsilon_{i,t}^{-}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+r_{i,t}=\alpha_{i}+b_{i}MKT_{t}+\epsilon_{i,t}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+r_{i,t}=\alpha_{i}+b_{i}^{+}MKT_{t+1}+\epsilon_{i,t}^{+}
+\]
+
+\end_inset
+
+and define beta as:
+\begin_inset Formula 
+\[
+\beta_{i}^{SW}=\frac{b_{i}^{-}+b_{i}+b_{i}^{+}}{1+2\rho}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\rho$
+\end_inset
+
+ is the first-order serial correlation of the market portfolio's excess
+ retrun.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+由于月度数据基本没有 non-sychronicity 问题，因而，SW法仅适用于daily data
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection
+infrequent trade bias
+\end_layout
+
+\begin_layout Itemize
+为避免 非频繁交易(infrequent trade)所导致的估计偏差，Dimson(1979)建议使用：
+\begin_inset Formula 
+\[
+\beta_{i}^{D}=\sum_{k=-5}^{5}b_{i}^{k}
+\]
+
+\end_inset
+
+其中，
+\begin_inset Formula $b_{i}^{k}$
+\end_inset
+
+来自：
+\begin_inset Formula 
+\[
+r_{i,t}=\alpha_{i}+\sum_{k=-5}^{5}b_{i}^{k}MKT_{t+k}+\epsilon_{i,t}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+由于频繁交易的股票并不会引致前述偏差，因而，此种方法不会影响该类股票beta估计的一致性，所以，此方法适用于所有股票
+\end_layout
+
+\end_deeper
+\begin_layout Section
+size
+\end_layout
+
+\begin_layout Subsection
+calculating market capitalization
+\end_layout
+
+\begin_layout Itemize
+the total value of all of the outstanding shares of that stock
+\end_layout
+
+\begin_layout Itemize
+筛选出>0的股票
+\end_layout
+
+\begin_layout Itemize
+财神给的数据中，size_tot(总市值)的单位是万元的
+\end_layout
+
+\begin_layout Itemize
+一般来说，MktCap有两种方法：
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+使用可获得的最近交易日的股票总市值；
+\end_layout
+
+\begin_layout Enumerate
+依循Fama和French(1993)，使用之前最近的6月末的股票总市值
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+在处理时，一般会对MktCap取对数，原因在于：一方面，不影响市值排序值；另一方面，MktCap截面分布往往是正偏的，使用取对数可以大大降低偏度，可能影响FM回
+归结果（异常值）。
+\end_layout
+
+\begin_layout Itemize
+有时候可能考虑通胀因素。
+\end_layout
+
+\begin_layout Section
+value
+\end_layout
+
+\begin_layout Itemize
+value stock: with low prices relative to earnings
+\end_layout
+
+\begin_layout Itemize
+positive relation between book-to-market ratio(or other related measures)
+ and expected stock returns
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+risk-based explanation(higher returns of value stocks are a result of higher
+ exposure to a priced risk factor
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+解释1：BM ratio proxy for exposure to a latent fundamental-based risk factor,
+ and it has been shown that value firms have persistently low earnings,
+ high earnings uncerntainty, and high leverage；解释2：BM capture the relative
+ distress effect, and the low share prices relative to measures of fundamentals
+ reflect the market's judgment that the prospects for the firm are poor.
+\end_layout
+
+\end_inset
+
+)【Fama and French(1993), Chen and Zhang(1998)】，但是 risk-based exlanation收到了挑战：
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Griffin and Lemmon (2002) find that firms with high distress risk exhibit
+ the largest return reversals around earnings announcements, thus attributing
+ the distress-risk effect to mispricing.
+\end_layout
+
+\begin_layout Enumerate
+Ali, Hwang, and Trombley (2003) show that the value effect is predominantly
+ driven by stocks whose investors are unsophisticated.
+ 
+\end_layout
+
+\begin_layout Enumerate
+Lakonishok, Shleifer, and Vishny (1994) combat risk-based expla- nation
+ by showing that high value-to-price stocks are no riskier than growth stocks
+ based on conventional notions of systematic risk such as beta and standard
+ deviation.
+ 
+\end_layout
+
+\begin_layout Enumerate
+Daniel and Titman (1997) cast doubts on the risk factor interpretation of
+ the superior returns to high book-to-market stocks by demonstrating that
+ expected returns are not significantly higher for stocks whose returns
+ are more highly correlated with the book-to-market factor of Fama and French
+ (1993).
+ In other words, co-movement with the proposed risk factor does not explain
+ expected returns.[高“value” beta并没有带来高的预期收益]
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+behavioral explanation: the returns associated with value investing are
+ due to naive investor expectations of future growth that result in mispricing.【L
+SV(1994, La Porta(1996), LLSV(1997))】
+\end_layout
+
+\begin_layout Enumerate
+recently: time-varying risk and risk-premia: long value stocks and short
+ growth stocks is high(low) when economic conditions are poor(good), Fama
+ and French(1995) find that during the periods characterized by poor economic
+ conditions and elevated risk premia, high(low) BM ratios are indicative
+ of persistently low(high) profitability.【Lettau and Ludvigson(2001), Zhang(2005)
+】
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+calculating Book-to-Market ratio
+\end_layout
+
+\begin_layout Itemize
+BM is defined as the book value of a firm's common equity(BE) divided by
+ the market value of the firm's equity(ME):
+\begin_inset Formula 
+\[
+BM=\frac{BE}{ME}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+由于BM is highly positively skewed(不知中国是否存在这样的问题)，为避免极端值的影响，通常取对数：
+\begin_inset Formula 
+\[
+lnBM=ln(BM)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+（可能需要的）调整项：+ deferred taxes + investment tax credit - book value of preferred
+ stock
+\end_layout
+
+\begin_layout Section
+Momentum
+\end_layout
+
+\begin_layout Itemize
+medium-term momentum effect is that stocks that have performed well in the
+ medium-term past(6-12 months) are more likely to outperform in the future.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Levy (1967) shows that relative strength, measured as the ratio of the current
+ stock price to the prior 27-week moving-average stock price, is positively
+ related to future stock returns.
+\end_layout
+
+\begin_layout Itemize
+previous performance over short periods, such as a month or a week, tends
+ to be negatively related to future performance.
+ This phenomenon, documented by Jegadeesh (1990) and Lehmann (1990), is
+ known as the short-term reversal effect.
+\end_layout
+
+\begin_layout Itemize
+as shown in Jegadeesh and Titman (1993), reversal patterns emerge when using
+ long-term past performance to predict future returns.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+The momentum effect is widely considered a behavioral phenomenon(delayed
+ reaction and overreaction to information)
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Jegadeesh and Titman (1993) find that while the momentum effect holds for
+ up to 12 months in the future, a long-term reversal effect is present for
+ months 13 through 31.
+ They claim that this result is indicative of a delayed stock-price reaction
+ to firm-specific events.
+\end_layout
+
+\begin_layout Itemize
+Rational explanations for the momentum phenomenon have been offered by Conrad
+ and Kaul (1989) and Lo and MacKinlay (1990a,b)....
+ Such models, however, are difficult to reconcile with the long-term reversal
+ phenomenon
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+measuring momentum
+\end_layout
+
+\begin_layout Itemize
+the mostly common usd measure of a stock's momentum is the 11-month return
+ of the stock during the period beginning 12 months prior to and ending
+ one month prior to the measurement date
+\end_layout
+
+\begin_layout Section
+short-term reversal
+\end_layout
+
+\begin_layout Itemize
+short-term reversal refers to the fact that stock returns over the short-term
+ past, such as one week as in Lehmann (1990) or one month as in Jegadeesh
+ (1990), tend to have a negative cross-sectional relation with returns over
+ the next week or month.
+\end_layout
+
+\begin_layout Itemize
+The reversal phenomenon is most commonly attributed to liquidity and micro-
+ structure effects.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Roll (1984) generates a model in which the bid–ask spread generates negative
+ serial corre- lation in time series of stock returns.
+\end_layout
+
+\begin_layout Itemize
+Many other papers, such as Lo and MacKinlay (1990), Conrad, Gultekin, and
+ Kaul (1997), Keim (1989), Hasbrouck (1991), Admati and Pfleiderer (1989),
+ and Mech (1993), have demonstrated that microstructure issues such as the
+ bid–ask bounce and transaction costs can generate autocorrelation in secu-
+ rity returns.
+\end_layout
+
+\begin_layout Itemize
+Boudoukh, Richardson, and Whitelaw (1994) demonstrate that a large portion
+ of documented serial correlation is attributable to institutional factors
+ such as trading and nontrading periods, market frictions such as the bid–ask
+ spread, or other microstructure effects.
+\end_layout
+
+\begin_layout Itemize
+Nagel (2012) presents evidence that the returns of short-term reversal strategie
+s can be used as proxies for the returns associated with liquidity provision.
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+measuring short-term reversal
+\end_layout
+
+\begin_layout Itemize
+in most applications, the short-termreversal of stock 
+\begin_inset Formula $i$
+\end_inset
+
+ for month is taken simply to be the return of the stock during the month
+ 
+\begin_inset Formula $t$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+liquidity
+\end_layout
+
+\begin_layout Itemize
+a security’s liquidity refers to the ease with which the security can be
+ bought and/or sold.
+ Securities that are 
+\color red
+difficult
+\color inherit
+ or 
+\color red
+expensive
+\color inherit
+ to transact in are considered illiquid, while securities for which the
+ cost of transacting is small or negligible are more liquid.
+\end_layout
+
+\begin_layout Itemize
+Several theoretical and empirical papers have examined the role of liquidity
+ in determining expected stock returns
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Amihud and Mendelson (1989) empirically test this prediction and find that,
+ consistent with the prediction of a liquidity premium, the bid–ask spread
+ has a positive cross-sectional relation with future stock returns after
+ controlling for other variables related to expected stock returns, such
+ as market beta, market capitalization.
+\end_layout
+
+\begin_layout Itemize
+Amihud (2002) generates a measure of stock illiquidity that requires only
+ return and volume data to calculate and shows that illiquidity is positively
+ related to expected market returns in both the time series and cross section.
+\end_layout
+
+\begin_layout Itemize
+Acharya and Pedersen (2005) demonstrate 
+\color red
+theoretically
+\color inherit
+ that liquidity shocks should be positively correlated with contemporaneous
+ returns and negatively correlated with future returns.
+\end_layout
+
+\begin_layout Itemize
+Easley, Hvidkjaer, and O’Hara (2002) suggest that some measures of liquidity
+ may be capturing the amount of information-based trading in a stock and
+ show that their measure of information-based trading is positively related
+ to expected stock returns.
+\end_layout
+
+\begin_layout Itemize
+Bali, Peng, Shen, and Tang (2014) find that shocks to stock-level liquidity
+ are positively related to future stock returns and attribute this predictabilit
+y to investor underreaction and inattention.
+\end_layout
+
+\begin_layout Itemize
+Chordia et al.
+ (2001b) document a negative relation between liquidity volatility and expected
+ returns.
+ Pereira and Zhang (2010) provide a theoretical rationale for this relation.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Many other studies have examined the role of aggregate liquidity in the
+ pricing of securities.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Chordia, Roll, and Subrahmanyam (2000) document substantial commonality
+ in individual stock liquidity, meaning that individual stock liquidity
+ is highly related to aggregate market liquidity.
+ They find that this effect aggregates to the portfolio level, indicating
+ that shocks to portfolio-level liquidity cannot be diversified away, which
+ supports the claim that an aggregate liquidity factor plays a role in asset
+ pricing.
+\end_layout
+
+\begin_layout Itemize
+Pastor and Stam- baugh (2003) demonstrate that an aggregate liquidity factor
+ plays a strong role in determining both cross-sectional variation in individual
+ stock returns and time-series variation in the market risk premium.
+\end_layout
+
+\begin_layout Itemize
+Kamara, Lou, and Sadka (2008) demonstrate that cross-sectional variation
+ in liquidity commonality has decreased over time and associate this phenomenon
+ with similar patterns in systematic risk and changes in institutional ownership.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Additional work has further characterized the role of liquidity in the financial
+ markets.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Chordia, Roll, and Subrahmanyam (2001a) document several properties of aggregate
+ market level liquidity in U.S.
+ equities.
+ They find that liquidity is low during market downturns, periods of high
+ market volatility, and on Fridays; that liquidity is high prior to major
+ macroeconomic announcements and on Tuesdays; and that daily aggregate liquidity
+ is negatively serially correlated.
+ 
+\end_layout
+
+\begin_layout Itemize
+Chordia, Roll, and Subrahmanyam (2002) find that imbalances in buy and sell
+ orders result in decreased liquidity and in some cases lead to reversal
+ patterns in the daily returns of individual stocks.
+ 
+\end_layout
+
+\begin_layout Itemize
+Chordia, Roll, and Subrahmanyam (2008) find that increased liquidity leads
+ to increased arbitrage activity and, in turn, enhanced market efficiency.
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+measuring liquidity
+\end_layout
+
+\begin_layout Itemize
+Roll(1984) proposes that two times the square root of the negative of the
+ covariance between successive prices changes in a given stock measures
+ the effective spread
+\end_layout
+
+\begin_layout Itemize
+Chordia et al.
+ (2001a) define several different measures of illiquidity: quoted spread;
+ effective spread; market depth; dollar depth.
+ Chordia et al.
+ (2001a) also look at: volume; dollar volume; the number of trades as measures
+ of liquidity.
+\end_layout
+
+\begin_layout Itemize
+Amihud(2002)'s illiquidity: The main idea behind the measure is to calculate
+ the effect of volume on the magnitude of the return of the security.
+ Amihud calculates illiquidity as the ratio of the absolute value of the
+ daily security return divided by the daily dollar volume traded in the
+ security, averaged over all days in the estimation period:
+\begin_inset Formula 
+\[
+Illiq_{i}=\frac{1}{D}\sum_{d=1}^{D}\frac{|R_{i,d}|}{VOLD_{i,d}}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $VOLD_{i,d}$
+\end_inset
+
+ is the dollar volume of stock 
+\begin_inset Formula $i$
+\end_inset
+
+ on day 
+\begin_inset Formula $d$
+\end_inset
+
+.
+ Amihud(2002) uses one year's worth of daily data covering the 12-month
+ period including month 
+\begin_inset Formula $t-11$
+\end_inset
+
+ through 
+\begin_inset Formula $t$
+\end_inset
+
+, inclusive.
+\end_layout
+
+\begin_layout Subsection
+liquidity factor
+\end_layout
+
+\begin_layout Itemize
+Standard asset pricing theories, such as the arbitrage pricing theory of
+ Ross (1976), dictate that cross-sectional variation in expected returns
+ is determined only by securities’ sensitivities to priced risk factors.
+ According to these theories, it is not the actual liquidity of an individual
+ security that plays a role in determining the security’s expected return.
+ What is important is how the security’s return is contemporaneously related
+ to aggregate changes in liquidity.【Pastor and Stambaugh(2003),后文简称PS】
+\end_layout
+
+\begin_layout Itemize
+traded liquidity factor: the returns of the long-short liquidity sensitivity
+ portfolio.
+ The traded liquidity factor is, therefore, frequently used by researchers
+ in factor analyses of portfolio returns aimed at calculating the portfolio’s
+ alpha after adjusting for aggregate liquidity risk.【直接使用个股liquidity
+\backslash
+illiquidity的mimick portfolio return不行吗？？？可能两种都行！？那么，这是否就是risk factor与stock
+ characteristics的区别呢？】
+\end_layout
+
+\begin_layout Subsubsection
+stock-level liquidity
+\end_layout
+
+\begin_layout Itemize
+a stock for which high volume days are not followed by price reversals is
+ considered highly liquid
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+To exemplify the intuition behind their measure, imagine that on certain
+ day, there is a large amount of order flow from investors looking to buy
+ a highly illiquid stock.
+ The result will likely be that the stock will realize high volume on that
+ day combined with a large positive return because the investors’ buying
+ pressure pushed the price of the stock up.
+ On the next day, however, the investors’ demand for the stock has been
+ satisfied, and the stock is likely to realize a price decrease back toward
+ its fundamental value.
+ 
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+Following this intuition, PS measure
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+By PS’s own admission, their measure of individual stock liquidity is very
+ noisy and does not exhibit any ability to predict the cross section of
+ future stock returns, or even the cross section of future liquidity.
+\end_layout
+
+\end_inset
+
+ the illiquidity of stock 
+\begin_inset Formula $i$
+\end_inset
+
+ in month 
+\begin_inset Formula $m$
+\end_inset
+
+ to be the estimated coefficient 
+\begin_inset Formula $\gamma_{i,m}$
+\end_inset
+
+ from regression specification
+\begin_inset Formula 
+\[
+r_{i,d+1}-r_{M,d+1}=\theta_{i,m}+\phi r_{i,d}+\gamma_{i,m}sign(r_{i,d}-r_{M,d})v_{i,d}+\epsilon_{i,d+1}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $r_{i,d}$
+\end_inset
+
+ and 
+\begin_inset Formula $r_{M,d}$
+\end_inset
+
+ are the rreturn of the given stock 
+\begin_inset Formula $i$
+\end_inset
+
+ and the market portfolio on day 
+\begin_inset Formula $d$
+\end_inset
+
+, respectively.
+ 
+\begin_inset Formula $v_{i,d}$
+\end_inset
+
+ is the dollar volume traded in stock 
+\begin_inset Formula $i$
+\end_inset
+
+ on day 
+\begin_inset Formula $t$
+\end_inset
+
+.
+ 
+\begin_inset Formula $sign(r_{i,d}-r_{m,d})v_{i,d}$
+\end_inset
+
+ is what PS refer to as signed volume.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+If the coefficient 
+\begin_inset Formula $\gamma_{i,m}$
+\end_inset
+
+ is negative, this means that the stock tends to underperform (outperform)
+ the market on days subsequent to high buying (selling) pressure days.
+ Thus, high values of 
+\begin_inset Formula $\gamma_{i,m}$
+\end_inset
+
+ are associated with highly liquid stocks and low values of 
+\begin_inset Formula $\gamma_{i,m}$
+\end_inset
+
+ indicate illiquid stocks.
+\end_layout
+
+\begin_layout Itemize
+at least 15 data points per month
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection
+aggregate liquidity
+\end_layout
+
+\begin_layout Itemize
+While their measure of individual stock liquisity is very noisy on an individual
+ level, PS demonstrate that the aggregated measure exhibits properties very
+ consistent with what would be expected of a measure of aggregate liquidity.
+ PS define their measure of aggregate liquidity for month 
+\begin_inset Formula $m$
+\end_inset
+
+ as
+\begin_inset Formula 
+\[
+\gamma_{m}=mean(\gamma_{i,m})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+liquidity innovation
+\end_layout
+
+\begin_layout Itemize
+To capture innovations in liquidity, PS begin by taking the average change
+ in the individual stock-level values of liquidity, averaging across stocks,
+ and adjusting for overall market size
+\begin_inset Formula 
+\[
+\Delta\gamma_{m}=(\frac{V_{m}}{V_{1}})\frac{1}{N_{m}}\sum_{i=1}^{N_{m}}(\gamma_{i,m}-\gamma_{i,m-1})
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $V_{m}$
+\end_inset
+
+is the total market capitalization of the 
+\begin_inset Formula $N_{m}$
+\end_inset
+
+ stocks included in the calculation of 
+\begin_inset Formula $\gamma_{m}$
+\end_inset
+
+，
+\begin_inset Formula $N_{m}$
+\end_inset
+
+ represents the number of stocks with valid liquidity measures in both months
+ 
+\begin_inset Formula $m$
+\end_inset
+
+ and 
+\begin_inset Formula $m−1$
+\end_inset
+
+.
+ To remove the long-run mean and any potential serial correlation in the
+ series 
+\begin_inset Formula $\Delta\gamma_{m}$
+\end_inset
+
+, PS run the regression:
+\begin_inset Formula 
+\[
+\Delta\gamma_{m}=a+b\Delta\gamma_{m-1}+c(\frac{V_{m-1}}{V_{1}})\gamma_{m-1}+u_{m}
+\]
+
+\end_inset
+
+Finally, PS define the monthly innovation in aggregate liquidity for month
+ 
+\begin_inset Formula $m$
+\end_inset
+
+ to be the fitted month 
+\begin_inset Formula $m$
+\end_inset
+
+ residual from the above regression, scaled by 100:
+\begin_inset Formula 
+\[
+L_{m}=u_{m}/100
+\]
+
+\end_inset
+
+
 \end_layout
 
 \end_body
