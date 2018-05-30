@@ -98,7 +98,7 @@
 \begin_layout Title
 因子库
 \begin_inset Foot
-status open
+status collapsed
 
 \begin_layout Plain Layout
 记录因子的详细构成、（可能不同的）计算方法、因子出处、（如果存在）实证结果的记录
@@ -250,6 +250,27 @@ where
 \end_layout
 
 \end_deeper
+\begin_layout Itemize
+《Betting against beta》中，作者估计beta时，是用
+\begin_inset Formula 
+\[
+\beta_{i}=\rho\frac{\sigma_{i}}{\sigma_{M}}
+\]
+
+\end_inset
+
+其中，为控制non-synchronous trading的影响，作者在估计相关系数时，对于个股，是用 overlapping 3-day log
+ returns:
+\begin_inset Formula 
+\[
+r_{i,t}^{3d}=\sum_{k=0}^{2}ln(1+r_{i,t+k})
+\]
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
 infrequent trade bias
 \end_layout
@@ -985,6 +1006,576 @@ Finally, PS define the monthly innovation in aggregate liquidity for month
 \begin_inset Formula 
 \[
 L_{m}=u_{m}/100
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+skewness
+\end_layout
+
+\begin_layout Itemize
+从Markowitz(1952)的 mean-variance paradigm到CAPM，然而实证研究并不完全支持CAPM
+\end_layout
+
+\begin_layout Itemize
+引入更高阶矩：
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Arditti (1967, 1971) shows theoretically and empirically that investors
+ demand a higher (lower) rate of return on investments whose return distribution
+s are negatively (positively) skewed.
+ 
+\end_layout
+
+\begin_layout Itemize
+Scott and Horvath (1980) extend this analysis to include not just the third
+ moment, but all higher moments of the distribution of returns, and demonstrate
+ that positive values of even (odd) moments command positive (negative)
+ risk premia, and vice versa for negative moment values.
+\end_layout
+
+\begin_layout Itemize
+Kraus and Litzenberger (1976) incorporate this notion into a three-moment
+ capital asset pricing model.
+ 
+\end_layout
+
+\begin_layout Itemize
+Harvey and Siddique (2000) introduce systematic skewness into the pricing
+ of securities via a stochastic discount factor that is quadratic in the
+ market return and show that this results in the pricing of conditional
+ co-skewness, defined as the covariance between the excess security return
+ and the squared excess market return, conditional on the market return.
+ Empirically, Harvey and Siddique (2000) find a co-skewness risk premium
+ of 3.60% per year.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Some papers have challenged the notion that idiosyncratic skewness is diversifie
+d away and therefore cannot be priced.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Kane (1982) shows that the total proportion of wealth that is invested in
+ risky securities is affected by portfolio skewness, and that skewness preferenc
+e may cause investors to not completely diversify.
+ Simkowitz and Beedles (1978) and Conine and Tamarkin (1981) propose that
+ when investors do not completely diversify, idiosyncratic skewness may
+ be relevant to the pricing of securities.
+ 
+\end_layout
+
+\begin_layout Itemize
+Mitton and Vorkink (2007) develop a model in which heterogeneous skew- ness
+ preference causes investors to underdiversify and demonstrate that idiosyncrati
+c skewness has an impact on equilibrium prices.
+ 
+\end_layout
+
+\begin_layout Itemize
+Barberis and Huang (2008) show that the cumulative prospect theory of Tver-
+ sky and Kahneman (1992) predicts a negative relation between individual
+ security skewness and expected return.
+\end_layout
+
+\begin_layout Itemize
+Boyer, Mitton, and Vorkink (2010) demonstrate that expected idiosyncratic
+ skewness, calculated based on firm-specific characteristics, has a strong
+ negative cross-sectional relation with future stock returns.
+ 
+\end_layout
+
+\begin_layout Itemize
+Bali, Cakici, and Whitelaw (2011) use the maximum daily return over the
+ past month as a proxy for extreme positive skewness and find a strong negative
+ relation with future stock returns.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Given the difficulties in measuring the market’s view of the skewness of
+ the dis- tribution of future stock returns from historical data (Boyer
+ et al.
+ (2010), Bali et al.
+ (2011)), recent research has examined the ability of skewness implied from
+ option prices to predict future security returns.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Consistent with theoretical predictions, Conrad, Dittmar, and Ghysels (2013)
+ find a negative cross-sectional relation between implied skewness and future
+ stock returns, and Bali and Murray (2013) find a negative relation between
+ implied skewness and the returns of skewness assets.
+ Boyer and Vorkink (2014) demonstrate that options with high implied skewness
+ generate lower average returns.
+ Amaya, Christoffersen, Jacobs, and Vasquez (2015) demonstrate a negative
+ relation between skewness measures from intraday data and expected returns.
+\end_layout
+
+\begin_layout Itemize
+Xing, Zhang, and Zhao (2010) and Cremers and Weinbaum (2010) find a positive
+ relation between measures related to implied skewness and future stock
+ returns.
+ The positive relation between implied skewness and future stock returns
+ is potentially explained by demand-based option pricing models of Bollen
+ and Whaley (2004) and Garleanu, Pedersen, and Poteshman (2009).
+ According to demand-based option pricing, investors anticipating positive
+ (negative) returns establish exposure to the stock by buying calls and
+ selling puts (selling calls and buying puts).
+ The price pressure exerted by these trades causes call prices to increase
+ (decrease) relative to put prices resulting in higher (lower) values of
+ option implied skewness for stocks that investors predict will increase
+ (decrease) in value.
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+measuring skewness
+\end_layout
+
+\begin_layout Itemize
+total skewness:
+\begin_inset Formula 
+\[
+Skew_{i}=\frac{\frac{1}{n}\sum_{t=1}^{n}(R_{i,t}-\overline{R_{i}})^{3}}{(\frac{1}{n}\sum_{t=1}^{n}(R_{i,t}-\overline{R_{i}})^{2})^{3/2}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+systematic skewness,frequently referred to as co-skewness(following Harvey
+ and Siddique(2000)):
+\begin_inset Formula 
+\[
+r_{i,t}=\alpha_{i}+\beta_{MKT,i}MKT_{t}+CoSkew_{i}MKT_{t}^{2}+\epsilon_{i,t}
+\]
+
+\end_inset
+
+但是，其他论文中也出现了另一种定义（齐次）：
+\begin_inset Formula 
+\[
+CoSkew_{i}=\frac{Cov(r_{i,t},MKT_{t}^{2})}{E(MKT_{t}^{3})}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+idiosyncratic skewness：
+\begin_inset Formula 
+\[
+IdioSkew_{i}=\frac{\frac{1}{n}\sum_{t=1}^{n}\epsilon_{i,t}^{3}}{(\frac{1}{n}\sum_{t=1}^{n}\epsilon_{i,t}^{2})^{3/2}}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\epsilon_{i,t}$
+\end_inset
+
+ are the residuals from the Fama-French 3-factor model(or other factor model).
+\end_layout
+
+\begin_layout Section
+idiosyncratic volatility
+\end_layout
+
+\begin_layout Itemize
+According to many asset pricing models, including the Capital Asset Pricing
+ Model (CAPM, Sharpe (1964), Lintner (1965), Mossin (1966)) and arbitrage
+ pricing the- ory (APT, Ross (1976)), investors can create portfolios that
+ have zero exposure to firm-specific risk by holding a well-diversified
+ portfolio with a large number of securities.
+ 
+\end_layout
+
+\begin_layout Itemize
+Levy (1978) and Merton (1987) develop models of market equilibrium that
+ relax the assumptions underlying the CAPM and APT
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+perfectly liquid (frictionless) and that all investors have complete information
+\end_layout
+
+\end_inset
+
+.
+ The main implication of each of these models is that, in equilibrium, firm-spec
+ific risk is priced.
+ Specifically, there is a positive risk premium associated with firm-specific
+ risk.
+\end_layout
+
+\begin_layout Itemize
+Empirically, the prediction of a positive relation between firm-specific
+ risk and expected stock returns has received substantial attention.
+ Early empirical studies by Friend, Westerfield, and Granito (1978), Levy
+ (1978), Tinic and West (1986), and Lehmann (1990) find weak evidence of
+ a positive cross-sectional relation between idiosyncratic volatility (the
+ most commonly used measure of firm-specific risk) and stock returns, while
+ the results in Fama and MacBeth (1973) provide no indication of such a
+ relation.
+ The samples and empirical techniques employed by these studies, however,
+ indicate that these results may not be widely generalizable.
+\end_layout
+
+\begin_layout Itemize
+Ang, Hodrick, Xing, and Zhang (2006) finds a strong negative cross-sectional
+ relation between idiosyncratic volatility and future stock returns.
+ While Ang et al.
+ demonstrate that a small portion of this relation can be explained by exposure
+ to aggregate volatility risk, which is empirically shown to carry a negative
+ risk premium, this phenomenon does not entirely explain the result.
+ 
+\end_layout
+
+\begin_layout Itemize
+Several subsequent papers have proposed explanations for the idiosyncratic
+ volatility puzzle.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Bali and Cakici (2008) demonstrate that data frequency, portfolio weighting
+ scheme, portfolio breakpoint calculation methodology, and the screens used
+ to create the sample all have a substantial impact on the idiosyncratic
+ volatility puzzle, and that the relation disappears for many choices of
+ these parameters.
+ 
+\end_layout
+
+\begin_layout Itemize
+Fu (2009) uses an exponential GARCH model to estimate expected idiosyncratic
+ volatility, and finds a positive relation between this measure and future
+ stock returns, although Guo, Kassa, and Ferguson (2014) show that this
+ study is potentially afflicted by the in-sample nature of the estimation
+ of expected idiosyncratic volatility.
+ 
+\end_layout
+
+\begin_layout Itemize
+Huang et al.
+ (2010) demonstrate that the negative relation between idiosyncratic volatility
+ and future stock returns is driven by the short-term reversal phenomenon.
+ 
+\end_layout
+
+\begin_layout Itemize
+Han and Lesmond (2011) provide evidence that the idiosyncratic volatility
+ puzzle is a manifestation of liquidity shocks and microstucture effects.
+ 
+\end_layout
+
+\begin_layout Itemize
+Bali, Cakici, and Whitelaw (2011) find that after controlling for demand
+ for lottery-like stocks, the negative relation between idiosyncratic volatility
+ and future stock returns disappears, and in some analyses the relation
+ becomes positive.
+ 
+\end_layout
+
+\begin_layout Itemize
+Baker, Bradley, and Wurgler (2011) show that benchmarking by institutional
+ investors may result in a limit to arbitrage, thus allowing this phenomenon
+ to persist
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+measuring total volatility and idiosyncratic volatility
+\end_layout
+
+\begin_layout Subsubsection
+total volatility 
+\end_layout
+
+\begin_layout Itemize
+方法一：
+\begin_inset Formula 
+\[
+Vol_{i}=100\sqrt{\frac{\sum_{t=1}^{n}(R_{i,t}-\overline{R_{i}})^{2}}{n-1}}\sqrt{m}
+\]
+
+\end_inset
+
+where the mulplication by 
+\begin_inset Formula $\sqrt{m}$
+\end_inset
+
+ 
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+m取决于数据频率
+\end_layout
+
+\end_inset
+
+converts the standard deviation of the periodic returns to an annualized
+ value.
+\end_layout
+
+\begin_layout Itemize
+方法二：
+\begin_inset Formula 
+\[
+Vol_{i}^{SS}=100\sqrt{\frac{\sum_{t=1}^{n}R_{i,t}^{2}}{n}}\sqrt{m}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+idiosyncratic volatility
+\end_layout
+
+\begin_layout Itemize
+Ang A, Hodrick R J, Xing Y, et al.
+ The cross‐section of volatility and expected returns[J].
+ The Journal of Finance, 2006, 61(1): 259-299.
+\end_layout
+
+\begin_layout Itemize
+Idiosyncratic volatility is measured as the residual standard error from
+ a time-series regression of periodic excess stock returns on the returns
+ of factor-mimicking port- folios.
+ The model used most frequently to calculate idiosyncratic volatility is
+ the Fama and French (1993) three-factor (FF) model.【作波动率对比时，需要年化】
+\end_layout
+
+\begin_layout Section
+BAB(Betting against beta)
+\end_layout
+
+\begin_layout Itemize
+Frazzini A, Pedersen L H.
+ Betting against beta[J].
+ Journal of Financial Economics, 2014, 111(1): 1-25.
+\end_layout
+
+\begin_layout Subsection
+BAB factor
+\end_layout
+
+\begin_layout Itemize
+construct a betting against beta(BAB) factor as:
+\begin_inset Formula 
+\[
+r_{t+1}^{BAB}=\frac{1}{\beta_{t}^{L}}(r_{t+1}^{L}-r^{f})-\frac{1}{\beta_{t}^{H}}(r_{t+1}^{H}-r^{f})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+作者原文中使用的是ex ante beta，而不是 ex post beta
+\backslash
+ realized beta.
+\end_layout
+
+\begin_layout Itemize
+为避免极端值的影响，作者 shrink the time series estimate of beta(
+\begin_inset Formula $\beta_{i}^{TS}$
+\end_inset
+
+) toward the cross-sectional mean(
+\begin_inset Formula $\beta^{XS}$
+\end_inset
+
+):
+\begin_inset Formula 
+\[
+\beta_{i}=w_{i}\beta_{i}^{TS}+(1-w_{i})\beta^{XS}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+High beta 组合和 Low beta组合独特的加权方式(仅包含High beta 和 low beta 两组股票)：
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+令
+\begin_inset Formula $z_{i}=rank(\beta_{it})$
+\end_inset
+
+，
+\begin_inset Formula $\overline{z}=1_{n}^{'}z/n$
+\end_inset
+
+为the average rank
+\end_layout
+
+\begin_layout Enumerate
+两个权重向量：
+\begin_inset Formula $w_{H}=k(z-\overline{z})^{+}$
+\end_inset
+
+，
+\begin_inset Formula $w_{L}=k(z-\overline{z})^{-}$
+\end_inset
+
+，其中，
+\begin_inset Formula $k=2/1_{n}^{'}|z-\overline{z}|$
+\end_inset
+
+，于是，
+\begin_inset Formula $1_{n}^{'}w_{H}=1$
+\end_inset
+
+，
+\begin_inset Formula $1_{n}^{'}w_{L}=1$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+组合超额收益和beta：
+\begin_inset Formula $r_{t+1}^{L}=r_{t+1}^{'}w_{L}$
+\end_inset
+
+，
+\begin_inset Formula $r_{t+1}^{H}=r_{t+1}^{'}w_{H}$
+\end_inset
+
+，
+\begin_inset Formula $\beta_{t}^{L}=\beta_{t}^{'}w_{L}$
+\end_inset
+
+，
+\begin_inset Formula $\beta_{t}^{H}=\beta_{t}^{'}w_{H}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+The expected excess return of the self-financing BAB factor is positive
+\begin_inset Formula 
+\[
+E_{t}(r_{t+1}^{BAB})=\frac{\beta_{t}^{H}-\beta_{t}^{L}}{\beta_{t}^{H}\beta_{t}^{L}}\psi_{t}
+\]
+
+\end_inset
+
+and increasing in the ex ante beta spread 
+\begin_inset Formula $\frac{\beta_{t}^{H}-\beta_{t}^{L}}{\beta_{t}^{H}\beta_{t}^{L}}$
+\end_inset
+
+and fundig tightness 
+\begin_inset Formula $\psi_{t}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+QMJ(quality minus junk)
+\end_layout
+
+\begin_layout Itemize
+Asness C S, Frazzini A, Pedersen L H.
+ Quality minus junk[J].
+ 2017.
+\end_layout
+
+\begin_layout Subsection
+construct quality measure
+\end_layout
+
+\begin_layout Itemize
+对于任意给定的变量x，首先将其转换为排序值：
+\begin_inset Formula $r_{i}=rank(x_{i})$
+\end_inset
+
+，再计算相应的z-score：
+\begin_inset Formula $z_{x}=\frac{(r-\mu_{r})}{\sigma_{r}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+profitability: gross profits over assets (GPOA), return on equity (ROE),
+ return on assets (ROA), cash flow over assets (CFOA), gross margin (GMAR),
+ and the fraction of earnings composed of cash (i.e.
+ minus accruals, ACC).
+ Then profitability score is the average of the individual z-scores:
+\begin_inset Formula 
+\[
+Profitability=mean(z_{GPOA}+z_{ROE}+z_{ROA}+z_{CFOA}+z_{GMAR}+z_{ACC})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+growth: Similarly, we measure growth as the five-year growth in profitability
+ (excluding accruals), averaged across five measures:
+\begin_inset Formula 
+\[
+Growth=mean(z_{\Delta GPOA}+z_{\Delta ROE}+z_{\Delta ROA}+z_{\Delta CFOA}+z_{\Delta GMAR})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+safety: We define safe securities as companies with low beta (BAB), low
+ leverage (LEV), low bankruptcy risk (O-Score and Z-Score) and low ROE volatilit
+y (EVOL)
+\begin_inset Formula 
+\[
+Safety=mean(z_{BAB}+z_{LEV}+z_{O-Score}+z_{Z-Score}+z_{EVOL})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Finally, we combine the three measures into a single quality score:
+\begin_inset Formula 
+\[
+Quality=aggregate(Profitability+Growth+Safety)
 \]
 
 \end_inset
