@@ -108,9 +108,1489 @@ LatexCommand tableofcontents
 
 \end_layout
 
+\begin_layout Standard
+说明：
+\end_layout
+
+\begin_layout Standard
+tags：equity/bond...
+ ; theory/techniques
+\end_layout
+
 \begin_layout Chapter
 The Efficient Market Theory and Evidence: Implications for Active Investment
  Management
+\end_layout
+
+\begin_layout Section
+Theory 
+\end_layout
+
+\begin_layout Subsection
+Early Theoretical Foundations 
+\end_layout
+
+\begin_layout Subsection
+Market Realism 
+\end_layout
+
+\begin_layout Subsection
+Theory of Active Delegated Management 
+\end_layout
+
+\begin_layout Subsection
+The Swensen Approach
+\end_layout
+
+\begin_layout Section
+Empirical Evidence Using Asset Prices 
+\end_layout
+
+\begin_layout Subsection
+Price Studies vs.
+ Manager Studies 
+\end_layout
+
+\begin_layout Subsection
+Methodological Issues 
+\end_layout
+
+\begin_layout Subsection
+Early Price Evidence Against Efficiency: Anomalies 
+\end_layout
+
+\begin_layout Subsection
+Multiple Factors 
+\end_layout
+
+\begin_layout Subsection
+Multiple Factors and the Scope for Active Management 
+\end_layout
+
+\begin_layout Subsection
+Recent Anomalies 
+\end_layout
+
+\begin_layout Subsection
+Long-Horizon Forecasts as Evidence of Inefficiency 
+\end_layout
+
+\begin_layout Subsection
+Derivatives 
+\end_layout
+
+\begin_layout Subsection
+Crashes as Evidence
+\end_layout
+
+\begin_layout Section
+Mutual Fund Performance as Evidence 
+\end_layout
+
+\begin_layout Subsection
+Active vs.
+ Passive Performance Tests 
+\end_layout
+
+\begin_layout Subsection
+Relative Performance Tests 
+\end_layout
+
+\begin_layout Subsection
+Flows, Incentives, and Mutual Fund Returns 
+\end_layout
+
+\begin_layout Subsection
+Conditioning Factors to Identify Skill 
+\end_layout
+
+\begin_layout Section
+Other Managed Portfolios as Evidence 
+\end_layout
+
+\begin_layout Subsection
+Institutional Funds 
+\end_layout
+
+\begin_layout Subsection
+Sovereign Wealth Funds 
+\end_layout
+
+\begin_layout Subsection
+Price Impact and Indexation 
+\end_layout
+
+\begin_layout Subsection
+Hedge Funds 
+\end_layout
+
+\begin_layout Section
+Other Market Sectors 
+\end_layout
+
+\begin_layout Subsection
+Fixed Income 
+\end_layout
+
+\begin_layout Subsection
+Private Equity and Venture Capital 
+\end_layout
+
+\begin_layout Subsection
+Real Estate 
+\end_layout
+
+\begin_layout Section
+Conclusion
+\end_layout
+
+\begin_layout Chapter
+Alphanomics: The Informational Underpinnings of Market Efficiency
+\end_layout
+
+\begin_layout Section
+The Magic of Markets
+\end_layout
+
+\begin_layout Subsection
+The value of markets in society
+\end_layout
+
+\begin_layout Subsection
+The joint equilibrium problem
+\end_layout
+
+\begin_layout Subsection
+What do we mean by market efficiency? 
+\end_layout
+
+\begin_layout Subsection
+The conceptual case for efficiency 
+\end_layout
+
+\begin_layout Subsection
+Can mispricing exist in equilibrium?
+\end_layout
+
+\begin_layout Subsection
+Costly informational arbitrage
+\end_layout
+
+\begin_layout Subsection
+The “As If” defense of market efficiency
+\end_layout
+
+\begin_layout Section
+The Noise Trader Approach to Finance: An Alternative to the EMH? 
+\end_layout
+
+\begin_layout Subsection
+Overview
+\end_layout
+
+\begin_layout Subsection
+The Shiller model 
+\end_layout
+
+\begin_layout Subsection
+The noise trader approach to finance 
+\end_layout
+
+\begin_layout Subsection
+Implications for market-based research 
+\end_layout
+
+\begin_layout Subsection
+Research design issues
+\end_layout
+
+\begin_layout Section
+Noise Trading and Investor Sentiment 
+\end_layout
+
+\begin_layout Subsection
+Investor sentiment and arbitrage costs 
+\end_layout
+
+\begin_layout Subsection
+What moves stock prices?
+\end_layout
+
+\begin_layout Subsection
+The quest for sentiment—early work 
+\end_layout
+
+\begin_layout Subsection
+Behavioral roots: The origins of investor sentiment 
+\end_layout
+
+\begin_layout Subsection
+Capital flows and stock returns
+\end_layout
+
+\begin_layout Subsection
+Investor clienteles and systemic noise
+\end_layout
+
+\begin_layout Subsection
+Measuring investor sentiment
+\end_layout
+
+\begin_layout Subsection
+Firm-level sentiment
+\end_layout
+
+\begin_layout Subsection
+Moods and emotions
+\end_layout
+
+\begin_layout Section
+Measuring Firm Value: The Role of Fundamental Analysis 
+\end_layout
+
+\begin_layout Subsection
+Overview
+\end_layout
+
+\begin_layout Subsection
+Benjamin Graham as a quant
+\end_layout
+
+\begin_layout Subsection
+A bit of theory might help
+\end_layout
+
+\begin_layout Subsection
+The two sides of value investing 
+\end_layout
+
+\begin_layout Subsection
+Lessons from the field
+\end_layout
+
+\begin_layout Subsection
+Empirical evidence from academic studies 
+\end_layout
+
+\begin_layout Subsection
+Why does value investing continue to work? 
+\end_layout
+
+\begin_layout Section
+Arbitrage Costs 
+\end_layout
+
+\begin_layout Subsection
+What the smart money sees
+\end_layout
+
+\begin_layout Subsection
+Strategy identification and verification 
+\end_layout
+
+\begin_layout Subsection
+The role of complexity
+\end_layout
+
+\begin_layout Subsection
+Implementation and execution costs
+\end_layout
+
+\begin_layout Subsection
+Funding and financing constraints
+\end_layout
+
+\begin_layout Section
+Research Methodology: Predictability in Asset Returns
+\end_layout
+
+\begin_layout Subsection
+Exposure to risk factors
+\end_layout
+
+\begin_layout Subsection
+If it looks like risk
+\end_layout
+
+\begin_layout Subsection
+Short-window returns 
+\end_layout
+
+\begin_layout Subsection
+Other non-return-based metrics
+\end_layout
+
+\begin_layout Subsection
+Sub-periods and sub-populations
+\end_layout
+
+\begin_layout Subsection
+Delisting and survivorship biases
+\end_layout
+
+\begin_layout Subsection
+Size, illiquidity and exploitability issues 
+\end_layout
+
+\begin_layout Subsection
+Gauging economic significance 
+\end_layout
+
+\begin_layout Subsection
+Testing statistical significance
+\end_layout
+
+\begin_layout Subsection
+Long-window returns
+\end_layout
+
+\begin_layout Subsection
+Incremental contribution 
+\end_layout
+
+\begin_layout Chapter
+Asset Management: A Systematic Approach to Factor Investing
+\end_layout
+
+\begin_layout Section
+the asset owner
+\end_layout
+
+\begin_layout Subsection
+asset owners
+\end_layout
+
+\begin_layout Subsection
+preferrences
+\end_layout
+
+\begin_layout Subsection
+mean-variance investing
+\end_layout
+
+\begin_layout Subsection
+investing for the long run
+\end_layout
+
+\begin_layout Subsection
+investing over the life cycle
+\end_layout
+
+\begin_layout Section
+factor risk premium
+\end_layout
+
+\begin_layout Subsection
+factor theory
+\end_layout
+
+\begin_layout Subsection
+factors
+\end_layout
+
+\begin_layout Subsection
+equities
+\end_layout
+
+\begin_layout Subsection
+bonds
+\end_layout
+
+\begin_layout Subsection
+alpha ( and the low-ris anomaly)
+\end_layout
+
+\begin_layout Subsection
+\begin_inset Quotes eld
+\end_inset
+
+real
+\begin_inset Quotes erd
+\end_inset
+
+ assets
+\end_layout
+
+\begin_layout Subsection
+tax-efficient investing
+\end_layout
+
+\begin_layout Subsection
+illiquid assets
+\end_layout
+
+\begin_layout Subsection
+factor investing
+\end_layout
+
+\begin_layout Section
+delegated portfolio management
+\end_layout
+
+\begin_layout Subsection
+delegated investing
+\end_layout
+
+\begin_layout Subsection
+mutual funds and other 40-act funds
+\end_layout
+
+\begin_layout Subsection
+hedge funds
+\end_layout
+
+\begin_layout Subsection
+private quity
+\end_layout
+
+\begin_layout Chapter
+Financial modeling
+\end_layout
+
+\begin_layout Section
+Corporate Finance and Valuation
+\end_layout
+
+\begin_layout Subsection
+Basic Financial Calculations
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+Present Value and Net Present Value 
+\end_layout
+
+\begin_layout Subsubsection
+The Internal Rate of Return (IRR) and Loan Tables 
+\end_layout
+
+\begin_layout Subsubsection
+Multiple Internal Rates of Return 
+\end_layout
+
+\begin_layout Subsubsection
+Flat Payment Schedules 
+\end_layout
+
+\begin_layout Subsubsection
+Future Values and Applications 
+\end_layout
+
+\begin_layout Subsubsection
+A Pension Problem—Complicating the Future Value Problem 
+\end_layout
+
+\begin_layout Subsubsection
+Continuous Compounding 
+\end_layout
+
+\begin_layout Subsubsection
+Discounting Using Dated Cash Flows 
+\end_layout
+
+\begin_layout Subsection
+Corporate Valuation
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+Four Methods to Compute Enterprise Value (EV) 
+\end_layout
+
+\begin_layout Subsubsection
+Using Accounting Book Values to Value a Company: The Firm’s Accounting Enterpris
+e Value 
+\end_layout
+
+\begin_layout Subsubsection
+The Efficient Markets Approach to Corporate Valuation
+\end_layout
+
+\begin_layout Subsubsection
+Enterprise Value (EV) as the Present Value of the Free Cash Flows: DCF “Top
+ Down” Valuation 
+\end_layout
+
+\begin_layout Subsubsection
+Free Cash Flows Based on Consolidated Statement of Cash Flows (CSCF) 
+\end_layout
+
+\begin_layout Subsubsection
+ABC Corp., Consolidated Statement of Cash Flows (CSCF) 
+\end_layout
+
+\begin_layout Subsubsection
+Free Cash Flows Based on Pro Forma Financial Statements 
+\end_layout
+
+\begin_layout Subsection
+Calculating the Weighted Average Cost of Capital (WACC) 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+Computing the Value of the Firm’s Equity, E 
+\end_layout
+
+\begin_layout Subsubsection
+Computing the Value of the Firm’s Debt, D 
+\end_layout
+
+\begin_layout Subsubsection
+Computing the Firm’s Tax Rate, TC
+\end_layout
+
+\begin_layout Subsubsection
+Computing the Firm’s Cost of Debt, rD 
+\end_layout
+
+\begin_layout Subsubsection
+Two Approaches to Computing the Firm’s Cost of Equity, rE 
+\end_layout
+
+\begin_layout Subsubsection
+Implementing the Gordon Model for rE 
+\end_layout
+
+\begin_layout Subsubsection
+The CAPM: Computing the Beta, β 
+\end_layout
+
+\begin_layout Subsubsection
+Using the Security Market Line (SML) to Calculate Merck’s Cost of Equity,
+ rE 
+\end_layout
+
+\begin_layout Subsubsection
+Three Approaches to Computing the Expected Return on the Market,E(rM) 
+\end_layout
+
+\begin_layout Subsubsection
+What’s the Risk-Free Rate rf in the CAPM? 
+\end_layout
+
+\begin_layout Subsubsection
+Computing the WACC, Three Cases 
+\end_layout
+
+\begin_layout Subsubsection
+Computing the WACC for Merck (MRK) 
+\end_layout
+
+\begin_layout Subsubsection
+Computing the WACC for Whole Foods (WFM) 
+\end_layout
+
+\begin_layout Subsubsection
+Computing the WACC for Caterpillar (CAT) 
+\end_layout
+
+\begin_layout Subsubsection
+When Don’t the Models Work? 
+\end_layout
+
+\begin_layout Subsection
+Valuation Based on the Consolidated Statement of Cash Flows 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+Free Cash Flow (FCF): Measuring the Cash Produced by the Business 
+\end_layout
+
+\begin_layout Subsubsection
+A Simple Example 
+\end_layout
+
+\begin_layout Subsubsection
+Merck: Reverse Engineering the Market Value
+\end_layout
+
+\begin_layout Subsection
+Pro Forma Financial Statement Modeling
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+How Financial Models Work: Theory and an Initial Example 
+\end_layout
+
+\begin_layout Subsubsection
+Free Cash Flow (FCF): Measuring the Cash Produced by the Business 
+\end_layout
+
+\begin_layout Subsubsection
+Using the Free Cash Flow (FCF) to Value the Firm and Its Equity 
+\end_layout
+
+\begin_layout Subsubsection
+Some Notes on the Valuation Procedure 
+\end_layout
+
+\begin_layout Subsubsection
+Alternative Modeling of Fixed Assets 
+\end_layout
+
+\begin_layout Subsubsection
+Sensitivity Analysis 
+\end_layout
+
+\begin_layout Subsubsection
+Debt as a Plug 
+\end_layout
+
+\begin_layout Subsubsection
+Incorporating a Target Debt/Equity Ratio into a Pro Forma 
+\end_layout
+
+\begin_layout Subsubsection
+Project Finance: Debt Repayment Schedules 
+\end_layout
+
+\begin_layout Subsubsection
+Calculating the Return on Equity 
+\end_layout
+
+\begin_layout Subsubsection
+Tax Loss Carryforwards 
+\end_layout
+
+\begin_layout Subsection
+Building a Pro Forma Model: The Case of Caterpillar 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+Caterpillar’s Financial Statements, 2007–2011 
+\end_layout
+
+\begin_layout Subsubsection
+Analyzing the Financial Statements 
+\end_layout
+
+\begin_layout Subsubsection
+A Model for Caterpillar 
+\end_layout
+
+\begin_layout Subsubsection
+Using the Model to Value Caterpillar 
+\end_layout
+
+\begin_layout Subsection
+Financial Analysis of Leasing 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+A Simple but Misleading Example 
+\end_layout
+
+\begin_layout Subsubsection
+Leasing and Firm Financing—The Equivalent-Loan Method 
+\end_layout
+
+\begin_layout Subsubsection
+The Lessor’s Problem: Calculating the Highest Acceptable Lease Rental 
+\end_layout
+
+\begin_layout Subsubsection
+Asset Residual Value and Other Considerations 
+\end_layout
+
+\begin_layout Subsubsection
+Leveraged Leasing 
+\end_layout
+
+\begin_layout Subsubsection
+A Leveraged Lease Example
+\end_layout
+
+\begin_layout Section
+Portfolio Models
+\end_layout
+
+\begin_layout Subsection
+Portfolio Models—Introduction
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+Computing Returns for Apple (AAPL) and Google (GOOG) 
+\end_layout
+
+\begin_layout Subsubsection
+Calculating Portfolio Means and Variances 
+\end_layout
+
+\begin_layout Subsubsection
+Portfolio Mean and Variance—Case of N Assets 
+\end_layout
+
+\begin_layout Subsubsection
+Envelope Portfolios 
+\end_layout
+
+\begin_layout Subsubsection
+Appendix 8.1: Adjusting for Dividends 
+\end_layout
+
+\begin_layout Subsubsection
+Appendix 8.2: Continuously Compounded Versus Geometric Returns 
+\end_layout
+
+\begin_layout Subsection
+Calculating Efficient Portfolios 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+Some Preliminary Definitions and Notation 
+\end_layout
+
+\begin_layout Subsubsection
+Five Propositions on Efficient Portfolios and the CAPM 
+\end_layout
+
+\begin_layout Subsubsection
+Calculating the Efficient Frontier: An Example 
+\end_layout
+
+\begin_layout Subsubsection
+Finding Efficient Portfolios in One Step 
+\end_layout
+
+\begin_layout Subsubsection
+Three Notes on the Optimization Procedure 
+\end_layout
+
+\begin_layout Subsubsection
+Finding the Market Portfolio: The Capital Market Line (CML) 
+\end_layout
+
+\begin_layout Subsubsection
+Testing the SML—Implementing Propositions 3–5 
+\end_layout
+
+\begin_layout Subsection
+Calculating the Variance-Covariance Matrix 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+Computing the Sample Variance-Covariance Matrix 
+\end_layout
+
+\begin_layout Subsubsection
+The Correlation Matrix 
+\end_layout
+
+\begin_layout Subsubsection
+Computing the Global Minimum Variance Portfolio (GMVP) 
+\end_layout
+
+\begin_layout Subsubsection
+Four Alternatives to the Sample Variance-Covariance Matrix 
+\end_layout
+
+\begin_layout Subsubsection
+Alternatives to the Sample Variance-Covariance: The Single-Index Model (SIM)
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Alternatives to the Sample Variance-Covariance: Constant Correlation
+\end_layout
+
+\begin_layout Subsubsection
+Alternatives to the Sample Variance-Covariance: Shrinkage Methods 
+\end_layout
+
+\begin_layout Subsubsection
+Using Option Information to Compute the Variance Matrix 
+\end_layout
+
+\begin_layout Subsubsection
+Which Method to Compute the Variance-Covariance Matrix? 
+\end_layout
+
+\begin_layout Subsection
+Estimating Betas and the Security Market Line 
+\end_layout
+
+\begin_layout Subsubsection
+Overview
+\end_layout
+
+\begin_layout Subsubsection
+Testing the SML 
+\end_layout
+
+\begin_layout Subsubsection
+Did We Learn Something? 
+\end_layout
+
+\begin_layout Subsubsection
+The Non-Efficiency of the “Market Portfolio” 
+\end_layout
+
+\begin_layout Subsubsection
+So What’s the Real Market Portfolio? How Can We Test the CAPM? 
+\end_layout
+
+\begin_layout Subsubsection
+Using Excess Returns 
+\end_layout
+
+\begin_layout Subsubsection
+Summary: Does the CAPM Have Any Uses? 
+\end_layout
+
+\begin_layout Subsection
+Efficient Portfolios Without Short Sales 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+A Numerical Example 
+\end_layout
+
+\begin_layout Subsubsection
+The Efficient Frontier with Short-Sale Restrictions 
+\end_layout
+
+\begin_layout Subsubsection
+A VBA Program for the Efficient Frontier Without Short Sales 
+\end_layout
+
+\begin_layout Subsubsection
+Other Position Restrictions 
+\end_layout
+
+\begin_layout Subsection
+The Black-Litterman Approach to Portfolio Optimization 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+A Naive Problem 
+\end_layout
+
+\begin_layout Subsubsection
+Black and Litterman’s Solution to the Optimization Problem 
+\end_layout
+
+\begin_layout Subsubsection
+BL Step 1: What Does the Market Think? 
+\end_layout
+
+\begin_layout Subsubsection
+BL Step 2: Introducing Opinions—What Does Joanna Think? 
+\end_layout
+
+\begin_layout Subsubsection
+Using Black-Litterman for International Asset Allocation
+\end_layout
+
+\begin_layout Subsection
+Event Studies 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+Outline of an Event Study 
+\end_layout
+
+\begin_layout Subsubsection
+An Initial Event Study: Procter & Gamble Buys Gillette 
+\end_layout
+
+\begin_layout Subsubsection
+A Fuller Event Study: Impact of Earnings Announcements on Stock Prices 
+\end_layout
+
+\begin_layout Subsubsection
+Using a Two-Factor Model of Returns for an Event Study 
+\end_layout
+
+\begin_layout Subsubsection
+Using Excel’s Offset Function to Locate a Regression in a Data Set 
+\end_layout
+
+\begin_layout Section
+VALUATION OF OPTIONS 
+\end_layout
+
+\begin_layout Subsection
+Introduction to Options 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+Basic Option Definitions and Terminology 
+\end_layout
+
+\begin_layout Subsubsection
+Some Examples 
+\end_layout
+
+\begin_layout Subsubsection
+Option Payoff and Profit Patterns 
+\end_layout
+
+\begin_layout Subsubsection
+Option Strategies: Payoffs from Portfolios of Options and Stocks 
+\end_layout
+
+\begin_layout Subsubsection
+Option Arbitrage Propositions 
+\end_layout
+
+\begin_layout Subsection
+The Binomial Option Pricing Model 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+Two-Date Binomial Pricing 
+\end_layout
+
+\begin_layout Subsubsection
+State Prices 
+\end_layout
+
+\begin_layout Subsubsection
+The Multi-Period Binomial Model 
+\end_layout
+
+\begin_layout Subsubsection
+Pricing American Options Using the Binomial Pricing Model 
+\end_layout
+
+\begin_layout Subsubsection
+Programming the Binomial Option Pricing Model in VBA
+\end_layout
+
+\begin_layout Subsubsection
+Convergence of Binomial Pricing to the Black-Scholes Price 
+\end_layout
+
+\begin_layout Subsubsection
+Using the Binomial Model to Price Employee Stock Options 
+\end_layout
+
+\begin_layout Subsubsection
+Using the Binomial Model to Price Non-Standard Options: An Example
+\end_layout
+
+\begin_layout Subsection
+The Black-Scholes Model 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+The Black-Scholes Model 
+\end_layout
+
+\begin_layout Subsubsection
+Using VBA to Define a Black-Scholes Pricing Function 
+\end_layout
+
+\begin_layout Subsubsection
+Calculating the Volatility 
+\end_layout
+
+\begin_layout Subsubsection
+A VBA Function to Find the Implied Volatility 
+\end_layout
+
+\begin_layout Subsubsection
+Dividend Adjustments to the Black-Scholes 
+\end_layout
+
+\begin_layout Subsubsection
+Using the Black-Scholes Formula to Price Structured Securities 
+\end_layout
+
+\begin_layout Subsubsection
+Bang for the Buck with Options 
+\end_layout
+
+\begin_layout Subsubsection
+The Black (1976) Model for Bond Option Valuation 
+\end_layout
+
+\begin_layout Subsection
+Option Greeks 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+Defining and Computing the Greeks 
+\end_layout
+
+\begin_layout Subsubsection
+Delta Hedging a Call 
+\end_layout
+
+\begin_layout Subsubsection
+Hedging a Collar 
+\end_layout
+
+\begin_layout Subsubsection
+Appendix: VBA for Greeks 
+\end_layout
+
+\begin_layout Subsection
+Real Options 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+A Simple Example of the Option to Expand 
+\end_layout
+
+\begin_layout Subsubsection
+The Abandonment Option 
+\end_layout
+
+\begin_layout Subsubsection
+Valuing the Abandonment Option as a Series of Puts 
+\end_layout
+
+\begin_layout Subsubsection
+Valuing a Biotechnology Project 
+\end_layout
+
+\begin_layout Section
+VALUING BONDS
+\end_layout
+
+\begin_layout Subsection
+Duration 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+Two Examples
+\end_layout
+
+\begin_layout Subsubsection
+What Does Duration Mean? 
+\end_layout
+
+\begin_layout Subsubsection
+Duration Patterns 
+\end_layout
+
+\begin_layout Subsubsection
+The Duration of a Bond with Uneven Payments 
+\end_layout
+
+\begin_layout Subsubsection
+Non-Flat Term Structures and Duration 
+\end_layout
+
+\begin_layout Subsection
+Immunization Strategies 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+A Basic Simple Model of Immunization 
+\end_layout
+
+\begin_layout Subsubsection
+A Numerical Example 
+\end_layout
+
+\begin_layout Subsubsection
+Convexity: A Continuation of Our Immunization Experiment 
+\end_layout
+
+\begin_layout Subsubsection
+Building a Better Mousetrap 
+\end_layout
+
+\begin_layout Subsection
+Modeling the Term Structure 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+Basic Example 
+\end_layout
+
+\begin_layout Subsubsection
+Several Bonds with the Same Maturity 
+\end_layout
+
+\begin_layout Subsubsection
+Fitting a Functional Form to the Term Structure 
+\end_layout
+
+\begin_layout Subsubsection
+The Properties of the Nelson-Siegel Term Structure 
+\end_layout
+
+\begin_layout Subsubsection
+Term Structure for Treasury Notes 
+\end_layout
+
+\begin_layout Subsubsection
+An Additional Computational Improvement 
+\end_layout
+
+\begin_layout Subsubsection
+Nelson-Siegel-Svensson Model
+\end_layout
+
+\begin_layout Subsubsection
+Appendix: VBA Functions Used in This Chapter 
+\end_layout
+
+\begin_layout Subsection
+Calculating Default-Adjusted Expected Bond Returns 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+Calculating the Expected Return in a One-Period Framework 
+\end_layout
+
+\begin_layout Subsubsection
+Calculating the Bond Expected Return in a Multi-Period Framework 
+\end_layout
+
+\begin_layout Subsubsection
+A Numerical Example 
+\end_layout
+
+\begin_layout Subsubsection
+Experimenting with the Example 
+\end_layout
+
+\begin_layout Subsubsection
+Computing the Bond Expected Return for an Actual Bond
+\end_layout
+
+\begin_layout Subsubsection
+Semiannual Transition Matrices 
+\end_layout
+
+\begin_layout Subsubsection
+Computing Bond Beta 
+\end_layout
+
+\begin_layout Section
+MONTE CARLO METHODS
+\end_layout
+
+\begin_layout Subsection
+Generating and Using Random Numbers 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+Rand( ) and Rnd: The Excel and VBA Random-Number Generators 
+\end_layout
+
+\begin_layout Subsubsection
+Testing Random-Number Generators 
+\end_layout
+
+\begin_layout Subsubsection
+Generating Normally Distributed Random Numbers 
+\end_layout
+
+\begin_layout Subsubsection
+Norm.Inv: Another Way to Generate Normal Deviates 
+\end_layout
+
+\begin_layout Subsubsection
+Generating Correlated Random Numbers 
+\end_layout
+
+\begin_layout Subsubsection
+What’s Our Interest in Correlation? A Small Case 
+\end_layout
+
+\begin_layout Subsubsection
+Multiple Random Variables with Correlation: The Cholesky Decomposition
+\end_layout
+
+\begin_layout Subsubsection
+Multivariate Normal with Non-Zero Means 
+\end_layout
+
+\begin_layout Subsubsection
+Multivariate Uniform Simulations 
+\end_layout
+
+\begin_layout Subsection
+An Introduction to Monte Carlo Methods 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+Computing π Using Monte Carlo
+\end_layout
+
+\begin_layout Subsubsection
+Writing a VBA Program
+\end_layout
+
+\begin_layout Subsubsection
+Another Monte Carlo Problem: Investment and Retirement 
+\end_layout
+
+\begin_layout Subsubsection
+A Monte Carlo Simulation of the Investment Problem 
+\end_layout
+
+\begin_layout Subsection
+Simulating Stock Prices 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+What Do Stock Prices Look Like? 
+\end_layout
+
+\begin_layout Subsubsection
+Lognormal Price Distributions and Geometric Diffusions
+\end_layout
+
+\begin_layout Subsubsection
+What Does the Lognormal Distribution Look Like?
+\end_layout
+
+\begin_layout Subsubsection
+Simulating Lognormal Price Paths 
+\end_layout
+
+\begin_layout Subsubsection
+Technical Analysis 
+\end_layout
+
+\begin_layout Subsubsection
+Calculating the Parameters of the Lognormal Distribution from Stock Prices
+ 
+\end_layout
+
+\begin_layout Subsection
+Monte Carlo Simulations for Investments 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+Simulating Price and Returns for a Single Stock 
+\end_layout
+
+\begin_layout Subsubsection
+Portfolio of Two Stocks 
+\end_layout
+
+\begin_layout Subsubsection
+Adding a Risk-Free Asset 
+\end_layout
+
+\begin_layout Subsubsection
+Multiple Stock Portfolios 
+\end_layout
+
+\begin_layout Subsubsection
+Simulating Savings for Pensions 
+\end_layout
+
+\begin_layout Subsubsection
+Beta and Return 
+\end_layout
+
+\begin_layout Subsection
+Value at Risk (VaR) 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+A Really Simple Example 
+\end_layout
+
+\begin_layout Subsubsection
+Defining Quantiles in Excel 
+\end_layout
+
+\begin_layout Subsubsection
+A Three-Asset Problem: The Importance of the Variance-Covariance Matrix
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Simulating Data: Bootstrapping 
+\end_layout
+
+\begin_layout Subsubsection
+Appendix: How to Bootstrap: Making a Bingo Card in Excel 
+\end_layout
+
+\begin_layout Subsection
+Simulating Options and Option Strategies 
+\end_layout
+
+\begin_layout Subsubsection
+Overview
+\end_layout
+
+\begin_layout Subsubsection
+Imperfect but Cashless Replication of a Call Option 
+\end_layout
+
+\begin_layout Subsubsection
+Simulating Portfolio Insurance 
+\end_layout
+
+\begin_layout Subsubsection
+Some Properties of Portfolio Insurance 
+\end_layout
+
+\begin_layout Subsubsection
+Digression: Insuring Total Portfolio Returns 
+\end_layout
+
+\begin_layout Subsubsection
+Simulating a Butterfly
+\end_layout
+
+\begin_layout Subsection
+30 Using Monte Carlo Methods for Option Pricing 
+\end_layout
+
+\begin_layout Subsubsection
+Overview 
+\end_layout
+
+\begin_layout Subsubsection
+Pricing a Plain-Vanilla Call Using Monte Carlo Methods 
+\end_layout
+
+\begin_layout Subsubsection
+State Prices, Probabilities, and Risk Neutrality 
+\end_layout
+
+\begin_layout Subsubsection
+Pricing a Call Using the Binomial Monte Carlo Model 
+\end_layout
+
+\begin_layout Subsubsection
+Monte Carlo Plain-Vanilla Call Pricing Converges to Black-Scholes 
+\end_layout
+
+\begin_layout Subsubsection
+Pricing Asian Options 
+\end_layout
+
+\begin_layout Subsubsection
+Pricing Asian Options with a VBA Program 
+\end_layout
+
+\begin_layout Subsubsection
+Pricing Barrier Options with Monte Carlo 
+\end_layout
+
+\begin_layout Subsubsection
+Using VBA and Monte Carlo to Price a Barrier Option
+\end_layout
+
+\begin_layout Section
+Excel techniques
+\end_layout
+
+\begin_layout Section
+Visual Basic for Applications(VBA)
+\end_layout
+
+\begin_layout Chapter
+Modern Portfolio Theory and Investment Analysis
 \end_layout
 
 \end_body
