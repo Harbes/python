@@ -119,6 +119,34 @@ LatexCommand tableofcontents
 \end_layout
 
 \begin_layout Section
+理想的论文与现实的投资
+\end_layout
+
+\begin_layout Itemize
+显著的因子并不一定真能带来显著地收益：
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+actual transactions costs, fees, and price impact
+\end_layout
+
+\begin_layout Enumerate
+potential data-mining biases
+\end_layout
+
+\begin_layout Enumerate
+Changing market conditions, including time-varying arbitrage activity, make
+ it difficult to extrapolate future performance.
+\end_layout
+
+\begin_layout Enumerate
+many anomalies are not scalable and cannot be implemented in large position
+ sizes
+\end_layout
+
+\end_deeper
+\begin_layout Section
 beta
 \end_layout
 
