@@ -19,8 +19,8 @@
 \language_package default
 \inputencoding utf8-plain
 \fontencoding global
-\font_roman "default" "Xingkai SC"
-\font_sans "default" "Xingkai SC"
+\font_roman "default" "Songti SC"
+\font_sans "default" "STFangsong"
 \font_typewriter "default" "Songti SC"
 \font_math "auto" "auto"
 \font_default_family default
@@ -95,37 +95,22 @@
 
 \begin_body
 
-\begin_layout Itemize
-鸟宿池边树，僧推月下门 Birds dwell in a tree by the pond.
- A monk knocks at the door under moon.
+\begin_layout Title
+书籍目录集合
 \end_layout
 
-\begin_layout Itemize
-皓月当空。 The moon shines brightly.
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
 \end_layout
 
-\begin_layout Itemize
-凉风起天末 A cool breeze sprang up in the sky。
-\end_layout
-
-\begin_layout Itemize
-日出于东而落于西 The sun rises in the east and sets in the west。
-\end_layout
-
-\begin_layout Itemize
-到了春天美丽的花朵开遍原野 In spring beautiful flowers bloom in the open country。
-\end_layout
-
-\begin_layout Itemize
-我对他的贵重的援助非常感谢。I am deeply indebted to him for his valuable assistance。
-\end_layout
-
-\begin_layout Itemize
-I have many acquaintances in Singapore
-\end_layout
-
-\begin_layout Itemize
-I made his acquaintance long ago
+\begin_layout Chapter
+The Efficient Market Theory and Evidence: Implications for Active Investment
+ Management
 \end_layout
 
 \end_body
