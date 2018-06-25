@@ -1765,5 +1765,522 @@ APPENDIX A Investigating Alternative Momentum Concepts 155
 APPENDIX B Performance Statistics Definitions 175
 \end_layout
 
+\begin_layout Chapter
+A
+\end_layout
+
+\begin_layout Section
+Chapter 1 Theoretical Framework of Finance 38
+\end_layout
+
+\begin_layout Section
+Chapter 2 Investment, Dividend, Financing, and Production Policies: Theory
+ and Implications 58 
+\end_layout
+
+\begin_layout Section
+Chapter 3 Research Methods in Quantitative Finance and Risk Management 76
+\end_layout
+
+\begin_layout Section
+Chapter 4 Foundation of Portfolio Theory 86
+\end_layout
+
+\begin_layout Section
+Chapter 5 Risk-Aversion, Capital Asset Allocation, and Markowitz Portfolio-Selec
+tion Model 102
+\end_layout
+
+\begin_layout Section
+Chapter 6 Capital Asset Pricing Model and Beta Forecasting 126 
+\end_layout
+
+\begin_layout Section
+Chapter 7 Index Models for Portfolio Selection 143 
+\end_layout
+
+\begin_layout Section
+Chapter 8 Performance-Measure Approaches for Selecting Optimum Portfolios
+ 157 
+\end_layout
+
+\begin_layout Section
+Chapter 9 The Creation and Control of Speculative Bubbles in a Laboratory
+ Setting 168 
+\end_layout
+
+\begin_layout Section
+Chapter 10 Portfolio Optimization Models and Mean–Variance Spanning Tests
+ 196 
+\end_layout
+
+\begin_layout Section
+Chapter 11 Combining Fundamental Measures for Stock Selection 216 
+\end_layout
+
+\begin_layout Section
+Chapter 12 On Estimation Risk and Power Utility Portfolio Selection 234
+ 
+\end_layout
+
+\begin_layout Section
+Chapter 13 International Portfolio Management: Theory and Method 251 
+\end_layout
+
+\begin_layout Section
+Chapter 14 The Le Chatelier Principle in the Markowitz Quadratic Programming
+ Investment Model: A Case of World Equity Fund Market 265 
+\end_layout
+
+\begin_layout Section
+Chapter 15 Risk-Averse Portfolio Optimization via Stochastic Dominance Constrain
+ts 276 
+\end_layout
+
+\begin_layout Section
+Chapter 16 Portfolio Analysis 288 
+\end_layout
+
+\begin_layout Section
+Chapter 17 Portfolio Theory, CAPM and Performance Measures 296 
+\end_layout
+
+\begin_layout Section
+Chapter 18 Intertemporal Equilibrium Models, Portfolio Theory and the Capital
+ Asset Pricing Model 311 
+\end_layout
+
+\begin_layout Section
+Chapter 19 Persistence, Predictability, and Portfolio Planning 316 
+\end_layout
+
+\begin_layout Section
+Chapter 20 Portfolio Insurance Strategies: Review of Theory and Empirical
+ Studies 346 
+\end_layout
+
+\begin_layout Section
+Chapter 21 Security Market Microstructure: The Analysis of a Non-Frictionless
+ Market 360 
+\end_layout
+
+\begin_layout Section
+Chapter 22 Options Strategies and Their Applications 380 
+\end_layout
+
+\begin_layout Section
+Chapter 23 Option Pricing Theory and Firm Valuation 401 
+\end_layout
+
+\begin_layout Section
+Chapter 24 Applications of the Binomial Distribution to Evaluate Call Options
+ 417 
+\end_layout
+
+\begin_layout Section
+Chapter 25 Multinomial Option Pricing Model 423 
+\end_layout
+
+\begin_layout Section
+Chapter 26 Two Alternative Binomial Option Pricing Model Approaches to Derive
+ Black-Scholes Option Pricing Model 433 
+\end_layout
+
+\begin_layout Section
+Chapter 27 Normal, Lognormal Distribution and Option Pricing Model 444 
+\end_layout
+
+\begin_layout Section
+Chapter 28 Bivariate Option Pricing Models 452 
+\end_layout
+
+\begin_layout Section
+Chapter 29 Displaced Log Normal and Lognormal American Option Pricing: AComparis
+on 462 
+\end_layout
+
+\begin_layout Section
+Chapter 30 Itô’s Calculus and the Derivation of the Black–Scholes Option-Pricing
+ Model 470 
+\end_layout
+
+\begin_layout Section
+Chapter 31 Constant Elasticity of Variance Option Pricing Model: Integration
+ and Detailed Derivation 494 
+\end_layout
+
+\begin_layout Section
+Chapter 32 Stochastic Volatility Option Pricing Models 504 
+\end_layout
+
+\begin_layout Section
+Chapter 33 Derivations and Applications of Greek Letters: Review and Integration
+ 514 
+\end_layout
+
+\begin_layout Section
+Chapter 34 A Further Analysis of the Convergence Rates and Patterns of the
+ Binomial Models 527 
+\end_layout
+
+\begin_layout Section
+Chapter 35 Estimating Implied Probabilities from Option Prices and the Underlyin
+g 536 
+\end_layout
+
+\begin_layout Section
+Chapter 36 Are Tails Fat Enough to Explain Smile 551 
+\end_layout
+
+\begin_layout Section
+Chapter 37 Option Pricing and Hedging Performance Under Stochastic Volatility
+ and Stochastic Interest Rates 566 
+\end_layout
+
+\begin_layout Section
+Chapter 38 Application of the Characteristic Function in Financial Research
+ 594 
+\end_layout
+
+\begin_layout Section
+Chapter 39 Asian Options 601 
+\end_layout
+
+\begin_layout Section
+Chapter 40 Numerical Valuation of Asian Options with Higher Moments in the
+ Underlying Distribution 605 
+\end_layout
+
+\begin_layout Section
+Chapter 41 The Valuation of Uncertain Income Streams and the Pricing of
+ Options* 622 
+\end_layout
+
+\begin_layout Section
+Chapter 42 Binomial OPM, Black-Scholes OPM and Their Relationship: Decision
+ Tree and Microsoft Excel Approach 634 
+\end_layout
+
+\begin_layout Section
+Chapter 43 Combinatorial Methods for Constructing Credit Risk Ratings 654
+ 
+\end_layout
+
+\begin_layout Section
+Chapter 44 The Structural Approach to Modeling Credit Risk 680 
+\end_layout
+
+\begin_layout Section
+Chapter 45 An Empirical Investigation of the Rationales for Integrated Risk-Mana
+gement Behavior 689 
+\end_layout
+
+\begin_layout Section
+Chapter 46 Copula, Correlated Defaults, and Credit VaR 710 
+\end_layout
+
+\begin_layout Section
+Chapter 47 Unspanned Stochastic Volatilities and Interest Rate Derivatives
+ Pricing 725 
+\end_layout
+
+\begin_layout Section
+Chapter 48 Catastrophic Losses and Alternative Risk Transfer Instruments
+ 764 
+\end_layout
+
+\begin_layout Section
+Chapter 49 A Real Option Approach to the Comprehensive Analysis of Bank
+ Consolidation Values 778 
+\end_layout
+
+\begin_layout Section
+Chapter 50 Dynamic Econometric Loss Model: A Default Study of US Subprime
+ Markets 790 
+\end_layout
+
+\begin_layout Section
+Chapter 51 The Effect of Default Risk on Equity Liquidity: Evidence Based
+ on the Panel Threshold Model 817 
+\end_layout
+
+\begin_layout Section
+Chapter 52 Put Option Approach to Determine Bank Risk Premium 829 
+\end_layout
+
+\begin_layout Section
+Chapter 53 Keiretsu Style Main Bank Relationships, R&D Investment, Leverage,
+ and Firm Value: Quantile Regression Approach 838 
+\end_layout
+
+\begin_layout Section
+Chapter 54 On the Feasibility of Laddering 851 
+\end_layout
+
+\begin_layout Section
+Chapter 55 Stock Returns, Extreme Values, and Conditional Skewed Distribution
+ 860 
+\end_layout
+
+\begin_layout Section
+Chapter 56 Capital Structure in Asia and CEO Entrenchment 870 
+\end_layout
+
+\begin_layout Section
+Chapter 57 A Generalized Model for Optimum Futures Hedge Ratio 880 
+\end_layout
+
+\begin_layout Section
+Chapter 58 The Sensitivity of Corporate Bond Volatility to Macroeconomic
+ Announcements 890 
+\end_layout
+
+\begin_layout Section
+Chapter 59 Raw Material Convenience Yields and Business Cycle 921 
+\end_layout
+
+\begin_layout Section
+Chapter 60 Alternative Methods to Determine Optimal Capital Structure: Theory
+ and Application 938 
+\end_layout
+
+\begin_layout Section
+Chapter 61 Actuarial Mathematics and Its Applications in Quantitative Finance
+ 957 
+\end_layout
+
+\begin_layout Section
+Chapter 62 The Prediction of Default with Outliers: Robust Logistic Regression
+ 968 
+\end_layout
+
+\begin_layout Section
+Chapter 63 Term Structure of Default-Free and Defaultable Securities: Theory
+ and Empirical Evidence 981 
+\end_layout
+
+\begin_layout Section
+Chapter 64 Liquidity Risk and Arbitrage Pricing Theory 1008 
+\end_layout
+
+\begin_layout Section
+Chapter 65 An Integrated Model of Debt Issuance, Refunding, and Maturity
+ 1026 
+\end_layout
+
+\begin_layout Section
+Chapter 66 Business Models: Applications to Capital Budgeting, Equity Value,
+ and Return Attribution 1040 
+\end_layout
+
+\begin_layout Section
+Chapter 67 Dividends Versus Reinvestments in Continuous Time: A More General
+ Model 1054 
+\end_layout
+
+\begin_layout Section
+Chapter 68 Segmenting Financial Services Market: An Empirical Study of Statistic
+al and Non-parametric Methods 1060 
+\end_layout
+
+\begin_layout Section
+Chapter 69 Spurious Regression and Data Mining in Conditional Asset Pricing
+ Models 1066 
+\end_layout
+
+\begin_layout Section
+Chapter 70 Issues Related to the Errors-in-Variables Problems in Asset Pricing
+ Tests 1090 
+\end_layout
+
+\begin_layout Section
+Chapter 71 McMC Estimation of Multiscale Stochastic Volatility Models 1108
+ 
+\end_layout
+
+\begin_layout Section
+Chapter 72 Regime Shifts and the Term Structure of Interest Rates 1120 
+\end_layout
+
+\begin_layout Section
+Chapter 73 ARM Processes and Their Modeling and Forecasting Methodology
+ 1134 
+\end_layout
+
+\begin_layout Section
+Chapter 74 Alternative Econometric Methods for Information-based Equity-selling
+ Mechanisms 1149 
+\end_layout
+
+\begin_layout Section
+Chapter 75 Implementation Problems and Solutions in Stochastic Volatility
+ Models of the Heston Type 1162 
+\end_layout
+
+\begin_layout Section
+Chapter 76 Revisiting Volume vs.
+ GARCH Effects Using Univariate and Bivariate GARCH Models: Evidence from
+ U.S.
+ Stock Markets 1169 
+\end_layout
+
+\begin_layout Section
+Chapter 77 Application of Fuzzy Set Theory to Finance Research: Method and
+ Application 1178 
+\end_layout
+
+\begin_layout Section
+Chapter 78 Hedonic Regression Analysis in Real Estate Markets: A Primer
+ 1195 
+\end_layout
+
+\begin_layout Section
+Chapter 79 Numerical Solutions of Financial Partial Differential Equations
+ 1202 
+\end_layout
+
+\begin_layout Section
+Chapter 80 A Primer on the Implicit Financing Assumptions of Traditional
+ Capital Budgeting Approaches 1215 
+\end_layout
+
+\begin_layout Section
+Chapter 81 Determinants of Flows into U.S.-Based International Mutual Funds
+ 1226 
+\end_layout
+
+\begin_layout Section
+Chapter 82 Predicting Bond Yields Using Defensive Forecasting 1247 
+\end_layout
+
+\begin_layout Section
+Chapter 83 Range Volatility Models and Their Applications in Finance 1263
+ 
+\end_layout
+
+\begin_layout Section
+Chapter 84 Examining the Impact of the U.S.
+ IT Stock Market on Other IT Stock Markets 1272 
+\end_layout
+
+\begin_layout Section
+Chapter 85 Application of Alternative ODE in Finance and Economics Research
+ 1281 
+\end_layout
+
+\begin_layout Section
+Chapter 86 Application of Simultaneous Equation in Finance Research 1289
+ 
+\end_layout
+
+\begin_layout Section
+Chapter 87 The Fuzzy Set and Data Mining Applications in Accounting and
+ Finance 1295 
+\end_layout
+
+\begin_layout Section
+Chapter 88 Forecasting S&P 100 Volatility: The Incremental Information Content
+ of Implied Volatilities and High-Frequency Index Returns 1320 
+\end_layout
+
+\begin_layout Section
+Chapter 89 Detecting Structural Instability in Financial Time Series 1332
+ 
+\end_layout
+
+\begin_layout Section
+Chapter 90 The Instrument Variable Approach to Correct for Endogeneity in
+ Finance 1343 
+\end_layout
+
+\begin_layout Section
+Chapter 91 Bayesian Inference of Financial Models Using MCMC Algorithms
+ 1356 
+\end_layout
+
+\begin_layout Section
+Chapter 92 On Capital Structure and Entry Deterrence 1366 
+\end_layout
+
+\begin_layout Section
+Chapter 93 VAR Models: Estimation, Inferences, and Applications 1375 
+\end_layout
+
+\begin_layout Section
+Chapter 94 Signaling Models and Product Market Games in Finance: Do We Know
+ What We Know?* 1383 
+\end_layout
+
+\begin_layout Section
+Chapter 95 Estimation of Shortand Long-Term VaR for Long-Memory Stochastic
+ Volatility Models 1393 
+\end_layout
+
+\begin_layout Section
+Chapter 96 Time Series Modeling and Forecasting of the Volatilities of Asset
+ Returns 1400 
+\end_layout
+
+\begin_layout Section
+Chapter 97 Listing Effects and the Private Company Discount in Bank Acquisitions
+ 1410 
+\end_layout
+
+\begin_layout Section
+Chapter 98 An ODE Approach for the Expected Discounted Penalty at Ruin in
+ Jump Diffusion Model (Reprint)* 1427 
+\end_layout
+
+\begin_layout Section
+Chapter 99 Alternative Models for Estimating the Cost of Equity Capital
+ for Property/Casualty Insurers* 1447 
+\end_layout
+
+\begin_layout Section
+Chapter 100 Implementing a Multifactor Term Structure Model 1465 
+\end_layout
+
+\begin_layout Section
+Chapter 101 Taking Positive Interest Rates Seriously* 1471 
+\end_layout
+
+\begin_layout Section
+Chapter 102 Positive Interest Rates and Yields: Additional Serious Consideration
+s* 1485 
+\end_layout
+
+\begin_layout Section
+Chapter 103 Functional Forms for Performance Evaluation: Evidence from Closed-En
+d Country Funds* 1505 
+\end_layout
+
+\begin_layout Section
+Chapter 104 A Semimartingale BSDE Related to the Minimal Entropy Martingale
+ Measure* 1536 
+\end_layout
+
+\begin_layout Section
+Chapter 105 The Density Process of the Minimal Entropy Martingale Measure
+ in a Stochastic Volatility Model with Jumps (Reprint)* 1547 
+\end_layout
+
+\begin_layout Section
+Chapter 106 Arbitrage Detection from Stock Data: An Empirical Study 1556
+ 
+\end_layout
+
+\begin_layout Section
+Chapter 107 Detecting Corporate Failure 1571 
+\end_layout
+
+\begin_layout Section
+Chapter 108 Genetic Programming for Option Pricing 1585 
+\end_layout
+
+\begin_layout Section
+Chapter 109 A Constant Elasticity of Variance (CEV) Family of Stock Price
+ Distributions in Option Pricing, Review, and Integration 1593 
+\end_layout
+
 \end_body
 \end_document
