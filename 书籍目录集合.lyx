@@ -1766,7 +1766,7 @@ APPENDIX B Performance Statistics Definitions 175
 \end_layout
 
 \begin_layout Chapter
-A
+Handbook of Quantitative Finance and Risk Management
 \end_layout
 
 \begin_layout Section
@@ -2280,6 +2280,1401 @@ Chapter 108 Genetic Programming for Option Pricing 1585
 \begin_layout Section
 Chapter 109 A Constant Elasticity of Variance (CEV) Family of Stock Price
  Distributions in Option Pricing, Review, and Integration 1593 
+\end_layout
+
+\begin_layout Chapter
+Asset pricing and portfolio choice theory
+\end_layout
+
+\begin_layout Section*
+PARTONE Single-PeriodModels
+\end_layout
+
+\begin_layout Section
+Utility and Risk Aversion 
+\end_layout
+
+\begin_layout Subsection
+Utility Functions and Risk Aversion 
+\end_layout
+
+\begin_layout Subsection
+Certainty Equivalents and Second-Order Risk Aversion 
+\end_layout
+
+\begin_layout Subsection
+Linear Risk Tolerance 
+\end_layout
+
+\begin_layout Subsection
+Utility and Wealth Moments 
+\end_layout
+
+\begin_layout Subsection
+Risk Aversion for Increments to Random Wealth 
+\end_layout
+
+\begin_layout Subsection
+Notes and References 
+\end_layout
+
+\begin_layout Section
+PortfolioChoice 
+\end_layout
+
+\begin_layout Subsection
+First-OrderCondition 
+\end_layout
+
+\begin_layout Subsection
+Single Risky Asset 
+\end_layout
+
+\begin_layout Subsection
+Multiple Risky Assets 
+\end_layout
+
+\begin_layout Subsection
+CARA-Normal Model 
+\end_layout
+
+\begin_layout Subsection
+Mean-VariancePreferences 
+\end_layout
+
+\begin_layout Subsection
+Linear Risk Tolerance and Wealth Expansion Paths 
+\end_layout
+
+\begin_layout Subsection
+Beginning-of-PeriodConsumption 
+\end_layout
+
+\begin_layout Subsection
+Notes and References 
+\end_layout
+
+\begin_layout Section
+Stochastic Discount Factors 
+\end_layout
+
+\begin_layout Subsection
+Basic Relationships Regarding SDFs 
+\end_layout
+
+\begin_layout Subsection
+Arbitrage, the Law of One Price, and Existence of SDFs 
+\end_layout
+
+\begin_layout Subsection
+Complete Markets and Uniqueness of the SDF 
+\end_layout
+
+\begin_layout Subsection
+Risk-Neutral Probabilities 
+\end_layout
+
+\begin_layout Subsection
+Orthogonal Projections of SDFs onto the Asset Span 
+\end_layout
+
+\begin_layout Subsection
+Hansen-Jagannathan Bounds 
+\end_layout
+
+\begin_layout Subsection
+Hedging and Optimal Portfolios with Quadratic Utility 
+\end_layout
+
+\begin_layout Subsection
+Hilbert Spaces and Gram-Schmidt Orthogonalization 
+\end_layout
+
+\begin_layout Subsection
+Notes and References
+\end_layout
+
+\begin_layout Section
+Equilibrium and Efficiency 
+\end_layout
+
+\begin_layout Subsection
+Pareto Optima 
+\end_layout
+
+\begin_layout Subsection
+Competitive Equilibria 
+\end_layout
+
+\begin_layout Subsection
+CompleteMarkets 
+\end_layout
+
+\begin_layout Subsection
+Aggregation and Efficiency with Linear Risk Tolerance 
+\end_layout
+
+\begin_layout Subsection
+Beginning-of-PeriodConsumption 
+\end_layout
+
+\begin_layout Subsection
+Notes and References 
+\end_layout
+
+\begin_layout Section
+Mean-Variance Analysis 
+\end_layout
+
+\begin_layout Subsection
+GraphicalAnalysis
+\end_layout
+
+\begin_layout Subsection
+Mean-Variance Frontier of Risky Assets
+\end_layout
+
+\begin_layout Subsection
+Mean-Variance Frontier with a Risk-Free Asset 
+\end_layout
+
+\begin_layout Subsection
+Orthogonal Projections and Frontier Returns 
+\end_layout
+
+\begin_layout Subsection
+Frontier Returns and Stochastic Discount Factors 
+\end_layout
+
+\begin_layout Subsection
+Separating Distributions 
+\end_layout
+
+\begin_layout Subsection
+Notes and References 
+\end_layout
+
+\begin_layout Section
+Factor Models 
+\end_layout
+
+\begin_layout Subsection
+Capital Asset Pricing Model 
+\end_layout
+
+\begin_layout Subsection
+General Factor Models 
+\end_layout
+
+\begin_layout Subsection
+Jensen’s Alpha and Performance Evaluation 
+\end_layout
+
+\begin_layout Subsection
+StatisticalFactors 
+\end_layout
+
+\begin_layout Subsection
+Arbitrage Pricing Theory 
+\end_layout
+
+\begin_layout Subsection
+Empirical Performance of Popular Models 
+\end_layout
+
+\begin_layout Subsection
+Notes and References 
+\end_layout
+
+\begin_layout Section
+Representative Investors 
+\end_layout
+
+\begin_layout Subsection
+Pareto Optimality Implies a Representative Investor 
+\end_layout
+
+\begin_layout Subsection
+Linear Risk Tolerance 
+\end_layout
+
+\begin_layout Subsection
+Consumption-Based Asset Pricing 
+\end_layout
+
+\begin_layout Subsection
+Coskewness-Cokurtosis Pricing Model 
+\end_layout
+
+\begin_layout Subsection
+Rubinstein Option Pricing Model 
+\end_layout
+
+\begin_layout Subsection
+Notes and References 
+\end_layout
+
+\begin_layout Section*
+PART TWO Dynamic Models 
+\end_layout
+
+\begin_layout Section
+Dynamic Securities Markets 
+\end_layout
+
+\begin_layout Subsection
+Portfolio Choice Model 
+\end_layout
+
+\begin_layout Subsection
+Stochastic Discount Factor Processes 
+\end_layout
+
+\begin_layout Subsection
+Arbitrage and the Law of One Price 
+\end_layout
+
+\begin_layout Subsection
+Complete Markets 
+\end_layout
+
+\begin_layout Subsection
+Bubbles, Transversality Conditions, and Ponzi Schemes 
+\end_layout
+
+\begin_layout Subsection
+Inflation and Foreign Exchange 
+\end_layout
+
+\begin_layout Subsection
+Notes and References 
+\end_layout
+
+\begin_layout Section
+Dynamic Portfolio Choice 
+\end_layout
+
+\begin_layout Subsection
+Euler Equation
+\end_layout
+
+\begin_layout Subsection
+Static Approach in Complete Markets 
+\end_layout
+
+\begin_layout Subsection
+Orthogonal Projections for Quadratic Utility
+\end_layout
+
+\begin_layout Subsection
+Introduction to Dynamic Programming 
+\end_layout
+
+\begin_layout Subsection
+Dynamic Programming for Portfolio Choice 
+\end_layout
+
+\begin_layout Subsection
+CRRA Utility with IID Returns 
+\end_layout
+
+\begin_layout Subsection
+Notes and References 
+\end_layout
+
+\begin_layout Section
+Dynamic Asset Pricing 
+\end_layout
+
+\begin_layout Subsection
+CAPM, CCAPM, and ICAPM
+\end_layout
+
+\begin_layout Subsection
+Testing Conditional Models 
+\end_layout
+
+\begin_layout Subsection
+Competitive Equilibria 
+\end_layout
+
+\begin_layout Subsection
+Gordon Model and Representative Investors 
+\end_layout
+
+\begin_layout Subsection
+Campbell-Shiller Linearization
+\end_layout
+
+\begin_layout Subsection
+Risk-NeutralProbabilities 
+\end_layout
+
+\begin_layout Subsection
+Notes and References 
+\end_layout
+
+\begin_layout Section
+Explaining Puzzles
+\end_layout
+
+\begin_layout Subsection
+External Habits 
+\end_layout
+
+\begin_layout Subsection
+Rare Disasters 
+\end_layout
+
+\begin_layout Subsection
+Epstein-Zin-Weil Utility 
+\end_layout
+
+\begin_layout Subsection
+Long-Run Risks 
+\end_layout
+
+\begin_layout Subsection
+Uninsurable Labor Income Risk 
+\end_layout
+
+\begin_layout Subsection
+Notes and References 
+\end_layout
+
+\begin_layout Section
+Brownian Motion and Stochastic Calculus 
+\end_layout
+
+\begin_layout Subsection
+Brownian Motion 
+\end_layout
+
+\begin_layout Subsection
+Itô Integral and Itô Processes 
+\end_layout
+
+\begin_layout Subsection
+Martingale Representation 
+\end_layout
+
+\begin_layout Subsection
+Itô’s Formula 
+\end_layout
+
+\begin_layout Subsection
+Geometric Brownian Motion 
+\end_layout
+
+\begin_layout Subsection
+Covariation of Itô Processes and General Itô’s Formula 
+\end_layout
+
+\begin_layout Subsection
+Conditional Variances and Covariances 
+\end_layout
+
+\begin_layout Subsection
+Transformations of Models 
+\end_layout
+
+\begin_layout Subsection
+Notes and References 
+\end_layout
+
+\begin_layout Section
+Continuous-Time Markets 
+\end_layout
+
+\begin_layout Subsection
+Asset Price Dynamics 
+\end_layout
+
+\begin_layout Subsection
+Intertemporal Budget Constraint
+\end_layout
+
+\begin_layout Subsection
+Stochastic Discount Factor Processes 
+\end_layout
+
+\begin_layout Subsection
+Valuation via SDF Processes 
+\end_layout
+
+\begin_layout Subsection
+Complete Markets 
+\end_layout
+
+\begin_layout Subsection
+Markovian Model 
+\end_layout
+
+\begin_layout Subsection
+Real and Nominal SDFs and Interest Rates 
+\end_layout
+
+\begin_layout Subsection
+Notes and References 
+\end_layout
+
+\begin_layout Section
+Continuous-Time Portfolio Choice and Pricing 
+\end_layout
+
+\begin_layout Subsection
+Euler Equation 
+\end_layout
+
+\begin_layout Subsection
+Representative Investor Pricing 
+\end_layout
+
+\begin_layout Subsection
+Static Approach to Portfolio Choice 
+\end_layout
+
+\begin_layout Subsection
+Introduction to Dynamic Programming 
+\end_layout
+
+\begin_layout Subsection
+Markovian Portfolio Choice 
+\end_layout
+
+\begin_layout Subsection
+CCAPM, ICAPM, and CAPM 
+\end_layout
+
+\begin_layout Subsection
+Notes and References 
+\end_layout
+
+\begin_layout Section
+Continuous-Time Topics 
+\end_layout
+
+\begin_layout Subsection
+Fundamental Partial Differential Equation
+\end_layout
+
+\begin_layout Subsection
+Fundamental PDE and Optimal Portfolio 
+\end_layout
+
+\begin_layout Subsection
+Risk-Neutral Probabilities 
+\end_layout
+
+\begin_layout Subsection
+Jump Risks 
+\end_layout
+
+\begin_layout Subsection
+Internal Habits 
+\end_layout
+
+\begin_layout Subsection
+Verification Theorem 
+\end_layout
+
+\begin_layout Subsection
+Notes and References 
+\end_layout
+
+\begin_layout Section*
+PART THREE DerivativeSecurities
+\end_layout
+
+\begin_layout Section
+Option Pricing 
+\end_layout
+
+\begin_layout Subsection
+Uses of Options and Put-Call Parity 
+\end_layout
+
+\begin_layout Subsection
+“No Arbitrage” Assumptions 
+\end_layout
+
+\begin_layout Subsection
+Changing Probabilities 
+\end_layout
+
+\begin_layout Subsection
+Black-Scholes Formula
+\end_layout
+
+\begin_layout Subsection
+Fundamental Partial Differential Equation 
+\end_layout
+
+\begin_layout Subsection
+Delta Hedging and Greeks 
+\end_layout
+
+\begin_layout Subsection
+American Options and Smooth Pasting 
+\end_layout
+
+\begin_layout Subsection
+Dividends 
+\end_layout
+
+\begin_layout Subsection
+Notes and References 
+\end_layout
+
+\begin_layout Section
+Forwards, Futures, and More Option Pricing 
+\end_layout
+
+\begin_layout Subsection
+Forward Measures 
+\end_layout
+
+\begin_layout Subsection
+Forwards and Futures 
+\end_layout
+
+\begin_layout Subsection
+Margrabe, Black, and Merton Formulas
+\end_layout
+
+\begin_layout Subsection
+Implied and Local Volatilities 
+\end_layout
+
+\begin_layout Subsection
+StochasticVolatility 
+\end_layout
+
+\begin_layout Subsection
+Notes and References 
+\end_layout
+
+\begin_layout Section
+Term Structure Models 
+\end_layout
+
+\begin_layout Subsection
+Forward Rates 
+\end_layout
+
+\begin_layout Subsection
+Factor Models and the Fundamental PDE 
+\end_layout
+
+\begin_layout Subsection
+Affine Models 
+\end_layout
+
+\begin_layout Subsection
+Quadratic Models 
+\end_layout
+
+\begin_layout Subsection
+Expectations Hypotheses 
+\end_layout
+
+\begin_layout Subsection
+Fitting the Yield Curve and HJM Models 
+\end_layout
+
+\begin_layout Subsection
+Notes and References 
+\end_layout
+
+\begin_layout Section
+Perpetual Options and the Leland Model 
+\end_layout
+
+\begin_layout Subsection
+Perpetual Options 
+\end_layout
+
+\begin_layout Subsection
+More Time-Independent Derivatives 
+\end_layout
+
+\begin_layout Subsection
+Perpetual Debt with Endogenous Default 
+\end_layout
+
+\begin_layout Subsection
+Optimal Static Capital Structure 
+\end_layout
+
+\begin_layout Subsection
+Optimal Dynamic Capital Structure 
+\end_layout
+
+\begin_layout Subsection
+Finite Maturity Debt 
+\end_layout
+
+\begin_layout Section
+Real Options andq Theory 
+\end_layout
+
+\begin_layout Subsection
+An Indivisible Investment Project 
+\end_layout
+
+\begin_layout Subsection
+q Theory 
+\end_layout
+
+\begin_layout Subsection
+Irreversible Investment as a Series of Real Options 
+\end_layout
+
+\begin_layout Subsection
+Dynamic Programming for Irreversible Investment 
+\end_layout
+
+\begin_layout Subsection
+Irreversible Investment and Perfect Competition 
+\end_layout
+
+\begin_layout Subsection
+Berk-Green-NaikModel 
+\end_layout
+
+\begin_layout Section*
+PART FOUR Beliefs, Information,and Preferences 
+\end_layout
+
+\begin_layout Section
+Heterogeneous Beliefs 
+\end_layout
+
+\begin_layout Subsection
+State-Dependent Utility Formulation 
+\end_layout
+
+\begin_layout Subsection
+Aggregation in Single-Period Markets 
+\end_layout
+
+\begin_layout Subsection
+Aggregation in Dynamic Markets 
+\end_layout
+
+\begin_layout Subsection
+Short Sales Constraints and Overpricing 
+\end_layout
+
+\begin_layout Subsection
+Speculative Trade and Bubbles 
+\end_layout
+
+\begin_layout Section
+Rational Expectations Equilibria 
+\end_layout
+
+\begin_layout Subsection
+No-Trade Theorem 
+\end_layout
+
+\begin_layout Subsection
+Normal-Normal Updating 
+\end_layout
+
+\begin_layout Subsection
+Fully Revealing Equilibria
+\end_layout
+
+\begin_layout Subsection
+Grossman-Stiglitz Model 
+\end_layout
+
+\begin_layout Subsection
+Hellwig Model 
+\end_layout
+
+\begin_layout Section
+Learning 
+\end_layout
+
+\begin_layout Subsection
+Estimating an Unknown Drift 
+\end_layout
+
+\begin_layout Subsection
+Portfolio Choice with an Unknown Expected Return 
+\end_layout
+
+\begin_layout Subsection
+More Filtering Theory 
+\end_layout
+
+\begin_layout Subsection
+Learning Expected Consumption Growth 
+\end_layout
+
+\begin_layout Subsection
+A Regime-Switching Model 
+\end_layout
+
+\begin_layout Section
+Information, Strategic Trading, and Liquidity 
+\end_layout
+
+\begin_layout Subsection
+Glosten-Milgrom Model
+\end_layout
+
+\begin_layout Subsection
+Kyle Model 
+\end_layout
+
+\begin_layout Subsection
+Glosten Model of Limit Order Markets
+\end_layout
+
+\begin_layout Subsection
+Auctions
+\end_layout
+
+\begin_layout Subsection
+Continuous-Time Kyle Model 
+\end_layout
+
+\begin_layout Section
+Alternative Preferences 
+\end_layout
+
+\begin_layout Subsection
+Experimental Paradoxes 
+\end_layout
+
+\begin_layout Subsection
+Betweenness Preferences 
+\end_layout
+
+\begin_layout Subsection
+Rank-Dependent Preferences 
+\end_layout
+
+\begin_layout Subsection
+First-Order Risk Aversion 
+\end_layout
+
+\begin_layout Subsection
+Ambiguity Aversion 
+\end_layout
+
+\begin_layout Section*
+Appendices Some Probability and Stochastic Process Theory 
+\end_layout
+
+\begin_layout Subsection*
+A.1.Random Variables 
+\end_layout
+
+\begin_layout Subsection*
+A.2.Probabilities 
+\end_layout
+
+\begin_layout Subsection*
+A.3.
+ Distribution Functions and Densities
+\end_layout
+
+\begin_layout Subsection*
+A.4.Expectations 
+\end_layout
+
+\begin_layout Subsection*
+A.5.
+ Convergence of Expectations
+\end_layout
+
+\begin_layout Subsection*
+A.6.
+ Interchange of Differentiation and Expectation 
+\end_layout
+
+\begin_layout Subsection*
+A.7.
+ Random Vectors 
+\end_layout
+
+\begin_layout Subsection*
+A.8.Conditioning 
+\end_layout
+
+\begin_layout Subsection*
+A.9.Independence 
+\end_layout
+
+\begin_layout Subsection*
+A.10.Equivalent Probability Measures 
+\end_layout
+
+\begin_layout Subsection*
+A.11.
+ Filtrations, Martingales, and Stopping Times 
+\end_layout
+
+\begin_layout Subsection*
+A.12.Martingales under Equivalent Measures 
+\end_layout
+
+\begin_layout Subsection*
+A.13.Local Martingales 
+\end_layout
+
+\begin_layout Subsection*
+A.14.The Usual Conditions 
+\end_layout
+
+\begin_layout Chapter
+Asset Management：A Systematic Approach to Factor Investing
+\end_layout
+
+\begin_layout Section*
+Part I: The Asset Owner 
+\end_layout
+
+\begin_layout Section
+Chapter 1: Asset Owners 
+\end_layout
+
+\begin_layout Section
+Chapter 2: Preferences 
+\end_layout
+
+\begin_layout Section
+Chapter 3: Mean-Variance Investing 
+\end_layout
+
+\begin_layout Section
+Chapter 4: Investing for the Long Run
+\end_layout
+
+\begin_layout Section
+Chapter 5: Investing Over the Life Cycle 
+\end_layout
+
+\begin_layout Section*
+Part II: Factor Risk Premiums 
+\end_layout
+
+\begin_layout Section
+Chapter 6: Factor Theory 
+\end_layout
+
+\begin_layout Section
+Chapter 7: Factors
+\end_layout
+
+\begin_layout Section
+Chapter 8: Equities 
+\end_layout
+
+\begin_layout Section
+Chapter 9: Bonds 
+\end_layout
+
+\begin_layout Section
+Chapter 10: Alpha (and the Low Risk Anomaly) 
+\end_layout
+
+\begin_layout Section
+Chapter 11: "Real " Assets
+\end_layout
+
+\begin_layout Section
+Chapter 12: Tax-Efficient Investing 
+\end_layout
+
+\begin_layout Section
+Chapter 13: Illiquid Assets 
+\end_layout
+
+\begin_layout Section
+Chapter 14: Factor Investing 
+\end_layout
+
+\begin_layout Section*
+Part III: Delegated Portfolio Management
+\end_layout
+
+\begin_layout Section
+Chapter 15: Delegated Investing
+\end_layout
+
+\begin_layout Section
+Chapter 16: Mutual Funds and Other 40-Act Funds 
+\end_layout
+
+\begin_layout Section
+Chapter 17: Hedge Funds 
+\end_layout
+
+\begin_layout Section
+Chapter 18: Private Equity 
+\end_layout
+
+\begin_layout Section
+Afterword: Factor Management 
+\end_layout
+
+\begin_layout Section
+Appendix: Returns
+\end_layout
+
+\begin_layout Chapter
+The Handbook of Equity Market Anomalies Translating Market Inefficiencies
+ into Effective Investment Strategies
+\end_layout
+
+\begin_layout Section
+Conceptual Foundations of Capital Market Anomalies 1 
+\end_layout
+
+\begin_layout Subsection
+Efficient Markets 2
+\end_layout
+
+\begin_layout Subsection
+Identifying Anomalies in Capital Markets 3
+\end_layout
+
+\begin_layout Subsection
+Explaining Anomalies 5 
+\end_layout
+
+\begin_layout Subsection
+Anomalies: Weighing the Evidence 10 
+\end_layout
+
+\begin_layout Subsection
+Appendix 1.1: Risk and Expected-Return Models 10 
+\end_layout
+
+\begin_layout Section
+The Accrual Anomaly 23 
+\end_layout
+
+\begin_layout Subsection
+What Are Accruals? 24 
+\end_layout
+
+\begin_layout Subsection
+Sloan (1996) in a Nutshell 32
+\end_layout
+
+\begin_layout Subsection
+Extensions of Sloan (1996) 38 Alternative Explanations for the Accrual Anomaly
+ 45
+\end_layout
+
+\begin_layout Subsection
+Practical Implications 51 
+\end_layout
+
+\begin_layout Subsection
+Appendix 2.1: Estimation and Testing Framework Used in Sloan (1996) 52 
+\end_layout
+
+\begin_layout Subsection
+Appendix 2.2: Details on the Broader Definition of Accruals 54 
+\end_layout
+
+\begin_layout Section
+The Analyst Recommendation and Earnings Forecast Anomaly 
+\end_layout
+
+\begin_layout Subsection
+Role of Research Analysts 63 
+\end_layout
+
+\begin_layout Subsection
+Investment Recommendations
+\end_layout
+
+\begin_layout Subsection
+Earnings Forecast Revisions 73 
+\end_layout
+
+\begin_layout Subsection
+Determinants of Forecast Revisions 76 
+\end_layout
+
+\begin_layout Subsection
+International Evidence 78 
+\end_layout
+
+\begin_layout Subsection
+Overview of the Investment Performance of Forecast Revisions 79 
+\end_layout
+
+\begin_layout Subsection
+Appendix 3.1: Details of Returns to Recommendation Strategies 
+\end_layout
+
+\begin_layout Section
+Post-Earnings Announcement Drift and Related Anomalies 91 
+\end_layout
+
+\begin_layout Subsection
+The Basics of the Anomaly 92 
+\end_layout
+
+\begin_layout Subsection
+Measuring Earnings Surprises 99 
+\end_layout
+
+\begin_layout Subsection
+Sources of Post-Earnings Announcement Drift 102 
+\end_layout
+
+\begin_layout Subsection
+Extensions 106 
+\end_layout
+
+\begin_layout Subsection
+Institutional Investors 108 
+\end_layout
+
+\begin_layout Subsection
+Individual Investors 110 
+\end_layout
+
+\begin_layout Section
+Fundamental Data Anomalies 117 
+\end_layout
+
+\begin_layout Subsection
+Fundamental Metrics 118 
+\end_layout
+
+\begin_layout Subsection
+Distress Risk 122
+\end_layout
+
+\begin_layout Subsection
+Capital Investment and Growth Anomalies 123
+\end_layout
+
+\begin_layout Subsection
+International Evidence 125
+\end_layout
+
+\begin_layout Subsection
+Conclusion 126 
+\end_layout
+
+\begin_layout Section
+Net Stock Anomalies 129
+\end_layout
+
+\begin_layout Subsection
+Initial Public Offerings 130
+\end_layout
+
+\begin_layout Subsection
+Seasoned Equity Offerings 132
+\end_layout
+
+\begin_layout Subsection
+Debt Issuances 133 
+\end_layout
+
+\begin_layout Subsection
+Share Repurchases and Tender Offers 134
+\end_layout
+
+\begin_layout Subsection
+Dividend Initiation and Omissions 136
+\end_layout
+
+\begin_layout Subsection
+Private Equity Placement 138 
+\end_layout
+
+\begin_layout Subsection
+Overall Net External Financing 138 
+\end_layout
+
+\begin_layout Subsection
+Mergers and Acquisitions 141 
+\end_layout
+
+\begin_layout Subsection
+International Evidence 142 
+\end_layout
+
+\begin_layout Subsection
+Other Explanations for the Abnormal Returns 143 
+\end_layout
+
+\begin_layout Section
+The Insider Trading Anomaly 147 
+\end_layout
+
+\begin_layout Subsection
+Overview of Insider Filings 148 
+\end_layout
+
+\begin_layout Subsection
+Documentation of the Anomaly 148
+\end_layout
+
+\begin_layout Subsection
+Results for the 1978–2005 Period 150 
+\end_layout
+
+\begin_layout Subsection
+How Consistent Is the Anomaly Year by Year? 152
+\end_layout
+
+\begin_layout Subsection
+When Are Returns Generated during the 1-Year Holding Periods? 154
+\end_layout
+
+\begin_layout Subsection
+Returns in Small Cap versus Large Cap 155 
+\end_layout
+
+\begin_layout Subsection
+Does It Work on the Short Side? 156 
+\end_layout
+
+\begin_layout Subsection
+Do Returns Vary by Industry? 160 
+\end_layout
+
+\begin_layout Subsection
+Institutional Investors 162 
+\end_layout
+
+\begin_layout Subsection
+Individual Investors 162 
+\end_layout
+
+\begin_layout Subsection
+Relation to Other Anomalies 163
+\end_layout
+
+\begin_layout Subsection
+International Evidence 164 
+\end_layout
+
+\begin_layout Subsection
+Can Insider Data Predict S&P 500 Returns? 
+\end_layout
+
+\begin_layout Subsection
+165 Latest Developments 166 
+\end_layout
+
+\begin_layout Subsection
+Long/Short Strategy for Institutional Investors 167 
+\end_layout
+
+\begin_layout Section
+Momentum: The Technical Analysis Anomaly 173 
+\end_layout
+
+\begin_layout Subsection
+History of Technical Analysis and Momentum 176
+\end_layout
+
+\begin_layout Subsection
+Assessing Momentum and Reversal in Stock Prices 178
+\end_layout
+
+\begin_layout Subsection
+Early Influential Work on Momentum and Reversals 179
+\end_layout
+
+\begin_layout Subsection
+Improving Upon Momentum Strategies 184 
+\end_layout
+
+\begin_layout Subsection
+Moving Averages 186
+\end_layout
+
+\begin_layout Subsection
+52-Week High/Low 187 
+\end_layout
+
+\begin_layout Subsection
+Momentum at Industry Levels 188
+\end_layout
+
+\begin_layout Subsection
+Momentum and Mutual Funds 189 
+\end_layout
+
+\begin_layout Subsection
+Is Technical Analysis Profitable? 190
+\end_layout
+
+\begin_layout Subsection
+Institutional Investors 193 
+\end_layout
+
+\begin_layout Subsection
+Explanations for Momentum and Reversals 195 
+\end_layout
+
+\begin_layout Subsection
+International Evidence
+\end_layout
+
+\begin_layout Section
+Seasonal Anomalies 205
+\end_layout
+
+\begin_layout Subsection
+The January Barometer 213
+\end_layout
+
+\begin_layout Subsection
+Sell-in-May-and-Go-Away 221 
+\end_layout
+
+\begin_layout Subsection
+Holiday Effects 226 
+\end_layout
+
+\begin_layout Subsection
+Day-of-the-Week Effects 231
+\end_layout
+
+\begin_layout Subsection
+Seasonality Calendars 234 
+\end_layout
+
+\begin_layout Subsection
+Political Effects 237 
+\end_layout
+
+\begin_layout Subsection
+Turn-of-the-Month Effects 248
+\end_layout
+
+\begin_layout Subsection
+Open/Close Daily Trade on the Open 254 
+\end_layout
+
+\begin_layout Subsection
+Weather: Sun, Rain, Snow, Moon, and the Stars 255 
+\end_layout
+
+\begin_layout Subsection
+Conclusions and Final Remarks 256 
+\end_layout
+
+\begin_layout Section
+Size and Value Anomalies 265 
+\end_layout
+
+\begin_layout Subsection
+The Early Days 265 
+\end_layout
+
+\begin_layout Subsection
+Fama-French Three-Factor Model 266 
+\end_layout
+
+\begin_layout Subsection
+Value Anomaly: Risk or Mispricing? 267 
+\end_layout
+
+\begin_layout Subsection
+Alternative Value Indicators 269 
+\end_layout
+
+\begin_layout Subsection
+Time Variation in the Value Premium 270
+\end_layout
+
+\begin_layout Subsection
+Cross-Sectional Variation in the Value Premium 273
+\end_layout
+
+\begin_layout Subsection
+Anatomy of the Size Anomaly 275 
+\end_layout
+
+\begin_layout Subsection
+International Evidence 278 
+\end_layout
+
+\begin_layout Subsection
+Value Premium: Evidence from Alternative Asset Classes 279 
+\end_layout
+
+\begin_layout Section
+Anomaly-Based Processes for the Individual Investor 285 
+\end_layout
+
+\begin_layout Subsection
+Increasing Returns Using Market Neutral 286 
+\end_layout
+
+\begin_layout Subsection
+Using ETFs to Add a Market Neutral Asset to a Portfolio 291
+\end_layout
+
+\begin_layout Subsection
+Using Stock Scoring Systems to Outperform Indexes 292
+\end_layout
+
+\begin_layout Subsection
+Implementation of Anomaly-Based Quant Processes 296
+\end_layout
+
+\begin_layout Subsection
+End of the Tour 305 
+\end_layout
+
+\begin_layout Subsection
+References
+\end_layout
+
+\begin_layout Section
+Appendix: Use of Anomaly Research by Professional Investors 307 
+\end_layout
+
+\begin_layout Subsection
+From Academia to Wall Street 307 
+\end_layout
+
+\begin_layout Subsection
+Statistical Arbitrage 308 
+\end_layout
+
+\begin_layout Subsection
+High-Frequency Trading 309
+\end_layout
+
+\begin_layout Subsection
+Multifactor Models 309 
+\end_layout
+
+\begin_layout Subsection
+Assets in Market Neutral Portfolios 310 
+\end_layout
+
+\begin_layout Subsection
+Assets in Long Portfolios 311 
+\end_layout
+
+\begin_layout Subsection
+United States versus International 313 
+\end_layout
+
+\begin_layout Subsection
+References
 \end_layout
 
 \end_body
