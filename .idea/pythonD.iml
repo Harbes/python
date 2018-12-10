@@ -3,6 +3,7 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/JAQS-example" />
+      <excludeFolder url="file://$MODULE_DIR$/ML&amp;DL" />
       <excludeFolder url="file://$MODULE_DIR$/Python Quant Book" />
       <excludeFolder url="file://$MODULE_DIR$/PythonANS" />
       <excludeFolder url="file://$MODULE_DIR$/R Quant" />
@@ -11,8 +12,9 @@
       <excludeFolder url="file://$MODULE_DIR$/itchat-progs-master/demo" />
       <excludeFolder url="file://$MODULE_DIR$/julia-project" />
       <excludeFolder url="file://$MODULE_DIR$/output" />
+      <excludeFolder url="file://$MODULE_DIR$/paper-IVOL" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.6" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.6.5 (~/miniconda3/bin/python)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TestRunnerService">
