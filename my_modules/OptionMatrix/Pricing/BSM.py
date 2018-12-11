@@ -1,8 +1,11 @@
-import numpy as np
+#import numpy as np
 from scipy.stats import norm
 from math import log,exp,sqrt
 
-def cnd(x,method='default'): # 正态分布累计分布函数
+def cnd(x,method='default'): # cumulative normal distribution function
+    '''
+    <The Complete Guide to Option Pricing Formulas>, Chapter 13
+    '''
     if method=='default':
         return norm.cdf(x)
 def BSM(call_condition,S,K,r,T,sigma,q=0.0):
@@ -39,7 +42,6 @@ def GeneralizedBSM(call_condition,S,K,r,T,sigma,q=0.0):
     else: # put
         return K*exp(-r*T)*cnd(-d2)-S*exp((b-r)*T)*cnd(-d1)
 
-BS(-1.0,100.0,100.0,0.05,1.5,0.25)
-T=1.0;sigma=0.25
-T>0.0
-True & (sigma>0.0)
+## TODO 试验区，待删除
+BSM(-1.0,100.0,100.0,0.05,1.5,0.25)
+GeneralizedBSM(-1.0,100.0,100.0,0.05,1.5,0.25)
