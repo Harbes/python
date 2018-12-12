@@ -77,7 +77,7 @@ def Delta(flag, S, K, r, T, sigma, q=0.0):
     :return:
     '''
     assert (T > 0.0) & (sigma > 0.0)
-    b = r
+    b = r - q
     d1 = (log(S / K) + (b + sigma ** 2.0 / 2.0) * T) / sigma / sqrt(T)
     if flag >0.0: # call
         return cnd(d1)*exp((b-r)*T)
@@ -101,7 +101,7 @@ def Gamma(S, K, r, T, sigma, q=0.0):
     :return:
     '''
     assert (T > 0.0) & (sigma > 0.0)
-    b = r
+    b = r - q
     d1 = (log(S / K) + (b + sigma *sigma / 2.0) * T) / sigma / sqrt(T)
     return exp((b-r)*T-d1*d1*0.5)/S/sigma/sqrt(2.0*pi*T) # gamma(call)=gamma(put)
 def Vega(S, K, r, T, sigma, q=0.0):
@@ -122,8 +122,8 @@ def Vega(S, K, r, T, sigma, q=0.0):
     :return:
     '''
     assert (T > 0.0) & (sigma > 0.0)
-    b = r
-    d1 = (log(S / K) + (b + sigma ** 2.0 / 2.0) * T) / sigma / sqrt(T)
+    b = r-q
+    d1 = (log(S / K) + (b + sigma * sigma/ 2.0) * T) / sigma / sqrt(T)
     return exp((b - r) * T - d1 * d1 * 0.5) *S*sqrt(0.5*T /pi)  # vega(call)=vega(put)
 def Theta(flag, S, K, r, T, sigma, q=0.0):
     '''
@@ -144,7 +144,7 @@ def Theta(flag, S, K, r, T, sigma, q=0.0):
     :return:
     '''
     assert (T > 0.0) & (sigma > 0.0)
-    b = r
+    b = r - q
     d1 = (log(S / K) + (b + sigma ** 2.0 / 2.0) * T) / sigma / sqrt(T)
     d2 = d1 - sigma * sqrt(T)
     A=-S*sigma*exp((b - r) * T - d1 * d1 * 0.5)/sqrt(8.0*pi*T)
@@ -152,7 +152,6 @@ def Theta(flag, S, K, r, T, sigma, q=0.0):
         return A-(b-r)*S*cnd(d1)*exp((b-r)*T)-r*K*cnd(d2)*exp(-r*T)
     else: # put
         return A+(b-r)*S*cnd(-d1)*exp((b-r)*T)+r*K*cnd(-d2)*exp(-r*T)
-
 def Rho(flag, S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
@@ -172,14 +171,13 @@ def Rho(flag, S, K, r, T, sigma, q=0.0):
     :return:
     '''
     assert (T > 0.0) & (sigma > 0.0)
-    b = r
-    d2 = (log(S / K) + (b - sigma ** 2.0 / 2.0) * T) / sigma / sqrt(T)
+    b = r - q
+    d2 = (log(S / K) + (b - sigma * sigma / 2.0) * T) / sigma / sqrt(T)
     if flag>0.0:
         return T*K*exp(-r*T)*cnd(d2)
     else:
         return -T*K*exp(-r*T)*cnd(-d2)
-
-def Vanna(S, K, r, T, sigma, q=0.0):
+def DdeltaDvol(S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
     b=r-q        gives the Merton(1973) stock option model with continuous dividend yield q;
@@ -187,7 +185,7 @@ def Vanna(S, K, r, T, sigma, q=0.0):
     b=0, r=0     gives the Asay(1982) margined futures option model;
     b=r-rf       gives the Garman and Kohlhagen(1983) currency option model
     ===================================================
-    vanna(call/put)= D_delta/D_sigma=D_vega/D_S
+    DdeltaDvol(call/put)=vanna(call/put)= D_delta/D_sigma=D_vega/D_S
     :param flag:
     :param S:
     :param K:
@@ -198,11 +196,10 @@ def Vanna(S, K, r, T, sigma, q=0.0):
     :return:
     '''
     assert (T > 0.0) & (sigma > 0.0)
-    b = r
-    d1 = (log(S / K) + (b + sigma ** 2.0 / 2.0) * T) / sigma / sqrt(T)
+    b = r - q
+    d1 = (log(S / K) + (b + sigma * sigma / 2.0) * T) / sigma / sqrt(T)
     d2 = d1 - sigma * sqrt(T)
     return -exp((b-r)*T-d1*d1*0.5)*d2/sigma/sqrt(2.0*pi)
-
 def DvannaDvol(S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
@@ -222,11 +219,10 @@ def DvannaDvol(S, K, r, T, sigma, q=0.0):
     :return:
     '''
     assert (T > 0.0) & (sigma > 0.0)
-    b = r
+    b = r - q
     d1 = (log(S / K) + (b + sigma ** 2.0 / 2.0) * T) / sigma / sqrt(T)
     d2 = d1 - sigma * sqrt(T)
     return -exp((b-r)*T-d1*d1*0.5)*d2/sigma/sigma/sqrt(2.0*pi)*(d1*d2-d1/d2-1.0)
-
 def DdeltaDtime(flag, S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
@@ -246,7 +242,7 @@ def DdeltaDtime(flag, S, K, r, T, sigma, q=0.0):
     :return:
     '''
     assert (T > 0.0) & (sigma > 0.0)
-    b = r
+    b = r - q
     d1 = (log(S / K) + (b + sigma *sigma / 2.0) * T) / sigma / sqrt(T)
     d2 = d1 - sigma * sqrt(T)
     A=exp(-0.5*d1*d1)/sqrt(2.0*pi)*(b/sigma/sqrt(T)-d2*0.5/T)
@@ -254,7 +250,6 @@ def DdeltaDtime(flag, S, K, r, T, sigma, q=0.0):
         return -exp((b-r)*T)*(A+(b-r)*cnd(d1))
     else:
         return -exp((b-r)*T)*(A-(b-r)*cnd(-d1))
-
 def DgammaDvol(S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
@@ -274,11 +269,10 @@ def DgammaDvol(S, K, r, T, sigma, q=0.0):
     :return:
     '''
     assert (T > 0.0) & (sigma > 0.0)
-    b = r
+    b = r - q
     d1 = (log(S / K) + (b + sigma *sigma / 2.0) * T) / sigma / sqrt(T)
     d2 = d1 - sigma * sqrt(T)
     return exp((b-r)*T-d1*d1*0.5)/S/sigma/sigma/sqrt(2.0*pi*T)*(d1*d2-1.0)
-
 def DgammaDspot(S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
@@ -298,10 +292,9 @@ def DgammaDspot(S, K, r, T, sigma, q=0.0):
     :return:
     '''
     assert (T > 0.0) & (sigma > 0.0)
-    b = r
+    b = r - q
     d1 = (log(S / K) + (b + sigma *sigma / 2.0) * T) / sigma / sqrt(T)
     return -exp((b-r)*T-d1*d1*0.5)/S/S/sigma/sqrt(2.0*pi*T)*(1.0+d1/sigma/sqrt(T))
-
 def DgammaDtime(S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
@@ -321,11 +314,10 @@ def DgammaDtime(S, K, r, T, sigma, q=0.0):
     :return:
     '''
     assert (T > 0.0) & (sigma > 0.0)
-    b = r
+    b = r - q
     d1 = (log(S / K) + (b + sigma *sigma / 2.0) * T) / sigma / sqrt(T)
     d2 = d1 - sigma * sqrt(T)
-    return exp((b-r)*T-d1*d1*0.5)/S/sigma/sqrt(2.0*pi*T)*(r-b+d*d1/sigma/sqrt(T)+(1.0-d1*d2)*0.5/T)
-
+    return exp((b-r)*T-d1*d1*0.5)/S/sigma/sqrt(2.0*pi*T)*(r-b+b*d1/sigma/sqrt(T)+(1.0-d1*d2)*0.5/T)
 def DvegaDvol(S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
@@ -345,11 +337,10 @@ def DvegaDvol(S, K, r, T, sigma, q=0.0):
     :return:
     '''
     assert (T > 0.0) & (sigma > 0.0)
-    b = r
+    b = r - q
     d1 = (log(S / K) + (b + sigma *sigma / 2.0) * T) / sigma / sqrt(T)
     d2 = d1 - sigma * sqrt(T)
     return exp((b - r) * T - d1 * d1 * 0.5) *S*sqrt(0.5*T /pi)*d1*d2/sigma
-
 def DvommaDvol(S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
@@ -369,11 +360,10 @@ def DvommaDvol(S, K, r, T, sigma, q=0.0):
     :return:
     '''
     assert (T > 0.0) & (sigma > 0.0)
-    b = r
+    b = r - q
     d1 = (log(S / K) + (b + sigma *sigma / 2.0) * T) / sigma / sqrt(T)
     d2 = d1 - sigma * sqrt(T)
     return exp((b - r) * T - d1 * d1 * 0.5) *S*sqrt(0.5*T /pi)*d1*d2/sigma/sigma*(d1*d2-d1/d2-d2/d1-1.0)
-
 def DvegaDtime(S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
@@ -393,11 +383,10 @@ def DvegaDtime(S, K, r, T, sigma, q=0.0):
     :return:
     '''
     assert (T > 0.0) & (sigma > 0.0)
-    b = r
+    b = r - q
     d1 = (log(S / K) + (b + sigma *sigma / 2.0) * T) / sigma / sqrt(T)
     d2 = d1 - sigma * sqrt(T)
     return exp((b - r) * T - d1 * d1 * 0.5) *S*sqrt(0.5*T /pi)*(r-b+b*d1/sigma/sqrt(T)-(1.0+d1*d2)/T*0.5)
-
 def VarianceVega(S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
@@ -417,10 +406,9 @@ def VarianceVega(S, K, r, T, sigma, q=0.0):
     :return:
     '''
     assert (T > 0.0) & (sigma > 0.0)
-    b = r
+    b = r - q
     d1 = (log(S / K) + (b + sigma *sigma / 2.0) * T) / sigma / sqrt(T)
     return S*exp((b-r)*T-0.5*d1*d1)*sqrt(T/8.0/pi)/sigma
-
 def StrikeDelta(flag, S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
@@ -440,13 +428,12 @@ def StrikeDelta(flag, S, K, r, T, sigma, q=0.0):
     :return:
     '''
     assert (T > 0.0) & (sigma > 0.0)
-    b = r
+    b = r - q
     d2 = (log(S / K) + (b - sigma * sigma / 2.0) * T) / sigma / sqrt(T)
     if flag>0.0:
         return -exp(-r*T)*cnd(d2)
     else:
         return exp(-r*T)*cnd(-d2)
-
 def StrikeGamma(flag, S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
@@ -466,7 +453,7 @@ def StrikeGamma(flag, S, K, r, T, sigma, q=0.0):
     :return:
     '''
     assert (T > 0.0) & (sigma > 0.0)
-    b = r
+    b = r - q
     d2 = (log(S / K) + (b - sigma * sigma / 2.0) * T) / sigma / sqrt(T)
     return exp(-r*T-d2*d2*0.5)/X/sigma/sqrt(2.0*pi*T)
 
