@@ -17,7 +17,6 @@ def HartAlgo(x):
     if x>0.0:
         p=1.0-p
     return p
-
 def PolyApprox4(x):
     '''
     the following approximation of N(x) produces values to within 4-decimal-place accuracy
@@ -31,7 +30,6 @@ def PolyApprox4(x):
         return 1.0-p
     else:
         return p
-
 def PolyApprox6(x):
     '''
     the following approximation of N(x), described by Abromowitz and Stegun(1974), produces values to within
@@ -47,7 +45,6 @@ def PolyApprox6(x):
         return 1.0-p
     else:
         return p
-
 def cnd(x,method='default'): # cumulative normal distribution function
     '''
     <The Complete Guide to Option Pricing Formulas>, Chapter 13
@@ -62,7 +59,7 @@ def cnd(x,method='default'): # cumulative normal distribution function
     else:
         return PolyApprox4(x)
 
-def delta(flag, S, K, r, T, sigma, q=0.0):
+def Delta(flag, S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
     b=r-q        gives the Merton(1973) stock option model with continuous dividend yield q;
@@ -86,8 +83,7 @@ def delta(flag, S, K, r, T, sigma, q=0.0):
         return cnd(d1)*exp((b-r)*T)
     else: # put, value<0
         return (cnd(d1)-1)*exp((b-r)*T)
-
-def gamma(S, K, r, T, sigma, q=0.0):
+def Gamma(S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
     b=r-q        gives the Merton(1973) stock option model with continuous dividend yield q;
@@ -108,8 +104,7 @@ def gamma(S, K, r, T, sigma, q=0.0):
     b = r
     d1 = (log(S / K) + (b + sigma *sigma / 2.0) * T) / sigma / sqrt(T)
     return exp((b-r)*T-d1*d1*0.5)/S/sigma/sqrt(2.0*pi*T) # gamma(call)=gamma(put)
-
-def vega(S, K, r, T, sigma, q=0.0):
+def Vega(S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
     b=r-q        gives the Merton(1973) stock option model with continuous dividend yield q;
@@ -130,8 +125,7 @@ def vega(S, K, r, T, sigma, q=0.0):
     b = r
     d1 = (log(S / K) + (b + sigma ** 2.0 / 2.0) * T) / sigma / sqrt(T)
     return exp((b - r) * T - d1 * d1 * 0.5) *S*sqrt(0.5*T /pi)  # vega(call)=vega(put)
-
-def theta(flag, S, K, r, T, sigma, q=0.0):
+def Theta(flag, S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
     b=r-q        gives the Merton(1973) stock option model with continuous dividend yield q;
@@ -159,7 +153,7 @@ def theta(flag, S, K, r, T, sigma, q=0.0):
     else: # put
         return A+(b-r)*S*cnd(-d1)*exp((b-r)*T)+r*K*cnd(-d2)*exp(-r*T)
 
-def rho(flag, S, K, r, T, sigma, q=0.0):
+def Rho(flag, S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
     b=r-q        gives the Merton(1973) stock option model with continuous dividend yield q;
@@ -185,7 +179,7 @@ def rho(flag, S, K, r, T, sigma, q=0.0):
     else:
         return -T*K*exp(-r*T)*cnd(-d2)
 
-def vanna(S, K, r, T, sigma, q=0.0):
+def Vanna(S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
     b=r-q        gives the Merton(1973) stock option model with continuous dividend yield q;
@@ -427,7 +421,7 @@ def VarianceVega(S, K, r, T, sigma, q=0.0):
     d1 = (log(S / K) + (b + sigma *sigma / 2.0) * T) / sigma / sqrt(T)
     return S*exp((b-r)*T-0.5*d1*d1)*sqrt(T/8.0/pi)/sigma
 
-def strike_delta(flag, S, K, r, T, sigma, q=0.0):
+def StrikeDelta(flag, S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
     b=r-q        gives the Merton(1973) stock option model with continuous dividend yield q;
@@ -453,7 +447,7 @@ def strike_delta(flag, S, K, r, T, sigma, q=0.0):
     else:
         return exp(-r*T)*cnd(-d2)
 
-def strike_gamma(flag, S, K, r, T, sigma, q=0.0):
+def StrikeGamma(flag, S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
     b=r-q        gives the Merton(1973) stock option model with continuous dividend yield q;
@@ -475,17 +469,4 @@ def strike_gamma(flag, S, K, r, T, sigma, q=0.0):
     b = r
     d2 = (log(S / K) + (b - sigma * sigma / 2.0) * T) / sigma / sqrt(T)
     return exp(-r*T-d2*d2*0.5)/X/sigma/sqrt(2.0*pi*T)
-## TODO 试验区，待删除
-import matplotlib.pyplot as plt
-import numpy as np
-from mpl_toolkits.mplot3d import Axes3D
-figure = plt.figure()
-ax = Axes3D(figure)
-X = np.arange(25, 150, 2.5)
-Y = np.arange(0.5, 0.02, -0.02)
-#网格化数据
-X, Y = np.meshgrid(X, Y)
-vfunc=np.vectorize(delta)
-Z = vfunc(1.0,X,100.0,0.07,Y,0.3)
-ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap='rainbow')
-plt.show()
+
