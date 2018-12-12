@@ -384,7 +384,7 @@ def DvegaDtime(S, K, r, T, sigma, q=0.0):
     '''
     assert (T > 0.0) & (sigma > 0.0)
     b = r - q
-    d1 = (log(S / K) + (b + sigma *sigma / 2.0) * T) / sigma / sqrt(T)
+    d1 = (log(S / K) + (b + sigma * sigma / 2.0) * T) / sigma / sqrt(T)
     d2 = d1 - sigma * sqrt(T)
     return exp((b - r) * T - d1 * d1 * 0.5) *S*sqrt(0.5*T /pi)*(r-b+b*d1/sigma/sqrt(T)-(1.0+d1*d2)/T*0.5)
 def VarianceVega(S, K, r, T, sigma, q=0.0):
