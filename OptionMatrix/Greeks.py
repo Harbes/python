@@ -1,3 +1,7 @@
+# Reference:
+# <<The Complete Guide to Option Pricing Formulas>> Espen G. Haug
+
+
 from math import log,exp,sqrt,pi
 from scipy.stats import norm
 

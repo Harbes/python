@@ -1,3 +1,7 @@
+# Reference:
+# <<The Complete Guide to Option Pricing Formulas>> Espen G. Haug
+#
+
 #import numpy as np
 #from .Distribution import cnd
 from math import log,exp,sqrt,pi
@@ -98,7 +102,3 @@ def GeneralizedBSM(flag, S, K, r, T, sigma, q=0.0):
         return S*exp((b-r)*T)*cnd(d1)-K*exp(-r*T)*cnd(d2)
     else: # put
         return K*exp(-r*T)*cnd(-d2)-S*exp((b-r)*T)*cnd(-d1)
-
-## TODO 试验区，待删除
-BSM(-1.0,100.0,100.0,0.05,1.5,0.25)
-GeneralizedBSM(-1.0,100.0,100.0,0.05,1.5,0.25)
