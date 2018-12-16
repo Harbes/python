@@ -3,23 +3,22 @@
 #
 
 import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt;
 from scipy.stats import norm
+#import PyQt5.QtGui
 
 # Chapter 3. the Lebesgue Integral
 ## Cantor set
-np.set_printoptions(precision=5)
 def CantorSet():
-    k=6
+    k=20
     M=10000
     Cantor=np.zeros(M)
     for i in range(M):
         for j in range(k):
-            Cantor[i]=round((Cantor[i]+2.0*np.random.uniform())/3.0,5) #理论上，ln(BinsNumber)/ln(10)=< prec <= ln(3)/ln(10)*k
+            Cantor[i]=(Cantor[i]+2.0*np.random.randint(0,2))/3.0 #理论上，ln(BinsNumber)/ln(10)=< prec <= ln(3)/ln(10)*k
     return Cantor
 Cantor=CantorSet()
-plt.hist(Cantor,3**10);plt.show() # 结果似乎不是很理想
-
+plt.hist(Cantor,bins=3**7);plt.show() # 结果似乎不是很理想
 
 # Chapter 4. Basic Probability Theory
 ## Simulation 4.2 (equally speced points in the unit interval)
