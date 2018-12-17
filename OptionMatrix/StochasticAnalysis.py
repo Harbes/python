@@ -2,12 +2,11 @@
 # <<Stochastic Analysis for Finance with Simulations>>, Geon Ho Choe.
 #
 
-import numpy as np
-import matplotlib.pyplot as plt;
-from scipy.stats import norm
 
 # Chapter 3. the Lebesgue Integral
 ## Cantor set
+import numpy as np
+import matplotlib.pyplot as plt;
 def CantorSet():
     k=20
     M=10000
@@ -20,6 +19,9 @@ Cantor=CantorSet()
 plt.hist(Cantor,bins=3**7);plt.show() # 结果似乎不是很理想
 
 # Chapter 4. Basic Probability Theory
+import numpy as np
+import matplotlib.pyplot as plt;
+from scipy.stats import norm
 ## Simulation 4.2 (equally speced points in the unit interval)-；
 N=100
 X=np.random.randn(N)
@@ -61,6 +63,8 @@ for k in [2,5]:
 plt.show()
 
 # Chapter 7. Brownian motion
+import numpy as np
+import matplotlib.pyplot as plt;
 ## Simulation7.1 (sample paths of Brownian motion)
 n=500
 t=20
