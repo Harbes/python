@@ -147,3 +147,52 @@ for i in range(1,N+1):
 for j in range(M):
     plt.plot(time,X[j,:])
 plt.show()
+
+# Chapter 10. the Ito Integral
+import numpy as np
+import matplotlib.pyplot as plt
+## Simulation 10.1 (Ito integral)
+T=3.0
+N=1000
+dt=T/N
+t=np.arange(.0,T+dt*.1,dt)
+dW=np.sqrt(dt)*np.random.randn(N)
+W=np.zeros(N+1)
+integral=np.zeros(N+1)
+exact=np.zeros(N+1)
+for i in range(N):
+    W[i+1]=W[i]+dW[i]
+    integral[i+1]=integral[i]+W[i]*dW[i]
+    exact[i+1]=W[i+1]*W[i+1]*.5-(i+1)*dt*.5
+plt.plot(t,exact,'k-')
+plt.plot(t,integral,'r.')
+plt.show()
+## Simulation 10.2 (Ito integral)
+T=3
+M=10
+N=500
+dt=T/N
+t=np.arange(.0,T+dt*.1,dt)
+dW=np.sqrt(dt)*np.random.randn(M,N)
+W=np.zeros((M,N+1))
+W[:,1:]+=dW.cumsum(axis=1)
+integral=np.zeros((M,N+1))
+integral[:,1:]+=(W[:,:-1]*dW).cumsum(axis=1) # 此处用的是W[:,:-1]，而不是W[:,1:]，结果差距很大，因此要注意时间的匹配
+for i in range(M):
+    plt.plot(t,integral[i])
+plt.plot(t,-.5*t)
+plt.show()
+# Simulation 10.3 (convergence)
+T=3
+M=100000
+N=500
+dt=T/N
+t=np.arange(.0,T+dt*.1,dt)
+dW=np.sqrt(dt)*np.random.randn(M,N)
+W=np.zeros((M,N+1))
+W[:,1:]+=dW.cumsum(axis=1)
+integral=np.zeros((M,N+1))
+integral[:,1:]+=(W[:,:-1]*dW).cumsum(axis=1) # 此处用的是W[:,:-1]，而不是W[:,1:]，结果差距很大，因此要注意时间的匹配
+exact=W[:,-1]**2*.5-T*.5
+error=integral[:,-1]-exact
+print(np.mean(error**2))
