@@ -98,3 +98,52 @@ for j in range(n+1):
     ave[j]=s[:,j].mean()
 plt.plot(time,ave);#plt.show()
 plt.plot(tt,s0*np.exp(mu*tt));plt.show()
+## Simulation 7.3 (Brownian motion with boundary condition)
+import numpy as np
+import matplotlib.pyplot as plt;
+T=1
+n=8
+dt=T/2**n
+time=np.arange(.0,T+dt*.1,dt)
+M=2**n+1
+w=np.zeros(M)
+w[0]=0 # initial condition
+w[-1]=.3 # condition on Brownian motion w at time T
+for i in range(n):
+    increment=2**(n-i)
+    for j in range(0,2**n,increment):
+        index1=j
+        index2=j+increment
+        t1=time[index1]
+        t2=time[index2]
+        w1=w[index1]
+        w2=w[index2]
+        ave=(w1+w2)*.5
+        var=(t2-t1)*.25
+        ind_mid=int((index1+index2)*.5)
+        w[ind_mid]=np.random.normal(ave,np.sqrt(var))
+for i in range(n+1):
+    t_value=np.zeros(2**i+1)
+    w_value=np.zeros(2**i+1)
+    for k in range(2**i+1):
+        t_value[k]=k*dt*2**(n-i)
+        w_value[k]=w[k*2**(n-i)]
+    plt.plot(t_value,w_value)
+plt.show()
+## Simulation 7.4 (LLN for Brownian motion)
+N=1000
+T=500
+dt=T/N
+time=np.arange(.0,T+dt*.1,dt)
+M=50
+W=np.zeros((M,N+1))
+dW=np.sqrt(dt)*np.random.randn(M,N)
+for i in range(N):
+    W[:,i+1]=W[:,i]+dW[:,i]
+X=np.zeros((M,N+1))
+X[:,0]=1.0
+for i in range(1,N+1):
+    X[:,i]=W[:,i]/(i*dt)
+for j in range(M):
+    plt.plot(time,X[j,:])
+plt.show()
