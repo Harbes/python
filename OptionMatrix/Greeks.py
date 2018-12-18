@@ -87,7 +87,7 @@ def Delta(flag, S, K, r, T, sigma, q=0.0):
         return cnd(d1)*exp((b-r)*T)
     else: # put, value<0
         return (cnd(d1)-1)*exp((b-r)*T)
-def Gamma(S, K, r, T, sigma, q=0.0):
+def Gamma(flag, S, K, r, T, sigma, q=0.0): # 尽管与flag无关，但是保持参数一致便于调用函数
     '''
     b=r          gives the BS(1973) stock option model;
     b=r-q        gives the Merton(1973) stock option model with continuous dividend yield q;
@@ -108,7 +108,7 @@ def Gamma(S, K, r, T, sigma, q=0.0):
     b = r - q
     d1 = (log(S / K) + (b + sigma *sigma / 2.0) * T) / sigma / sqrt(T)
     return exp((b-r)*T-d1*d1*0.5)/S/sigma/sqrt(2.0*pi*T) # gamma(call)=gamma(put)
-def Vega(S, K, r, T, sigma, q=0.0):
+def Vega(flag, S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
     b=r-q        gives the Merton(1973) stock option model with continuous dividend yield q;
@@ -181,7 +181,7 @@ def Rho(flag, S, K, r, T, sigma, q=0.0):
         return T*K*exp(-r*T)*cnd(d2)
     else:
         return -T*K*exp(-r*T)*cnd(-d2)
-def DdeltaDvol(S, K, r, T, sigma, q=0.0):
+def DdeltaDvol(flag, S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
     b=r-q        gives the Merton(1973) stock option model with continuous dividend yield q;
@@ -204,7 +204,7 @@ def DdeltaDvol(S, K, r, T, sigma, q=0.0):
     d1 = (log(S / K) + (b + sigma * sigma / 2.0) * T) / sigma / sqrt(T)
     d2 = d1 - sigma * sqrt(T)
     return -exp((b-r)*T-d1*d1*0.5)*d2/sigma/sqrt(2.0*pi)
-def DvannaDvol(S, K, r, T, sigma, q=0.0):
+def DvannaDvol(flag, S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
     b=r-q        gives the Merton(1973) stock option model with continuous dividend yield q;
@@ -254,7 +254,7 @@ def DdeltaDtime(flag, S, K, r, T, sigma, q=0.0):
         return -exp((b-r)*T)*(A+(b-r)*cnd(d1))
     else:
         return -exp((b-r)*T)*(A-(b-r)*cnd(-d1))
-def DgammaDvol(S, K, r, T, sigma, q=0.0):
+def DgammaDvol(flag, S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
     b=r-q        gives the Merton(1973) stock option model with continuous dividend yield q;
@@ -277,7 +277,7 @@ def DgammaDvol(S, K, r, T, sigma, q=0.0):
     d1 = (log(S / K) + (b + sigma *sigma / 2.0) * T) / sigma / sqrt(T)
     d2 = d1 - sigma * sqrt(T)
     return exp((b-r)*T-d1*d1*0.5)/S/sigma/sigma/sqrt(2.0*pi*T)*(d1*d2-1.0)
-def DgammaDspot(S, K, r, T, sigma, q=0.0):
+def DgammaDspot(flag, S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
     b=r-q        gives the Merton(1973) stock option model with continuous dividend yield q;
@@ -299,7 +299,7 @@ def DgammaDspot(S, K, r, T, sigma, q=0.0):
     b = r - q
     d1 = (log(S / K) + (b + sigma *sigma / 2.0) * T) / sigma / sqrt(T)
     return -exp((b-r)*T-d1*d1*0.5)/S/S/sigma/sqrt(2.0*pi*T)*(1.0+d1/sigma/sqrt(T))
-def DgammaDtime(S, K, r, T, sigma, q=0.0):
+def DgammaDtime(flag, S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
     b=r-q        gives the Merton(1973) stock option model with continuous dividend yield q;
@@ -322,7 +322,7 @@ def DgammaDtime(S, K, r, T, sigma, q=0.0):
     d1 = (log(S / K) + (b + sigma *sigma / 2.0) * T) / sigma / sqrt(T)
     d2 = d1 - sigma * sqrt(T)
     return exp((b-r)*T-d1*d1*0.5)/S/sigma/sqrt(2.0*pi*T)*(r-b+b*d1/sigma/sqrt(T)+(1.0-d1*d2)*0.5/T)
-def DvegaDvol(S, K, r, T, sigma, q=0.0):
+def DvegaDvol(flag, S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
     b=r-q        gives the Merton(1973) stock option model with continuous dividend yield q;
@@ -345,7 +345,7 @@ def DvegaDvol(S, K, r, T, sigma, q=0.0):
     d1 = (log(S / K) + (b + sigma *sigma / 2.0) * T) / sigma / sqrt(T)
     d2 = d1 - sigma * sqrt(T)
     return exp((b - r) * T - d1 * d1 * 0.5) *S*sqrt(0.5*T /pi)*d1*d2/sigma
-def DvommaDvol(S, K, r, T, sigma, q=0.0):
+def DvommaDvol(flag, S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
     b=r-q        gives the Merton(1973) stock option model with continuous dividend yield q;
@@ -368,7 +368,7 @@ def DvommaDvol(S, K, r, T, sigma, q=0.0):
     d1 = (log(S / K) + (b + sigma *sigma / 2.0) * T) / sigma / sqrt(T)
     d2 = d1 - sigma * sqrt(T)
     return exp((b - r) * T - d1 * d1 * 0.5) *S*sqrt(0.5*T /pi)*d1*d2/sigma/sigma*(d1*d2-d1/d2-d2/d1-1.0)
-def DvegaDtime(S, K, r, T, sigma, q=0.0):
+def DvegaDtime(flag, S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
     b=r-q        gives the Merton(1973) stock option model with continuous dividend yield q;
@@ -391,7 +391,7 @@ def DvegaDtime(S, K, r, T, sigma, q=0.0):
     d1 = (log(S / K) + (b + sigma * sigma / 2.0) * T) / sigma / sqrt(T)
     d2 = d1 - sigma * sqrt(T)
     return exp((b - r) * T - d1 * d1 * 0.5) *S*sqrt(0.5*T /pi)*(r-b+b*d1/sigma/sqrt(T)-(1.0+d1*d2)/T*0.5)
-def VarianceVega(S, K, r, T, sigma, q=0.0):
+def VarianceVega(flag, S, K, r, T, sigma, q=0.0):
     '''
     b=r          gives the BS(1973) stock option model;
     b=r-q        gives the Merton(1973) stock option model with continuous dividend yield q;
