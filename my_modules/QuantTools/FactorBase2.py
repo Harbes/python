@@ -1,4 +1,3 @@
-import sys
 import pandas as pd
 from pandas import DataFrame,Series,qcut
 import numpy as np
@@ -7,32 +6,36 @@ import statsmodels.api as sm
 from copy import deepcopy
 from scipy.stats import mstats
 from dateutil.parser import parse
+import sys
 import warnings
 warnings.filterwarnings("ignore")
-##############################
+#data_path=_data_path()
+#
+def InputOptions():
+    # TODO
+    # 时间：投资时间点，调仓频率
+    #      因子计算窗口期：日历窗口期or交易日窗口期
+    # 收益率计算：method=arithmetic、log
+    #      数据：close-close，close-open
+    pass
+def PreCalData():
+    # TODO
+    # 例如：ret_d,ret_index_d,SMB_freq,HML_freq
+    pass
 def GetDataPath():
-    '''
-    get data path according to different operating system
-    :return:
-    '''
     sys_platform=sys.platform
-    if sys_platform in {'win32'}:
+    if sys_platform =='win32':
         return 'E:/data/NewData/'
-    elif sys_platform in {'darwin','mac'}:
-        return '/Users/harbes/data/xccdata/'
-    elif sys_platform in {'linux'}:
-        return '/home/harbes/data/xccdata/'
+    elif sys_platform=='mac':
+        return '/Users/harbes/data/NewData/'
+    elif sys_platform=='linux':
+        return '/home/harbes/data/NewData/'
     else:
         raise ValueError('These is no such systerm in your work-station')
 def InvestTime():
-## TODO 待判断是否剔除
-    '''
-    设定数据起始时间
-    :return:
-    '''
-    StartTime=parse('20050101')
-    EndTime=parse('20180301')
-    return StartTime,EndTime
+    start_=parse('20050101')
+    end_=parse('20180301')
+    return None
 
 
 def resample_index(dat, to_freq):
@@ -846,7 +849,4 @@ def DoublePortAnalysis(var_list,var2,var_dict=None,index_ret=None,SMB=None,HML=N
                                                             SMB=SMB, HML=HML)
             portfolio_alpha_t.loc[var, port] = portfolio_alpha.loc[var,port]/se
     return pd.DataFrame({'mean': portfolio_mean.stack(), 't': portfolio_t.stack(),'alpha':portfolio_alpha.stack(),'alpha_t':portfolio_alpha_t.stack()}).T
-
-
-
 
