@@ -27,7 +27,7 @@ def GetDataPath():
 def InvestTime():
 ## TODO 待判断是否剔除
     '''
-    设定数据起始时间
+    设定数据起始时间，并非投资起始期
     :return:
     '''
     StartTime=parse('20050101')
@@ -37,8 +37,12 @@ def InvestTime():
 
 def resample_index(dat, to_freq):
     '''
-    使用时一定要注意，此命令会更改数据的index；因此，凡是涉及输入的数据使用此命令时，一定要使用copy()，以防出错
-    :param data:
+    例如： 20180808 -> 20180831
+          20180809 -> 20180831
+    注意：
+        1、使用时一定要注意，此命令会更改数据的index；因此，凡是涉及输入的数据使用此命令时，一定要使用copy()，以防出错；
+        2、此方法会掩盖真实交易日期（全都转换为自然年月末尾值）
+    :param dat:
     :param to_freq:
     :return:
     '''
@@ -80,7 +84,7 @@ def GetEndDateList(data, freq, trim_end=False):
 def GetValueWeightedIndexReturn(freq):
     p0 = 'adj_open'
     p1 = 'adj_close'  # price0也可以使用 'adj_pre_close'
-    PV = import_data(PV_vars=['size_tot',p0, p1])[0]
+    PV = import_data(PV_vars=['size_tot',p0, p1])[0] ## TODO import_data 可能会删除！！！
     price0 = resample_index(PV[p0].unstack(),to_freq=freq).groupby(level=0).nth(0).stack()
     price1 = resample_index(PV[p1].unstack(),to_freq=freq).groupby(level=0).nth(-1).stack()
     size=resample_index(PV['size_tot'].unstack(),to_freq=freq).groupby(level=0).nth(-1).stack()
