@@ -27,11 +27,7 @@ market_cap=PV['Dmktcap'].unstack()
 date_list=annual_inc_bef_extra.loc['2004':].index[1:20]
 tmp=EarningsToPrice(annual_inc_bef_extra,market_cap,date_list)
 market_cap.index[market_cap.index.month==12]
-
-tot_assets=BS['AT'].unstack()
-        market_cap=PV['Dmktcap'].unstack()
-        date_list=tot_assets.index[10:]
-        tmp21=AssetsToMarket(tot_assets,market_cap,date_list)
+pub_date=pd.read_pickle(DPath+'PubDate')['ActlDt']
 def AssetsToMarket(total_assets,market_cap,date_list,most_recent=False,annually=True):
     '''
     Attention:数据时间index影响指标是否是instantly updated
@@ -306,6 +302,7 @@ def Reversal_60_13(adj_price,date_list):
     return rev
 
 def SustainableGrowth(book_value,date_list,annually=True,pub_date=None):
+    ##  todo 使用pub_date替代most_recent命令
     '''
     Sustainable growth, which is annual growth in book value of equity
     For example:
@@ -749,3 +746,374 @@ def CashProductivity(trad_share,long_debt,tot_assets,cash_eq,date_list,annually=
         tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
         return tmp2.resample('D').ffill().ffill().reindex(index=date_list, columns=tmp.columns)
+
+def CashToAssets(cash_eq,tot_assets,date_list,annually=True,pub_date=None):
+    '''
+    Cash-to-assets, which is cash and cash equivalents divided by the two-year average of total assets.
+    For example:
+        tot_assets=BS['AT'].unstack()
+        cash_eq=CF['CEEPBL'].unstack()
+        tmp2=CashToAssets(cash_eq,tot_assets,date_list,annually=False,pub_date=pub_date)
+    :param cash_eq:
+    :param tot_assets:
+    :param date_list:
+    :param annually:
+    :param pub_date:
+    :return:
+    '''
+    if annually:
+        tmp=2.0*cash_eq[cash_eq.index.month==12]/(tot_assets[tot_assets.index.month==12]+tot_assets[tot_assets.index.month==12].shift(1))
+    else:
+        tmp=2.0*cash_eq/(tot_assets+tot_assets.shift(1))
+    if pub_date is None:
+        tmp.index = tmp.index + MonthEnd(6)
+        return tmp.resample('D').ffill().loc[date_list]
+    else:
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        return tmp2.resample('D').ffill().ffill().reindex(index=date_list, columns=tmp.columns)
+def CapitalTurnover(sales,tot_assets,date_list,pub_date=None):
+    '''
+    Capital turnover, which is sales divided by 1-year-lagged total assets.
+    For example:
+        sales=IS['REV'].unstack()
+        tot_assets=BS['AT'].unstack()
+        tmp1=CapitalTurnover(sales,tot_assets,date_list,pub_date=pub_date)
+    :param sales:
+    :param tot_assets:
+    :param date_list:
+    :param annually:
+    :param pub_date:
+    :return:
+    '''
+    tmp=sales[sales.index.month==12]/tot_assets[tot_assets.index.month==12].shift(1)
+    if pub_date is None:
+        tmp.index = tmp.index + MonthEnd(6)
+        return tmp.resample('D').ffill().loc[date_list]
+    else:
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        return tmp2.resample('D').ffill().ffill().reindex(index=date_list, columns=tmp.columns)
+def ReturnOnCapital(inc_bef_tax,fin_exp,net_working,net_fixed,date_list,pub_date=None):
+    ##todo 注意：在reindex(date_list)之前需要先shift(1)一下，前述的所有函数都需要修改！！！
+    '''
+    Return on Capital = EBIT/(Net Working Capital + Net Fixed Assets)
+    For example:
+        inc_bef_tax=IS['IBT'].unstack()
+        fin_exp=IS['FINEXP'].unstack()
+        net_working=(BS['CA']-BS['CL']).unstack()
+        net_fixed=(BS['PPE']-CF['DFAOGA']).unstack()
+        tmp1=ReturnOnCapital(inc_bef_tax,fin_exp,net_working,net_fixed,pub_date=pub_date)
+    :param inc_bef_tax:
+    :param fin_exp:
+    :param net_working:
+    :param net_fixed:
+    :param pub_date:
+    :return:
+    '''
+    tmp = (inc_bef_tax+fin_exp)/(net_fixed+net_working)
+    tmp=tmp[tmp.index.month==12]
+    if pub_date is None:
+        tmp.index = tmp.index + MonthEnd(6)
+        return tmp.resample('D').ffill().shift(1).loc[date_list]
+    else:
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        return tmp2.resample('D').ffill().ffill().shift(1).reindex(index=date_list, columns=tmp.columns)
+def EarningsYield(inc_bef_tax,fin_exp,market_cap,tot_debt,cash_eq,date_list):
+    '''
+    Earnings yield, which is earnings before interests and taxes divided by enterprise value.
+    (Enterprise value formula:EV = Market capitalization + Total debt − Cash and cash equivalents)
+    For example:
+        inc_bef_tax=IS['IBT'].unstack()
+        fin_exp=IS['FINEXP'].unstack()
+        market_cap=PV['Dmktcap'].unstack()
+        tot_debt=BS['LB'].unstack()
+        cash_eq=CF['CEEPBL'].unstack()
+        tmp=EarningsYield(inc_bef_tax,fin_exp,market_cap,tot_debt,cash_eq,date_list)
+    :param inc_bef_tax:
+    :param fin_exp:
+    :param market_cap:
+    :param tot_debt:
+    :param cash_eq:
+    :param pub_date:
+    :return:
+    '''
+    tmp = (inc_bef_tax + fin_exp) / (market_cap.resample('D').ffill().ffill().loc[tot_debt.index]+tot_debt-cash_eq)
+    tmp = tmp[tmp.index.month == 12]
+    tmp.index = tmp.index + MonthEnd(6)
+    return tmp.resample('D').ffill().shift(1).loc[date_list]
+
+def GrossMargins(oper_rev,oper_exp,date_list,pub_date=None):
+    '''
+    Gross margins, which is operating revenue minus operating expenses divided by 1-year-lagged operating revenue.
+    For example:
+        oper_rev=IS['OPREV'].unstack()
+        oper_exp=IS['COGS'].fillna(0).unstack()
+        tmp1=GrossMargins(oper_rev,oper_exp,date_list,pub_date=pub_date)
+    :param oper_rev:
+    :param oper_exp:
+    :param date_list:
+    :param pub_date:
+    :return:
+    '''
+    tmp = (oper_rev[oper_rev.index.month==12]-oper_exp[oper_exp.index.month==12])/oper_rev[oper_rev.index.month==12].shift(1)
+    if pub_date is None:
+        tmp.index = tmp.index + MonthEnd(6)
+        return tmp.resample('D').ffill().shift(1).loc[date_list]
+    else:
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        return tmp2.resample('D').ffill().ffill().shift(1).reindex(index=date_list, columns=tmp.columns)
+
+def GrossProfitability(oper_rev,oper_exp,tot_assets,date_list,pub_date=None):
+    '''
+    Gross profitability ratio, which is the quarterly operating revenue minus quarterly operating expenses
+        divided by the average of current quarterly total assets and 1-quarter-lagged total assets.
+    For example:
+        oper_rev=IS['OPREV'].unstack()
+        oper_exp=IS['COGS'].fillna(0).unstack()
+        tot_assets=BS['AT'].unstack();tot_assets[tot_assets<=0.0]=np.nan
+        tmp1=GrossProfitability(oper_rev,oper_exp,tot_assets,date_list,pub_date=None)
+    :param oper_rev_q:
+    :param oper_exp_q:
+    :param tot_assets_q:
+    :param date_list:
+    :param pub_date:
+    :return:
+    '''
+    oper_rev_q=oper_rev.resample('Q').fillna(method=None)
+    oper_rev_q=oper_rev_q-oper_rev_q.shift(1)
+    oper_rev_q[oper_rev_q.index.month==3]=oper_rev[oper_rev.index.month==3]
+    oper_exp_q = oper_exp.resample('Q').fillna(method=None)
+    oper_exp_q=oper_exp-oper_exp.shift(1)
+    oper_exp_q[oper_exp_q.index.month == 3] = oper_exp[oper_exp.index.month == 3]
+    tmp = 2.0*(oper_rev_q-oper_exp_q)/(tot_assets+tot_assets.shift(1))
+    if pub_date is None:
+        tmp.index = tmp.index + MonthEnd(6)
+        return tmp.resample('D').ffill().shift(1).loc[date_list]
+    else:
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        return tmp2.resample('D').ffill().ffill().shift(1).reindex(index=date_list, columns=tmp.columns)
+def NetPayoutOverProfit(net_inc,book_value,tot_profit,date_list,pub_date=None):
+    '''
+    Net payout over profits, which is the sum of total net payout (net income minus changes in book equity)
+        divided by total profits.
+    For example:
+        net_inc=IS['NI'].unstack()
+        book_value=BS['EQU'].unstack()
+        tot_profit=IS['IBT'].unstack()
+        date_list=book_value.loc['2005':].index
+        tmp1=NetPayoutOverProfit(net_inc,book_value,tot_profit,date_list,pub_date=pub_date)
+    :param net_inc:
+    :param book_value:
+    :param tot_profit:
+    :param date_list:
+    :param pub_date:
+    :return:
+    '''
+    tmp = (net_inc[net_inc.index.month==12]-book_value[book_value.index.month==12]+book_value[book_value.index.month==12].shift(1))/\
+          tot_profit[tot_profit.index.month==12]
+    if pub_date is None:
+        tmp.index = tmp.index + MonthEnd(6)
+        return tmp.resample('D').ffill().shift(1).loc[date_list]
+    else:
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        return tmp2.resample('D').ffill().ffill().shift(1).reindex(index=date_list, columns=tmp.columns)
+
+
+def ReturnOnOperatingAsset(oper_inc,depre,fin_assets,fin_lia,date_list,pub_date=None):
+    '''
+    Return on net operating assets, which is operating income after depreciation divided by 1-year lagged net operating assets.
+    For example:
+        oper_inc=IS['OI'].unstack()
+depre=CF['DFAOGA'].unstack()
+fin_assets = (BS['HLTFA'].fillna(0) + BS['BBSFA'].fillna(0) + BS['AFSFA'].fillna(0)).unstack()
+fin_lia = (BS['STBL'].fillna(0) + BS['HLTFL'].fillna(0) + BS['INTP'].fillna(0) + BS['DVP'].fillna(0) + BS['LTBL'].fillna(0)).unstack()
+tmp1=ReturnOnOperatingAsset(oper_inc,depre,fin_assets,fin_lia,date_list,pub_date=pub_date)
+    :param oper_inc:
+    :param depre:
+    :param oper_asset:
+    :param oper_lia:
+    :param date_list:
+    :param pub_date:
+    :return:
+    '''
+    net_oper_asset=fin_assets-fin_lia
+    tmp=(oper_inc[oper_inc.index.month==12]-depre[depre.index.month==12])/net_oper_asset[net_oper_asset.index.month==12].shift(1)
+    if pub_date is None:
+        tmp.index = tmp.index + MonthEnd(6)
+        return tmp.resample('D').ffill().shift(1).loc[date_list]
+    else:
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        return tmp2.resample('D').ffill().ffill().shift(1).reindex(index=date_list, columns=tmp.columns)
+
+
+def ReturnOnAssets(oper_inc,tot_assets,date_list,pub_date=None):
+    '''
+    Return on assets, which is quarterly total operating profit divided by the average of current quarterly total assets
+        and 1-quarter-lagged total assets.
+    For example:
+        oper_inc=IS['OI'].unstack()
+tot_assets=BS['AT'].unstack()
+tmp1=ReturnOnAssets(oper_inc,tot_assets,date_list,pub_date=pub_date)
+    :param oper_inc:
+    :param tot_assets:
+    :param date_list:
+    :param pub_date:
+    :return:
+    '''
+    oper_inc_q=oper_inc.resample('Q').fillna(method=None)
+    oper_inc_q=oper_inc_q-oper_inc_q.shift(1)
+    oper_inc_q[oper_inc_q.index.month==3]=oper_inc[oper_inc.index.month==3]
+    tmp=2.0*oper_inc_q/(tot_assets+tot_assets.shift(1))
+    if pub_date is None:
+        tmp.index = tmp.index + MonthEnd(6)
+        return tmp.resample('D').ffill().shift(1).loc[date_list]
+    else:
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        return tmp2.resample('D').ffill().ffill().shift(1).reindex(index=date_list, columns=tmp.columns)
+
+def ReturnOnEquity(net_inc,book_value,date_list,pub_date=None):
+    '''
+    Return on equity, which is quarterly net income divided by the average of current quarterly total shareholders’ equity and 1-quarter-lagged shareholders’ equity.
+    For example:
+        net_inc=IS['NI'].unstack()
+book_value=BS['EQU'].unsatck()
+tmp1=ReturnOnEquity(net_inc,book_value,date_list,pub_date=pub_date)
+    :param net_inc:
+    :param book_value:
+    :param date_list:
+    :param pub_date:
+    :return:
+    '''
+    net_inc_q=net_inc.resample('Q').fillna(method=None)
+    net_inc_q=net_inc_q-net_inc_q.shift(1)
+    net_inc_q[net_inc_q.index.month==3]=net_inc[net_inc.index.month==3]
+    tmp=net_inc_q*2.0/(book_value+book_value.resample('Q').fillna(method=None).shift(1))
+    if pub_date is None:
+        tmp.index = tmp.index + MonthEnd(6)
+        return tmp.resample('D').ffill().shift(1).loc[date_list]
+    else:
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        return tmp2.resample('D').ffill().ffill().shift(1).reindex(index=date_list, columns=tmp.columns)
+
+def ReturnOnInvestedCapital(inc_bef_tax,fin_exp,non_oper_inc,market_cap,tot_debt,cash_eq,date_list):
+    '''
+    Return on invested capital, which is t annual earnings before interest and taxes minus non- operating income divided by non-cash enterprise value.
+    For example:
+        inc_bef_tax=IS['IBT'].unstack()
+fin_exp=IS['FINEXP'].unstack().fillna(0)
+non_oper_inc=IS['NOINC'].unstack().fillna(0)
+market_cap=PV['Dmktcap'].unstack()
+tot_debt=BS['LB'].unstack()
+cash_eq=CF['CEEPBL'].unstack().fillna(0)
+tmp=ReturnOnInvestedCapital(inc_bef_tax,fin_exp,non_oper_inc,market_cap,tot_debt,cash_eq,date_list)
+    :param inc_bef_tax:
+    :param fin_exp:
+    :param market_cap:
+    :param tot_debt:
+    :param cash_eq:
+    :param date_list:
+    :return:
+    '''
+    tmp = (inc_bef_tax + fin_exp - non_oper_inc) / (market_cap.resample('D').ffill().ffill().loc[tot_debt.index] + tot_debt - cash_eq)
+    tmp = tmp[tmp.index.month == 12]
+    tmp.index = tmp.index + MonthEnd(6)
+    return tmp.resample('D').ffill().shift(1).loc[date_list]
+
+def TexableIncomeToBookIncome(inc_bef_tax,net_inc,date_list,pub_date=None):
+    '''
+    Taxable income-to-book income, which is pretax income divided by net income.
+    For example:
+        inc_bef_tax=IS['IBT'].unstack()
+net_inc=IS['NI'].unstack()
+tmp1=TexableIncomeToBookIncome(inc_bef_tax,net_inc,date_list,pub_date=pub_date)
+    :param inc_bef_tax:
+    :param net_inc:
+    :param date_list:
+    :param pub_date:
+    :return:
+    '''
+    tmp=inc_bef_tax/net_inc
+    tmp=tmp[tmp.index.month==12]
+    if pub_date is None:
+        tmp.index = tmp.index + MonthEnd(6)
+        return tmp.resample('D').ffill().shift(1).loc[date_list]
+    else:
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        return tmp2.resample('D').ffill().ffill().shift(1).reindex(index=date_list, columns=tmp.columns)
+
+def Z_score(net_working,tot_assets,EBIT,market_cap,tot_lia,sales,date_list):
+    '''
+    Z-score, we follow Dichev (1998) to construct Z-score = 1.2 × (working capital / total assets) +
+        1.4 × (retained earnings / total assets) + 3.3 × (EBIT / total assets) +
+        0.6 × (market value of equity / book value of total liabilities) + (sales / total assets).
+    For example:
+        net_working=BS['CA'].unstack().fillna(0)-BS['CL'].unstack().fillna(0)
+retained_earnings=BS['SR'].unstack().fillna(0)+BS['UDP'].unstack().fillna(0)
+EBIT=IS['IBT'].unstack()-IS['FINEXP'].unstack().fillna(0)
+market_cap=PV['Dmktcap'].unstack()
+tot_lia=BS['LB'].unstack()
+sales=IS['REV'].unstack()
+tmp=Z_score(net_working,tot_assets,EBIT,market_cap,tot_lia,sales,date_list)
+    :param net_working:
+    :param tot_assets:
+    :param EBIT:
+    :param market_cap:
+    :param tot_lia:
+    :param sales:
+    :param date_list:
+    :return:
+    '''
+    tmp = 1.2*net_working/tot_assets+1.4*retained_earnings/tot_assets+3.3*EBIT/tot_assets+\
+          0.6*market_cap.resample('D').ffill().ffill().loc[tot_lia.index]/tot_lia+sales/tot_assets
+    tmp = tmp[tmp.index.month == 12]
+    tmp.index = tmp.index + MonthEnd(6)
+    return tmp.resample('D').ffill().shift(1).loc[date_list]
