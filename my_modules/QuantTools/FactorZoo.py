@@ -9,6 +9,7 @@ from copy import deepcopy
 from scipy.stats import mstats
 from dateutil.parser import parse
 import time
+import statsmodels.api as sm
 #import warnings
 #warnings.filterwarnings("ignore")
 DPath='/Users/harbes/data/CNRDS/'
@@ -933,7 +934,7 @@ def NetPayoutOverProfit(net_inc,book_value,tot_profit,date_list,pub_date=None):
     :param pub_date:
     :return:
     '''
-    tmp = (net_inc[net_inc.index.month==12]-book_value[book_value.index.month==12]+book_value[book_value.index.month==12].shift(1))/\
+    tmp = (net_inc[net_inc.index.month==12]-book_value[book_value.index.month==12].diff())/\
           tot_profit[tot_profit.index.month==12]
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6)
@@ -1117,3 +1118,340 @@ tmp=Z_score(net_working,tot_assets,EBIT,market_cap,tot_lia,sales,date_list)
     tmp = tmp[tmp.index.month == 12]
     tmp.index = tmp.index + MonthEnd(6)
     return tmp.resample('D').ffill().shift(1).loc[date_list]
+
+
+def ChangeIn6MonthMomentum(adj_prc,date_list):
+    '''
+    Change in 6-month momentum, which is cumulative returns from months t-6 to t-1 minus months t-12 to t-7.
+    For example:
+        adj_prc=PV['Adclsprc'].unstack()
+tmp=ChangeIn6MonthMomentum(adj_prc,date_list)
+    :param adj_prc:
+    :param date_list:
+    :return:
+    '''
+    ch_mom6=pd.DataFrame(index=date_list,columns=adj_prc.columns)
+    for i in date_list:
+        ch_mom6.loc[i]=adj_prc.loc[i-DateOffset(months=6):i-Day()].iloc[[0,-1]].pct_change().iloc[-1]-\
+                       adj_prc.loc[i-DateOffset(months=12):i-DateOffset(months=6)].iloc[[0,-1]].pct_change().iloc[-1]
+    return ch_mom6
+
+def IndustryMomentum():
+    ##todo
+
+def Momentum(adj_prc,date_list,period_start=DateOffset(months=1),period_end=Day()):
+    '''
+    1-month momentum, which is one-month cumulative returns.(short-term reversal)
+    For example:
+        adj_prc = PV['Adclsprc'].unstack()
+tmp=Momentum1Month(adj_prc,date_list)
+    :param adj_prc:
+    :param date_list:
+    :return:
+    '''
+    mom1=pd.DataFrame(index=date_list, columns=adj_prc.columns)
+    for i in date_list:
+        mom1.loc[i] = adj_prc.loc[i - period_start:i - period_end].iloc[[0, -1]].pct_change().iloc[-1]
+    return mom1
+def VolumeMomentum(adj_prc,volume,date_list,period_start=DateOffset(months=1),period_end=Day()):
+    ## todo two-way sorted portfolio
+    '''
+    文献：over the next 12 months, price momentum is more pronounced among high volume stocks
+    Volume Momentum, which is buy- and- hold returns from t-6 through t-1. We limit the sample to high trading volume
+        stocks, i.e., stocks in the highest quintile of average monthly trading volume measured over the past six months.
+
+    :param adj_prc:
+    :param volume:
+    :param date_list:
+    :return:
+    '''
+def VolumeTrend(volume,date_list):
+    '''
+    volume trend, which is five-year trend in monthly trading volume scaled by average trading volume during the same
+        five-year period.
+    For example:
+        volume=pd.read_pickle(DPath+'PVm')['Mtrdvol'].unstack()
+t0=time.time()
+tmp=VolumeTrend(volume,date_list)
+dt=time.time()-t0
+    :param volume:
+    :param date_list:
+    :return:
+    '''
+    volume_tmp=volume.reset_index()
+    volume_tmp['groupby']=volume.index.year*100.0+volume.index.month
+    volume_tmp_groupby=volume_tmp.groupby('groupby').nth(-1)
+    volume_tmp=volume_tmp_groupby.set_index('Trdmt')
+    volume_trend=pd.DataFrame(index=date_list,columns=volume_tmp.columns)
+    for i in date_list:
+        tmp=volume_tmp.loc[i-DateOffset(years=3)-Day(10):i-Day(1)].apply(lambda x:x/x.mean()-1.0)# -Day(10)防止最后交易日不在月末，从而造成遗漏
+        X=np.arange(1,len(tmp)+1)-(len(tmp)+1.0)*0.5
+        volume_trend.loc[i] =X@tmp.values/X.var()
+    return volume_trend
+def BetaDimson(ret_d,market_ret,date_list):
+    '''
+    The Dimson beta, we follow Dimson (1979) to use the lead and the lag of the market return along with the current
+        market return to estimate the Dimson beta.
+    For example:
+        ret_d=pd.read_pickle(DPath+'PVd')['Adret'].unstack()
+market_ret=pd.read_pickle(DPath+'market_ret_d_tot')
+t0=time.time()
+tmp=BetaDimson(ret_d,market_ret,date_list)
+time.time()-t0
+    :param ret_d:
+    :param market_ret:
+    :param date_list:
+    :return:
+    '''
+    beta_dimson=pd.DataFrame(index=date_list,columns=ret_d.columns)
+    X=pd.concat([market_ret.shift(2),market_ret.shift(1),market_ret,market_ret.shift(-1),market_ret.shift(-2)],axis=1)
+    for i in date_list:
+        tmpX=X.loc[i-DateOffset(years=1):i-Day()].iloc[:-2].apply(lambda x: x - x.mean())
+        tmpY = ret_d.loc[tmpX.index].apply(lambda x: x - x.mean()).fillna(0)
+        beta_dimson.loc[i]=(np.linalg.pinv(tmpX.values.T@tmpX)@tmpX.values.T@tmpY).sum()
+    return beta_dimson[beta_dimson!=0.0]
+def BetaDownside(ret_d,market_ret,date_list):
+    '''
+    Downside beta, we follow Ang, Chen, and Xing (2006) to estimate downside beta as the conditional covariance between
+        a stock’s excess return and market excess return, divided by the conditional variance of market excess return,
+        which is on condition that market excess return is lower than the average of market excess return.
+    For example:
+    :param ret_d:
+    :param market_ret:
+    :param date_list:
+    :return:
+    '''
+    beta_down = pd.DataFrame(index=date_list, columns=ret_d.columns)
+    for i in date_list:
+        tmpX = market_ret.loc[i - DateOffset(years=1):i - Day()]
+        tmpX = tmpX - tmpX.mean()
+        tmpX[tmpX>0.0]=0.0 # key
+        tmpY = ret_d.loc[tmpX.index].apply(lambda x: x - x.mean()).fillna(0)
+        beta_down.loc[i] = tmpX.values.T @ tmpY.values/(tmpX.values.T @ tmpX.values)
+    return beta_down[beta_down != 0.0]
+def BetaMarket(ret_d,market_ret,date_list):
+    '''
+    Market beta, which is the estimated market beta from weekly returns and equal weighted market returns for 3 years
+        ending month t-1 with at least 52 weeks of returns.###本代码使用的仍然是日交易数据
+    :param ret_d:
+    :param market_ret:
+    :param date_list:
+    :return:
+    '''
+    beta_ = pd.DataFrame(index=date_list, columns=ret_d.columns)
+    for i in date_list:
+        tmpX = market_ret.loc[i - DateOffset(months=3):i - Day()]
+        tmpX = tmpX - tmpX.mean()
+        tmpY = ret_d.loc[tmpX.index].apply(lambda x: x - x.mean()).fillna(0)
+        beta_.loc[i] = tmpX.values.T @ tmpY.values/(tmpX.values.T @ tmpX.values)
+    return beta_[beta_ != 0.0]
+def BetaSquared(ret_d,market_ret,date_list):
+    '''
+    Beta squared, which is market beta squared.
+    :param ret_d:
+    :param market_ret:
+    :param date_list:
+    :return:
+    '''
+    tmp=BetaMarket(ret_d,market_ret,date_list)
+    return tmp**2.0
+def BetaFP(ret_d,market_ret,date_list):
+    '''
+    Fama and French (1992) beta, we follow Fama and French (1992) to estimate individual stocks’ betas by regressing
+        monthly return on the current and recent lag of the market return with a five-year rolling window.
+    For example:
+        ret_d=pd.read_pickle(DPath+'PVd')['Adret'].unstack()*0.01
+        market_ret=pd.read_pickle(DPath+'market_ret_d_tot')*0.01
+t0=time.time()
+tmp=BetaFP(ret_d,market_ret,date_list)
+time.time()-t0 # 68.86
+    :param ret_d:
+    :param market_ret:
+    :param date_list:
+    :return:
+    '''
+    ret_d_ln=np.log(ret_d+1.0)
+    ret_3d=ret_d_ln+ret_d_ln.shift(-1)+ret_d_ln.shift(-2)
+    market_ret_ln=np.log(market_ret+1.0)
+    market_ret_3d=market_ret_ln+market_ret_ln.shift(-1)+market_ret_ln.shift(-2)
+    beta_FP=pd.DataFrame(index=date_list,columns=ret_d.columns)
+    for i in date_list:
+        beta_FP.loc[i]=ret_d.loc[i-DateOffset(months=3):i-Day()].std()/\
+                       market_ret.loc[i-DateOffset(months=3):i-Day()].std()*\
+                       ret_3d.loc[i-DateOffset(years=2):i-Day()].corrwith(market_ret_3d.loc[i-DateOffset(years=2):i-Day()])
+    return beta_FP
+def IdiosyncraticVolatility(ret_d,market_ret,date_list):
+    '''
+    Idiosyncratic return volatility, which is standard deviation of residuals of weekly returns on weekly equal
+        weighted market returns for 3 years prior to month end.
+    For example:
+        ret_d=pd.read_pickle(DPath+'PVd')['Adret'].unstack()
+market_ret=ret_d.mean(axis=1) # market_ret=pd.read_pickle('market_ret_d_eq')
+t0=time.time()
+tmp=IdiosyncraticVolatility(ret_d,market_ret,date_list)
+time.time()-t0 # 66.45
+    :param ret_d:
+    :param market_ret:
+    :param date_list:
+    :return:
+    '''
+    ivol = pd.DataFrame(index=date_list, columns=ret_d.columns)
+    for i in date_list:
+        tmpX = market_ret.loc[i - DateOffset(months=1):i - Day()]
+        tmpX=tmpX-tmpX.mean()
+        tmpY = ret_d.loc[tmpX.index].apply(lambda x: x - x.mean()).fillna(0)
+        tmpBeta = tmpX.values.T @ tmpY.values/(tmpX.values.T @ tmpX.values)
+        ivol.loc[i]=tmpY.sub(np.matrix(tmpX).T@np.matrix(tmpBeta)).std()
+    return ivol[ivol>0.0]
+
+
+def Illiquidity(ret_d,tra_amount,date_list):
+    '''
+    Illiquidity, which is the average of absolute daily return divided by daily RMB trading volume over the past 12
+        months ending on June 30 of year t+1.
+    For example:
+        ret_d=pd.read_pickle(DPath+'PVd')['Adret'].unstack()
+tra_amount=pd.read_pickle(DPath+'PVd')['Dtrdamt'].unstack()
+tmp=Illiquidity(ret_d,tra_amount,date_list)
+    :param ret_d:
+    :param amount:
+    :param date_list:
+    :return:
+    '''
+    illiq=pd.DataFrame(index=date_list,columns=ret_d.columns)
+    illiq_d=ret_d.abs()/tra_amount*1.0e6
+    for i in date_list:
+        illiq.loc[i]=illiq_d.loc[i - DateOffset(months=1):i - Day()].mean()
+    return illiq[illiq>0.0]
+
+ret_d=pd.read_pickle(DPath+'PVd')['Adret'].unstack()
+tmp=MaxDailyReturn(ret_d,date_list)
+def MaxDailyReturn(ret_d,date_list):
+    '''
+    Maximum daily returns, which is the maximum daily return from returns during calendar month t-1.
+    :param ret_d:
+    :param date_list:
+    :return:
+    '''
+    max_ret=pd.DataFrame(index=date_list,columns=ret_d.columns)
+    for i in date_list:
+        max_ret.loc[i]=ret_d.loc[i - DateOffset(months=1):i - Day()].max()
+    return max_ret[max_ret!=0.0]
+
+
+def Price(cls_prc,date_list):
+    '''
+    Price, which is the share price at the end of month t-1
+    For example:
+        cls_prc=pd.read_pickle(DPath+'PVd')['Dclsprc'].unstack()
+tmp=Price(cls_prc,date_list)
+    :param cls_prc:
+    :param date_list:
+    :return:
+    '''
+    return cls_prc.resample('D').ffill().reindex(date_list)
+def PriceDelay():
+    ##todo
+def TradingAmount(tra_amount,date_list):
+    ## todo 平均值还是last observation
+    '''
+    RMB trading volume, which is the natural log of RMB trading volume times price per share from month t-2
+    :param tra_amount:
+    :param date_list:
+    :return:
+    '''
+    tra_amt=pd.DataFrame(index=date_list,columns=tra_amount.columns)
+    tmp=np.log(tra_amount)
+    for i in date_list:
+        tra_amt.loc[i]=tmp.loc[i - DateOffset(months=2):i - Day()].mean()
+    return tra_amt
+
+
+def Size(market_cap,date_list):
+    '''
+    Frim size, which is market value of tradable shares at the end of each month.
+    For example:
+        market_cap=pd.read_pickle(DPath+'PVd')['Dmktcap'].unstack() #'Domktcap'
+tmp=Size(market_cap,date_list)
+    :param market_cap:
+    :param date_list:
+    :return:
+    '''
+    return np.log(market_cap.resample('D').ffill().reindex(date_list))
+
+
+def VolatilityOfTradingAmount(tra_amount,date_list):
+    '''
+    Volatility of RMB trading volume, which is monthly standard deviation of daily dollar trading volume.
+    For example:
+        tra_amount=pd.read_pickle(DPath+'PVd')['Dtrdamt'].unstack()
+tmp=VolatilityOfTradingAmount(tra_amount,date_list)
+    :param tra_amount:
+    :param date_list:
+    :return:
+    '''
+    vol_tra_amt=pd.DataFrame(index=date_list,columns=tra_amount.columns)
+    tmp=np.log(tra_amount)
+    for i in date_list:
+        vol_tra_amt.loc[i]=tmp.loc[i - DateOffset(months=1):i - Day()].std()
+    return vol_tra_amt[vol_tra_amt>0.0]
+
+
+def VolatilityOfTurnover(turnover,date_list):
+    '''
+    Volatility of turnover, which is monthly standard deviation of daily share turnover.
+    For example:
+        turnover=pd.read_pickle(DPath+'PVd')['Dtnor'].unstack()
+tmp=VolatilityOfTurnover(turnover[turnover>0.0],date_list)
+    :param turnover:
+    :param date_list:
+    :return:
+    '''
+    vol_turnover = pd.DataFrame(index=date_list, columns=turnover.columns)
+    #tmp = np.log(turnover)
+    for i in date_list:
+        vol_turnover.loc[i] = turnover.loc[i - DateOffset(months=1):i - Day()].std()
+    return vol_turnover[vol_turnover>0.0]
+
+def VolatilityOfReturns(ret_d,date_list):
+    '''
+    Return volatility, which is standard deviation of daily returns from month t-1
+    For example:
+        ret_d=pd.read_pickle(DPath+'PVd')['Adret'].unstack();
+tmp=VolatilityOfReturns(ret_d,date_list)
+    :param ret_d:
+    :param date_list:
+    :return:
+    '''
+    vol_ret = pd.DataFrame(index=date_list, columns=ret_d.columns)
+    for i in date_list:
+        vol_ret.loc[i] = ret_d.loc[i - DateOffset(months=1):i - Day()].std()
+    return vol_ret[vol_ret>0.0]
+
+def Turnover(turnover,date_list):
+    '''
+    Share turnover, which is average monthly trading volume for most recent 3 months scaled by number of shares
+        outstanding in current month.
+    For example:
+        turnover=pd.read_pickle(DPath+'PVd')['Dtnor'].unstack()
+tmp=Turnover(turnover[turnover>0.0],date_list)
+    :param turnover:
+    :param date_list:
+    :return:
+    '''
+    tnor=pd.DataFrame(index=date_list, columns=turnover.columns)
+    for i in date_list:
+        tnor.loc[i]=turnover.loc[i - DateOffset(months=2):i - Day()].mean()
+    return tnor[tnor>0.0]
+curr_assets=BS['CA'].unstack()
+curr_lia=BS['CL'].unstack()
+def CurrentRatio(curr_assets,curr_lia,date_list,annually=True,pub_date=None):
+    '''
+    Current ratio, which is current assets divided by current liabilities.
+    :param curr_assets:
+    :param curr_lia:
+    :param date_list:
+    :param annually:
+    :param pub_date:
+    :return:
+    '''
