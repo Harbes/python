@@ -1,9 +1,9 @@
 # todo 几点建议：.loc换成.reindex;将SustainableGrowth函数作为模板推广至其他函数；财报数据出现加减时，引入fillna
 import sys
 import pandas as pd
-from pandas import DataFrame,Series,qcut
 import numpy as np
 from pandas.tseries.offsets import MonthEnd,YearEnd,Week,Day,DateOffset
+from pandas import DataFrame,Series,qcut
 import statsmodels.api as sm
 from copy import deepcopy
 from scipy.stats import mstats
@@ -17,85 +17,90 @@ BS=pd.read_pickle(DPath+'BS')
 #BS=BS.iloc[:,:-1].astype(float)
 #BS.iloc[0,0]
 #BS.to_pickle(DPath+'BS')
-PV=pd.read_pickle(DPath+'PV')
+PV=pd.read_pickle(DPath+'PVd')
 #PV=PV.astype(float)
 #PV.iloc[0,0]
 #PV.to_pickle(DPath+'PV')
 CF=pd.read_pickle(DPath+'CF')
 IS=pd.read_pickle(DPath+'IS')
-annual_inc_bef_extra=IS['IBT'].unstack()-IS['TAX'].unstack()
+
 market_cap=PV['Dmktcap'].unstack()
-date_list=annual_inc_bef_extra.loc['2004':].index[1:20]
-tmp=EarningsToPrice(annual_inc_bef_extra,market_cap,date_list)
-market_cap.index[market_cap.index.month==12]
+
 pub_date=pd.read_pickle(DPath+'PubDate')['ActlDt']
-def AssetsToMarket(total_assets,market_cap,date_list,most_recent=False,annually=True):
+def AssetsToMarket(tot_assets,market_cap,date_list,annually=True,pub_date=None,most_recent=False):
+    ## todo 需要仔细检查
     '''
-    Attention:数据时间index影响指标是否是instantly updated
     Assets-to-market, which is total assets for the fiscal year divided by fiscal-year-end market capitalization.
     for example:
-        BS=pd.read_pickle(DPath+'BS')
-        PV=pd.read_pickle(DPath+'PV')
         tot_assets=BS['AT'].unstack()
-        market_cap=PV['Dmktcap'].unstack()
-        date_list=tot_assets.index[10:]
-        tmp3=AssetsToMarket(tot_assets,market_cap,date_list,most_recent=True)
+market_cap=PV['Dmktcap'].unstack()
+date_list=pd.date_range('2015-01-01','2017-12-31', freq='Q');
+tmp1=AssetsToMarket(tot_assets,market_cap,date_list,annually=True,pub_date=pub_date,most_recent=True)
     :param tot_assets:
     :param market_cap:
     :param date_list:
+    :param annually:
+    :param pub_date:
     :return:
     '''
-    common_columns=total_assets.columns&market_cap.columns
-    if most_recent:
-        return total_assets.resample('D').ffill().loc[(date_list, common_columns)].div(
-            market_cap.resample('D').ffill().loc[(date_list, common_columns)])
-    elif annually:
-        #GroupByFunc = lambda x: x.year
-        #tmp = market_cap.groupby(GroupByFunc).last()
-        #tmp.index = pd.to_datetime(tmp.index, format='%Y') + YearEnd()
-        #tmp2 = total_assets.loc[(total_assets.index.month == 12, common_columns)] / tmp[common_columns]
-        tmp = total_assets.loc[(total_assets.index.month == 12, common_columns)]
-        tmp2 = tmp / market_cap[common_columns].resample('D').ffill().loc[tmp.index]
-        tmp2.index = tmp2.index + MonthEnd(6)
-        return tmp2.resample('D').ffill().loc[date_list]
+    tmp=tot_assets.resample('Q').fillna(method=None)
+    if annually:
+        tmp=tmp[tmp.index.month==12]
+    if pub_date is None:
+        if most_recent:
+            tmp.index = tmp.index + MonthEnd(6) + Day()
+            return (tmp.resample('D').ffill()/market_cap.resample('D').ffill().shift(1)).reindex(date_list)
+        else:
+            tmp=tmp/market_cap.resample('D').ffill().reindex(tmp.index)
+            tmp.index = tmp.index + MonthEnd(6) + Day()
+            return tmp.resample('D').ffill().reindex(date_list)
     else:
-        tmp3= total_assets[common_columns] / market_cap[common_columns].resample('D').ffill().loc[total_assets.index]
-        tmp3.index = tmp3.index + MonthEnd(6)
-        return tmp3.resample('D').ffill().loc[date_list]
-def BookToMarket(book_value,market_cap,date_list,most_recent=False,annually=True):
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        if most_recent:
+            return (tmp2.resample('D').ffill().ffill(limit=365).shift(1) / market_cap.resample('D').ffill().shift(1)).reindex(
+                date_list)
+        else:
+            tmp2= tmp2 / market_cap.resample('D').ffill().reindex(tmp2.index)
+            return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
+
+def BookToMarket(book_value,market_cap,date_list,annually=True,pub_date=None):
     '''
     Book-to-market equity, which is the book value of equity for fiscal year divided by fiscal-year-end market capitalization
     For example:
         BS=pd.read_pickle(DPath+'BS')
         PV=pd.read_pickle(DPath+'PV')
         book_value=BS['EQU'].unstack()
-        market_cap=PV['Dmktcap'].unstack()
-        date_list=book_value.loc['2004':].index[1:20]
-        tmp=BookToMarket(book_value,market_cap,date_list)
-
+market_cap=PV['Dmktcap'].unstack()
+tmp=BookToMarket(book_value,market_cap,date_list,annually=True,pub_date=None)
     :param book_value:
     :param market_cap:
     :param date_list:
+    :param annually:
+    :param pub_date:
     :return:
     '''
-    common_columns=book_value.columns&market_cap.columns
-    if most_recent:
-        return book_value.resample('D').ffill().loc[(date_list, common_columns)].div(
-            market_cap.resample('D').ffill().loc[(date_list, common_columns)])
-    elif annually:
-        #GroupByFunc=lambda x:x.year
-        #tmp=market_cap.groupby(GroupByFunc).last()
-        #tmp.index=pd.to_datetime(tmp.index,format='%Y')+YearEnd()
-        #tmp2=book_value.loc[(book_value.index.month==12,common_columns)]/tmp[common_columns]
-        tmp = book_value.loc[(book_value.index.month == 12, common_columns)]
-        tmp2 = tmp / market_cap[common_columns].resample('D').ffill().loc[tmp.index]
-        tmp2.index=tmp2.index+MonthEnd(6)
-        return tmp2.resample('D').ffill().loc[date_list]
+    tmp = book_value.resample('Q').fillna(method=None)
+    if annually:
+        tmp = tmp[tmp.index.month == 12]
+    if pub_date is None:
+        tmp = tmp / market_cap.resample('D').ffill().reindex(tmp.index)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
-        tmp3 = book_value[common_columns] / market_cap[common_columns].resample('D').ffill().loc[book_value.index]
-        tmp3.index = tmp3.index + MonthEnd(6)
-        return tmp3.resample('D').ffill().loc[date_list]
-def OperatingCashFlowToPrice(oper_cash,market_cap,date_list,most_recent=False,annually=True):
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        tmp2 = tmp2 / market_cap.resample('D').ffill().reindex(tmp2.index)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
+def OperatingCashFlowToPrice(oper_cash,market_cap,date_list,pub_date=None):
     '''
     Cash flow-to-price, which is operating cash flows divided by fiscal-year-end market capitalization.
     For example:
@@ -104,28 +109,28 @@ def OperatingCashFlowToPrice(oper_cash,market_cap,date_list,most_recent=False,an
         oper_cash=CF['NCPOA'].unstack()
         market_cap=PV['Dmktcap'].unstack()
         date_list=oper_cash.loc['2004':].index[1:20]
-        tmp=OperatingCashFlowToPrice(oper_cash,market_cap,date_list)
-
-    :param cash_flow:
+        tmp=OperatingCashFlowToPrice(oper_cash,market_cap,date_list,pub_date=None)
+    :param oper_cash:
     :param market_cap:
     :param date_list:
+    :param pub_date:
     :return:
     '''
-
-    common_columns=oper_cash.columns&market_cap.columns
-    if most_recent:
-        return oper_cash.resample('D').ffill().loc[(date_list, common_columns)].div(
-            market_cap.resample('D').ffill().loc[(date_list, common_columns)])
-    elif annually:
-        tmp = oper_cash.loc[(oper_cash.index.month == 12, common_columns)]
-        tmp2 = tmp / market_cap[common_columns].resample('D').ffill().loc[tmp.index]
-        tmp2.index=tmp2.index+MonthEnd(6)
-        return tmp2.resample('D').ffill().loc[date_list]
+    tmp = oper_cash[oper_cash.index.month == 12]
+    if pub_date is None:
+        tmp = tmp / market_cap.resample('D').ffill().reindex(tmp.index)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
-        tmp3 = oper_cash[common_columns] / market_cap[common_columns].resample('D').ffill().loc[oper_cash.index]
-        tmp3.index = tmp3.index + MonthEnd(6)
-        return tmp3.resample('D').ffill().loc[date_list]
-def DebtToEquity(total_lia,market_cap,date_list,most_recent=False,annually=True):
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        tmp2 = tmp2 / market_cap.resample('D').ffill().reindex(tmp2.index)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
+def DebtToEquity(tot_lia,market_cap,date_list,annually=True,pub_date=None):
     '''
     Debt-to-equity ratio, which is total liabilities divided by fiscal-year-end market capitalization.
     For example:
@@ -134,52 +139,66 @@ def DebtToEquity(total_lia,market_cap,date_list,most_recent=False,annually=True)
         total_lia=BS['LB'].unstack()
         market_cap=PV['Dmktcap'].unstack()
         date_list=total_lia.loc['2004':].index[1:20]
-        tmp=DebtToEquity(total_lia,market_cap,date_list)
-    :param total_lia:
+        tmp=DebtToEquity(tot_lia,market_cap,date_list,annually=True,pub_date=None)
+    :param tot_lia:
     :param market_cap:
     :param date_list:
+    :param annually:
+    :param pub_date:
     :return:
     '''
-    common_columns = total_lia.columns & market_cap.columns
-    if most_recent:
-        return total_lia.resample('D').ffill().loc[(date_list, common_columns)].div(
-            market_cap.resample('D').ffill().loc[(date_list, common_columns)])
-    elif annually:
-        tmp = total_lia.loc[(total_lia.index.month == 12, common_columns)]
-        tmp2 = tmp / market_cap[common_columns].resample('D').ffill().loc[tmp.index]
-        tmp2.index=tmp2.index+MonthEnd(6)
-        return tmp2.resample('D').ffill().loc[date_list]
+    tmp = tot_lia.resample('Q').fillna(method=None)
+    if annually:
+        tmp = tmp[tmp.index.month == 12]
+    if pub_date is None:
+        tmp = tmp / market_cap.resample('D').ffill().reindex(tmp.index)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
-        tmp3 = total_lia[common_columns] / market_cap[common_columns].resample('D').ffill().loc[total_lia.index]
-        tmp3.index = tmp3.index + MonthEnd(6)
-        return tmp3.resample('D').ffill().loc[date_list]
-def LongTermDebtToMarketEquity(long_debt,market_cap,date_list,most_recent=False,annually=True):
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        tmp2 = tmp2 / market_cap.resample('D').ffill().reindex(tmp2.index)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
+def LongTermDebtToMarketEquity(long_debt,market_cap,date_list,annually=True,pub_date=None):
     '''
     Long term debt-to-market equity, which is long term liabilities divided by fiscal-year-end market capitalization.
     For example:
         long_debt=BS['NCL'].unstack()
         market_cap=PV['Dmktcap'].unstack()
         date_list=long_debt.loc['2004':].index[1:20]
-        tmp=LongTermDebtToMarketEquity(long_debt,market_cap,date_list)
+        tmp=LongTermDebtToMarketEquity(long_debt,market_cap,date_list,annually=True,pub_date=None)
     :param long_debt:
     :param market_cap:
     :param date_list:
+    :param annually:
+    :param pub_date:
     :return:
     '''
-    common_columns = long_debt.columns & market_cap.columns
-    if most_recent:
-        return long_debt.resample('D').ffill().loc[(date_list, common_columns)].div(
-            market_cap.resample('D').ffill().loc[(date_list, common_columns)])
-    elif annually:
-        tmp = long_debt.loc[(long_debt.index.month == 12, common_columns)]
-        tmp2 = tmp / market_cap[common_columns].resample('D').ffill().loc[tmp.index]
-        tmp2.index=tmp2.index+MonthEnd(6)
-        return tmp2.resample('D').ffill().loc[date_list]
+    tmp = long_debt.resample('Q').fillna(method=None)
+    if annually:
+        tmp = tmp[tmp.index.month == 12]
+    if pub_date is None:
+        tmp = tmp / market_cap.resample('D').ffill().reindex(tmp.index)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
-        tmp3 = long_debt[common_columns] / market_cap[common_columns].resample('D').ffill().loc[long_debt.index]
-        tmp3.index = tmp3.index + MonthEnd(6)
-        return tmp3.resample('D').ffill().loc[date_list]
-def DividendToPrice(annual_div,market_cap,date_list,most_recent=False,annually=True):
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        tmp2 = tmp2 / market_cap.resample('D').ffill().reindex(tmp2.index)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
+
+dividend=BS['DVP'].unstack()
+market_cap=PV['Dmktcap'].unstack()
+tmp=DividendToPrice(dividend,market_cap,date_list,pub_date=None)
+def DividendToPrice(dividend,market_cap,date_list,pub_date=None):
     '''
     Dividend-to-price ratio, which is annual total dividends payouts divided by fiscal-year-end market capitalization.
 
@@ -188,20 +207,21 @@ def DividendToPrice(annual_div,market_cap,date_list,most_recent=False,annually=T
     :param date_list:
     :return:
     '''
-    common_columns = annual_div.columns & market_cap.columns
-    if most_recent:
-        return annual_div.resample('D').ffill().loc[(date_list, common_columns)].div(
-            market_cap.resample('D').ffill().loc[(date_list, common_columns)])
-    elif annually:
-        tmp = annual_div.loc[(annual_div.index.month == 12, common_columns)]
-        tmp2 = tmp / market_cap[common_columns].resample('D').ffill().loc[tmp.index]
-        tmp2.index = tmp2.index + MonthEnd(6)
-        return tmp2.resample('D').ffill().loc[date_list]
+    tmp = dividend[dividend.index.month == 12]*1e6
+    if pub_date is None:
+        tmp = tmp / market_cap.resample('D').ffill().reindex(tmp.index)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
-        tmp3 = annual_div[common_columns] / market_cap[common_columns].resample('D').ffill().loc[annual_div.index]
-        tmp3.index = tmp3.index + MonthEnd(6)
-        return tmp3.resample('D').ffill().loc[date_list]
-def EarningsToPrice(annual_inc_bef_extra,market_cap,date_list,most_recent=False,annually=True):
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        tmp2 = tmp2 / market_cap.resample('D').ffill().reindex(tmp2.index)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
+def EarningsToPrice(annual_inc_bef_extra,market_cap,date_list,pub_date=None):
     '''
     Earnings-to-price, which is annual income before extraordinary items divided by fiscal-year-end market capitalization.
     For example:
@@ -214,20 +234,21 @@ def EarningsToPrice(annual_inc_bef_extra,market_cap,date_list,most_recent=False,
     :param date_list:
     :return:
     '''
-    common_columns = annual_inc_bef_extra.columns & market_cap.columns
-    if most_recent:
-        return annual_inc_bef_extra.resample('D').ffill().loc[(date_list, common_columns)].div(
-            market_cap.resample('D').ffill().loc[(date_list, common_columns)])
-    elif annually:
-        tmp = annual_inc_bef_extra.loc[(annual_inc_bef_extra.index.month == 12, common_columns)]
-        tmp2 = tmp / market_cap[common_columns].resample('D').ffill().loc[tmp.index]
-        tmp2.index = tmp2.index + MonthEnd(6)
-        return tmp2.resample('D').ffill().loc[date_list]
+    tmp = annual_inc_bef_extra[annual_inc_bef_extra.index.month == 12]
+    if pub_date is None:
+        tmp = tmp / market_cap.resample('D').ffill().reindex(tmp.index)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
-        tmp3 = annual_inc_bef_extra[common_columns] / market_cap[common_columns].resample('D').ffill().loc[annual_inc_bef_extra.index]
-        tmp3.index = tmp3.index + MonthEnd(6)
-        return tmp3.resample('D').ffill().loc[date_list]
-def LiabilityGrowth(total_lia,date_list,most_recent=False,annually=True):
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        tmp2 = tmp2 / market_cap.resample('D').ffill().reindex(tmp2.index)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
+def LiabilityGrowth(tot_lia,date_list,most_recent=False,annually=True):
     '''
     Liability growth, which is the annual change in total liabilities divided by 1-year-lagged total liabilities.
     For example:
@@ -237,33 +258,47 @@ def LiabilityGrowth(total_lia,date_list,most_recent=False,annually=True):
     :param date_list:
     :return:
     '''
-    if most_recent:
-        tmp=total_lia.resample('D').ffill().pct_change(fill_method=None)
-        tmp[tmp==0.0]=np.nan
-        return tmp.loc[date_list]
-    elif annually:
-        tmp=total_lia[total_lia.index.month==12].pct_change(fill_method=None)
-        tmp.index=tmp.index+MonthEnd(6)
-        return tmp.resample('D').ffill().ffill().loc[date_list]
+    tmp = tot_lia[tot_lia.index.month == 12].pct_change(fill_method=None)
+    if pub_date is None:
+        tmp.index = tmp.index + MonthEnd(6) + Day()
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
-        tmp = total_lia.pct_change(fill_method=None)
-        tmp.index = tmp.index + MonthEnd(6)
-        return tmp.resample('D').ffill().loc[date_list]
-def AdjOperatingCashFLowToPrice(adj_operating,market_cap,date_list):
-    ##todo adj_opeating???
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
+
+def OperatingCashFLowToPrice(oper_cash,market_cap,date_list,pub_date=None):
     '''
     Operating cash flow-to-price, which is operating cash flow(measured as earnings adjusted for depreciation and
         working capital accruals) divided by fiscal-year-end market capitalization.
-    :param adj_operating:
+    For example:
+        oper_cash=CF['NCPOA'].unstack()
+tmp=OperatingCashFLowToPrice(oper_cash,market_cap,date_list,pub_date=pub_date)
+    :param oper_cash:
     :param market_cap:
     :param date_list:
+    :param pub_date:
     :return:
     '''
-    common_columns = adj_operating.columns & market_cap.columns
-    return adj_operating.resample('D').ffill().loc[(date_list, common_columns)].div(
-        market_cap.resample('D').ffill().loc[(date_list, common_columns)])
-def PayoutYield(annual_inc_bef_extra,book_value,market_cap,date_list):
-    ##todo
+    tmp = oper_cash[oper_cash.index.month == 12]
+    if pub_date is None:
+        tmp = tmp / market_cap.resample('D').ffill().reindex(tmp.index)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
+        return tmp.resample('D').ffill().reindex(date_list)
+    else:
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        tmp2 = tmp2 / market_cap.resample('D').ffill().reindex(tmp2.index)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
+def PayoutYield(annual_inc_bef_extra,book_value,market_cap,date_list,pub_date=None):
     '''
     Payout yield, which is annual income before extraordinary items minus the change of book equity divided by
         fiscal year end market capitalization.
@@ -278,15 +313,21 @@ def PayoutYield(annual_inc_bef_extra,book_value,market_cap,date_list):
     :param date_list:
     :return:
     '''
-    common_columns = annual_inc_bef_extra.columns& book_value.columns & market_cap.columns
-    annual_inc_minus_change_book=annual_inc_bef_extra[annual_inc_bef_extra.index.month==12]-\
-                                 book_value[book_value.index.month==12]+\
-                                 book_value[book_value.index.month==12].shift(1)
-    tmp=annual_inc_minus_change_book[common_columns]/market_cap[common_columns].resample('D').ffill().ffill().loc[annual_inc_minus_change_book.index]
-    tmp.index=tmp.index+MonthEnd(6)
-    return tmp.resample('D').ffill().ffill().loc[date_list]
+    tmp = annual_inc_bef_extra[annual_inc_bef_extra.index.month==12]-book_value[book_value.index.month==12].diff()
+    if pub_date is None:
+        tmp = tmp / market_cap.resample('D').ffill().reindex(tmp.index)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
+        return tmp.resample('D').ffill().reindex(date_list)
+    else:
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        tmp2 = tmp2 / market_cap.resample('D').ffill().reindex(tmp2.index)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
 def Reversal_60_13(adj_price,date_list):
-    ##TODO
     '''
     Reversal, which is cumulative returns from months t-60 to t-13.
     For example:
@@ -298,12 +339,10 @@ def Reversal_60_13(adj_price,date_list):
     '''
     rev=pd.DataFrame(index=date_list,columns=adj_price.columns)
     for i in date_list:
-        tmp=adj_price.loc[i-DateOffset(months=60):i-DateOffset(months=12)]
-        rev.loc[i]=(tmp.iloc[-1]-tmp.iloc[0])/tmp.iloc[0]
+        rev.loc[i]=adj_price.loc[i-DateOffset(years=5):i-DateOffset(years=1)].iloc[[0,-1]].pct_change().iloc[1]
     return rev
 
 def SustainableGrowth(book_value,date_list,annually=True,pub_date=None):
-    ##  todo 使用pub_date替代most_recent命令
     '''
     Sustainable growth, which is annual growth in book value of equity
     For example:
@@ -317,9 +356,9 @@ def SustainableGrowth(book_value,date_list,annually=True,pub_date=None):
     if annually:
         tmp=book_value.loc[book_value.index.month==12].pct_change(fill_method=None)
     else:
-        tmp=book_value.pct_change(fill_method=None)
+        tmp=book_value.resample('Q').fillna(method=None).pct_change(fill_method=None)
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
         return tmp.resample('D').ffill().loc[date_list]
     else:
         tmp2=pd.DataFrame()
@@ -328,7 +367,7 @@ def SustainableGrowth(book_value,date_list,annually=True,pub_date=None):
         tmp2=tmp2.reset_index()
         tmp2=tmp2.loc[tmp2['date'].notnull()].set_index(['date','Scode'])['growth'].sort_index()
         tmp2=tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().reindex(date_list)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
 def SalesGrowthMinusInventoryGrowth(sales,inventory,date_list,pub_date=None):
     '''
     Sales growth minus inventory growth, which is annual growth in sales minus annual growth in inventory.
@@ -343,7 +382,7 @@ def SalesGrowthMinusInventoryGrowth(sales,inventory,date_list,pub_date=None):
     '''
     tmp = sales[sales.index.month==12].pct_change(fill_method=None)-inventory[inventory.index.month==12].pct_change(fill_method=None)
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
         return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2 = pd.DataFrame()
@@ -352,7 +391,7 @@ def SalesGrowthMinusInventoryGrowth(sales,inventory,date_list,pub_date=None):
         tmp2 = tmp2.reset_index()
         tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['growth'].sort_index()
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().reindex(date_list)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
 def SalesToPrice(sales,market_cap,date_list,pub_date=None):
     '''
     Sales-to-price, which is the annual operating revenue divided by fiscal-year-end market capitalization.
@@ -367,8 +406,8 @@ def SalesToPrice(sales,market_cap,date_list,pub_date=None):
     '''
     tmp = sales[sales.index.month==12]
     if pub_date is None:
-        tmp2=tmp / market_cap.resample('D').ffill().ffill().reindex(tmp.index)
-        tmp2.index = tmp2.index + MonthEnd(6)
+        tmp2=tmp / market_cap.resample('D').ffill().reindex(tmp.index)
+        tmp2.index = tmp2.index + MonthEnd(6) + Day()
         return tmp2.resample('D').ffill().reindex(date_list)
     else:
         tmp2 = pd.DataFrame()
@@ -377,7 +416,7 @@ def SalesToPrice(sales,market_cap,date_list,pub_date=None):
         tmp2 = tmp2.reset_index()
         tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['sales'].sort_index()
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().reindex(date_list)/market_cap.resample('D').ffill().reindex(date_list)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)/market_cap.resample('D').ffill().shift(1).reindex(date_list)
 def TaxGrowth(tax,date_list,pub_date=None):
     '''
     Tax growth, which is annual change in taxes payable divided by 1-year-lagged taxes payable.
@@ -390,7 +429,7 @@ def TaxGrowth(tax,date_list,pub_date=None):
     '''
     tmp = tax[tax.index.month == 12].pct_change(fill_method=None)
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
         return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2 = pd.DataFrame()
@@ -399,7 +438,7 @@ def TaxGrowth(tax,date_list,pub_date=None):
         tmp2 = tmp2.reset_index()
         tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['growth'].sort_index()
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().reindex(date_list)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
 def Accruals(accruals,oper_cash,tot_assets,date_list,pub_date=None):
     '''
     Accruals, which is annual income before extraordinary items minus operating cash flows divided by average total assets.
@@ -415,7 +454,7 @@ def Accruals(accruals,oper_cash,tot_assets,date_list,pub_date=None):
     '''
     tmp = (accruals[accruals.index.month == 12]-oper_cash[oper_cash.index.month==12])/tot_assets[tot_assets.index.month==12]
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
         return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2 = pd.DataFrame()
@@ -424,7 +463,7 @@ def Accruals(accruals,oper_cash,tot_assets,date_list,pub_date=None):
         tmp2 = tmp2.reset_index()
         tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['accruals'].sort_index()
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().reindex(date_list)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
 def PercentAccruals(tot_profit,oper_cash,net_profit,date_list,pub_date=None):
     '''
     Percent accruals, which is total profit minus operating cash flow divided by net profit.
@@ -441,7 +480,7 @@ def PercentAccruals(tot_profit,oper_cash,net_profit,date_list,pub_date=None):
     tmp = (tot_profit[tot_profit.index.month == 12] - oper_cash[oper_cash.index.month == 12]) / net_profit[
         net_profit.index.month == 12]
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
         return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2 = pd.DataFrame()
@@ -450,7 +489,7 @@ def PercentAccruals(tot_profit,oper_cash,net_profit,date_list,pub_date=None):
         tmp2 = tmp2.reset_index()
         tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['per'].sort_index()
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().reindex(date_list)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
 def CapitalExpenditureGrowth(PPE,depre,date_list,pub_date=None):
     '''
     Capital expenditure growth, which is the annual change in capital expenditure divided by 1-
@@ -464,9 +503,9 @@ def CapitalExpenditureGrowth(PPE,depre,date_list,pub_date=None):
     :param date_list:
     :return:
     '''
-    tmp=(PPE[PPE.index.month==12]-PPE[PPE.index.month==12].shift(1)+depre[depre.index.month==12]).pct_change(fill_method=None)
+    tmp=(PPE[PPE.index.month==12].diff()+depre[depre.index.month==12]).pct_change(fill_method=None)
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
         return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2 = pd.DataFrame()
@@ -475,7 +514,7 @@ def CapitalExpenditureGrowth(PPE,depre,date_list,pub_date=None):
         tmp2 = tmp2.reset_index()
         tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['growth'].sort_index()
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().reindex(date_list)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
 def ChangeInShareholdersEquity(book_value,tot_assets,date_list,annually=True,pub_date=None):
     '''
     Change in shareholders’ equity, which is the annual change in book equity divided by 1-year-lagged total assets.
@@ -489,12 +528,11 @@ def ChangeInShareholdersEquity(book_value,tot_assets,date_list,annually=True,pub
     :return:
     '''
     if annually:
-        tmp=(book_value.loc[book_value.index.month==12]-book_value[book_value.index.month==12].shift(1))/\
-            tot_assets[tot_assets.index.month==12].shift(1)
+        tmp=book_value.loc[book_value.index.month==12].diff()/tot_assets[tot_assets.index.month==12].shift(1)
     else:
-        tmp=(book_value-book_value.shift(1))/tot_assets.shift(1)
+        tmp=book_value.diff()/tot_assets.shift(1)
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
         return tmp.resample('D').ffill().loc[date_list]
     else:
         tmp2=pd.DataFrame()
@@ -503,7 +541,7 @@ def ChangeInShareholdersEquity(book_value,tot_assets,date_list,annually=True,pub
         tmp2=tmp2.reset_index()
         tmp2=tmp2.loc[tmp2['date'].notnull()].set_index(['date','Scode'])['change'].sort_index()
         tmp2=tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().reindex(date_list)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
 def ChangesInPPEandInventoryToAssets(PPE,inventory,tot_assets,date_list,annually=True,pub_date=None):
     ## todo 对于没有inventory(例如银行)的数据，舍弃(nan)还是取值为0？？？
     '''
@@ -511,7 +549,7 @@ def ChangesInPPEandInventoryToAssets(PPE,inventory,tot_assets,date_list,annually
         plus the annual change in inventory scaled by 1-year-lagged total assets.
     For example:
         PPE=BS['PPE'].unstack()
-        inventory=BS['INVY'].unstack()
+        inventory=BS['INVY'].unstack().fillna(0)
         tot_assets=BS['AT'].unstack()
         tmp2=ChangesInPPEandInventoryToAssets(PPE,inventory,tot_assets,date_list,annually=False,pub_date=pub_date)
     :param PPE:
@@ -523,12 +561,11 @@ def ChangesInPPEandInventoryToAssets(PPE,inventory,tot_assets,date_list,annually
     :return:
     '''
     if annually:
-        tmp=((PPE+inventory).loc[PPE.index.month==12]-(PPE+inventory)[PPE.index.month==12].shift(1))/\
-            tot_assets[tot_assets.index.month==12].shift(1)
+        tmp=(PPE+inventory).loc[PPE.index.month==12].diff()/tot_assets[tot_assets.index.month==12].shift(1)
     else:
-        tmp=((PPE+inventory)-(PPE+inventory).shift(1))/tot_assets.shift(1)
+        tmp=(PPE+inventory).diff()/tot_assets.shift(1)
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
         return tmp.resample('D').ffill().loc[date_list]
     else:
         tmp2=pd.DataFrame()
@@ -537,7 +574,7 @@ def ChangesInPPEandInventoryToAssets(PPE,inventory,tot_assets,date_list,annually
         tmp2=tmp2.reset_index()
         tmp2=tmp2.loc[tmp2['date'].notnull()].set_index(['date','Scode'])['change'].sort_index()
         tmp2=tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().reindex(index=date_list,columns=tmp.columns)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list,columns=tmp.columns)
 def InvestmentToAssets(tot_assets,date_list,annually=True,pub_date=None):
     '''
     Investment-to-assets, which is the annual change in total assets divided by 1-year-lagged total assets.
@@ -555,7 +592,7 @@ def InvestmentToAssets(tot_assets,date_list,annually=True,pub_date=None):
     else:
         tmp=tot_assets.pct_change(fill_method=None)
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
         return tmp.resample('D').ffill().loc[date_list]
     else:
         tmp2=pd.DataFrame()
@@ -564,7 +601,7 @@ def InvestmentToAssets(tot_assets,date_list,annually=True,pub_date=None):
         tmp2=tmp2.reset_index()
         tmp2=tmp2.loc[tmp2['date'].notnull()].set_index(['date','Scode'])['change'].sort_index()
         tmp2=tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().reindex(index=date_list,columns=tmp.columns)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list,columns=tmp.columns)
 
 def InventoryChange(inventory,tot_assets,date_list,annually=True,pub_date=None):
     '''
@@ -581,12 +618,12 @@ def InventoryChange(inventory,tot_assets,date_list,annually=True,pub_date=None):
     :return:
     '''
     if annually:
-        tmp=2.0*(inventory[inventory.index.month==12]-inventory[inventory.index.month==12].shift(1))/\
+        tmp=2.0*inventory[inventory.index.month==12].diff()/\
             (tot_assets[tot_assets.index.month==12]+tot_assets[tot_assets.index.month==12].shift(1))
     else:
-        tmp=2.0*(inventory-inventory.shift(1))/(tot_assets+tot_assets.shift(1))
+        tmp=2.0*inventory.diff()/(tot_assets+tot_assets.shift(1))
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
         return tmp.resample('D').ffill().loc[date_list]
     else:
         tmp2=pd.DataFrame()
@@ -595,7 +632,7 @@ def InventoryChange(inventory,tot_assets,date_list,annually=True,pub_date=None):
         tmp2=tmp2.reset_index()
         tmp2=tmp2.loc[tmp2['date'].notnull()].set_index(['date','Scode'])['change'].sort_index()
         tmp2=tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().reindex(index=date_list,columns=tmp.columns)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list,columns=tmp.columns)
 def InventoryGrowth(inventory,date_list,annually=True,pub_date=None):
     '''
     Inventory growth, which is the annual change in inventory divided by 1-year-lagged inventory.
@@ -613,7 +650,7 @@ def InventoryGrowth(inventory,date_list,annually=True,pub_date=None):
     else:
         tmp=inventory.pct_change(fill_method=None)
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
         return tmp.resample('D').ffill().loc[date_list]
     else:
         tmp2=pd.DataFrame()
@@ -622,7 +659,7 @@ def InventoryGrowth(inventory,date_list,annually=True,pub_date=None):
         tmp2=tmp2.reset_index()
         tmp2=tmp2.loc[tmp2['date'].notnull()].set_index(['date','Scode'])['change'].sort_index()
         tmp2=tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().reindex(index=date_list,columns=tmp.columns)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list,columns=tmp.columns)
 def NetOperatingAssets(fin_assets,fin_lia,book_value,tot_assets,date_list,annually=True,pub_date=None):
     '''
     Net operating assets, which is operating assets minus operating liabilities scaled by total assets
@@ -645,7 +682,7 @@ def NetOperatingAssets(fin_assets,fin_lia,book_value,tot_assets,date_list,annual
     if annually:
         tmp=tmp[tmp.index.month==12]
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
         return tmp.resample('D').ffill().loc[date_list]
     else:
         tmp2=pd.DataFrame()
@@ -654,7 +691,7 @@ def NetOperatingAssets(fin_assets,fin_lia,book_value,tot_assets,date_list,annual
         tmp2=tmp2.reset_index()
         tmp2=tmp2.loc[tmp2['date'].notnull()].set_index(['date','Scode'])['change'].sort_index()
         tmp2=tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().reindex(index=date_list,columns=tmp.columns)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list,columns=tmp.columns)
 def AssetTurnover(fin_assets,fin_lia,book_value,sales,date_list,pub_date=None):
     '''
     Asset turnover, which is sales divided by 1-year-lagged net operating assets
@@ -676,7 +713,7 @@ def AssetTurnover(fin_assets,fin_lia,book_value,sales,date_list,pub_date=None):
     tmp =sales/(fin_lia - fin_assets + book_value)
     tmp=tmp[tmp.index.month==12]
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
         return tmp.resample('D').ffill().loc[date_list]
     else:
         tmp2 = pd.DataFrame()
@@ -685,7 +722,7 @@ def AssetTurnover(fin_assets,fin_lia,book_value,sales,date_list,pub_date=None):
         tmp2 = tmp2.reset_index()
         tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['change'].sort_index()
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().reindex(index=date_list, columns=tmp.columns)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list, columns=tmp.columns)
 def CashFlowOverAssets(oper_cash,tot_assets,date_list,annually=True,pub_date=None):
     '''
     Cash flow over assets, which is cash flow from operation scaled by total assets.
@@ -704,7 +741,7 @@ def CashFlowOverAssets(oper_cash,tot_assets,date_list,annually=True,pub_date=Non
     if annually:
         tmp = tmp[tmp.index.month == 12]
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
         return tmp.resample('D').ffill().loc[date_list]
     else:
         tmp2 = pd.DataFrame()
@@ -713,8 +750,9 @@ def CashFlowOverAssets(oper_cash,tot_assets,date_list,annually=True,pub_date=Non
         tmp2 = tmp2.reset_index()
         tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().reindex(index=date_list, columns=tmp.columns)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list, columns=tmp.columns)
 def CashProductivity(trad_share,long_debt,tot_assets,cash_eq,date_list,annually=True,pub_date=None):
+    ## todo 不同频率数据加减时，使用pub_date是否恰当？？？
     '''
     Cash productivity, which is market value of tradable shares plus long-term liabilities minus total
         assets scaled by cash and cash equivalents.
@@ -733,11 +771,11 @@ def CashProductivity(trad_share,long_debt,tot_assets,cash_eq,date_list,annually=
     :param pub_date:
     :return:
     '''
-    tmp = (trad_share.resample('D').ffill().ffill().loc[long_debt.index]+long_debt-tot_assets)/cash_eq
+    tmp = (trad_share.resample('D').ffill().ffill(limit=365).loc[long_debt.index]+long_debt-tot_assets)/cash_eq
     if annually:
         tmp = tmp[tmp.index.month == 12]
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
         return tmp.resample('D').ffill().loc[date_list]
     else:
         tmp2 = pd.DataFrame()
@@ -746,7 +784,7 @@ def CashProductivity(trad_share,long_debt,tot_assets,cash_eq,date_list,annually=
         tmp2 = tmp2.reset_index()
         tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().reindex(index=date_list, columns=tmp.columns)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list, columns=tmp.columns)
 
 def CashToAssets(cash_eq,tot_assets,date_list,annually=True,pub_date=None):
     '''
@@ -767,7 +805,7 @@ def CashToAssets(cash_eq,tot_assets,date_list,annually=True,pub_date=None):
     else:
         tmp=2.0*cash_eq/(tot_assets+tot_assets.shift(1))
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
         return tmp.resample('D').ffill().loc[date_list]
     else:
         tmp2 = pd.DataFrame()
@@ -776,7 +814,7 @@ def CashToAssets(cash_eq,tot_assets,date_list,annually=True,pub_date=None):
         tmp2 = tmp2.reset_index()
         tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().reindex(index=date_list, columns=tmp.columns)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list, columns=tmp.columns)
 def CapitalTurnover(sales,tot_assets,date_list,pub_date=None):
     '''
     Capital turnover, which is sales divided by 1-year-lagged total assets.
@@ -793,7 +831,7 @@ def CapitalTurnover(sales,tot_assets,date_list,pub_date=None):
     '''
     tmp=sales[sales.index.month==12]/tot_assets[tot_assets.index.month==12].shift(1)
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
         return tmp.resample('D').ffill().loc[date_list]
     else:
         tmp2 = pd.DataFrame()
@@ -802,9 +840,8 @@ def CapitalTurnover(sales,tot_assets,date_list,pub_date=None):
         tmp2 = tmp2.reset_index()
         tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().reindex(index=date_list, columns=tmp.columns)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list, columns=tmp.columns)
 def ReturnOnCapital(inc_bef_tax,fin_exp,net_working,net_fixed,date_list,pub_date=None):
-    ##todo 注意：在reindex(date_list)之前需要先shift(1)一下，前述的所有函数都需要修改！！！
     '''
     Return on Capital = EBIT/(Net Working Capital + Net Fixed Assets)
     For example:
@@ -823,7 +860,7 @@ def ReturnOnCapital(inc_bef_tax,fin_exp,net_working,net_fixed,date_list,pub_date
     tmp = (inc_bef_tax+fin_exp)/(net_fixed+net_working)
     tmp=tmp[tmp.index.month==12]
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
+        tmp.index = tmp.index + MonthEnd(6) + Day()
         return tmp.resample('D').ffill().shift(1).loc[date_list]
     else:
         tmp2 = pd.DataFrame()
@@ -832,8 +869,8 @@ def ReturnOnCapital(inc_bef_tax,fin_exp,net_working,net_fixed,date_list,pub_date
         tmp2 = tmp2.reset_index()
         tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().shift(1).reindex(index=date_list, columns=tmp.columns)
-def EarningsYield(inc_bef_tax,fin_exp,market_cap,tot_debt,cash_eq,date_list):
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list, columns=tmp.columns)
+def EarningsYield(inc_bef_tax,fin_exp,market_cap,tot_lia,cash_eq,date_list):
     '''
     Earnings yield, which is earnings before interests and taxes divided by enterprise value.
     (Enterprise value formula:EV = Market capitalization + Total debt − Cash and cash equivalents)
@@ -841,18 +878,18 @@ def EarningsYield(inc_bef_tax,fin_exp,market_cap,tot_debt,cash_eq,date_list):
         inc_bef_tax=IS['IBT'].unstack()
         fin_exp=IS['FINEXP'].unstack()
         market_cap=PV['Dmktcap'].unstack()
-        tot_debt=BS['LB'].unstack()
+        tot_lia=BS['LB'].unstack()
         cash_eq=CF['CEEPBL'].unstack()
-        tmp=EarningsYield(inc_bef_tax,fin_exp,market_cap,tot_debt,cash_eq,date_list)
+        tmp=EarningsYield(inc_bef_tax,fin_exp,market_cap,tot_lia,cash_eq,date_list)
     :param inc_bef_tax:
     :param fin_exp:
     :param market_cap:
-    :param tot_debt:
+    :param tot_lia:
     :param cash_eq:
     :param pub_date:
     :return:
     '''
-    tmp = (inc_bef_tax + fin_exp) / (market_cap.resample('D').ffill().ffill().loc[tot_debt.index]+tot_debt-cash_eq)
+    tmp = (inc_bef_tax + fin_exp) / (market_cap.resample('D').ffill().ffill(limit=365).loc[tot_lia.index]+tot_lia-cash_eq)
     tmp = tmp[tmp.index.month == 12]
     tmp.index = tmp.index + MonthEnd(6)
     return tmp.resample('D').ffill().shift(1).loc[date_list]
@@ -872,8 +909,8 @@ def GrossMargins(oper_rev,oper_exp,date_list,pub_date=None):
     '''
     tmp = (oper_rev[oper_rev.index.month==12]-oper_exp[oper_exp.index.month==12])/oper_rev[oper_rev.index.month==12].shift(1)
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
-        return tmp.resample('D').ffill().shift(1).loc[date_list]
+        tmp.index = tmp.index + MonthEnd(6) + Day()
+        return tmp.resample('D').ffill().loc[date_list]
     else:
         tmp2 = pd.DataFrame()
         tmp2['tmp'] = tmp.stack()
@@ -881,7 +918,7 @@ def GrossMargins(oper_rev,oper_exp,date_list,pub_date=None):
         tmp2 = tmp2.reset_index()
         tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().shift(1).reindex(index=date_list, columns=tmp.columns)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list, columns=tmp.columns)
 
 def GrossProfitability(oper_rev,oper_exp,tot_assets,date_list,pub_date=None):
     '''
@@ -899,16 +936,16 @@ def GrossProfitability(oper_rev,oper_exp,tot_assets,date_list,pub_date=None):
     :param pub_date:
     :return:
     '''
-    oper_rev_q=oper_rev.resample('Q').fillna(method=None)
-    oper_rev_q=oper_rev_q-oper_rev_q.shift(1)
+    oper_rev_q=oper_rev.resample('Q').fillna(method=None).diff()
+    #oper_rev_q=oper_rev_q-oper_rev_q.shift(1)
     oper_rev_q[oper_rev_q.index.month==3]=oper_rev[oper_rev.index.month==3]
-    oper_exp_q = oper_exp.resample('Q').fillna(method=None)
-    oper_exp_q=oper_exp-oper_exp.shift(1)
+    oper_exp_q = oper_exp.resample('Q').fillna(method=None).diff()
+    #oper_exp_q=oper_exp-oper_exp.shift(1)
     oper_exp_q[oper_exp_q.index.month == 3] = oper_exp[oper_exp.index.month == 3]
     tmp = 2.0*(oper_rev_q-oper_exp_q)/(tot_assets+tot_assets.shift(1))
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
-        return tmp.resample('D').ffill().shift(1).loc[date_list]
+        tmp.index = tmp.index + MonthEnd(6) + Day()
+        return tmp.resample('D').ffill().loc[date_list]
     else:
         tmp2 = pd.DataFrame()
         tmp2['tmp'] = tmp.stack()
@@ -916,7 +953,7 @@ def GrossProfitability(oper_rev,oper_exp,tot_assets,date_list,pub_date=None):
         tmp2 = tmp2.reset_index()
         tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().shift(1).reindex(index=date_list, columns=tmp.columns)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list, columns=tmp.columns)
 def NetPayoutOverProfit(net_inc,book_value,tot_profit,date_list,pub_date=None):
     '''
     Net payout over profits, which is the sum of total net payout (net income minus changes in book equity)
@@ -937,8 +974,8 @@ def NetPayoutOverProfit(net_inc,book_value,tot_profit,date_list,pub_date=None):
     tmp = (net_inc[net_inc.index.month==12]-book_value[book_value.index.month==12].diff())/\
           tot_profit[tot_profit.index.month==12]
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
-        return tmp.resample('D').ffill().shift(1).loc[date_list]
+        tmp.index = tmp.index + MonthEnd(6) + Day()
+        return tmp.resample('D').ffill().loc[date_list]
     else:
         tmp2 = pd.DataFrame()
         tmp2['tmp'] = tmp.stack()
@@ -946,7 +983,7 @@ def NetPayoutOverProfit(net_inc,book_value,tot_profit,date_list,pub_date=None):
         tmp2 = tmp2.reset_index()
         tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().shift(1).reindex(index=date_list, columns=tmp.columns)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list, columns=tmp.columns)
 
 
 def ReturnOnOperatingAsset(oper_inc,depre,fin_assets,fin_lia,date_list,pub_date=None):
@@ -969,8 +1006,8 @@ tmp1=ReturnOnOperatingAsset(oper_inc,depre,fin_assets,fin_lia,date_list,pub_date
     net_oper_asset=fin_assets-fin_lia
     tmp=(oper_inc[oper_inc.index.month==12]-depre[depre.index.month==12])/net_oper_asset[net_oper_asset.index.month==12].shift(1)
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
-        return tmp.resample('D').ffill().shift(1).loc[date_list]
+        tmp.index = tmp.index + MonthEnd(6) + Day()
+        return tmp.resample('D').ffill().loc[date_list]
     else:
         tmp2 = pd.DataFrame()
         tmp2['tmp'] = tmp.stack()
@@ -978,7 +1015,7 @@ tmp1=ReturnOnOperatingAsset(oper_inc,depre,fin_assets,fin_lia,date_list,pub_date
         tmp2 = tmp2.reset_index()
         tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().shift(1).reindex(index=date_list, columns=tmp.columns)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list, columns=tmp.columns)
 
 
 def ReturnOnAssets(oper_inc,tot_assets,date_list,pub_date=None):
@@ -995,13 +1032,13 @@ tmp1=ReturnOnAssets(oper_inc,tot_assets,date_list,pub_date=pub_date)
     :param pub_date:
     :return:
     '''
-    oper_inc_q=oper_inc.resample('Q').fillna(method=None)
-    oper_inc_q=oper_inc_q-oper_inc_q.shift(1)
+    oper_inc_q=oper_inc.resample('Q').fillna(method=None).diff()
+    #oper_inc_q=oper_inc_q-oper_inc_q.shift(1)
     oper_inc_q[oper_inc_q.index.month==3]=oper_inc[oper_inc.index.month==3]
     tmp=2.0*oper_inc_q/(tot_assets+tot_assets.shift(1))
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
-        return tmp.resample('D').ffill().shift(1).loc[date_list]
+        tmp.index = tmp.index + MonthEnd(6) + Day()
+        return tmp.resample('D').ffill().loc[date_list]
     else:
         tmp2 = pd.DataFrame()
         tmp2['tmp'] = tmp.stack()
@@ -1009,7 +1046,7 @@ tmp1=ReturnOnAssets(oper_inc,tot_assets,date_list,pub_date=pub_date)
         tmp2 = tmp2.reset_index()
         tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().shift(1).reindex(index=date_list, columns=tmp.columns)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list, columns=tmp.columns)
 
 def ReturnOnEquity(net_inc,book_value,date_list,pub_date=None):
     '''
@@ -1024,13 +1061,13 @@ tmp1=ReturnOnEquity(net_inc,book_value,date_list,pub_date=pub_date)
     :param pub_date:
     :return:
     '''
-    net_inc_q=net_inc.resample('Q').fillna(method=None)
-    net_inc_q=net_inc_q-net_inc_q.shift(1)
+    net_inc_q=net_inc.resample('Q').fillna(method=None).diff()
+    #net_inc_q=net_inc_q-net_inc_q.shift(1)
     net_inc_q[net_inc_q.index.month==3]=net_inc[net_inc.index.month==3]
     tmp=net_inc_q*2.0/(book_value+book_value.resample('Q').fillna(method=None).shift(1))
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
-        return tmp.resample('D').ffill().shift(1).loc[date_list]
+        tmp.index = tmp.index + MonthEnd(6) + Day()
+        return tmp.resample('D').ffill().loc[date_list]
     else:
         tmp2 = pd.DataFrame()
         tmp2['tmp'] = tmp.stack()
@@ -1038,9 +1075,9 @@ tmp1=ReturnOnEquity(net_inc,book_value,date_list,pub_date=pub_date)
         tmp2 = tmp2.reset_index()
         tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().shift(1).reindex(index=date_list, columns=tmp.columns)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list, columns=tmp.columns)
 
-def ReturnOnInvestedCapital(inc_bef_tax,fin_exp,non_oper_inc,market_cap,tot_debt,cash_eq,date_list):
+def ReturnOnInvestedCapital(inc_bef_tax,fin_exp,non_oper_inc,market_cap,tot_lia,cash_eq,date_list):
     '''
     Return on invested capital, which is t annual earnings before interest and taxes minus non- operating income divided by non-cash enterprise value.
     For example:
@@ -1059,10 +1096,10 @@ tmp=ReturnOnInvestedCapital(inc_bef_tax,fin_exp,non_oper_inc,market_cap,tot_debt
     :param date_list:
     :return:
     '''
-    tmp = (inc_bef_tax + fin_exp - non_oper_inc) / (market_cap.resample('D').ffill().ffill().loc[tot_debt.index] + tot_debt - cash_eq)
+    tmp = (inc_bef_tax + fin_exp - non_oper_inc) / (market_cap.resample('D').ffill().ffill(limit=365).loc[tot_lia.index] + tot_lia - cash_eq)
     tmp = tmp[tmp.index.month == 12]
-    tmp.index = tmp.index + MonthEnd(6)
-    return tmp.resample('D').ffill().shift(1).loc[date_list]
+    tmp.index = tmp.index + MonthEnd(6) + Day()
+    return tmp.resample('D').ffill().loc[date_list]
 
 def TexableIncomeToBookIncome(inc_bef_tax,net_inc,date_list,pub_date=None):
     '''
@@ -1080,8 +1117,8 @@ tmp1=TexableIncomeToBookIncome(inc_bef_tax,net_inc,date_list,pub_date=pub_date)
     tmp=inc_bef_tax/net_inc
     tmp=tmp[tmp.index.month==12]
     if pub_date is None:
-        tmp.index = tmp.index + MonthEnd(6)
-        return tmp.resample('D').ffill().shift(1).loc[date_list]
+        tmp.index = tmp.index + MonthEnd(6) + Day()
+        return tmp.resample('D').ffill().loc[date_list]
     else:
         tmp2 = pd.DataFrame()
         tmp2['tmp'] = tmp.stack()
@@ -1089,7 +1126,7 @@ tmp1=TexableIncomeToBookIncome(inc_bef_tax,net_inc,date_list,pub_date=pub_date)
         tmp2 = tmp2.reset_index()
         tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
-        return tmp2.resample('D').ffill().ffill().shift(1).reindex(index=date_list, columns=tmp.columns)
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list, columns=tmp.columns)
 
 def Z_score(net_working,tot_assets,EBIT,market_cap,tot_lia,sales,date_list):
     '''
@@ -1116,8 +1153,8 @@ tmp=Z_score(net_working,tot_assets,EBIT,market_cap,tot_lia,sales,date_list)
     tmp = 1.2*net_working/tot_assets+1.4*retained_earnings/tot_assets+3.3*EBIT/tot_assets+\
           0.6*market_cap.resample('D').ffill().ffill().loc[tot_lia.index]/tot_lia+sales/tot_assets
     tmp = tmp[tmp.index.month == 12]
-    tmp.index = tmp.index + MonthEnd(6)
-    return tmp.resample('D').ffill().shift(1).loc[date_list]
+    tmp.index = tmp.index + MonthEnd(6) +Day()
+    return tmp.resample('D').ffill().loc[date_list]
 
 
 def ChangeIn6MonthMomentum(adj_prc,date_list):
@@ -1132,8 +1169,8 @@ tmp=ChangeIn6MonthMomentum(adj_prc,date_list)
     '''
     ch_mom6=pd.DataFrame(index=date_list,columns=adj_prc.columns)
     for i in date_list:
-        ch_mom6.loc[i]=adj_prc.loc[i-DateOffset(months=6):i-Day()].iloc[[0,-1]].pct_change().iloc[-1]-\
-                       adj_prc.loc[i-DateOffset(months=12):i-DateOffset(months=6)].iloc[[0,-1]].pct_change().iloc[-1]
+        ch_mom6.loc[i]=adj_prc.loc[i-DateOffset(months=6):i-Day()].iloc[[0,-1]].pct_change().iloc[1]-\
+                       adj_prc.loc[i-DateOffset(months=12):i-DateOffset(months=6)].iloc[[0,-1]].pct_change().iloc[1]
     return ch_mom6
 
 def IndustryMomentum():
@@ -1166,6 +1203,7 @@ def VolumeMomentum(adj_prc,volume,date_list,period_start=DateOffset(months=1),pe
     :return:
     '''
 def VolumeTrend(volume,date_list):
+    ## todo 仅使用CNRDS数据，适用性不够
     '''
     volume trend, which is five-year trend in monthly trading volume scaled by average trading volume during the same
         five-year period.
@@ -1324,11 +1362,13 @@ tmp=Illiquidity(ret_d,tra_amount,date_list)
         illiq.loc[i]=illiq_d.loc[i - DateOffset(months=1):i - Day()].mean()
     return illiq[illiq>0.0]
 
-ret_d=pd.read_pickle(DPath+'PVd')['Adret'].unstack()
-tmp=MaxDailyReturn(ret_d,date_list)
+
 def MaxDailyReturn(ret_d,date_list):
     '''
     Maximum daily returns, which is the maximum daily return from returns during calendar month t-1.
+    For example:
+        ret_d=pd.read_pickle(DPath+'PVd')['Adret'].unstack()
+tmp=MaxDailyReturn(ret_d,date_list)
     :param ret_d:
     :param date_list:
     :return:
@@ -1349,7 +1389,7 @@ tmp=Price(cls_prc,date_list)
     :param date_list:
     :return:
     '''
-    return cls_prc.resample('D').ffill().reindex(date_list)
+    return cls_prc.resample('D').ffill().shift(1).reindex(date_list)
 def PriceDelay():
     ##todo
 def TradingAmount(tra_amount,date_list):
@@ -1377,7 +1417,7 @@ tmp=Size(market_cap,date_list)
     :param date_list:
     :return:
     '''
-    return np.log(market_cap.resample('D').ffill().reindex(date_list))
+    return np.log(market_cap.resample('D').ffill().shift(1).reindex(date_list))
 
 
 def VolatilityOfTradingAmount(tra_amount,date_list):
@@ -1443,11 +1483,42 @@ tmp=Turnover(turnover[turnover>0.0],date_list)
     for i in date_list:
         tnor.loc[i]=turnover.loc[i - DateOffset(months=2):i - Day()].mean()
     return tnor[tnor>0.0]
-curr_assets=BS['CA'].unstack()
-curr_lia=BS['CL'].unstack()
+
+def CashflowToDebt(oper_cash,tot_lia,date_list,pub_date=None):
+    '''
+    The cash flow-to-debt ratio is the ratio of a company’s cash flow from operations to its total debt.
+    现金债务总额比《偿债能力《CNRDS
+    For example:
+        oper_cash=CF['NCPOA'].unstack()
+tot_lia=BS['LB'].unstack()
+tmp1=CashflowToDebt(oper_cash,tot_lia,date_list,pub_date=pub_date)
+    :param oper_cash:
+    :param tot_lia:
+    :param date_list:
+    :param annually:
+    :param pub_date:
+    :return:
+    '''
+    tmp=2.0*oper_cash[oper_cash.index.month==12]/(tot_lia[tot_lia.index.month==12]+tot_lia[tot_lia.index.month==12].shift(1))
+    if pub_date is None:
+        tmp.index = tmp.index + MonthEnd(6) + Day()
+        return tmp.resample('D').ffill().loc[date_list]
+    else:
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list, columns=tmp.columns)
 def CurrentRatio(curr_assets,curr_lia,date_list,annually=True,pub_date=None):
     '''
     Current ratio, which is current assets divided by current liabilities.
+    For example:
+        curr_assets=BS['CA'].unstack()
+curr_lia=BS['CL'].unstack()
+pub_date=pd.read_pickle(DPath+'PubDate')['ActlDt']
+tmp1=CurrentRatio(curr_assets,curr_lia,date_list,annually=True,pub_date=pub_date)
     :param curr_assets:
     :param curr_lia:
     :param date_list:
@@ -1455,3 +1526,167 @@ def CurrentRatio(curr_assets,curr_lia,date_list,annually=True,pub_date=None):
     :param pub_date:
     :return:
     '''
+    tmp=curr_assets/curr_lia
+    if annually:
+        tmp=tmp[tmp.index.month==12]
+    if pub_date is None:
+        tmp.index = tmp.index + MonthEnd(6) +Day()
+        return tmp.resample('D').ffill().loc[date_list]
+    else:
+        tmp2=pd.DataFrame()
+        tmp2['tmp']=tmp.stack()
+        tmp2['date']=pub_date
+        tmp2=tmp2.reset_index()
+        tmp2=tmp2.loc[tmp2['date'].notnull()].set_index(['date','Scode'])['tmp'].sort_index()
+        tmp2=tmp2.loc[~tmp2.index.duplicated()].unstack()
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list,columns=tmp.columns)
+
+def CurrentRatioGrowth(curr_assets,curr_lia,date_list,annually=True,pub_date=None):
+    '''
+    Current ratio growth, which is annual growth in current ratio.
+    For example:
+        curr_assets=BS['CA'].unstack()
+curr_lia=BS['CL'].unstack()
+pub_date=pd.read_pickle(DPath+'PubDate')['ActlDt']
+tmp1=CurrentRatioGrowth(curr_assets,curr_lia,date_list,annually=True,pub_date=pub_date)
+    :param curr_assets:
+    :param curr_lia:
+    :param date_list:
+    :param annually:
+    :param pub_date:
+    :return:
+    '''
+    tmp=curr_assets/curr_lia
+    if annually:
+        tmp=tmp[tmp.index.month==12].pct_change(fill_method=None)
+    else:
+        tmp=tmp.pct_change(fill_method=None)
+    if pub_date is None:
+        tmp.index = tmp.index + MonthEnd(6) + Day()
+        return tmp.resample('D').ffill().loc[date_list]
+    else:
+        tmp2=pd.DataFrame()
+        tmp2['tmp']=tmp.stack()
+        tmp2['date']=pub_date
+        tmp2=tmp2.reset_index()
+        tmp2=tmp2.loc[tmp2['date'].notnull()].set_index(['date','Scode'])['tmp'].sort_index()
+        tmp2=tmp2.loc[~tmp2.index.duplicated()].unstack()
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list,columns=tmp.columns)
+
+def QuickRatio(curr_assets,curr_lia,inventory,date_list,annually=True,pub_date=None):
+    '''
+    Quick ratio, which is current assets minus inventory, divided by current liabilities.
+    For example:
+        inventory = BS['INVY'].unstack().fillna(0)
+curr_assets=BS['CA'].unstack()
+curr_lia=BS['CL'].unstack()
+pub_date=pd.read_pickle(DPath+'PubDate')['ActlDt']
+tmp1=QuickRatio(curr_assets,curr_lia,inventory,date_list,annually=True,pub_date=pub_date)
+    :param curr_assets:
+    :param curr_lia:
+    :param inventory:
+    :param date_list:
+    :param annually:
+    :param pub_date:
+    :return:
+    '''
+    tmp = (curr_assets - inventory) / curr_lia
+    if annually:
+        tmp = tmp[tmp.index.month == 12]
+    if pub_date is None:
+        tmp.index = tmp.index + MonthEnd(6) + Day()
+        return tmp.resample('D').ffill().loc[date_list]
+    else:
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list, columns=tmp.columns)
+def QuickRatioGrowth(curr_assets,curr_lia,inventory,date_list,annually=True,pub_date=None):
+    '''
+    Quick ratio growth, which is annual growth in quick ratio.
+    For example:
+        inventory = BS['INVY'].unstack().fillna(0)
+curr_assets=BS['CA'].unstack()
+curr_lia=BS['CL'].unstack()
+pub_date=pd.read_pickle(DPath+'PubDate')['ActlDt']
+tmp1=QuickRatioGrowth(curr_assets,curr_lia,inventory,date_list,annually=True,pub_date=pub_date)
+    :param curr_assets:
+    :param curr_lia:
+    :param inventory:
+    :param date_list:
+    :param annually:
+    :param pub_date:
+    :return:
+    '''
+    tmp = (curr_assets - inventory) / curr_lia
+    if annually:
+        tmp = tmp[tmp.index.month == 12].pct_change(fill_method=None)
+    else:
+        tmp=tmp.pct_change(fill_method=None)
+    if pub_date is None:
+        tmp.index = tmp.index + MonthEnd(6) + Day()
+        return tmp.resample('D').ffill().loc[date_list]
+    else:
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list, columns=tmp.columns)
+
+def SalesToCash(sales,cash_eq,date_list,pub_date=None):
+    '''
+    Sales-to-cash, which is sales divided by cash and cash equivalents.
+    For example:
+        sales=IS['REV'].unstack()
+cash_eq=CF['CEEPBL'].unstack()
+tmp1=SalesToCash(sales,cash_eq,date_list,pub_date=None)
+    :param sales:
+    :param cash_eq:
+    :param date_list:
+    :param pub_date:
+    :return:
+    '''
+    tmp=sales[sales.index.month==12]/cash_eq[cash_eq.index.month==12]
+    if pub_date is None:
+        tmp.index = tmp.index + MonthEnd(6)+Day()
+        return tmp.resample('D').ffill().loc[date_list]
+    else:
+        tmp2=pd.DataFrame()
+        tmp2['tmp']=tmp.stack()
+        tmp2['date']=pub_date
+        tmp2=tmp2.reset_index()
+        tmp2=tmp2.loc[tmp2['date'].notnull()].set_index(['date','Scode'])['tmp'].sort_index()
+        tmp2=tmp2.loc[~tmp2.index.duplicated()].unstack()
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list,columns=tmp.columns)
+
+
+def SalesToInventory(sales,inventory,date_list,pub_date=None):
+    '''
+    Sales-to-inventory, which is sales divided by total inventory.
+    For example:
+        sales=IS['REV'].unstack()
+inventory = BS['INVY'].unstack()
+tmp1=SalesToInventory(sales,inventory,date_list,pub_date=pub_date)
+    :param sales:
+    :param inventory:
+    :param date_list:
+    :param pub_date:
+    :return:
+    '''
+    tmp = sales[sales.index.month == 12] / inventory[inventory.index.month == 12]
+    if pub_date is None:
+        tmp.index = tmp.index + MonthEnd(6) + Day()
+        return tmp.resample('D').ffill().loc[date_list]
+    else:
+        tmp2 = pd.DataFrame()
+        tmp2['tmp'] = tmp.stack()
+        tmp2['date'] = pub_date
+        tmp2 = tmp2.reset_index()
+        tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['tmp'].sort_index()
+        tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
+        return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list, columns=tmp.columns)
