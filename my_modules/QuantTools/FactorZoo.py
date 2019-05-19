@@ -1173,7 +1173,18 @@ tmp=ChangeIn6MonthMomentum(adj_prc,date_list)
                        adj_prc.loc[i-DateOffset(months=12):i-DateOffset(months=6)].iloc[[0,-1]].pct_change().iloc[1]
     return ch_mom6
 
-def IndustryMomentum():
+def IndustryMomentum(adj_prc,sector,sec_sign,date_list,weight=None):
+    '''
+    sector=pd.read_pickle(DPath+'sector_datetime')
+adj_prc=pd.read_pickle(DPath+'PVd')['Adclsprc'].unstack()
+sec_sign=np.arange(1.0,29.0)
+    :param adj_prc:
+    :param sector:
+    :param sec_sign:
+    :param date_list:
+    :param weight:
+    :return:
+    '''
     ##todo
 
 def Momentum(adj_prc,date_list,period_start=DateOffset(months=1),period_end=Day()):
