@@ -4,12 +4,19 @@
 
 
 # Chapter 3. the Lebesgue Integral
+<<<<<<< Updated upstream
 ## Cantor set
 import numpy as np
 import matplotlib.pyplot as plt;
 def CantorSet():
     k=20
     M=10000
+=======
+#np.set_printoptions(precision=5)
+def CantorSet():
+    k=6
+    M=2000
+>>>>>>> Stashed changes
     Cantor=np.zeros(M)
     for i in range(M):
         for j in range(k):
@@ -152,6 +159,7 @@ for j in range(M):
     plt.plot(time,X[j,:])
 plt.show()
 
+<<<<<<< Updated upstream
 # Chapter 10. the Ito Integral
 import numpy as np
 import matplotlib.pyplot as plt
@@ -200,3 +208,5 @@ integral[:,1:]+=(W[:,:-1]*dW).cumsum(axis=1) # 此处用的是W[:,:-1]，而不�
 exact=W[:,-1]**2*.5-T*.5
 error=integral[:,-1]-exact
 print(np.mean(error**2))
+=======
+>>>>>>> Stashed changes

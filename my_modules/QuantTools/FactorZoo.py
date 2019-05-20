@@ -1,7 +1,7 @@
 # todo 几点建议：.loc换成.reindex;将SustainableGrowth函数作为模板推广至其他函数；财报数据出现加减时，引入fillna
 import pandas as pd
 import numpy as np
-from pandas.tseries.offsets import Day,DateOffset#,MonthEnd,YearEnd,Week
+from pandas.tseries.offsets import Day,DateOffset,MonthEnd#,YearEnd,Week
 
 def AssetsToMarket(tot_assets,market_cap,date_list,annually=True,pub_date=None,most_recent=False):
     ## todo 需要仔细检查
@@ -869,7 +869,7 @@ def EarningsYield(inc_bef_tax,fin_exp,market_cap,tot_lia,cash_eq,date_list):
     tmp = (inc_bef_tax + fin_exp) / (market_cap.resample('D').ffill().ffill(limit=365).loc[tot_lia.index]+tot_lia-cash_eq)
     tmp = tmp[tmp.index.month == 12]
     tmp.index = tmp.index + MonthEnd(6)
-    return tmp.resample('D').ffill().shift(1).loc[date_list]
+    return tmp.resample('D').ffill().shift(1).reindex(date_list)
 def GrossMargins(oper_rev,oper_exp,date_list,pub_date=None):
     '''
     Gross margins, which is operating revenue minus operating expenses divided by 1-year-lagged operating revenue.
@@ -1146,7 +1146,7 @@ tmp=ChangeIn6MonthMomentum(adj_prc,date_list)
     p0.index = p0.index + Day(183)
     p1.index = p1.index + Day(183)
     return tmp1 - (p1.reindex(date_list) - p0.reindex(date_list)) / p0.reindex(date_list)
-def IndustryMomentum(adj_prc,sector,sec_sign,date_list,period_start=DateOffset(months=3),period_end=Day()):
+def IndustryMomentum(adj_prc,sector,sec_sign,date_list,period_start=Day(183),period_end=Day()):
     ## 将个股return替换为行业return
     '''
     sector=pd.read_pickle(DPath+'sector_datetime')
@@ -1159,13 +1159,21 @@ sec_sign=np.arange(29.0)
     :param weight:
     :return:
     '''
-    sector.loc[date_list[-1]]=np.nan
-    sector_tmp=sector.resample('D').ffill().ffill()
-    mom = pd.DataFrame(index=date_list, columns=adj_prc.columns&sector.columns)
-    for i in date_list:
-        mom.loc[i] = adj_prc.loc[i - period_start:i - period_end].iloc[[0, -1]].pct_change().iloc[1]
+    #sector.loc[date_list[-1]]=np.nan
+    #sector_tmp=sector.resample('D').ffill().ffill()
+    sector_tmp = sector.iloc[-1]
+    #mom = pd.DataFrame(index=date_list, columns=adj_prc.columns&sector.columns)
+    #for i in date_list:
+    #    mom.loc[i] = adj_prc.loc[i - period_start:i - period_end].iloc[[0, -1]].pct_change().iloc[1]
+    p0 = adj_prc.resample('D').ffill().ffill(limit=7)
+    p1 = adj_prc.resample('D').ffill().ffill(limit=7)
+    p0.index = p0.index + period_start
+    p1.index = p1.index + period_end
+    mom=((p1.reindex(date_list) - p0.reindex(date_list)) / p0.reindex(date_list))[adj_prc.columns&sector.columns]
+    for i in mom.index:
         for j in sec_sign:
-            mom.loc[i][sector_tmp.loc[i] == j]=mom.loc[i][sector_tmp.loc[i]==j].mean()
+            #mom.loc[i][sector_tmp.loc[i] == j]=mom.loc[i][sector_tmp.loc[i]==j].mean()
+            mom.loc[i][sector_tmp == j] = mom.loc[i][sector_tmp == j].mean()
     return mom
 def Momentum(adj_prc,date_list,period_start=Day(30),period_end=Day()):
     '''

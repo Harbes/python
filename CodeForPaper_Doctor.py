@@ -11,12 +11,13 @@ import time
 #from dateutil.parser import parse
 #import warnings
 #warnings.filterwarnings("ignore")
-DPath='/Users/harbes/data/CNRDS/'
+DPath='E:/data/CNRDS/'#'/Users/harbes/data/CNRDS/'
 BS=pd.read_pickle(DPath+'BS')
 PV=pd.read_pickle(DPath+'PVd')
 CF=pd.read_pickle(DPath+'CF')
 IS=pd.read_pickle(DPath+'IS')
-##
+## 大概125s
+t0=time.time()
 market_cap=PV['Dmktcap'].unstack()
 tot_assets=BS['AT'].unstack()
 book_value=BS['EQU'].unstack()
@@ -62,12 +63,13 @@ del PV
 del BS
 del IS
 del CF
+t1=time.time()
 ##
 date_list=pd.date_range('2004-12-31','2018-9-1',freq='M')+Day()
 #pub_date=pd.read_pickle(DPath+'PubDate')['ActlDt']
 
-##指标计算
-t0=time.time()
+##指标计算 大概20min
+t2=time.time()
 AM=AssetsToMarket(tot_assets,market_cap,date_list,annually=True,pub_date=None,most_recent=False)
 BM=BookToMarket(book_value,market_cap,date_list,annually=True,pub_date=None)
 CFP=OperatingCashFlowToPrice(oper_cash,market_cap,date_list,pub_date=None)
@@ -108,7 +110,7 @@ ROIC=ReturnOnInvestedCapital(inc_bef_tax,fin_exp,non_oper_inc.fillna(0),market_c
 TBI=TexableIncomeToBookIncome(inc_bef_tax,net_inc,date_list,pub_date=None)
 Z_score=ZScore(net_working,tot_assets,retained_earnings,ebit,market_cap,tot_lia,sales,date_list)
 CHMOM=ChangeIn6MonthMomentum(adj_prc,date_list)
-INDMOM=IndustryMomentum(adj_prc,sector,sec_sign,date_list,period_start=DateOffset(months=3),period_end=Day())
+INDMOM=IndustryMomentum(adj_prc,sector,sec_sign,date_list,period_start=Day(183),period_end=Day())
 MOM1M=Momentum(adj_prc,date_list,period_start=Day(30),period_end=Day())
 MOM6M=Momentum(adj_prc,date_list,period_start=Day(183),period_end=Day(30))
 MOM12M=Momentum(adj_prc,date_list,period_start=Day(365),period_end=Day(30))
@@ -136,7 +138,7 @@ QR=QuickRatio(curr_assets,curr_lia,inventory,date_list,annually=True,pub_date=No
 QRG=QuickRatioGrowth(curr_assets,curr_lia,inventory,date_list,annually=True,pub_date=None)
 SC=SalesToCash(sales,cash_eq,date_list,pub_date=None)
 SI=SalesToInventory(sales,inventory,date_list,pub_date=None)
-t1=time.time()-t0
+t3=time.time()
 ##
 signal_list=[AM,BM,CFP,DER,DLME,DP,EP,LG,PY,SG,SMI,SP,TG,ACC,PACC,CAPXG,dBe,dPIA,IA,IVC,IVG,NOA,ATO,CFOA,CP,CTA,CTO,EBIT,
              EY,GM,GP,NPOP,RNA,ROA,ROE,ROIC,TBI,Z_score,
@@ -144,4 +146,8 @@ signal_list=[AM,BM,CFP,DER,DLME,DP,EP,LG,PY,SG,SMI,SP,TG,ACC,PACC,CAPXG,dBe,dPIA
              B_DIM,B_DN,BETA,BETASQ,B_FP,
              IVOL,ILLIQ,MAXRET,PRC,RVOL,SIZE,STD_RVOL,STD_TURN,RETVOL,TURN,
              CFD,CR,CRG,QR,QRG,SC,SI]
-
+signal_names='''AM,BM,CFP,DER,DLME,DP,EP,LG,PY,SG,SMI,SP,TG,ACC,PACC,CAPXG,dBe,dPIA,IA,IVC,IVG,NOA,ATO,CFOA,CP,CTA,CTO,EBIT,EY,GM,GP,NPOP,RNA,ROA,ROE,ROIC,TBI,Z_score,CHMOM,INDMOM,MOM1M,MOM6M,MOM12M,MOM36M,VOLT,B_DIM,B_DN,BETA,BETASQ,B_FP,IVOL,ILLIQ,MAXRET,PRC,RVOL,SIZE,STD_RVOL,STD_TURN,RETVOL,TURN,CFD,CR,CRG,QR,QRG,SC,SI'''
+indi_all=pd.DataFrame()
+for name,var in zip(signal_names.split(','),signal_list):
+    indi_all[name]=var.stack()
+indi_all.to_pickle(DPath+'indicators_all')
