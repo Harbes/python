@@ -1,32 +1,7 @@
 # todo 几点建议：.loc换成.reindex;将SustainableGrowth函数作为模板推广至其他函数；财报数据出现加减时，引入fillna
-import sys
 import pandas as pd
 import numpy as np
 from pandas.tseries.offsets import MonthEnd,YearEnd,Week,Day,DateOffset
-from pandas import DataFrame,Series,qcut
-import statsmodels.api as sm
-from copy import deepcopy
-from scipy.stats import mstats
-from dateutil.parser import parse
-import time
-import statsmodels.api as sm
-#import warnings
-#warnings.filterwarnings("ignore")
-DPath='/Users/harbes/data/CNRDS/'
-BS=pd.read_pickle(DPath+'BS')
-#BS=BS.iloc[:,:-1].astype(float)
-#BS.iloc[0,0]
-#BS.to_pickle(DPath+'BS')
-PV=pd.read_pickle(DPath+'PVd')
-#PV=PV.astype(float)
-#PV.iloc[0,0]
-#PV.to_pickle(DPath+'PV')
-CF=pd.read_pickle(DPath+'CF')
-IS=pd.read_pickle(DPath+'IS')
-
-market_cap=PV['Dmktcap'].unstack()
-
-pub_date=pd.read_pickle(DPath+'PubDate')['ActlDt']
 def AssetsToMarket(tot_assets,market_cap,date_list,annually=True,pub_date=None,most_recent=False):
     ## todo 需要仔细检查
     '''
@@ -195,13 +170,14 @@ def LongTermDebtToMarketEquity(long_debt,market_cap,date_list,annually=True,pub_
         tmp2 = tmp2 / market_cap.resample('D').ffill().reindex(tmp2.index)
         return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
 
-dividend=BS['DVP'].unstack()
-market_cap=PV['Dmktcap'].unstack()
-tmp=DividendToPrice(dividend,market_cap,date_list,pub_date=None)
+
 def DividendToPrice(dividend,market_cap,date_list,pub_date=None):
     '''
     Dividend-to-price ratio, which is annual total dividends payouts divided by fiscal-year-end market capitalization.
-
+    For example:
+        dividend=BS['DVP'].unstack()
+market_cap=PV['Dmktcap'].unstack()
+tmp=DividendToPrice(dividend,market_cap,date_list,pub_date=None)
     :param dividend:
     :param market_cap:
     :param date_list:
@@ -1401,8 +1377,8 @@ tmp=Price(cls_prc,date_list)
     :return:
     '''
     return cls_prc.resample('D').ffill().shift(1).reindex(date_list)
-def PriceDelay():
-    ##todo
+#def PriceDelay():
+##todo
 def TradingAmount(tra_amount,date_list):
     ## todo 平均值还是last observation
     '''
