@@ -1201,8 +1201,8 @@ tmp=Momentum1Month(adj_prc,date_list)
     '''
     p0 = adj_prc.resample('D').ffill().ffill(limit=7)
     p1 = adj_prc.resample('D').ffill().ffill(limit=7)
-    p0.index = pd.Series(p0.index) + period_start
-    p1.index = pd.Series(p1.index) + period_end
+    p0.index = p0.index + period_start
+    p1.index = p1.index + period_end
     return (p1.reindex(date_list) - p0.reindex(date_list)) / p0.reindex(date_list)
     #mom1=pd.DataFrame(index=date_list, columns=adj_prc.columns)
     #for i in date_list:
@@ -1300,7 +1300,7 @@ def BetaMarket(ret_d,market_ret,date_list):
         tmpX = market_ret.loc[i - DateOffset(months=1):i - Day()]
         tmpX = tmpX - tmpX.mean()
         tmpY = ret_d.loc[tmpX.index].apply(lambda x: x - x.mean()).fillna(0)
-        beta_.loc[i] = tmpX.values.T @ tmpY.values/(tmpX.values.T @ tmpX.values)
+        beta_.loc[i] = tmpX.values.T @ tmpY.values/(tmpX*tmpX).sum()
     return beta_[beta_ != 0.0]
 def BetaSquared(ret_d,market_ret,date_list):
     '''
@@ -1320,22 +1320,22 @@ def BetaFP(ret_d,market_ret,date_list):
         ret_d=pd.read_pickle(DPath+'PVd')['Adret'].unstack()*0.01
         market_ret=pd.read_pickle(DPath+'market_ret_d_tot')*0.01
 t0=time.time()
-tmp=BetaFP(ret_d,market_ret,date_list)
+tmp=BetaFP(ret_d*0.01,market_ret*0.01,date_list)
 time.time()-t0 # 68.86
     :param ret_d:
     :param market_ret:
     :param date_list:
     :return:
     '''
-    ret_d_ln=np.log(ret_d+1.0)
-    ret_3d=ret_d_ln+ret_d_ln.shift(-1)+ret_d_ln.shift(-2)
-    market_ret_ln=np.log(market_ret+1.0)
-    market_ret_3d=market_ret_ln+market_ret_ln.shift(-1)+market_ret_ln.shift(-2)
+    #ret_d_ln=np.log(ret_d+1.0)
+    ret_3d=np.log(ret_d+1.0)+np.log(ret_d+1.0).shift(-1)+np.log(ret_d+1.0).shift(-2)
+    #market_ret_ln=np.log(market_ret+1.0)
+    market_ret_3d=np.log(market_ret+1.0)+np.log(market_ret+1.0).shift(-1)+np.log(market_ret+1.0).shift(-2)
     beta_FP=pd.DataFrame(index=date_list,columns=ret_d.columns)
     for i in date_list:
         beta_FP.loc[i]=ret_d.loc[i-DateOffset(months=3):i-Day()].std()/\
                        market_ret.loc[i-DateOffset(months=3):i-Day()].std()*\
-                       ret_3d.loc[i-DateOffset(years=2):i-Day()].corrwith(market_ret_3d.loc[i-DateOffset(years=2):i-Day()])
+                       ret_3d.loc[i-DateOffset(years=1):i-Day()].corrwith(market_ret_3d.loc[i-DateOffset(years=1):i-Day()])
     return beta_FP
 def IdiosyncraticVolatility(ret_d,market_ret,date_list):
     '''
