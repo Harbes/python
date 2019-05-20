@@ -111,7 +111,7 @@ def DebtToEquity(tot_lia,market_cap,date_list,annually=True,pub_date=None):
     For example:
         BS=pd.read_pickle(DPath+'BS')
         PV=pd.read_pickle(DPath+'PV')
-        total_lia=BS['LB'].unstack()
+        tot_lia=BS['LB'].unstack()
         market_cap=PV['Dmktcap'].unstack()
         date_list=total_lia.loc['2004':].index[1:20]
         tmp=DebtToEquity(tot_lia,market_cap,date_list,annually=True,pub_date=None)
@@ -224,17 +224,20 @@ def EarningsToPrice(annual_inc_bef_extra,market_cap,date_list,pub_date=None):
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
         tmp2 = tmp2 / market_cap.resample('D').ffill().reindex(tmp2.index)
         return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
-def LiabilityGrowth(tot_lia,date_list,most_recent=False,annually=True):
+def LiabilityGrowth(tot_lia,date_list,annually=True,pub_date=None):
     '''
     Liability growth, which is the annual change in total liabilities divided by 1-year-lagged total liabilities.
     For example:
-        total_lia=BS['LB'].unstack()
+        tot_lia=BS['LB'].unstack()
         tmp2=LiabilityGrowth(total_lia,total_lia.index[15:],annually=False)
     :param total_lia:
     :param date_list:
     :return:
     '''
-    tmp = tot_lia[tot_lia.index.month == 12].pct_change(fill_method=None)
+    if annually:
+        tmp = tot_lia[tot_lia.index.month == 12].pct_change(fill_method=None)
+    else:
+        tmp=tot_lia.resample('Q').fillna(method=None).pct_change(fill_method=None)
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
         return tmp.resample('D').ffill().reindex(date_list)
@@ -247,7 +250,8 @@ def LiabilityGrowth(tot_lia,date_list,most_recent=False,annually=True):
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
         return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
 
-def OperatingCashFLowToPrice(oper_cash,market_cap,date_list,pub_date=None):
+def AdjOperatingCashFlowToPrice(oper_cash,market_cap,date_list,pub_date=None):
+    ## todo 与前述的OperatingCashFlowToPrice重复
     '''
     Operating cash flow-to-price, which is operating cash flow(measured as earnings adjusted for depreciation and
         working capital accruals) divided by fiscal-year-end market capitalization.
@@ -416,6 +420,7 @@ def TaxGrowth(tax,date_list,pub_date=None):
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
         return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
 def Accruals(accruals,oper_cash,tot_assets,date_list,pub_date=None):
+    ## todo accruals的计算与EarningsToPrice、PayoutYield似乎一样？是不是错了？
     '''
     Accruals, which is annual income before extraordinary items minus operating cash flows divided by average total assets.
     For example:
@@ -525,9 +530,9 @@ def ChangesInPPEandInventoryToAssets(PPE,inventory,tot_assets,date_list,annually
         plus the annual change in inventory scaled by 1-year-lagged total assets.
     For example:
         PPE=BS['PPE'].unstack()
-        inventory=BS['INVY'].unstack().fillna(0)
+        inventory=BS['INVY'].unstack()
         tot_assets=BS['AT'].unstack()
-        tmp2=ChangesInPPEandInventoryToAssets(PPE,inventory,tot_assets,date_list,annually=False,pub_date=pub_date)
+        tmp2=ChangesInPPEandInventoryToAssets(PPE,inventory.fillna(0),tot_assets,date_list,annually=False,pub_date=pub_date)
     :param PPE:
     :param inventory:
     :param tot_assets:
