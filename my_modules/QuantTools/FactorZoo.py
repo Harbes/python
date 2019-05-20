@@ -307,7 +307,7 @@ def PayoutYield(annual_inc_bef_extra,book_value,market_cap,date_list,pub_date=No
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
         tmp2 = tmp2 / market_cap.resample('D').ffill().reindex(tmp2.index)
         return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
-def Reversal_60_13(adj_price,date_list):
+def Reversal_60_13(adj_prc,date_list):
     '''
     Reversal, which is cumulative returns from months t-60 to t-13.
     For example:
@@ -317,9 +317,9 @@ def Reversal_60_13(adj_price,date_list):
     :param date_list:
     :return:
     '''
-    rev=pd.DataFrame(index=date_list,columns=adj_price.columns)
+    rev=pd.DataFrame(index=date_list,columns=adj_prc.columns)
     for i in date_list:
-        rev.loc[i]=adj_price.loc[i-DateOffset(years=5):i-DateOffset(years=1)].iloc[[0,-1]].pct_change().iloc[1]
+        rev.loc[i]=adj_prc.loc[i-DateOffset(years=5):i-DateOffset(years=1)].iloc[[0,-1]].pct_change().iloc[1]
     return rev
 
 def SustainableGrowth(book_value,date_list,annually=True,pub_date=None):
@@ -704,7 +704,7 @@ def AssetTurnover(fin_assets,fin_lia,book_value,sales,date_list,pub_date=None):
         tmp2 = tmp2.loc[tmp2['date'].notnull()].set_index(['date', 'Scode'])['change'].sort_index()
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
         return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list, columns=tmp.columns)
-def CashFlowOverAssets(oper_cash,tot_assets,date_list,annually=True,pub_date=None):
+def CashFlowOverAssets(oper_cash,tot_assets,date_list,pub_date=None):
     '''
     Cash flow over assets, which is cash flow from operation scaled by total assets.
     For example:
@@ -718,9 +718,7 @@ def CashFlowOverAssets(oper_cash,tot_assets,date_list,annually=True,pub_date=Non
     :param pub_date:
     :return:
     '''
-    tmp = oper_cash/tot_assets
-    if annually:
-        tmp = tmp[tmp.index.month == 12]
+    tmp = oper_cash[oper_cash.index.month==12]/tot_assets[tot_assets.index.month==12]
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
         return tmp.resample('D').ffill().loc[date_list]
@@ -823,6 +821,7 @@ def CapitalTurnover(sales,tot_assets,date_list,pub_date=None):
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
         return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list, columns=tmp.columns)
 def ReturnOnCapital(inc_bef_tax,fin_exp,net_working,net_fixed,date_list,pub_date=None):
+    ## todo inc_bef_tax 与 前述的tot_profit 是否相等？？？
     '''
     Return on Capital = EBIT/(Net Working Capital + Net Fixed Assets)
     For example:
@@ -1109,7 +1108,7 @@ tmp1=TexableIncomeToBookIncome(inc_bef_tax,net_inc,date_list,pub_date=pub_date)
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
         return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list, columns=tmp.columns)
 
-def Z_score(net_working,tot_assets,EBIT,market_cap,tot_lia,sales,date_list):
+def ZScore(net_working,tot_assets,ebit,market_cap,tot_lia,sales,date_list):
     '''
     Z-score, we follow Dichev (1998) to construct Z-score = 1.2 × (working capital / total assets) +
         1.4 × (retained earnings / total assets) + 3.3 × (EBIT / total assets) +
@@ -1117,22 +1116,22 @@ def Z_score(net_working,tot_assets,EBIT,market_cap,tot_lia,sales,date_list):
     For example:
         net_working=BS['CA'].unstack().fillna(0)-BS['CL'].unstack().fillna(0)
 retained_earnings=BS['SR'].unstack().fillna(0)+BS['UDP'].unstack().fillna(0)
-EBIT=IS['IBT'].unstack()-IS['FINEXP'].unstack().fillna(0)
+ebit=IS['IBT'].unstack()-IS['FINEXP'].unstack().fillna(0)
 market_cap=PV['Dmktcap'].unstack()
 tot_lia=BS['LB'].unstack()
 sales=IS['REV'].unstack()
 tmp=Z_score(net_working,tot_assets,EBIT,market_cap,tot_lia,sales,date_list)
     :param net_working:
     :param tot_assets:
-    :param EBIT:
+    :param ebit:
     :param market_cap:
     :param tot_lia:
     :param sales:
     :param date_list:
     :return:
     '''
-    tmp = 1.2*net_working/tot_assets+1.4*retained_earnings/tot_assets+3.3*EBIT/tot_assets+\
-          0.6*market_cap.resample('D').ffill().ffill().loc[tot_lia.index]/tot_lia+sales/tot_assets
+    tmp = 1.2*net_working/tot_assets+1.4*retained_earnings/tot_assets+3.3*ebit/tot_assets+\
+          0.6*market_cap.resample('D').ffill().ffill(limit=365).loc[tot_lia.index]/tot_lia+sales/tot_assets
     tmp = tmp[tmp.index.month == 12]
     tmp.index = tmp.index + MonthEnd(6) +Day()
     return tmp.resample('D').ffill().loc[date_list]
@@ -1154,11 +1153,13 @@ tmp=ChangeIn6MonthMomentum(adj_prc,date_list)
                        adj_prc.loc[i-DateOffset(months=12):i-DateOffset(months=6)].iloc[[0,-1]].pct_change().iloc[1]
     return ch_mom6
 
-def IndustryMomentum(adj_prc,sector,sec_sign,date_list,weight=None):
+
+def IndustryMomentum(adj_prc,sector,sec_sign,date_list,period_start=DateOffset(months=3),period_end=Day()):
+    ## 将个股return替换为行业return
     '''
     sector=pd.read_pickle(DPath+'sector_datetime')
 adj_prc=pd.read_pickle(DPath+'PVd')['Adclsprc'].unstack()
-sec_sign=np.arange(1.0,29.0)
+sec_sign=np.arange(29.0)
     :param adj_prc:
     :param sector:
     :param sec_sign:
@@ -1166,7 +1167,14 @@ sec_sign=np.arange(1.0,29.0)
     :param weight:
     :return:
     '''
-    ##todo
+    sector.loc[date_list[-1]]=np.nan
+    sector_tmp=sector.resample('D').ffill().ffill()
+    mom = pd.DataFrame(index=date_list, columns=adj_prc.columns&sector.columns)
+    for i in date_list:
+        mom.loc[i] = adj_prc.loc[i - period_start:i - period_end].iloc[[0, -1]].pct_change().iloc[1]
+        for j in sec_sign:
+            mom.loc[i][sector_tmp.loc[i] == j]=mom.loc[i][sector_tmp.loc[i]==j].mean()
+    return mom
 
 def Momentum(adj_prc,date_list,period_start=DateOffset(months=1),period_end=Day()):
     '''
@@ -1194,6 +1202,7 @@ def VolumeMomentum(adj_prc,volume,date_list,period_start=DateOffset(months=1),pe
     :param date_list:
     :return:
     '''
+    return np.nan
 def VolumeTrend(volume,date_list):
     ## todo 仅使用CNRDS数据，适用性不够
     '''
@@ -1270,7 +1279,7 @@ def BetaMarket(ret_d,market_ret,date_list):
     '''
     beta_ = pd.DataFrame(index=date_list, columns=ret_d.columns)
     for i in date_list:
-        tmpX = market_ret.loc[i - DateOffset(months=3):i - Day()]
+        tmpX = market_ret.loc[i - DateOffset(months=1):i - Day()]
         tmpX = tmpX - tmpX.mean()
         tmpY = ret_d.loc[tmpX.index].apply(lambda x: x - x.mean()).fillna(0)
         beta_.loc[i] = tmpX.values.T @ tmpY.values/(tmpX.values.T @ tmpX.values)
@@ -1382,8 +1391,8 @@ tmp=Price(cls_prc,date_list)
     :return:
     '''
     return cls_prc.resample('D').ffill().shift(1).reindex(date_list)
-#def PriceDelay():
-##todo
+##todo def PriceDelay():
+
 def TradingAmount(tra_amount,date_list):
     ## todo 平均值还是last observation
     '''
@@ -1399,7 +1408,7 @@ def TradingAmount(tra_amount,date_list):
     return tra_amt
 
 
-def Size(market_cap,date_list):
+def Capitalization(market_cap,date_list):
     '''
     Frim size, which is market value of tradable shares at the end of each month.
     For example:
