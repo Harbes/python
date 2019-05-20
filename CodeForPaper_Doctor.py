@@ -57,6 +57,7 @@ cls_prc=PV['Dclsprc'].unstack()
 turnover=PV['Dtnor'].unstack()
 curr_assets=BS['CA'].unstack()
 curr_lia=BS['CL'].unstack()
+retained_earnings=BS['SR'].unstack().fillna(0)+BS['UDP'].unstack().fillna(0)
 del PV
 del BS
 del IS
@@ -105,13 +106,13 @@ ROA=ReturnOnAssets(oper_inc,tot_assets,date_list,pub_date=None)
 ROE=ReturnOnEquity(net_inc,book_value,date_list,pub_date=None)
 ROIC=ReturnOnInvestedCapital(inc_bef_tax,fin_exp,non_oper_inc.fillna(0),market_cap,tot_lia,cash_eq,date_list)
 TBI=TexableIncomeToBookIncome(inc_bef_tax,net_inc,date_list,pub_date=None)
-Z_score=ZScore(net_working,tot_assets,ebit,market_cap,tot_lia,sales,date_list)
+Z_score=ZScore(net_working,tot_assets,retained_earnings,ebit,market_cap,tot_lia,sales,date_list)
 CHMOM=ChangeIn6MonthMomentum(adj_prc,date_list)
 INDMOM=IndustryMomentum(adj_prc,sector,sec_sign,date_list,period_start=DateOffset(months=3),period_end=Day())
-MOM1M=Momentum(adj_prc,date_list,period_start=DateOffset(months=1),period_end=Day())
-MOM6M=Momentum(adj_prc,date_list,period_start=DateOffset(months=6),period_end=DateOffset(months=1))
-MOM12M=Momentum(adj_prc,date_list,period_start=DateOffset(years=1),period_end=DateOffset(months=1))
-MOM36M=Momentum(adj_prc,date_list,period_start=DateOffset(years=3),period_end=DateOffset(years=1))
+MOM1M=Momentum(adj_prc,date_list,period_start=Day(30),period_end=Day())
+MOM6M=Momentum(adj_prc,date_list,period_start=Day(183),period_end=Day(30))
+MOM12M=Momentum(adj_prc,date_list,period_start=Day(365),period_end=Day(30))
+MOM36M=Momentum(adj_prc,date_list,period_start=Day(365*3),period_end=Day(365))
 VOLT=VolumeTrend(volume,date_list)
 B_DIM=BetaDimson(ret_d,market_ret,date_list)
 B_DN=BetaDownside(ret_d,market_ret,date_list)
@@ -139,3 +140,8 @@ t1=time.time()-t0
 ##
 signal_list=[AM,BM,CFP,DER,DLME,DP,EP,LG,PY,SG,SMI,SP,TG,ACC,PACC,CAPXG,dBe,dPIA,IA,IVC,IVG,NOA,ATO,CFOA,CP,CTA,CTO,EBIT,
              EY,GM,GP,NPOP,RNA,ROA,ROE,ROIC,TBI,Z_score,
+             CHMOM,INDMOM,MOM1M,MOM6M,MOM12M,MOM36M,VOLT,
+             B_DIM,B_DN,BETA,BETASQ,B_FP,
+             IVOL,ILLIQ,MAXRET,PRC,RVOL,SIZE,STD_RVOL,STD_TURN,RETVOL,TURN,
+             CFD,CR,CRG,QR,QRG,SC,SI]
+

@@ -307,7 +307,8 @@ def PayoutYield(annual_inc_bef_extra,book_value,market_cap,date_list,pub_date=No
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
         tmp2 = tmp2 / market_cap.resample('D').ffill().reindex(tmp2.index)
         return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(date_list)
-def Reversal_60_13(adj_prc,date_list):
+def Reversal_60_13(adj_prc,date_list,fast=True):
+    ## todo 本质上与momentum相同
     '''
     Reversal, which is cumulative returns from months t-60 to t-13.
     For example:
@@ -317,10 +318,13 @@ def Reversal_60_13(adj_prc,date_list):
     :param date_list:
     :return:
     '''
-    rev=pd.DataFrame(index=date_list,columns=adj_prc.columns)
-    for i in date_list:
-        rev.loc[i]=adj_prc.loc[i-DateOffset(years=5):i-DateOffset(years=1)].iloc[[0,-1]].pct_change().iloc[1]
-    return rev
+
+    p0 = adj_prc.resample('D').ffill().ffill(limit=7)
+    p1 = adj_prc.resample('D').ffill().ffill(limit=7)
+    p0.index = p0.index + Day(365*5+1)
+    p1.index = p1.index + Day(365)
+    return (p1.reindex(date_list) - p0.reindex(date_list)) / p0.reindex(date_list)
+
 
 def SustainableGrowth(book_value,date_list,annually=True,pub_date=None):
     '''
@@ -339,7 +343,7 @@ def SustainableGrowth(book_value,date_list,annually=True,pub_date=None):
         tmp=book_value.resample('Q').fillna(method=None).pct_change(fill_method=None)
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
-        return tmp.resample('D').ffill().loc[date_list]
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2=pd.DataFrame()
         tmp2['growth']=tmp.stack()
@@ -514,7 +518,7 @@ def ChangeInShareholdersEquity(book_value,tot_assets,date_list,annually=True,pub
         tmp=book_value.diff()/tot_assets.shift(1)
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
-        return tmp.resample('D').ffill().loc[date_list]
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2=pd.DataFrame()
         tmp2['change']=tmp.stack()
@@ -547,7 +551,7 @@ def ChangesInPPEandInventoryToAssets(PPE,inventory,tot_assets,date_list,annually
         tmp=(PPE+inventory).diff()/tot_assets.shift(1)
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
-        return tmp.resample('D').ffill().loc[date_list]
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2=pd.DataFrame()
         tmp2['change']=tmp.stack()
@@ -574,7 +578,7 @@ def InvestmentToAssets(tot_assets,date_list,annually=True,pub_date=None):
         tmp=tot_assets.pct_change(fill_method=None)
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
-        return tmp.resample('D').ffill().loc[date_list]
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2=pd.DataFrame()
         tmp2['change']=tmp.stack()
@@ -605,7 +609,7 @@ def InventoryChange(inventory,tot_assets,date_list,annually=True,pub_date=None):
         tmp=2.0*inventory.diff()/(tot_assets+tot_assets.shift(1))
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
-        return tmp.resample('D').ffill().loc[date_list]
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2=pd.DataFrame()
         tmp2['change']=tmp.stack()
@@ -632,7 +636,7 @@ def InventoryGrowth(inventory,date_list,annually=True,pub_date=None):
         tmp=inventory.pct_change(fill_method=None)
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
-        return tmp.resample('D').ffill().loc[date_list]
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2=pd.DataFrame()
         tmp2['change']=tmp.stack()
@@ -664,7 +668,7 @@ def NetOperatingAssets(fin_assets,fin_lia,book_value,tot_assets,date_list,annual
         tmp=tmp[tmp.index.month==12]
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
-        return tmp.resample('D').ffill().loc[date_list]
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2=pd.DataFrame()
         tmp2['change']=tmp.stack()
@@ -695,7 +699,7 @@ def AssetTurnover(fin_assets,fin_lia,book_value,sales,date_list,pub_date=None):
     tmp=tmp[tmp.index.month==12]
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
-        return tmp.resample('D').ffill().loc[date_list]
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2 = pd.DataFrame()
         tmp2['change'] = tmp.stack()
@@ -721,7 +725,7 @@ def CashFlowOverAssets(oper_cash,tot_assets,date_list,pub_date=None):
     tmp = oper_cash[oper_cash.index.month==12]/tot_assets[tot_assets.index.month==12]
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
-        return tmp.resample('D').ffill().loc[date_list]
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2 = pd.DataFrame()
         tmp2['tmp'] = tmp.stack()
@@ -755,7 +759,7 @@ def CashProductivity(trad_share,long_debt,tot_assets,cash_eq,date_list,annually=
         tmp = tmp[tmp.index.month == 12]
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
-        return tmp.resample('D').ffill().loc[date_list]
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2 = pd.DataFrame()
         tmp2['tmp'] = tmp.stack()
@@ -785,7 +789,7 @@ def CashToAssets(cash_eq,tot_assets,date_list,annually=True,pub_date=None):
         tmp=2.0*cash_eq/(tot_assets+tot_assets.shift(1))
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
-        return tmp.resample('D').ffill().loc[date_list]
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2 = pd.DataFrame()
         tmp2['tmp'] = tmp.stack()
@@ -811,7 +815,7 @@ def CapitalTurnover(sales,tot_assets,date_list,pub_date=None):
     tmp=sales[sales.index.month==12]/tot_assets[tot_assets.index.month==12].shift(1)
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
-        return tmp.resample('D').ffill().loc[date_list]
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2 = pd.DataFrame()
         tmp2['tmp'] = tmp.stack()
@@ -841,7 +845,7 @@ def ReturnOnCapital(inc_bef_tax,fin_exp,net_working,net_fixed,date_list,pub_date
     tmp=tmp[tmp.index.month==12]
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
-        return tmp.resample('D').ffill().shift(1).loc[date_list]
+        return tmp.resample('D').ffill().shift(1).reindex(date_list)
     else:
         tmp2 = pd.DataFrame()
         tmp2['tmp'] = tmp.stack()
@@ -890,7 +894,7 @@ def GrossMargins(oper_rev,oper_exp,date_list,pub_date=None):
     tmp = (oper_rev[oper_rev.index.month==12]-oper_exp[oper_exp.index.month==12])/oper_rev[oper_rev.index.month==12].shift(1)
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
-        return tmp.resample('D').ffill().loc[date_list]
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2 = pd.DataFrame()
         tmp2['tmp'] = tmp.stack()
@@ -925,7 +929,7 @@ def GrossProfitability(oper_rev,oper_exp,tot_assets,date_list,pub_date=None):
     tmp = 2.0*(oper_rev_q-oper_exp_q)/(tot_assets+tot_assets.shift(1))
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
-        return tmp.resample('D').ffill().loc[date_list]
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2 = pd.DataFrame()
         tmp2['tmp'] = tmp.stack()
@@ -955,7 +959,7 @@ def NetPayoutOverProfit(net_inc,book_value,tot_profit,date_list,pub_date=None):
           tot_profit[tot_profit.index.month==12]
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
-        return tmp.resample('D').ffill().loc[date_list]
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2 = pd.DataFrame()
         tmp2['tmp'] = tmp.stack()
@@ -987,7 +991,7 @@ tmp1=ReturnOnOperatingAsset(oper_inc,depre,fin_assets,fin_lia,date_list,pub_date
     tmp=(oper_inc[oper_inc.index.month==12]-depre[depre.index.month==12])/net_oper_asset[net_oper_asset.index.month==12].shift(1)
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
-        return tmp.resample('D').ffill().loc[date_list]
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2 = pd.DataFrame()
         tmp2['tmp'] = tmp.stack()
@@ -1018,7 +1022,7 @@ tmp1=ReturnOnAssets(oper_inc,tot_assets,date_list,pub_date=pub_date)
     tmp=2.0*oper_inc_q/(tot_assets+tot_assets.shift(1))
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
-        return tmp.resample('D').ffill().loc[date_list]
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2 = pd.DataFrame()
         tmp2['tmp'] = tmp.stack()
@@ -1047,7 +1051,7 @@ tmp1=ReturnOnEquity(net_inc,book_value,date_list,pub_date=pub_date)
     tmp=net_inc_q*2.0/(book_value+book_value.resample('Q').fillna(method=None).shift(1))
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
-        return tmp.resample('D').ffill().loc[date_list]
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2 = pd.DataFrame()
         tmp2['tmp'] = tmp.stack()
@@ -1079,7 +1083,7 @@ tmp=ReturnOnInvestedCapital(inc_bef_tax,fin_exp,non_oper_inc,market_cap,tot_debt
     tmp = (inc_bef_tax + fin_exp - non_oper_inc) / (market_cap.resample('D').ffill().ffill(limit=365).loc[tot_lia.index] + tot_lia - cash_eq)
     tmp = tmp[tmp.index.month == 12]
     tmp.index = tmp.index + MonthEnd(6) + Day()
-    return tmp.resample('D').ffill().loc[date_list]
+    return tmp.resample('D').ffill().reindex(date_list)
 
 def TexableIncomeToBookIncome(inc_bef_tax,net_inc,date_list,pub_date=None):
     '''
@@ -1098,7 +1102,7 @@ tmp1=TexableIncomeToBookIncome(inc_bef_tax,net_inc,date_list,pub_date=pub_date)
     tmp=tmp[tmp.index.month==12]
     if pub_date is None:
         tmp.index = tmp.index + MonthEnd(6) + Day()
-        return tmp.resample('D').ffill().loc[date_list]
+        return tmp.resample('D').ffill().reindex(date_list)
     else:
         tmp2 = pd.DataFrame()
         tmp2['tmp'] = tmp.stack()
@@ -1108,7 +1112,7 @@ tmp1=TexableIncomeToBookIncome(inc_bef_tax,net_inc,date_list,pub_date=pub_date)
         tmp2 = tmp2.loc[~tmp2.index.duplicated()].unstack()
         return tmp2.resample('D').ffill().ffill(limit=365).shift(1).reindex(index=date_list, columns=tmp.columns)
 
-def ZScore(net_working,tot_assets,ebit,market_cap,tot_lia,sales,date_list):
+def ZScore(net_working,tot_assets,retained_earnings,ebit,market_cap,tot_lia,sales,date_list):
     '''
     Z-score, we follow Dichev (1998) to construct Z-score = 1.2 × (working capital / total assets) +
         1.4 × (retained earnings / total assets) + 3.3 × (EBIT / total assets) +
@@ -1120,7 +1124,7 @@ ebit=IS['IBT'].unstack()-IS['FINEXP'].unstack().fillna(0)
 market_cap=PV['Dmktcap'].unstack()
 tot_lia=BS['LB'].unstack()
 sales=IS['REV'].unstack()
-tmp=Z_score(net_working,tot_assets,EBIT,market_cap,tot_lia,sales,date_list)
+tmp=ZScore(net_working,tot_assets,retained_earnings,ebit,market_cap,tot_lia,sales,date_list)
     :param net_working:
     :param tot_assets:
     :param ebit:
@@ -1134,7 +1138,7 @@ tmp=Z_score(net_working,tot_assets,EBIT,market_cap,tot_lia,sales,date_list)
           0.6*market_cap.resample('D').ffill().ffill(limit=365).loc[tot_lia.index]/tot_lia+sales/tot_assets
     tmp = tmp[tmp.index.month == 12]
     tmp.index = tmp.index + MonthEnd(6) +Day()
-    return tmp.resample('D').ffill().loc[date_list]
+    return tmp.resample('D').ffill().reindex(date_list)
 
 
 def ChangeIn6MonthMomentum(adj_prc,date_list):
@@ -1146,12 +1150,21 @@ tmp=ChangeIn6MonthMomentum(adj_prc,date_list)
     :param adj_prc:
     :param date_list:
     :return:
-    '''
+    初始Code【运行较慢】
     ch_mom6=pd.DataFrame(index=date_list,columns=adj_prc.columns)
     for i in date_list:
         ch_mom6.loc[i]=adj_prc.loc[i-DateOffset(months=6):i-Day()].iloc[[0,-1]].pct_change().iloc[1]-\
                        adj_prc.loc[i-DateOffset(months=12):i-DateOffset(months=6)].iloc[[0,-1]].pct_change().iloc[1]
     return ch_mom6
+    '''
+    p0 = adj_prc.resample('D').ffill().ffill(limit=7)
+    p1 = adj_prc.resample('D').ffill().ffill(limit=7)
+    p0.index = p1.index + Day(183)#pd.Series(p0.index) + DateOffset(months=6)
+    p1.index = p1.index + Day(1)
+    tmp1 = (p1.reindex(date_list) - p0.reindex(date_list)) / p0.reindex(date_list)
+    p0.index = p0.index + Day(183)
+    p1.index = p1.index + Day(183)
+    return tmp1 - (p1.reindex(date_list) - p0.reindex(date_list)) / p0.reindex(date_list)
 
 
 def IndustryMomentum(adj_prc,sector,sec_sign,date_list,period_start=DateOffset(months=3),period_end=Day()):
@@ -1176,7 +1189,7 @@ sec_sign=np.arange(29.0)
             mom.loc[i][sector_tmp.loc[i] == j]=mom.loc[i][sector_tmp.loc[i]==j].mean()
     return mom
 
-def Momentum(adj_prc,date_list,period_start=DateOffset(months=1),period_end=Day()):
+def Momentum(adj_prc,date_list,period_start=Day(30),period_end=Day()):
     '''
     1-month momentum, which is one-month cumulative returns.(short-term reversal)
     For example:
@@ -1186,10 +1199,15 @@ tmp=Momentum1Month(adj_prc,date_list)
     :param date_list:
     :return:
     '''
-    mom1=pd.DataFrame(index=date_list, columns=adj_prc.columns)
-    for i in date_list:
-        mom1.loc[i] = adj_prc.loc[i - period_start:i - period_end].iloc[[0, -1]].pct_change().iloc[-1]
-    return mom1
+    p0 = adj_prc.resample('D').ffill().ffill(limit=7)
+    p1 = adj_prc.resample('D').ffill().ffill(limit=7)
+    p0.index = pd.Series(p0.index) + period_start
+    p1.index = pd.Series(p1.index) + period_end
+    return (p1.reindex(date_list) - p0.reindex(date_list)) / p0.reindex(date_list)
+    #mom1=pd.DataFrame(index=date_list, columns=adj_prc.columns)
+    #for i in date_list:
+    #    mom1.loc[i] = adj_prc.loc[i - period_start:i - period_end].iloc[[0, -1]].pct_change().iloc[-1]
+    #return mom1
 def VolumeMomentum(adj_prc,volume,date_list,period_start=DateOffset(months=1),period_end=Day()):
     ## todo two-way sorted portfolio
     '''
@@ -1225,7 +1243,7 @@ dt=time.time()-t0
     for i in date_list:
         tmp=volume_tmp.loc[i-DateOffset(years=3)-Day(10):i-Day(1)].apply(lambda x:x/x.mean()-1.0)# -Day(10)防止最后交易日不在月末，从而造成遗漏
         X=np.arange(1,len(tmp)+1)-(len(tmp)+1.0)*0.5
-        volume_trend.loc[i] =X@tmp.values/X.var()
+        volume_trend.loc[i] =X@tmp.values/(X*X).sum()
     return volume_trend
 def BetaDimson(ret_d,market_ret,date_list):
     '''
@@ -1247,7 +1265,7 @@ time.time()-t0
     for i in date_list:
         tmpX=X.loc[i-DateOffset(years=1):i-Day()].iloc[:-2].apply(lambda x: x - x.mean())
         tmpY = ret_d.loc[tmpX.index].apply(lambda x: x - x.mean()).fillna(0)
-        beta_dimson.loc[i]=(np.linalg.pinv(tmpX.values.T@tmpX)@tmpX.values.T@tmpY).sum()
+        beta_dimson.loc[i]=(np.linalg.pinv(tmpX.values.T@tmpX.values)@tmpX.values.T@tmpY).sum()
     return beta_dimson[beta_dimson!=0.0]
 def BetaDownside(ret_d,market_ret,date_list):
     '''
