@@ -1,0 +1,12 @@
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+conda config --set show_channel_urls yes
+
+conda install jupyter
+conda install -c r r-irkernel # 如果同时安装了R，且希望jupyter运行R的话
+conda install numpy
+conda install pandas
+conda install scipy
+conda install cython
+conda install matplotlib
+pip install statsmodel
