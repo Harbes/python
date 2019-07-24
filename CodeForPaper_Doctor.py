@@ -64,6 +64,7 @@ del BS
 del IS
 del CF
 t1=time.time()
+print(t1-t0)
 ##
 date_list=pd.date_range('2004-12-31','2018-9-1',freq='M')+Day()
 #pub_date=pd.read_pickle(DPath+'PubDate')['ActlDt']
@@ -139,6 +140,7 @@ QRG=QuickRatioGrowth(curr_assets,curr_lia,inventory,date_list,annually=True,pub_
 SC=SalesToCash(sales,cash_eq,date_list,pub_date=None)
 SI=SalesToInventory(sales,inventory,date_list,pub_date=None)
 t3=time.time()
+print((t3-t2)/60)
 ##
 signal_list=[AM,BM,CFP,DER,DLME,DP,EP,LG,PY,SG,SMI,SP,TG,ACC,PACC,CAPXG,dBe,dPIA,IA,IVC,IVG,NOA,ATO,CFOA,CP,CTA,CTO,EBIT,
              EY,GM,GP,NPOP,RNA,ROA,ROE,ROIC,TBI,Z_score,
