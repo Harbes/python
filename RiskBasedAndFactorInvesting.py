@@ -37,9 +37,25 @@ A=matrix(np.vstack(([1]*4,r_mean)),tc='d')#等式约束
 n=100
 sigmas=np.zeros(n)
 r_p=0.03+np.arange(n)*.0003
+weights=np.zeros((4,n))
 for i in range(n):
     b=matrix([1.0,r_p[i]],tc='d')
     sol=solvers.qp(P,q,G,h,A,b)
-    sigmas[i]=np.sqrt(sol['primal objective'])
+    sigmas[i]=np.sqrt(sol['primal objective']*2.0) # 注意，目标函数有1/2，故计算方差时要还原
+    weights[:,i]=np.array(sol['x']).reshape(-1)
 import matplotlib.pyplot as plt
 plt.plot(sigmas*100,r_p*100);plt.show()
+i_min_sigma=sigmas.argmin()
+sigma_min=\
+    sigmas.min()
+i_max_SR=(r_p/sigmas).argmax()
+SR_max=\
+    (r_p/sigmas).max()
+#===> MVP
+weights[:,23]
+r_p[23]
+sigmas[23]
+#===> MSRP
+weights[:,33]
+r_p[33]
+sigmas[33]
