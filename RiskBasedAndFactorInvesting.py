@@ -44,7 +44,7 @@ for i in range(n):
     sigmas[i]=np.sqrt(sol['primal objective']*2.0) # 注意，目标函数有1/2，故计算方差时要还原
     weights[:,i]=np.array(sol['x']).reshape(-1)
 import matplotlib.pyplot as plt
-plt.plot(sigmas*100,r_p*100);plt.show()
+plt.plot(sigmas*100,r_p*100);plt.show() # 需要绘制详细一些
 i_min_sigma=sigmas.argmin()
 sigma_min=\
     sigmas.min()
