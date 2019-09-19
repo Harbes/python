@@ -84,7 +84,7 @@ W0=np.ones(4)/4
 res=minimize(func,W0,method='trust-constr',jac=func_der,hess=SR1(),constraints=linear_constraint,bounds=bounds)# hess=SR1()是近似计算hess矩阵，另外，可以使用jac='2-point'近似计算
 print('Weights:',res.x,'\np_r:',res.x.dot(r_mean),'\np_std:',np.sqrt(res.x.dot(SIGMA).dot(res.x)),'\nSR:',res.x.dot(r_mean)/np.sqrt(res.x.dot(SIGMA).dot(res.x)))
 
-# risk parity 与原书的结果不是很接近
+# risk parity，方法1【与原书的结果不是很接近】
 budgeting=np.ones(4)/4
 c=budgeting.dot(np.log(budgeting))*1.001
 # bounds=Bounds(np.zeros(4),np.ones(4))
