@@ -718,7 +718,7 @@ if __name__ == '__main__':
     fSMB = SMB_m.iloc[:, 0] - SMB_m.iloc[:, -1]
     fHML = HML_m.iloc[:, 0] - HML_m.iloc[:, -1]
     ret=cal_rev(del_rf=True)
-    weights = None  #weights = size.shift(1)  #
+    weights = None  #p_weights = size.shift(1)  #
     W='EW' if weights is None else 'VW'
     independent = False  #independent = True  #
     inde = 'inde' if independent else 'depe'
@@ -729,7 +729,7 @@ if __name__ == '__main__':
     FF_t = pd.DataFrame(index=Return_m.index, columns=Return_m.columns)
     for i in range(len(cha)):
         i=4
-        #tmp=cal_mimick_port2(cha[i].loc['200512':'201802'],ivol.loc['200512':'201802'],ret.loc['200512':'201802'],weights,independent=independent)
+        #tmp=cal_mimick_port2(cha[i].loc['200512':'201802'],ivol.loc['200512':'201802'],ret.loc['200512':'201802'],p_weights,independent=independent)
         #long_short = (tmp.iloc[:, -1] - tmp.iloc[:, 0]).unstack()
         #long_short[6]=long_short.mean(axis=1)
         long_short=cal_mimick_port1(cha[i].loc['200512':'201802'],ret.loc['200512':'201802'],weights,10)

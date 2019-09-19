@@ -16,7 +16,7 @@ SIGMA_inv=np.linalg.pinv(SIGMA)
 weights_mvp=SIGMA_inv.sum(axis=0)/SIGMA_inv.sum() # IG的权重为负
 r_mvp=(weights_mvp*r_mean).sum()
 std_mvp=np.sqrt(1/SIGMA_inv.sum())
-# constrained minimization# 不知为何，报错
+# MVP with non-negative constraint
 from scipy.optimize import minimize,Bounds,LinearConstraint
 bounds=Bounds(np.zeros(4),np.ones(4))
 matrix_LC=np.array([np.ones(4),r_mean])
@@ -24,8 +24,13 @@ p_r=0.04
 linear_constraint=LinearConstraint(matrix_LC, [1.0, p_r], [1.0, p_r]) #两个r_p换成一个range后，minimize报错
 def func(W):
     return SIGMA.dot(W).dot(W)
+def func_der(W):
+    return SIGMA.dot(W)*2.0
+def func_hess(W):
+    return SIGMA*2.0
 W0=np.ones(4)/4
-res=minimize(func,W0,method='trust-constr',constraints=linear_constraint,bounds=bounds)# 似乎要设置jac矩阵
+res=minimize(func,W0,method='trust-constr',jac=func_der,hess=func_hess,constraints=linear_constraint,bounds=bounds)# 似乎要设置jac矩阵
+print('Weights:',res.x,'\nMinimum std:',np.sqrt(res.fun))
 # 使用cvxopt包，计算权重非负约束下的efficient frontier
 from cvxopt import matrix,solvers
 P=matrix(SIGMA,tc='d') #二次项
@@ -44,7 +49,6 @@ for i in range(n):
     p_weights[:, i]=np.array(sol['x']).reshape(-1)
 import matplotlib.pyplot as plt
 plt.plot(p_std * 100, p_r * 100);plt.show() # 需要绘制详细一些
-
 
 SR_max=\
     (p_r / p_std).max()
@@ -65,3 +69,16 @@ p_ew_weight=np.ones(4)/4
 p_ew_r=r_mean.mean();p_ew_r
 p_ew_std=np.sqrt(SIGMA.dot(p_weight).dot(p_weight));p_ew_std
 p_ew_SR=p_ew_r/p_ew_std;p_ew_SR
+
+# MDP with non-negative constraint
+bounds=Bounds(np.zeros(4),np.ones(4))
+matrix_LC=np.ones(4)
+p_r=0.04
+linear_constraint=LinearConstraint(matrix_LC, [1.0], [1.0])
+def func(W):
+    return -W.dot(r_std)/np.sqrt(W.dot(SIGMA).dot(W))
+def func_der(W):
+    return (W.dot(r_std)*SIGMA.dot(W)-W.dot(SIGMA).dot(W)*r_std)/(W.dot(SIGMA).dot(W))**1.5
+W0=np.ones(4)/4
+res=minimize(func,W0,method='trust-constr',jac=func_der,hess=SR1(),constraints=linear_constraint,bounds=bounds)# hess=SR1()是近似计算hess矩阵，另外，可以使用jac='2-point'近似计算
+print('Weights:',res.x,'\np_r:',res.x.dot(r_mean),'\np_std:',np.sqrt(res.x.dot(SIGMA).dot(res.x)),'\nSR:',res.x.dot(r_mean)/np.sqrt(res.x.dot(SIGMA).dot(res.x)))
