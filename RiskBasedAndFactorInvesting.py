@@ -12,50 +12,56 @@ corr=np.array([[1.0,-.3,.35,.74],
                [.74,-.24,.63,1.0]])
 SIGMA=(corr*r_std).T*r_std
 SIGMA_inv=np.linalg.pinv(SIGMA)
-# calculate MVP
+# calculate MVP without nonnegative constraint
 weights_mvp=SIGMA_inv.sum(axis=0)/SIGMA_inv.sum() # IG的权重为负
 r_mvp=(weights_mvp*r_mean).sum()
 std_mvp=np.sqrt(1/SIGMA_inv.sum())
-# constrained minimization
+# constrained minimization# 不知为何，报错
 from scipy.optimize import minimize,Bounds,LinearConstraint
 bounds=Bounds(np.zeros(4),np.ones(4))
 matrix_LC=np.array([np.ones(4),r_mean])
-linear_constraint=LinearConstraint(matrix_LC,[1.0,r_p],[1.0,r_p]) #两个r_p换成一个range后，minimize报错
+p_r=0.04
+linear_constraint=LinearConstraint(matrix_LC, [1.0, p_r], [1.0, p_r]) #两个r_p换成一个range后，minimize报错
 def func(W):
-    return (W*SIGMA*W).sum()
-r_p=0.04
+    return SIGMA.dot(W).dot(W)
 W0=np.ones(4)/4
-res=minimize(func,W0,method='trust-constr',constraints=linear_constraint,bounds=bounds)# 权重总是不满足约束条件，不知为何
-# 使用cvxopt包
+res=minimize(func,W0,method='trust-constr',constraints=linear_constraint,bounds=bounds)# 似乎要设置jac矩阵
+# 使用cvxopt包，计算权重非负约束下的efficient frontier
 from cvxopt import matrix,solvers
-
 P=matrix(SIGMA,tc='d') #二次项
 q=matrix([0]*4,tc='d') #一次项
 G=matrix(np.diag([-1]*4),tc='d')#不等式约束(全部改写成<=)
 h=matrix([0]*4,tc='d')
 A=matrix(np.vstack(([1]*4,r_mean)),tc='d')#等式约束
 n=100
-sigmas=np.zeros(n)
-r_p=0.03+np.arange(n)*.0003
-weights=np.zeros((4,n))
+p_std=np.zeros(n)
+p_r= 0.03 + np.arange(n) * .0003
+p_weights=np.zeros((4, n))
 for i in range(n):
-    b=matrix([1.0,r_p[i]],tc='d')
+    b=matrix([1.0, p_r[i]], tc='d')
     sol=solvers.qp(P,q,G,h,A,b)
-    sigmas[i]=np.sqrt(sol['primal objective']*2.0) # 注意，目标函数有1/2，故计算方差时要还原
-    weights[:,i]=np.array(sol['x']).reshape(-1)
+    p_std[i]=np.sqrt(sol['primal objective'] * 2.0) # 注意，目标函数有1/2，故计算方差时要还原
+    p_weights[:, i]=np.array(sol['x']).reshape(-1)
 import matplotlib.pyplot as plt
-plt.plot(sigmas*100,r_p*100);plt.show() # 需要绘制详细一些
-i_min_sigma=sigmas.argmin()
-sigma_min=\
-    sigmas.min()
-i_max_SR=(r_p/sigmas).argmax()
+plt.plot(p_std * 100, p_r * 100);plt.show() # 需要绘制详细一些
+
+
 SR_max=\
-    (r_p/sigmas).max()
+    (p_r / p_std).max()
 #===> MVP
-weights[:,23]
-r_p[23]
-sigmas[23]
+i_std_min=p_std.argmin()
+p_weights[:, i_std_min]
+p_r[i_std_min]
+p_std[i_std_min]
+SR_std_min=p_r[i_std_min]/p_std[i_std_min];SR_std_min
 #===> MSRP
-weights[:,33]
-r_p[33]
-sigmas[33]
+i_SR_max=(p_r / p_std).argmax()
+p_weights[:, i_SR_max]
+p_r[i_SR_max]
+p_std[i_SR_max]
+(p_r/p_std)[i_SR_max]
+# 1/N or equally-weighted
+p_ew_weight=np.ones(4)/4
+p_ew_r=r_mean.mean();p_ew_r
+p_ew_std=np.sqrt(SIGMA.dot(p_weight).dot(p_weight));p_ew_std
+p_ew_SR=p_ew_r/p_ew_std;p_ew_SR
