@@ -82,3 +82,9 @@ def func_der(W):
 W0=np.ones(4)/4
 res=minimize(func,W0,method='trust-constr',jac=func_der,hess=SR1(),constraints=linear_constraint,bounds=bounds)# hess=SR1()是近似计算hess矩阵，另外，可以使用jac='2-point'近似计算
 print('Weights:',res.x,'\np_r:',res.x.dot(r_mean),'\np_std:',np.sqrt(res.x.dot(SIGMA).dot(res.x)),'\nSR:',res.x.dot(r_mean)/np.sqrt(res.x.dot(SIGMA).dot(res.x)))
+
+# IVP
+p_ivp_weight=1.0/r_std/(1.0/r_std).sum()
+p_ivp_r=p_ivp_weight.dot(r_mean);p_ivp_r
+p_ivp_std=np.sqrt(p_ivp_weight.dot(SIGMA).dot(p_ivp_weight));p_ivp_std
+p_ivp_SR=p_ivp_r/p_ivp_std;p_ivp_SR
