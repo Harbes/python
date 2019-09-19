@@ -84,7 +84,7 @@ W0=np.ones(4)/4
 res=minimize(func,W0,method='trust-constr',jac=func_der,hess=SR1(),constraints=linear_constraint,bounds=bounds)# hess=SR1()是近似计算hess矩阵，另外，可以使用jac='2-point'近似计算
 print('Weights:',res.x,'\np_r:',res.x.dot(r_mean),'\np_std:',np.sqrt(res.x.dot(SIGMA).dot(res.x)),'\nSR:',res.x.dot(r_mean)/np.sqrt(res.x.dot(SIGMA).dot(res.x)))
 
-# risk parity，方法1【不需要leverage=1的约束】
+# risk budgeting，方法1【不需要leverage=1的约束，只需要最后scale一下即可】
 budgeting=np.arange(1,5)/np.arange(1,5).sum()
 c=budgeting.dot(np.log(budgeting))*1.001
 def func(W):
@@ -102,14 +102,19 @@ nonlinear_constraint=NonlinearConstraint(cons_f,-np.inf,0.0,jac=cons_jac,hess=BF
 res=minimize(func,budgeting,method='trust-constr',jac=func_der,hess=func_hess,constraints=nonlinear_constraint)
 print('Weights:',res.x/res.x.sum(),'\np_r:',res.x.dot(r_mean)/res.x.sum(),'\np_std:',np.sqrt(res.x.dot(SIGMA).dot(res.x))/res.x.sum(),'\nSR:',res.x.dot(r_mean)/np.sqrt(res.x.dot(SIGMA).dot(res.x)))
 W=res.x/res.x.sum();SIGMA.dot(W)*W
-# risk parity，方法2
+# risk budgeting，方法2【不需要额外w>0的假设，因为ln(w)就隐含了w>0】
 budgeting=np.ones(4)/4
+matrix_LC=np.ones(4)
+linear_constraint=LinearConstraint(matrix_LC, [1.0], [1.0])
 def func(W):
     CR=SIGMA.dot(W)*W
     v=0.0
     for i in range(1,len(CR)):
         v+=((CR[:-i]-CR[i:])**2.0).sum()
     return v
+res=minimize(func,budgeting,method='trust-constr',jac='2-point',hess=BFGS(),constraints=linear_constraint)
+print('Weights:',res.x,'\np_r:',res.x.dot(r_mean),'\np_std:',np.sqrt(res.x.dot(SIGMA).dot(res.x)),'\nSR:',res.x.dot(r_mean)/np.sqrt(res.x.dot(SIGMA).dot(res.x)))
+W=res.x;SIGMA.dot(W)*W
 
 # IVP
 p_ivp_weight=1.0/r_std/(1.0/r_std).sum()
