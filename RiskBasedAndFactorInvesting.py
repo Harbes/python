@@ -84,10 +84,9 @@ W0=np.ones(4)/4
 res=minimize(func,W0,method='trust-constr',jac=func_der,hess=SR1(),constraints=linear_constraint,bounds=bounds)# hess=SR1()是近似计算hess矩阵，另外，可以使用jac='2-point'近似计算
 print('Weights:',res.x,'\np_r:',res.x.dot(r_mean),'\np_std:',np.sqrt(res.x.dot(SIGMA).dot(res.x)),'\nSR:',res.x.dot(r_mean)/np.sqrt(res.x.dot(SIGMA).dot(res.x)))
 
-# risk parity，方法1【与原书的结果不是很接近】
-budgeting=np.ones(4)/4
+# risk parity，方法1【不需要leverage=1的约束】
+budgeting=np.arange(1,5)/np.arange(1,5).sum()
 c=budgeting.dot(np.log(budgeting))*1.001
-# bounds=Bounds(np.zeros(4),np.ones(4))
 def func(W):
     return SIGMA.dot(W).dot(W)
 def func_der(W):
@@ -99,9 +98,18 @@ def cons_f(W):
 def cons_jac(W):
     return -budgeting/W
 from scipy.optimize import BFGS
-nonlinear_constraint=NonlinearConstraint(cons_f,-np.inf,0.0,jac='2-point',hess=BFGS())
+nonlinear_constraint=NonlinearConstraint(cons_f,-np.inf,0.0,jac=cons_jac,hess=BFGS())
 res=minimize(func,budgeting,method='trust-constr',jac=func_der,hess=func_hess,constraints=nonlinear_constraint)
-print('Weights:',res.x,'\np_r:',res.x.dot(r_mean),'\np_std:',np.sqrt(res.x.dot(SIGMA).dot(res.x)),'\nSR:',res.x.dot(r_mean)/np.sqrt(res.x.dot(SIGMA).dot(res.x)))
+print('Weights:',res.x/res.x.sum(),'\np_r:',res.x.dot(r_mean)/res.x.sum(),'\np_std:',np.sqrt(res.x.dot(SIGMA).dot(res.x))/res.x.sum(),'\nSR:',res.x.dot(r_mean)/np.sqrt(res.x.dot(SIGMA).dot(res.x)))
+W=res.x/res.x.sum();SIGMA.dot(W)*W
+# risk parity，方法2
+budgeting=np.ones(4)/4
+def func(W):
+    CR=SIGMA.dot(W)*W
+    v=0.0
+    for i in range(1,len(CR)):
+        v+=((CR[:-i]-CR[i:])**2.0).sum()
+    return v
 
 # IVP
 p_ivp_weight=1.0/r_std/(1.0/r_std).sum()
