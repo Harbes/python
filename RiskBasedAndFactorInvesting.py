@@ -1,4 +1,6 @@
 import numpy as np
+from scipy.optimize import minimize,Bounds,LinearConstraint,NonlinearConstraint
+import matplotlib.pyplot as plt
 
 ########## Ch1
 ###MSRP###
@@ -17,7 +19,6 @@ weights_mvp=SIGMA_inv.sum(axis=0)/SIGMA_inv.sum() # IG的权重为负
 r_mvp=(weights_mvp*r_mean).sum()
 std_mvp=np.sqrt(1/SIGMA_inv.sum())
 # MVP with non-negative constraint
-from scipy.optimize import minimize,Bounds,LinearConstraint
 bounds=Bounds(np.zeros(4),np.ones(4))
 matrix_LC=np.array([np.ones(4),r_mean])
 p_r=0.04
@@ -47,7 +48,7 @@ for i in range(n):
     sol=solvers.qp(P,q,G,h,A,b)
     p_std[i]=np.sqrt(sol['primal objective'] * 2.0) # 注意，目标函数有1/2，故计算方差时要还原
     p_weights[:, i]=np.array(sol['x']).reshape(-1)
-import matplotlib.pyplot as plt
+
 plt.plot(p_std * 100, p_r * 100);plt.show() # 需要绘制详细一些
 
 SR_max=\
@@ -81,6 +82,25 @@ def func_der(W):
     return (W.dot(r_std)*SIGMA.dot(W)-W.dot(SIGMA).dot(W)*r_std)/(W.dot(SIGMA).dot(W))**1.5
 W0=np.ones(4)/4
 res=minimize(func,W0,method='trust-constr',jac=func_der,hess=SR1(),constraints=linear_constraint,bounds=bounds)# hess=SR1()是近似计算hess矩阵，另外，可以使用jac='2-point'近似计算
+print('Weights:',res.x,'\np_r:',res.x.dot(r_mean),'\np_std:',np.sqrt(res.x.dot(SIGMA).dot(res.x)),'\nSR:',res.x.dot(r_mean)/np.sqrt(res.x.dot(SIGMA).dot(res.x)))
+
+# risk parity 与原书的结果不是很接近
+budgeting=np.ones(4)/4
+c=budgeting.dot(np.log(budgeting))*1.001
+# bounds=Bounds(np.zeros(4),np.ones(4))
+def func(W):
+    return SIGMA.dot(W).dot(W)
+def func_der(W):
+    return SIGMA.dot(W)*2.0
+def func_hess(W):
+    return SIGMA*2.0
+def cons_f(W):
+    return c-budgeting.dot(np.log(W))
+def cons_jac(W):
+    return -budgeting/W
+from scipy.optimize import BFGS
+nonlinear_constraint=NonlinearConstraint(cons_f,-np.inf,0.0,jac='2-point',hess=BFGS())
+res=minimize(func,budgeting,method='trust-constr',jac=func_der,hess=func_hess,constraints=nonlinear_constraint)
 print('Weights:',res.x,'\np_r:',res.x.dot(r_mean),'\np_std:',np.sqrt(res.x.dot(SIGMA).dot(res.x)),'\nSR:',res.x.dot(r_mean)/np.sqrt(res.x.dot(SIGMA).dot(res.x)))
 
 # IVP
