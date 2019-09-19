@@ -103,18 +103,18 @@ res=minimize(func,budgeting,method='trust-constr',jac=func_der,hess=func_hess,co
 print('Weights:',res.x/res.x.sum(),'\np_r:',res.x.dot(r_mean)/res.x.sum(),'\np_std:',np.sqrt(res.x.dot(SIGMA).dot(res.x))/res.x.sum(),'\nSR:',res.x.dot(r_mean)/np.sqrt(res.x.dot(SIGMA).dot(res.x)))
 W=res.x/res.x.sum();SIGMA.dot(W)*W
 # risk budgeting，方法2【不需要额外w>0的假设，因为ln(w)就隐含了w>0】
-budgeting=np.ones(4)/4
+budgeting=np.arange(2,6);budgeting=budgeting/budgeting.sum()
 matrix_LC=np.ones(4)
 linear_constraint=LinearConstraint(matrix_LC, [1.0], [1.0])
 def func(W):
-    CR=SIGMA.dot(W)*W
+    CR_b=SIGMA.dot(W)*W/budgeting
     v=0.0
-    for i in range(1,len(CR)):
-        v+=((CR[:-i]-CR[i:])**2.0).sum()
+    for i in range(1,len(CR_b)):
+        v+=((CR_b[:-i]-CR_b[i:])**2.0).sum()
     return v
 res=minimize(func,budgeting,method='trust-constr',jac='2-point',hess=BFGS(),constraints=linear_constraint)
 print('Weights:',res.x,'\np_r:',res.x.dot(r_mean),'\np_std:',np.sqrt(res.x.dot(SIGMA).dot(res.x)),'\nSR:',res.x.dot(r_mean)/np.sqrt(res.x.dot(SIGMA).dot(res.x)))
-W=res.x;SIGMA.dot(W)*W
+W=res.x;SIGMA.dot(W)*W/(SIGMA.dot(W)*W).sum()
 
 # IVP
 p_ivp_weight=1.0/r_std/(1.0/r_std).sum()
