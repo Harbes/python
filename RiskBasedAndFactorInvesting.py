@@ -32,7 +32,7 @@ def func_hess(W):
 W0=np.ones(4)/4
 res=minimize(func,W0,method='trust-constr',jac=func_der,hess=func_hess,constraints=linear_constraint,bounds=bounds)# 似乎要设置jac矩阵
 print('Weights:',res.x,'\nMinimum std:',np.sqrt(res.fun))
-# 使用cvxopt包，计算权重非负约束下的efficient frontier
+# 使用cvxopt包求解QP问题，计算权重非负约束下的efficient frontier
 from cvxopt import matrix,solvers
 P=matrix(SIGMA,tc='d') #二次项
 q=matrix([0]*4,tc='d') #一次项
