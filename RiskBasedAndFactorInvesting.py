@@ -93,7 +93,7 @@ p_ew_r=r_mean.mean();p_ew_r
 p_ew_std=np.sqrt(SIGMA.dot(p_ew_weight).dot(p_ew_weight));p_ew_std
 p_ew_SR=p_ew_r/p_ew_std;p_ew_SR
 
-### MDP with non-negative constraint
+### MDP with non-negative constraint, 方法1
 bounds=Bounds(np.zeros(4),np.ones(4))
 matrix_LC=np.ones(4)
 p_r=0.04
@@ -106,9 +106,28 @@ W0=np.ones(4)/4
 res=minimize(func,W0,method='trust-constr',jac=func_der,hess=SR1(),constraints=linear_constraint,bounds=bounds)# hess=SR1()是近似计算hess矩阵，另外，可以使用jac='2-point'近似计算
 print('Weights:',res.x,'\np_r:',res.x.dot(r_mean),'\np_std:',np.sqrt(res.x.dot(SIGMA).dot(res.x)),'\nSR:',res.x.dot(r_mean)/np.sqrt(res.x.dot(SIGMA).dot(res.x)))
 
+### MDP with non-negative constraint, 方法2
+bounds=Bounds(np.zeros(4),np.inf)
+matrix_LC=r_std#np.array([np.ones(4),r_std])
+c=r_std.max() # 原则上belong to[0,sigma_max]
+linear_constraint=LinearConstraint(matrix_LC, [c], [np.inf])
+def func(W):
+    return SIGMA.dot(W).dot(W)
+def func_der(W):
+    return 2.0*SIGMA.dot(W)
+def cons(W):
+    return c-r_std.dot(W)
+def cons_der(W):
+    return -r_std
+W0=np.ones(4)/4
+res=minimize(func,W0,method='trust-constr',jac=func_der,hess=SR1(),constraints=linear_constraint,bounds=bounds)# hess=SR1()是近似计算hess矩阵，另外，可以使用jac='2-point'近似计算
+print('Weights:',res.x/res.x.sum(),'\np_r:',res.x.dot(r_mean)/res.x.sum(),'\np_std:',np.sqrt(res.x.dot(SIGMA).dot(res.x))/res.x.sum(),'\nSR:',res.x.dot(r_mean)/np.sqrt(res.x.dot(SIGMA).dot(res.x)))
+
+
+
 ### risk budgeting，方法1【不需要leverage=1的约束，只需要最后scale一下即可】
 budgeting=np.arange(1,5)/np.arange(1,5).sum()
-c=budgeting.dot(np.log(budgeting))*1.001
+c = budgeting.dot(np.log(budgeting))
 def func(W):
     return SIGMA.dot(W).dot(W)
 def func_der(W):
