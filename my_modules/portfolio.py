@@ -233,7 +233,7 @@ class MeanVarAnalysis:
 
         :param Ep: Number,iterable
         :return: Array
-            the weights of frontier portfolio
+            the p_weights of frontier portfolio
         '''
         one = np.ones(self.init_data.shape[1])
         V_inv = pinv(self.Cov())
