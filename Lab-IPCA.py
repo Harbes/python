@@ -115,5 +115,21 @@ def num_IPCA_estimate_ALS(Gamma_Old,W,X,Nts,PSF=None):
 K=2
 Gamma_Old,s,v     = sp.sparse.linalg.svds(X.T,K);
 Factor_Old          = s*v.T
-Gamma_Old.shape
-Factor_Old.shape
+# Numerical choices
+MaxIterations       = 100;
+Tolerance           = 1e-6;
+
+# Algorithm
+for i in range(MaxIterations):
+    # Run regressions using Old estimates
+    Gamma_New,Factor_New = num_IPCA_estimate_ALS(Gamma_Old,W,X,Nts)
+    # Calculate change in Old and New estimates
+    tol  = np.maximum(np.abs(Gamma_New-Gamma_Old).max(),np.abs(Factor_New-Factor_Old).max().max()) # other convergence norms could be used
+    # Replace Old estimates for the next iteration
+    if tol<=Tolerance:
+        break
+    Factor_Old  = Factor_New
+    Gamma_Old   = Gamma_New
+
+Gamma   = Gamma_New;
+Factor  = Factor_New;
