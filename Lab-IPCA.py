@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import scipy as sp
 from scipy.sparse.linalg import svds
 from pandas.tseries.offsets import DateOffset
 DPath='E:/data/CNRDS/'
@@ -17,23 +18,20 @@ ret.index=pd.to_datetime(ret.index.astype(int).astype(str),format='%Y%m')
 
 # 标准化indicators
 indicators_all.index.names=['Trddt','Scode']
-indi_standardized=indicators_all.groupby(by=['Trddt']).apply(lambda x:(x-x.mean())/x.std())
+indi_standardized=indicators_all.astype(float).groupby(by=['Trddt']).apply(lambda x:(x-x.mean())/x.std())
 indi_standardized['ret']=ret.stack().drop_duplicates(keep='last')
 X_tmp=indi_standardized.iloc[:,:-1].mul(indi_standardized['ret'],axis=0) # 个股characteristics与return的乘积
 Nts=(X_tmp.sum(axis=1)!=0).groupby('Trddt').sum()
-X=X_tmp.groupby('Trddt').sum().div(Nts,axis=0) ## 部分数值为0，原因在于原始predictor可能都是nan【为什么predictor会出现大面积且连续的NaN？】;删与不删对结果影响几何？稳健吗？
+## TODO
+X=X_tmp.astype(float).groupby('Trddt').sum().div(Nts,axis=0) ## 部分数值为0，原因在于原始predictor可能都是nan【为什么predictor会出现大面积且连续的NaN？】;
+# 删与不删对结果影响几何？稳健吗？;上述X的列由X_tmp的67变成了53？？？---> 加上astype(float)
 indi_standardized=indi_standardized.loc[X_tmp.sum(axis=1)!=0].fillna(0.0)
 W=pd.DataFrame(index=pd.MultiIndex.from_product([Nts.index,indi_standardized.columns[:-1]], names=['Trddt','predictors']),columns=indi_standardized.columns[:-1])
 for i in Nts.index:
     W.loc[i]=(indi_standardized.loc[i,:'SI'].T@indi_standardized.loc[i,:'SI']/Nts.loc[i]).values
 
-#Initial guess
-K=2
-Gamma_Old,s,v     = sp.sparse.linalg.svds(X.T,K);
-Factor_Old          = s*v.T
-Factor_Old.shape
-def num_IPCA_estimate_ALS(Gamma_Old,W,X,Nts,PSF=None):
 
+def num_IPCA_estimate_ALS(Gamma_Old,W,X,Nts,PSF=None):
     '''
     % usage:
     % -[ Gamma_New , F_New ] = num_IPCA_estimate_ALS( Gamma_Old , W , X , Nts )
@@ -62,24 +60,37 @@ def num_IPCA_estimate_ALS(Gamma_Old,W,X,Nts,PSF=None):
     '''
     T=len(Nts)
     if PSF is not None:
+        _,K_add=np.shape(PSF) # 若PSF的dim=1，则此命令出错
         L,K_tilde=np.shape(Gamma_Old)
         K=K_tilde-K_add
     else:
         L, K_tilde = np.shape(Gamma_Old)
         K=K_tilde
-    F_New=np.empty(K,T)
-    if K>0:
-        if PSF is not None:
-            for t in range(T):
-                F_New[:,t]=np.linalg.pinv(Gamma_Old[:,:K].T@W[:,:,t]@Gamma_Old[:,:K])@Gamma_Old[:,:K].T@\
-                           (X[:,t]-W[:,t]@Gamma_Old[:,K:]*PSF[t])
-        else:
-            for t in range(T):
-                F_New[:,t]=np.linalg.pinv(Gamma_Old.T@W[:,:,t]@Gamma_Old)@Gamma_Old.T@X[:,t]
-    Numerator=np.zeros(L*K_tilde,1)
-    Denominator=np.zeros(L*K_tilde,1)
+    F_New=pd.DataFrame(np.nan,index=Nts.index)
     if PSF is not None:
+        for t in Nts.index:
+            F_New.loc[t] = np.linalg.pinv(Gamma_Old[:, :K].T @ W.loc[t].values @ Gamma_Old[:, :K]) @ Gamma_Old[:, :K].T @ \
+                          (X.loc[t] - W.loc[t].values @ Gamma_Old[:, K:] * PSF.loc[t])
+    else:
+        for t in Nts.index:
+            F_New.loc[t] = np.linalg.pinv(Gamma_Old.T @ W.loc[t].values @ Gamma_Old) @ Gamma_Old.T @ X.loc[t]
+
+    Numerator=np.zeros(L*K_tilde)
+    Denominator=np.zeros(L*K_tilde)
+    if PSF is not None:
+        for i in Nts.index:
+            ff=np.vstack((F_New.loc[t].values,PSF.loc[t].values))
+            Numerator+=np.kron(X.loc[t],ff)*Nst.loc[t]
+            Denominator+=np.kron(W.loc[t].values,ff@ff.T)*Nst.loc[t]
+
+
 
     return None
 
 
+#Initial guess
+K=2
+Gamma_Old,s,v     = sp.sparse.linalg.svds(X.T,K);
+Factor_Old          = s*v.T
+Gamma_Old.shape
+Factor_Old.shape
