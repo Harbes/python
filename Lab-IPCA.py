@@ -29,7 +29,7 @@ indi_standardized=indi_standardized.loc[X_tmp.sum(axis=1)!=0].fillna(0.0)
 W=pd.DataFrame(index=pd.MultiIndex.from_product([Nts.index,indi_standardized.columns[:-1]], names=['Trddt','predictors']),columns=indi_standardized.columns[:-1])
 for i in Nts.index:
     W.loc[i]=(indi_standardized.loc[i,:'SI'].T@indi_standardized.loc[i,:'SI']/Nts.loc[i]).values
-
+W=W.astype(float)
 
 def num_IPCA_estimate_ALS(Gamma_Old,W,X,Nts,PSF=None):
     '''
@@ -62,39 +62,53 @@ def num_IPCA_estimate_ALS(Gamma_Old,W,X,Nts,PSF=None):
     if PSF is not None:
         K_add=np.size(PSF)/len(PSF)
         L,K_tilde=len(Gamma_Old),np.size(Gamma_Old)/len(Gamma_Old)
-        K=K_tilde-K_add
+        K=K_tilde-K_add # K=0表明除了预设的factors之外，并不需要从工具变量中估计其他的factors
     else:
-        L, K_tilde = len(Gamma_Old),np.size(Gamma_Old)/len(Gamma_Old)
-        K=K_tilde
-    F_New=pd.DataFrame(np.nan,index=Nts.index)
-    #if K>0: # 若不满足，则下面这段if...else...似乎不需要？？？
-    if PSF is not None:
-        for t in Nts.index:
-            F_New.loc[t] = np.linalg.pinv(Gamma_Old[:, :K].T @ W.loc[t].values @ Gamma_Old[:, :K]) @ Gamma_Old[:, :K].T @ \
-                          (X.loc[t] - W.loc[t].values @ Gamma_Old[:, K:] * PSF.loc[t])
-    else:
-        for t in Nts.index:
-            F_New.loc[t] = np.linalg.pinv(Gamma_Old.T @ W.loc[t].values @ Gamma_Old) @ Gamma_Old.T @ X.loc[t]
+        L, K_tilde = len(Gamma_Old),int(np.size(Gamma_Old)/len(Gamma_Old))
+        K=K_tilde # 从工具变量中估计factors的个数
+    F_New=pd.DataFrame(np.empty((T,K)),index=Nts.index,columns=list(str(i) for i in range(1,K+1)))
+    if K>0:
+        if PSF is not None:
+            for t in Nts.index:
+                F_New.loc[t] = np.linalg.pinv(Gamma_Old[:, :K].T @ W.loc[t].values @ Gamma_Old[:, :K]) @ Gamma_Old[:,
+                                                                                                         :K].T @ \
+                               (X.loc[t] - W.loc[t].values @ Gamma_Old[:, K:] * PSF.loc[t])
+        else:
+            for t in Nts.index:
+                F_New.loc[t] = np.linalg.pinv(Gamma_Old.T @ W.loc[t].values @ Gamma_Old) @ Gamma_Old.T @ X.loc[t]
 
     Numerator=np.zeros(L*K_tilde)
-    Denominator=np.zeros(L*K_tilde)
+    Denominator=np.zeros((L*K_tilde,L*K_tilde))
     if PSF is not None:
-        for i in Nts.index:
-            ff=np.vstack((F_New.loc[t].values,PSF.loc[t].values))
-            Numerator+=np.kron(X.loc[t].values,ff)*Nst.loc[t]
-            Denominator+=np.kron(W.loc[t].values,ff@ff.T)*Nst.loc[t]
+        if K>0:
+            for i in Nts.index:
+                ff = np.vstack((F_New.loc[t].values, PSF.loc[t].values))
+                Numerator += np.kron(X.loc[t].values, ff) * Nst.loc[t]
+                Denominator += np.kron(W.loc[t].values, ff @ ff.T) * Nst.loc[t]
+        else:
+            for i in Nts.index:
+                ff = PSF.loc[t].values
+                Numerator += np.kron(X.loc[t].values, ff) * Nts.loc[t]
+                Denominator += np.kron(W.loc[t].values, ff.reshape(K_add, 1) @ ff.reshape(1, K_add)) * Nts.loc[t]
     else:
         for i in Nts.index:
             ff=F_New.loc[t].values
-            Numerator+=np.kron(X.loc[t].values,ff)*Nst.loc[t]
+            Numerator+=np.kron(X.loc[t].values,ff)*Nts.loc[t]
             Denominator+=np.kron(W.loc[t].values,ff.reshape(K_tilde,1)@ff.reshape(1,K_tilde))*Nts.loc[t]
-    Gamma_New=(Numerator/Denominator).reshape(K_tilde,L).T
-
-
-
-
-
-    return None
+    Gamma_New=(np.linalg.pinv(Denominator)@Numerator).reshape(K_tilde,L).T
+    # GammaBeta orthonormal and F_New Orthogonal
+    if K>0:
+        R1 = sp.linalg.cholesky(Gamma_New.T @ Gamma_New, lower=False)  # np.linalg.cholesky给出的是下三角
+        R2, _, _ = np.linalg.svd(R1 @ F_New.values.T @ F_New.values @ R1.T)
+        Gamma_New[:, :K] = Gamma_New[:, :K] @ np.linalg.pinv(R1) @ R2
+        F_New = (np.linalg.pinv(R2) @ R1 @ F_New.T).T
+    # Sign convention on GammaBeta and F_New
+    if K>0:
+        sg=np.sign(F_New.mean(axis=0))
+        sg[sg==0]=1.0
+        Gamma_New[:,:K]=Gamma_New[:,:K]*sg.values
+        F_New*=sg.values
+    return Gamma_New,F_New
 
 
 #Initial guess
