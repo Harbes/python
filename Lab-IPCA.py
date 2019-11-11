@@ -60,13 +60,14 @@ def num_IPCA_estimate_ALS(Gamma_Old,W,X,Nts,PSF=None):
     '''
     T=len(Nts)
     if PSF is not None:
-        _,K_add=np.shape(PSF) # 若PSF的dim=1，则此命令出错
-        L,K_tilde=np.shape(Gamma_Old)
+        K_add=np.size(PSF)/len(PSF)
+        L,K_tilde=len(Gamma_Old),np.size(Gamma_Old)/len(Gamma_Old)
         K=K_tilde-K_add
     else:
-        L, K_tilde = np.shape(Gamma_Old)
+        L, K_tilde = len(Gamma_Old),np.size(Gamma_Old)/len(Gamma_Old)
         K=K_tilde
     F_New=pd.DataFrame(np.nan,index=Nts.index)
+    #if K>0: # 若不满足，则下面这段if...else...似乎不需要？？？
     if PSF is not None:
         for t in Nts.index:
             F_New.loc[t] = np.linalg.pinv(Gamma_Old[:, :K].T @ W.loc[t].values @ Gamma_Old[:, :K]) @ Gamma_Old[:, :K].T @ \
@@ -80,8 +81,16 @@ def num_IPCA_estimate_ALS(Gamma_Old,W,X,Nts,PSF=None):
     if PSF is not None:
         for i in Nts.index:
             ff=np.vstack((F_New.loc[t].values,PSF.loc[t].values))
-            Numerator+=np.kron(X.loc[t],ff)*Nst.loc[t]
+            Numerator+=np.kron(X.loc[t].values,ff)*Nst.loc[t]
             Denominator+=np.kron(W.loc[t].values,ff@ff.T)*Nst.loc[t]
+    else:
+        for i in Nts.index:
+            ff=F_New.loc[t].values
+            Numerator+=np.kron(X.loc[t].values,ff)*Nst.loc[t]
+            Denominator+=np.kron(W.loc[t].values,ff.reshape(K_tilde,1)@ff.reshape(1,K_tilde))*Nts.loc[t]
+    Gamma_New=(Numerator/Denominator).reshape(K_tilde,L).T
+
+
 
 
 
