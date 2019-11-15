@@ -58,6 +58,7 @@ def num_IPCA_estimate_ALS(Gamma_Old,W,X,Nts,PSF=None):
     %
     % When nargin<=4, Ktilde=K and GammaDelta is not estimated
     '''
+
     T=len(Nts)
     if PSF is not None:
         K_add=np.size(PSF)/len(PSF)
