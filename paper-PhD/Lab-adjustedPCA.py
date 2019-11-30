@@ -39,7 +39,6 @@ lambda_a.iloc[:,selected].expanding().mean().plot();plt.show()
 rho_lambda_a=lambda_a.corr().astype(float) # 为什么会出现大量的nan？？？---> 剔除inf后，rho中不再有nan，但是可能子样本中仍然会出现
 lambda_a.isnull().sum()>0
 col_nan=lambda_a.loc[:,lambda_a.isnull().sum()>0].columns;col_nan # lambda有缺失的变量
-DPath='/Users/harbes/PycharmProjects/data/CNRDS/' #'E:/data/CNRDS/'
 
 col_nornumll=rho_lambda_a.columns.difference(col_nan)
 eig_vals, eig_vecs=np.linalg.eig(rho_lambda_a.loc[col_nornumll,col_nornumll])
