@@ -1,0 +1,39 @@
+import pandas as pd
+import numpy as np
+from pandas.tseries.offsets import DateOffset
+import matplotlib.pyplot as plt
+DPath='E:/data/CNRDS/'
+indicators_all=pd.read_pickle(DPath+'indicators_all')
+PV=pd.read_pickle(DPath+'PV');PV.tail(10)
+tmp=PV[['Scode','Trddt','Adclsprc']].iloc[1:].set_index(['Trddt','Scode'])
+tmp=tmp.astype(float)
+adjprc=tmp.loc[~tmp.index.duplicated(keep='last')].unstack() # 提出duplicates
+adjprc.index=pd.to_datetime(adjprc.index,format='%Y-%m-%d')# 调整index格式
+adjprc.columns=adjprc.columns.get_level_values(1)# 调整columns格式
+GroupBy1=lambda x:x.year*100.0+x.month
+#p0=adjprc.groupby(by=GroupBy).first();p0
+ret=adjprc.groupby(by=GroupBy1).last().pct_change();ret
+ret.index=pd.to_datetime(ret.index.astype(int).astype(str),format='%Y%m')
+ret.index[0]
+# 标准化indicators
+indicators_all.index.names=['Trddt','Scode']
+indi_standardized=indicators_all.groupby(by=['Trddt']).apply(lambda x:(x-x.mean())/x.std())
+
+# step 1: X=a+b*Z
+ret1=ret.stack().loc[indi_standardized.index]
+ret1.index.names=['Trddt','Scode']
+indi_standardized.corrwith(ret1)
+i_set=set(indi_standardized.index.get_level_values(0)) # 日期
+indi_set=indi_standardized.columns
+lambda_a=pd.DataFrame(np.nan,index=i_set,columns=indi_set).sort_index()
+for i in lambda_a.index:
+    lambda_a.loc[i]=indi_standardized.loc[i].corrwith(ret1.loc[i])/ret1.loc[i].std()
+lambda_a=lambda_a.astype(float)
+#ii=lambda_a.index[6]
+#indi_standardized.loc[ii,'SC'] # 估计的lambda_a存在missing value
+#indicators_all.loc[ii,'SC']
+selected=3
+lambda_a.iloc[:,selected].plot();plt.show()
+lambda_a.iloc[:,selected].rolling(window=12,min_periods=1).mean().plot();plt.show()
+lambda_a.iloc[:,selected].expanding().mean().plot();plt.show()
+rho_lambda_a=lambda_a.corr().astype(float) # 为什么会出现大量的nan？？？
