@@ -32,8 +32,11 @@ lambda_a=lambda_a.astype(float)
 #ii=lambda_a.index[6]
 #indi_standardized.loc[ii,'SC'] # 估计的lambda_a存在missing value
 #indicators_all.loc[ii,'SC']
-selected=3
+selected=5
 lambda_a.iloc[:,selected].plot();plt.show()
 lambda_a.iloc[:,selected].rolling(window=12,min_periods=1).mean().plot();plt.show()
 lambda_a.iloc[:,selected].expanding().mean().plot();plt.show()
 rho_lambda_a=lambda_a.corr().astype(float) # 为什么会出现大量的nan？？？
+plt.acorr(lambda_a.iloc[:,22]);plt.show()
+
+lambda_a.loc[:,lambda_a.isnull().sum()>0].columns # lambda有缺失的变量
