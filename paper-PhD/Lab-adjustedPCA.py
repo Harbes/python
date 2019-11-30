@@ -39,4 +39,9 @@ lambda_a.iloc[:,selected].expanding().mean().plot();plt.show()
 rho_lambda_a=lambda_a.corr().astype(float) # 为什么会出现大量的nan？？？
 plt.acorr(lambda_a.iloc[:,22]);plt.show()
 
-lambda_a.loc[:,lambda_a.isnull().sum()>0].columns # lambda有缺失的变量
+col_nan=lambda_a.loc[:,lambda_a.isnull().sum()>0].columns # lambda有缺失的变量
+
+col_nornumll=rho_lambda_a.columns.difference(col_nan)
+eig_vals, eig_vecs=np.linalg.eig(rho_lambda_a.loc[col_nornumll,col_nornumll])
+eig_vals
+eig_vals.cumsum()/eig_vals.sum()
