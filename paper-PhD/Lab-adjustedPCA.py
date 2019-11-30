@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 from pandas.tseries.offsets import DateOffset
 import matplotlib.pyplot as plt
-DPath='E:/data/CNRDS/'
-indicators_all=pd.read_pickle(DPath+'indicators_all')
+DPath='/Users/harbes/PycharmProjects/data/CNRDS/' #'E:/data/CNRDS/'
+indicators_all=pd.read_pickle(DPath+'indicators_all').replace([np.inf, -np.inf], np.nan)
 PV=pd.read_pickle(DPath+'PV');PV.tail(10)
 tmp=PV[['Scode','Trddt','Adclsprc']].iloc[1:].set_index(['Trddt','Scode'])
 tmp=tmp.astype(float)
@@ -14,7 +14,7 @@ GroupBy1=lambda x:x.year*100.0+x.month
 #p0=adjprc.groupby(by=GroupBy).first();p0
 ret=adjprc.groupby(by=GroupBy1).last().pct_change();ret
 ret.index=pd.to_datetime(ret.index.astype(int).astype(str),format='%Y%m')
-ret.index[0]
+
 # 标准化indicators
 indicators_all.index.names=['Trddt','Scode']
 indi_standardized=indicators_all.groupby(by=['Trddt']).apply(lambda x:(x-x.mean())/x.std())
@@ -36,10 +36,10 @@ selected=5
 lambda_a.iloc[:,selected].plot();plt.show()
 lambda_a.iloc[:,selected].rolling(window=12,min_periods=1).mean().plot();plt.show()
 lambda_a.iloc[:,selected].expanding().mean().plot();plt.show()
-rho_lambda_a=lambda_a.corr().astype(float) # 为什么会出现大量的nan？？？
-plt.acorr(lambda_a.iloc[:,22]);plt.show()
-
-col_nan=lambda_a.loc[:,lambda_a.isnull().sum()>0].columns # lambda有缺失的变量
+rho_lambda_a=lambda_a.corr().astype(float) # 为什么会出现大量的nan？？？---> 剔除inf后，rho中不再有nan，但是可能子样本中仍然会出现
+lambda_a.isnull().sum()>0
+col_nan=lambda_a.loc[:,lambda_a.isnull().sum()>0].columns;col_nan # lambda有缺失的变量
+DPath='/Users/harbes/PycharmProjects/data/CNRDS/' #'E:/data/CNRDS/'
 
 col_nornumll=rho_lambda_a.columns.difference(col_nan)
 eig_vals, eig_vecs=np.linalg.eig(rho_lambda_a.loc[col_nornumll,col_nornumll])

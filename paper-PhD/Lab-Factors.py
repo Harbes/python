@@ -11,7 +11,7 @@ import time
 #from dateutil.parser import parse
 #import warnings
 #warnings.filterwarnings("ignore")
-DPath='E:/data/CNRDS/'#'/Users/harbes/data/CNRDS/'
+DPath='/Users/harbes/PycharmProjects/data/CNRDS/' #'E:/data/CNRDS/'#
 BS=pd.read_pickle(DPath+'BS')
 PV=pd.read_pickle(DPath+'PVd')
 CF=pd.read_pickle(DPath+'CF')
@@ -67,6 +67,7 @@ t1=time.time()
 print(t1-t0)
 ##
 date_list=pd.date_range('2004-12-31','2018-9-1',freq='M')+Day()
+
 #pub_date=pd.read_pickle(DPath+'PubDate')['ActlDt']
 
 ##指标计算 大概20min

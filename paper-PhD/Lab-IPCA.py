@@ -4,7 +4,7 @@ import scipy as sp
 from scipy.sparse.linalg import svds
 from pandas.tseries.offsets import DateOffset
 DPath='E:/data/CNRDS/'
-indicators_all=pd.read_pickle(DPath+'indicators_all')
+indicators_all=pd.read_pickle(DPath+'indicators_all').replace([np.inf, -np.inf], np.nan)
 PV=pd.read_pickle(DPath+'PV');PV.tail(10)
 tmp=PV[['Scode','Trddt','Adclsprc']].iloc[1:].set_index(['Trddt','Scode'])
 tmp=tmp.astype(float)

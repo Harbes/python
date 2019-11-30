@@ -1,12 +1,13 @@
 import pandas as pd
 import numpy as np
 from pandas.tseries.offsets import DateOffset
-DPath='E:/data/CNRDS/'
-indicators_all=pd.read_pickle(DPath+'indicators_all')
+DPath='/Users/harbes/PycharmProjects/data/CNRDS/' #'E:/data/CNRDS/'
+indicators_all=pd.read_pickle(DPath+'indicators_all').replace([np.inf, -np.inf], np.nan)
+
 PV=pd.read_pickle(DPath+'PV');PV.tail(10)
 tmp=PV[['Scode','Trddt','Adclsprc']].iloc[1:].set_index(['Trddt','Scode'])
 tmp=tmp.astype(float)
-adjprc=tmp.loc[~tmp.index.duplicated(keep='last')].unstack() # 提出duplicates
+adjprc=tmp.loc[~tmp.index.duplicated(keep='last')].unstack() # 剔除duplicates
 adjprc.index=pd.to_datetime(adjprc.index,format='%Y-%m-%d')# 调整index格式
 adjprc.columns=adjprc.columns.get_level_values(1)# 调整columns格式
 GroupBy1=lambda x:x.year*100.0+x.month
