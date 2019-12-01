@@ -58,3 +58,6 @@ X_j_bar.loc[t].cov()
 
 eig_vals,_=np.linalg.eigh(X_j_bar.loc[t].cov());eig_vals.cumsum()/eig_vals.sum()
 eig_vals,_=np.linalg.eigh(M_hat.loc[t]);eig_vals.cumsum()/eig_vals.sum()
+
+eig_vals,_=np.linalg.eigh(indi_standardized.loc[(t,slice(None))].iloc[:,list(range(17))+list(range(18,20))].cov());eig_vals.cumprod() # 剔除 17，49，60，61
+indi_standardized.loc[(t,slice(None))].iloc[:,:-2].cov()
