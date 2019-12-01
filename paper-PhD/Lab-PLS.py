@@ -14,7 +14,6 @@ GroupBy1=lambda x:x.year*100.0+x.month
 #p0=adjprc.groupby(by=GroupBy).first();p0
 ret=adjprc.groupby(by=GroupBy1).last().pct_change();ret
 ret.index=pd.to_datetime(ret.index.astype(int).astype(str),format='%Y%m')
-ret.index[0]
 # 标准化indicators
 indicators_all.index.names=['Trddt','Scode']
 indi_standardized=indicators_all.groupby(by=['Trddt']).apply(lambda x:(x-x.mean())/x.std())
@@ -22,7 +21,6 @@ indi_standardized=indicators_all.groupby(by=['Trddt']).apply(lambda x:(x-x.mean(
 # step 1: X=a+b*Z
 ret1=ret.stack().loc[indi_standardized.index]
 ret1.index.names=['Trddt','Scode']
-indi_standardized.corrwith(ret1)
 i_set=set(indi_standardized.index.get_level_values(0)) # 日期
 indi_set=indi_standardized.columns
 lambda_a=pd.DataFrame(np.nan,index=i_set,columns=indi_set).sort_index()
