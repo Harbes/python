@@ -1,7 +1,18 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 from pandas.tseries.offsets import DateOffset
-DPath='/Users/harbes/PycharmProjects/data/CNRDS/' #'E:/data/CNRDS/'
+import sys
+def GetDataPath():
+    sys_platform=sys.platform
+    if sys_platform =='win32':
+        return 'E:/data/CNRDS/' #
+    elif sys_platform=='mac':
+        return '/Users/harbes/PycharmProjects/data/CNRDS/' #
+    elif sys_platform=='linux':
+        return '/home/harbes/data/NewData/'
+    else:
+        raise ValueError('These is no such systerm in your work-station')
 indicators_all=pd.read_pickle(DPath+'indicators_all').replace([np.inf, -np.inf], np.nan)
 
 PV=pd.read_pickle(DPath+'PV');PV.tail(10)

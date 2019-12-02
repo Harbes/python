@@ -4,7 +4,7 @@ import scipy as sp
 from scipy.sparse.linalg import svds
 import matplotlib.pyplot as plt
 from pandas.tseries.offsets import DateOffset
-DPath='/Users/harbes/PycharmProjects/data/CNRDS/' #'E:/data/CNRDS/'
+DPath='E:/data/CNRDS/' # '/Users/harbes/PycharmProjects/data/CNRDS/' #
 indicators_all=pd.read_pickle(DPath+'indicators_all').replace([np.inf, -np.inf], np.nan)
 PV=pd.read_pickle(DPath+'PV');PV.tail(10)
 tmp=PV[['Scode','Trddt','Adclsprc']].iloc[1:].set_index(['Trddt','Scode'])
@@ -114,7 +114,7 @@ def num_IPCA_estimate_ALS(Gamma_Old,W,X,Nts,PSF=None):
 
 
 #Initial guess
-K=2
+K=5
 Gamma_Old,s,v     = sp.sparse.linalg.svds(X.T,K);
 Factor_Old          = s*v.T
 # Numerical choices
@@ -136,3 +136,5 @@ for i in range(MaxIterations):
 Gamma   = Gamma_New;
 Factor  = Factor_New;
 Factor.plot();plt.show()
+eig_vals,_=np.linalg.eigh(Factor.cov());eig_vals
+Factor.cov()

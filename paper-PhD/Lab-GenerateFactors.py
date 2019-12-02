@@ -11,7 +11,18 @@ import time
 #from dateutil.parser import parse
 #import warnings
 #warnings.filterwarnings("ignore")
-DPath='/Users/harbes/PycharmProjects/data/CNRDS/' #'E:/data/CNRDS/'#
+import sys
+def GetDataPath():
+    sys_platform=sys.platform
+    if sys_platform =='win32':
+        return 'E:/data/CNRDS/' #
+    elif sys_platform=='mac':
+        return '/Users/harbes/PycharmProjects/data/CNRDS/' #
+    elif sys_platform=='linux':
+        return '/home/harbes/data/NewData/'
+    else:
+        raise ValueError('These is no such systerm in your work-station')
+DPath=GetDataPath()
 BS=pd.read_pickle(DPath+'BS')
 PV=pd.read_pickle(DPath+'PVd')
 CF=pd.read_pickle(DPath+'CF')
@@ -88,7 +99,7 @@ SP=SalesToPrice(sales,market_cap,date_list,pub_date=None)
 TG=TaxGrowth(tax,date_list,pub_date=None)
 ACC=Accruals(annual_inc_bef_extra,oper_cash,tot_assets,date_list,pub_date=None)
 PACC=PercentAccruals(tot_profit,oper_cash,net_profit,date_list,pub_date=None)
-CAPXG=CapitalExpenditureGrowth(PPE,depre,date_list,pub_date=None)
+CAPXG=CapitalExpenditureGrowth(PPE.fillna(0.0),depre.fillna(0.0),date_list,pub_date=None)
 dBe=ChangeInShareholdersEquity(book_value,tot_assets,date_list,annually=True,pub_date=None)
 dPIA=ChangesInPPEandInventoryToAssets(PPE,inventory.fillna(0),tot_assets,date_list,annually=True,pub_date=None)
 IA=InvestmentToAssets(tot_assets,date_list,annually=True,pub_date=None)
