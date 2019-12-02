@@ -97,3 +97,7 @@ port_ret.mean()*100
 hedge_ret.mean()*100
 t_port=port_ret.mean()/NWest_mean(port_ret);t_port
 t_hedge=hedge_ret.mean()/NWest_mean(hedge_ret);t_hedge
+
+
+
+np.linalg.det(pd.DataFrame(np.random.randn(500,70)).cov())
